@@ -5,5 +5,5 @@
 </script>
 
 <Page title="Tables">
-    <Button color="primary"><Icon name="plus" /> Add Table</Button>
+    <Button slot="header-buttons" color="primary"><Icon name="plus" /> Add Table</Button>
 </Page>
