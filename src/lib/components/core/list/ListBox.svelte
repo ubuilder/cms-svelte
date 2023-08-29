@@ -7,6 +7,8 @@
 	export let title: string = 'List'
 	export let items: T[] = []
 
+	export let hasFooter = true
+
 	let headers: { name: string; getFooter: (items: T[]) => string }[] = []
 
 	function register(name: string, getFooter: (items: T[]) => string) {
@@ -23,7 +25,8 @@
 	setContext('LIST_BOX', { register, unregister })
 </script>
 
-<Card {...$$restProps} {title} if={items.length}>
+{#if items.length}
+<Card {...$$restProps} {title}>
 	<Table>
 		<TableHead>
 			{#each headers as header}
@@ -38,7 +41,8 @@
 				</TableRow>
 			{/each}
 		</TableBody>
-		<TableFoot if={hasFooter}>
+		{#if hasFooter}
+		<TableFoot >
 			<TableRow>
 				{#each headers as header}
 					<TableCell>
@@ -51,5 +55,7 @@
 				{/each}
 			</TableRow>
 		</TableFoot>
+		{/if}
 	</Table>
 </Card>
+{/if}

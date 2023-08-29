@@ -1,17 +1,14 @@
 <script>
   import {
     Avatar,
-    Button,
     Dropdown,
     DropdownItem,
     DropdownMenu,
     El,
-    Icon,
-    Sidebar,
     SidebarItem,
   } from "yesvelte";
   import Layout from "$lib/components/core/Layout.svelte";
-  import tabler from "yesvelte/css/daisyui.min.css?url";
+  import tabler from "yesvelte/css/tabler.min.css?url";
 </script>
 
 <svelte:head>
@@ -48,3 +45,9 @@
     </svelte:fragment>
     <slot/>
 </Layout>
+
+<style>
+  :global(.y-form-input .y-label) {
+    padding: 0;
+  }
+</style>
