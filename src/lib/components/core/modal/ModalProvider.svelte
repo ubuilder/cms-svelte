@@ -4,9 +4,9 @@
 </script>
 
 {#if $modal}
-	{#key $modal.open}
+	<!-- {#key $modal.open} -->
 		<Modal bind:show={$modal.open} size="md" backdrop {...$modal.config}>
 			<svelte:component this={$modal.component} {...$modal.props} />
 		</Modal>
-	{/key}
+	<!-- {/key} -->
 {/if}

@@ -1,11 +1,22 @@
-import { db } from '$lib/server'
+import {connect} from '@ulibs/db'
+import { existsSync, fstat, fstatSync, mkdirSync } from 'fs'
 
 export const handle = async ({event, resolve}) => {
 
-    const users = db.getModel<User>('users')
+    const siteId = '123123'
 
+    // get model based on domain
+    const {getModel} = connect({filename: 'data/' + siteId + '/db.json'}) // based on url
+    event.locals.db = (table: string) => getModel(table)
 
-    console.log(users)
+    if(!existsSync('data/' + siteId)) {
+
+        mkdirSync('data/' + siteId, {recursive: true})
+        mkdirSync('data/' + siteId + '/assets', {recursive: true})
+    }
+    
+    event.locals.siteId = siteId
+    
     
     return resolve(event)
 }

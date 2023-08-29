@@ -47,7 +47,7 @@
 	}
 </script>
 
-<form novalidate on:reset|preventDefault={onFormReset} on:submit|preventDefault={onFormSubmit}>
+<form {...$$restProps} novalidate on:reset|preventDefault={onFormReset} on:submit|preventDefault={onFormSubmit}>
 	<FormObject bind:errors {errorMessages} bind:get bind:set bind:value>
 		<slot {loading} />
 	</FormObject>

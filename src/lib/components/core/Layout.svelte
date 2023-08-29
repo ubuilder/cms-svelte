@@ -1,5 +1,6 @@
 <script>
 	import { Avatar, El, Icon, Offcanvas, OffcanvasHeader, Sidebar, SidebarItem } from 'yesvelte'
+  import ModalProvider from './modal/ModalProvider.svelte';
 
 	let offcanvasShow = false
 </script>
@@ -56,6 +57,8 @@
 <El class="layout-content">
 	<slot />
 </El>
+
+<ModalProvider/>
 
 <style>
 	:global(.layout-content) {

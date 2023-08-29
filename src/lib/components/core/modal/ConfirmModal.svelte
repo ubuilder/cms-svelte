@@ -11,11 +11,11 @@
 	export let cancelText: string = 'Cancel'
 
 	function onYes() {
-		loading = true
+		// loading = true
 		$modal.resolve(true)
 	}
 	function onCancel() {
-		loading = true
+		// loading = true
 		$modal.resolve(false)
 	}
 
