@@ -27,6 +27,7 @@
 
 {#if items.length}
 <Card {...$$restProps} {title}>
+	<slot name="start"/>
 	<Table>
 		<TableHead borderBottom>
 			{#each headers as header}
@@ -57,6 +58,7 @@
 		</TableFoot>
 		{/if}
 	</Table>
+	<slot name="end"/>
 </Card>
 {/if}
 

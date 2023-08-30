@@ -75,7 +75,7 @@
       </Popover>
     </El>
     <El col>
-      <FormInput label="Name" bind:value={table.name} />
+      <FormInput required label="Name" bind:value={table.name} />
     </El>
     <El col="12">
       <FormField label="Fields">
@@ -176,6 +176,8 @@
                       label="Mode"
                       bind:value={field.mode}
                     />
+                  {:else if field.type === 'date_time'}
+                    <FormSwitch label="Range?" bind:checked={field.range}/>
                   {/if}
 
                   <El col="12" d="flex" justifyContent="end">
@@ -235,7 +237,7 @@
 
   <ButtonList justifyContent="end" slot="footer">
     <Button on:click={() => $modal.close()}>Cancel</Button>
-    <Button color="primary" on:click={() => $modal.resolve(table)}>
+    <Button disabled={!table.name} color="primary" on:click={() => $modal.resolve(table)}>
       {submitText}
     </Button>
   </ButtonList>

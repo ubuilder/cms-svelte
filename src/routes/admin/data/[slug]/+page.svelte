@@ -3,7 +3,7 @@
   import ListBox from "$lib/components/core/list/ListBox.svelte";
   import ListItem from "$lib/components/core/list/ListItem.svelte";
   import { modal } from "$lib/components/core/modal/modal.js";
-  import { Button, El, Icon, Switch } from "yesvelte";
+  import { Button, Card, CardBody, El, Icon, Switch } from "yesvelte";
   import DynamicDataModal from "./DynamicDataModal.svelte";
   import { invalidateAll } from "$app/navigation";
   import ButtonList from "$lib/components/core/ButtonList.svelte";
@@ -138,5 +138,8 @@
         </Button>
       </El>
     </ListItem>
+    <El gap="2" d="flex" justifyContent="end" px="3" py="2" slot="end">
+      HELLO
+    </El>
   </ListBox>
 </Page>

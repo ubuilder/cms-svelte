@@ -23,10 +23,10 @@
 </script>
 
 <FilterButton
-  active={$filters[key].value[0]}
+  active={$filters[key].value?.[0]}
   on:clear={() => ($filters[key].value = [undefined, undefined])}
 >
-  {#if !$filters[key].value[0]}
+  {#if !$filters[key].value?.[0]}
     {text}: All
   {:else}
     {text}: {$filters[key].value[0]} to {$filters[key].value[1]}

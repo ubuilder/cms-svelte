@@ -21,7 +21,7 @@
         operator: "between",
       };
     }
-    $: active = typeof $filters[key].value[0] !== 'undefined'
+    $: active = typeof $filters[key].value?.[0] !== 'undefined'
   </script>
   
   <FilterButton
@@ -31,13 +31,16 @@
     {#if !active}
       {text}: All
     {:else}
-      {text}: {$filters[key].value[0]} to {$filters[key].value[1]}
+      {text}: {$filters[key].value?.[0]} to {$filters[key].value?.[1]}
     {/if}
   </FilterButton>
   <Popover autoClose="outside">
     <PopoverBody>
-        <FormInput label="From" bind:value={$filters[key].value[0]}/>
-        <FormInput label="To" bind:value={$filters[key].value[1]}/>
+      {#if $filters[key].value}
+        <FormInput label="From" value={$filters[key].value[0]} on:change={(e) => $filters[key].value[0] = e.target.value}/>
+        <FormInput label="To" value={$filters[key].value[1]} on:change={(e) => $filters[key].value[1] = e.target.value}/>
+      {/if}
     </PopoverBody>
+    
   </Popover>
   

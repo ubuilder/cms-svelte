@@ -1,7 +1,7 @@
 export async function load({params, locals}) {
     const table = await locals.db('tables').get({where: {slug: params.slug }})
 
-    const rows = await locals.db(params.slug).query()
+    const rows = await locals.db(params.slug).query({where: locals.filters})
 
     return {
         table,
