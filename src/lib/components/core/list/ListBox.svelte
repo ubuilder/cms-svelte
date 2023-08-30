@@ -28,7 +28,7 @@
 {#if items.length}
 <Card {...$$restProps} {title}>
 	<Table>
-		<TableHead>
+		<TableHead borderBottom>
 			{#each headers as header}
 				<TableCell px="2">{header.name}</TableCell>
 			{/each}
@@ -36,7 +36,7 @@
 
 		<TableBody>
 			{#each items as item, index}
-				<TableRow>
+				<TableRow style="max-height: 80px">
 					<slot {item} {index} />
 				</TableRow>
 			{/each}
@@ -59,3 +59,10 @@
 	</Table>
 </Card>
 {/if}
+
+<style>
+	:global(.y-table-wrapper) {
+		overflow-x: auto;
+
+	}
+</style>

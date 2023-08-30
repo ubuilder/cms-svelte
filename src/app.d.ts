@@ -5,7 +5,8 @@ declare global {
 		// interface Error {}
 		interface Locals {
 			db: any;
-			siteId: string
+			siteId: string;
+			filters: Record<string, object>
 		}
 		// interface PageData {}
 		// interface Platform {}

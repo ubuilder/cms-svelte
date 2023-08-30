@@ -5,7 +5,7 @@
 
 {#if $modal}
 	<!-- {#key $modal.open} -->
-		<Modal bind:show={$modal.open} size="md" backdrop {...$modal.config}>
+		<Modal bind:show={$modal.open} size="md" scrollable backdrop {...$modal.config}>
 			<svelte:component this={$modal.component} {...$modal.props} />
 		</Modal>
 	<!-- {/key} -->

@@ -30,7 +30,7 @@
 	</El>
 </El>
 
-<Sidebar borderEnd="1" h="100" d="none" dSm="block" class="layout-sidebar" position="fixed" style="/* margin-top: 57px */ width: 15rem;">
+<Sidebar borderEnd="1" h="100" d="none" dSm="block" class="layout-sidebar" position="fixed" style="margin-top: 57px; width: 15rem;">
 	<slot name="sidebar-items">
 		<SidebarItem title="User Management" icon="user">
 			<SidebarItem icon="users" title="Users" />
@@ -38,7 +38,7 @@
 		</SidebarItem>
 	</slot>
 </Sidebar>
-<Offcanvas class="layout-offcanvas" style="width: 15rem" backdrop autoClose bind:show={offcanvasShow}>
+<Offcanvas class="layout-offcanvas" style="width: 15rem;" backdrop autoClose bind:show={offcanvasShow}>
 	<OffcanvasHeader m="0" ps="3" py="3" class="layout-brand">
 		<slot name="logo">
 			<h1 style="margin-bottom: 0 !important;">UBuilder</h1>
@@ -63,11 +63,6 @@
 <style>
 	:global(.layout-content) {
 		margin-left: 0;
-	}
-
-	:global(.y-offcanvas-header-btn-icon) {
-		filter: invert(1);
-
 	}
 
 	@media (min-width: 576px) {

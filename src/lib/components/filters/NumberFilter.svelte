@@ -1,0 +1,43 @@
+<script lang="ts">
+    import {
+      DatePicker,
+      FormInput,
+      Popover,
+      PopoverBody,
+    } from "yesvelte";
+  
+    import FilterButton from "./FilterButton.svelte";
+    import { getContext } from "svelte";
+    import type { Writable } from "svelte/store";
+  
+    export let key: string;
+    export let text: string;
+  
+    const filters = getContext<Writable<any>>("FILTERS");
+  
+    if (!$filters[key]) {
+      $filters[key] = {
+        value: [undefined, undefined],
+        operator: "between",
+      };
+    }
+    $: active = typeof $filters[key].value[0] !== 'undefined'
+  </script>
+  
+  <FilterButton
+    {active}
+    on:clear={() => ($filters[key].value = [undefined, undefined])}
+  >
+    {#if !active}
+      {text}: All
+    {:else}
+      {text}: {$filters[key].value[0]} to {$filters[key].value[1]}
+    {/if}
+  </FilterButton>
+  <Popover autoClose="outside">
+    <PopoverBody>
+        <FormInput label="From" bind:value={$filters[key].value[0]}/>
+        <FormInput label="To" bind:value={$filters[key].value[1]}/>
+    </PopoverBody>
+  </Popover>
+  

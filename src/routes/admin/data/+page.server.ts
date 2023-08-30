@@ -1,5 +1,5 @@
 export async function load({locals}) {
-    const tables = await locals.db('tables').query({perPage: 50}).then(res => res.data)
+    const tables = await locals.db('tables').query({perPage: 50, where: locals.filters}).then(res => res.data)
 
     return {
         tables
@@ -16,7 +16,7 @@ function slugify(str: string, separator = '_') {
       result += str[i].toLowerCase();
     }
     return result;
-  } 
+} 
 
 export const actions = {
     async create(event) {

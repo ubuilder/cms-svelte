@@ -2,10 +2,10 @@ import { fail } from "@sveltejs/kit";
 import { join } from "path";
 import { rm, writeFile } from "fs/promises";
 
-export async function load(event) {
-  const assets = event.locals
+export async function load({ locals }) {
+  const assets = locals
     .db("files")
-    .query({ perPage: 50 })
+    .query({ perPage: 50, where: locals.filters })
     .then((res: any) => res.data);
 
   return {

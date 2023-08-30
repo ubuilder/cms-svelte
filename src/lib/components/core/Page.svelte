@@ -1,22 +1,11 @@
 <script lang="ts">
-  // import { LOGIN_PAGE, user } from '@stores'
-  import { SvelteComponent, onMount, setContext } from "svelte";
-  import {
-    Breadcrumb,
-    BreadcrumbItem,
-    Button,
-    Card,
-    CardActions,
-    CardBody,
-    CardHeader,
-    CardTitle,
-    El,
-  } from "yesvelte";
-  import ButtonList from "./ButtonList.svelte";
+  import qs from "qs";
+  import { onMount, setContext } from "svelte";
+  import { page } from "$app/stores";
+  import { El } from "yesvelte";
   import PageHeader from "./PageHeader.svelte";
   import { writable } from "svelte/store";
-  // import EmptyLayout from '$lib/components/core/layout/EmptyLayout.svelte'
-  // import AdminLayout from '$lib/components/core/layout/AdminLayout.svelte'
+  import { goto } from "$app/navigation";
 
   export let roles: string | string[] = [];
 
@@ -24,13 +13,47 @@
 
   export let htmlTitle: string | undefined = title;
 
-  const filters = writable({});
+  const queryString = $page.url.searchParams.toString();
+  const queryObject = qs.parse(queryString);
+
+  const filters = writable<any>(queryObject.filters ?? {});
+
+  let loaded = false;
+
+  onMount(() => {
+    loaded = true;
+  });
 
   setContext("FILTERS", filters);
 
-  $: {
-    console.log("Should refresh page: ", $filters);
+  async function applyFilters(_deps: any) {
+    const filtersObject: any = {};
+    for (let key in $filters) {
+      if (key === "filters") {
+        continue;
+      }
+      if ($filters[key].value !== "") {
+        if ($filters[key].value === "true") {
+          $filters[key] = { value: true, operator: "=" };
+        } else if ($filters[key].value === "false") {
+          $filters[key] = { value: false, operator: "=" };
+        }
+        filtersObject[key] = $filters[key];
+      }
+    }
+
+    if (loaded) {
+      const url = `?${qs.stringify({ filters: filtersObject })}`;
+      
+      try {
+        await goto(url, {invalidateAll: true});
+      } catch(err) {
+        console.log('err: ', err)
+      }
+    }
   }
+
+  $: applyFilters($filters);
 </script>
 
 <svelte:head>

@@ -1,8 +1,9 @@
 <script>
   import ButtonList from "$lib/components/core/ButtonList.svelte";
   import Page from "$lib/components/core/Page.svelte";
-  import Filter from "$lib/components/filters/Filter.svelte";
   import FilterList from "$lib/components/filters/FilterList.svelte";
+  import SelectFilter from "$lib/components/filters/SelectFilter.svelte";
+  import TextFilter from "$lib/components/filters/TextFilter.svelte";
   import { Button, ButtonGroup, Icon } from "yesvelte";
 
 </script>
@@ -15,14 +16,14 @@
     </Button>
   </ButtonList>
   <FilterList>
-    <Filter text="Type" key="is_template" items={[
+    <SelectFilter text="Type" key="is_template" items={[
       { key: true, text: 'Template' },      
       { key: false, text: 'Page' },
       ]}/>
 
-      <Filter type="text" text="Title" key="title"/>
+      <TextFilter  text="Title" key="title"/>
       
-      <Filter text="Theme" key="theme" items={[
+      <SelectFilter text="Theme" key="theme" items={[
         { key: 'daisyui', text: 'Daisy UI' },      
         { key: 'tabler', text: 'Tabler' },
         ]}/>

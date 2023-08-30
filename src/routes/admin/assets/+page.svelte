@@ -1,12 +1,11 @@
 <script lang="ts">
   import Page from "$lib/components/core/Page.svelte";
-  import { Form } from "$lib/components/core/form";
-  import Filter from "$lib/components/filters/Filter.svelte";
   import FilterList from "$lib/components/filters/FilterList.svelte";
-  import { Button, Card, CardBody, El, Icon } from "yesvelte";
-  import AssetImage from "./AssetTypes/AssetImage.svelte";
+  import { Button, El, Icon } from "yesvelte";
   import Asset from "./Asset.svelte";
   import { invalidateAll } from "$app/navigation";
+  import TextFilter from "$lib/components/filters/TextFilter.svelte";
+  import SelectFilter from "$lib/components/filters/SelectFilter.svelte";
 
   export let data;
 
@@ -28,7 +27,6 @@
     console.log(result);
   }
 
-  let filters = {};
 </script>
 
 <Page title="Assets">
@@ -42,8 +40,7 @@
   </Button>
 
   <FilterList>
-    <Filter
-      type="select"
+    <SelectFilter
       key="type"
       items={[
         { text: "Image", key: "image" },
@@ -52,7 +49,7 @@
       ]}
       text="Type"
     />
-    <Filter type="text" key="name" text="Name" />
+    <TextFilter key="name" text="Name" />
   </FilterList>
 
   <!-- Upload file form -->

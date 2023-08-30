@@ -3,11 +3,16 @@
   import ListBox from "$lib/components/core/list/ListBox.svelte";
   import ListItem from "$lib/components/core/list/ListItem.svelte";
   import { modal } from "$lib/components/core/modal/modal.js";
-  import { Button, El, Icon } from "yesvelte";
+  import { Button, El, Icon, Switch } from "yesvelte";
   import DynamicDataModal from "./DynamicDataModal.svelte";
   import { invalidateAll } from "$app/navigation";
   import ButtonList from "$lib/components/core/ButtonList.svelte";
   import ConfirmModal from "$lib/components/core/modal/ConfirmModal.svelte";
+  import FilterList from "$lib/components/filters/FilterList.svelte";
+  import SelectFilter from "$lib/components/filters/SelectFilter.svelte";
+  import TextFilter from "$lib/components/filters/TextFilter.svelte";
+  import DateFilter from "$lib/components/filters/DateFilter.svelte";
+  import NumberFilter from "$lib/components/filters/NumberFilter.svelte";
 
   export let data;
 
@@ -81,10 +86,43 @@
     </Button>
   </ButtonList>
 
+  <FilterList>
+    {#each data.table.fields as field}
+      {#if field.type === "select"}
+        <SelectFilter
+          items={field.options ?? []}
+          text={field.name}
+          key={field.name}
+        />
+      {:else if field.type === "switch"}
+        <SelectFilter
+          items={[
+            { key: true, text: "True" },
+            { key: false, text: "False" },
+          ]}
+          text={field.name}
+          key={field.name}
+        />
+      {:else if field.type === "date_time"}
+        <DateFilter key={field.name} text={field.name} />
+      {:else if field.type === "number"}
+        <NumberFilter key={field.name} text={field.name} />
+      {:else if field.type === "plain_text" || field.type === "rich_text"}
+        <TextFilter text={field.name} key={field.name} />
+      {/if}
+    {/each}
+  </FilterList>
+
   <ListBox title="" items={data.rows.data} let:item>
     {#each data.table.fields as field}
       <ListItem name={field.name}>
-        {item[field.name]}
+        {#if field.type === "switch"}
+          <Switch checked={item[field.name]} />
+        {:else if field.type === "image"}
+          <El tag="img" width="64px" src="/files/{item[field.name]}" />
+        {:else}
+          {item[field.name]}
+        {/if}
       </ListItem>
     {/each}
     <ListItem style="width: 0" name="Actions">
