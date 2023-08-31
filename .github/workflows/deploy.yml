@@ -32,6 +32,7 @@ jobs:
           cwd: "./"
           files: |
             build/
+            package.json
             captain-definition
           outPath: deploy.tar
 
