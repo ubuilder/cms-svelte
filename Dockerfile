@@ -19,7 +19,7 @@ RUN npm ci
 RUN npm run build
 
 # Delete source code files that were used to build the app that are no longer needed
-RUN rm -rf src/ static/ emailTemplates/ docker-compose.yml
+RUN rm -rf src/ static/
 
 # The USER instruction sets the user name to use as the default user for the remainder of the current stage
 USER node:node
