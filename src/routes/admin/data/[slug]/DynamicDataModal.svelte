@@ -42,7 +42,7 @@
                 <FormSwitch {...props} bind:checked={data[field.name]}/>
 
             {:else}
-            NOT SUPPORTED
+            NOT SUPPORTED {field.type}
             {/if}
         {/each}
     </El>
