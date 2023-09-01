@@ -4,7 +4,7 @@ import { rm, writeFile } from "fs/promises";
 
 export async function load({ locals }) {
   const assets = locals
-    .db("files")
+    .db("u-files")
     .query({ perPage: 50, where: locals.filters })
     .then((res: any) => res.data);
 
@@ -29,7 +29,7 @@ export const actions = {
 
     const { file } = formData as { file: File };
 
-    const [fileId] = await locals.db("files").insert({
+    const [fileId] = await locals.db("u-files").insert({
       name: file.name,
       type: file.type.split("/")[0],
       size: file.size,
@@ -48,7 +48,7 @@ export const actions = {
 
     const id = body.id;
 
-    await event.locals.db("files").remove(id);
+    await event.locals.db("u-files").remove(id);
 
     await rm(join("data", event.locals.siteId, "assets", id));
 
@@ -60,7 +60,7 @@ export const actions = {
     const id = body.id;
     const data = body.data;
 
-    await event.locals.db("files").update(id, {
+    await event.locals.db("u-files").update(id, {
       name: data.name,
       alt: data.alt,
       description: data.description,

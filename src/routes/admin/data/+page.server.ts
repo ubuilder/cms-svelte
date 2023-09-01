@@ -1,5 +1,5 @@
 export async function load({locals}) {
-    const tables = await locals.db('tables').query({perPage: 50, where: locals.filters}).then(res => res.data)
+    const tables = await locals.db('u-tables').query({perPage: 50, where: locals.filters}).then(res => res.data)
 
     return {
         tables
@@ -22,7 +22,7 @@ export const actions = {
     async create(event) {
         const body = await event.request.json()
 
-        await event.locals.db('tables').insert({
+        await event.locals.db('u-tables').insert({
             name: body.name,
             slug: slugify(body.name),
             icon: body.icon,
@@ -34,7 +34,7 @@ export const actions = {
     async update(event) {
         const body = await event.request.json()
 
-        await event.locals.db('tables').update(body.id, {
+        await event.locals.db('u-tables').update(body.id, {
             name: body.name,
             icon: body.icon,
             fields: body.fields
