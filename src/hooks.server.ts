@@ -5,24 +5,37 @@ import { existsSync, mkdirSync } from "fs";
 
 export const handle = async ({ event, resolve }) => {
   const sitesDb = connect({ filename: "data/db.json" });
-  const sites = await sitesDb.getModel('sites').query()
+  const sites = await sitesDb.getModel("sites").query();
 
   let siteId;
-   
-  for(let site of sites.data) {
-    if(event.request.headers.get('host') && site.domains.includes(event.request.headers.get('host'))) {
-      siteId = site.id
+
+  for (let site of sites.data) {
+    if (
+      event.request.headers.get("host") &&
+      site.domains.includes(event.request.headers.get("host"))
+    ) {
+      siteId = site.id;
     }
   }
 
-  if(!siteId && event.request.headers.get('host')?.includes('localhost')) {
-    siteId = event.url.port
+  if (!siteId && event.request.headers.get("host")?.includes("localhost")) {
+    siteId = event.url.port;
   }
-  if(!siteId) throw new Error('Site not found');
+  if (!siteId) throw new Error("Site not found");
 
   // get model based on domain
   const { getModel } = connect({ filename: "data/" + siteId + "/db.json" }); // based on url
   event.locals.db = (table: string) => getModel(table);
+
+
+  console.log(event.cookies.getAll())
+  if (event.cookies.get("auth")) {
+    const user = event.locals
+      .db("u-users")
+      .get({ where: { id: event.cookies.get("auth") } });
+
+    event.locals.user = user;
+  }
 
   event.locals.siteId = siteId;
 
