@@ -1,8 +1,6 @@
 import { connect } from "@ulibs/db";
 import qs from "qs";
 
-import { existsSync, mkdirSync } from "fs";
-
 const enable_test_user = true;
 
 export const handle = async ({ event, resolve }) => {
