@@ -26,6 +26,7 @@
 		"@ulibs/db": "^1.0.1-next.18",
 		"@ulibs/ui": "^0.0.2-next.141",
 		"handlebars": "^4.7.8",
+		"interactjs": "^1.10.18",
 		"pg": "^8.11.1",
 		"yesvelte": "^0.0.2-next.201"
 	}
