@@ -44,14 +44,14 @@
 
 .holder{
     background-color: rgba(28, 27, 27, 0.814);
-    mask: url(holder.svg) no-repeat center;
-    -webkit-mask: url(holder.svg) no-repeat center;
+    mask: url(/editor/holder.svg) no-repeat center;
+    -webkit-mask: url(/editor/holder.svg) no-repeat center;
     cursor: move;
 }
 .close{
     background-color:rgba(28, 27, 27, 0.814);
-    mask: url(x.svg) no-repeat center ;
-    -webkit-mask: url(x.svg) no-repeat center;
+    mask: url(/editor/x.svg) no-repeat center ;
+    -webkit-mask: url(/editor/x.svg) no-repeat center;
     cursor: pointer;
 }
 
