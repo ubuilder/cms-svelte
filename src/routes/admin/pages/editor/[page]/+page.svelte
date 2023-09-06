@@ -1,0 +1,48 @@
+<script lang="ts">
+	import DragWrapper from '$lib/components/editor/DragWrapper.svelte';
+	import Sidebar from '$lib/components/editor/Sidebar.svelte';
+	import DropZone from '$lib/components/editor/DropZone.svelte';
+	import { components } from '$lib/components/editor/components';
+	import './style.css';
+	import Header from '$lib/components/editor/Header.svelte';
+	import ControlPanel from '$lib/components/editor/ControlPanel.svelte';
+	import tabler from 'yesvelte/css/tabler.min.css?url'
+	let componentFocusIn = false
+	let screenSize: 'laptop' | 'tablet'| 'mobile' = 'laptop';
+
+</script>
+
+<svelte:head>
+	<link rel='stylesheet' href={tabler}/>
+</svelte:head>
+<div class="home">
+	<div class="sidebar">
+		<Header  bind:screenSize/>
+		<Sidebar>
+			{#if !componentFocusIn}
+				{#each components as { name, image, template }}
+					<DragWrapper {name} {image} {template} />
+				{/each}
+			{:else}
+				<ControlPanel />
+			{/if}
+		</Sidebar>
+	</div>
+	<DropZone {screenSize} on:componentFocusOut = {(e)=>componentFocusIn = false} on:componentFocusIn = {()=>{componentFocusIn = true}} />
+</div>
+
+
+<style>
+	.home {
+		display: grid;
+		grid-template-columns: 1fr 4fr;
+		gap: 5px;
+		background: linear-gradient(90deg, #c9c9c6, #f7f7f7 , #f7f7f7, #c9c9c6);
+
+		
+	}
+	.sidebar{
+		height: 100vh;
+		background-color: white;
+	}
+</style>
