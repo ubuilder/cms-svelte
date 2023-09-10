@@ -1,6 +1,6 @@
-import hbs from "handlebars";
+import hbs from 'handlebars';
 
-export async function load({ locals, params }) {
+export async function load({locals, params}) {
   const page: any = {
     load: {
       blog: {
@@ -25,16 +25,17 @@ export async function load({ locals, params }) {
     slot: [
       {
         type: "Container",
-        props: {size: 'xl'},
+        props: { size: "xl" },
         slot: [
           {
             type: "Input",
-            props: { value: 123 },
+            props: { value: 123 ,class: 'u-component'},
           },
           {
             type: "Button",
             props: {
               color: "red",
+              class: 'u-component'
             },
             slot: ["Hello"],
           },
@@ -51,31 +52,39 @@ export async function load({ locals, params }) {
             },
           },
           {
-            type: 'Container',
+            type: "Container",
             props: {
-              p: 'sm',
-              style: 'display: flex; flex-direction: column; gap: 20px'
+              p: "sm",
+              style: "display: flex; flex-direction: column; gap: 20px",
             },
             slot: [
               {
-                type: 'Input',
-                props: {placeholder: 'name...', name: 'name'}
+                type: "Input",
+                props: { placeholder: "name...", name: "name" },
               },
               {
-                type: 'Input',
-                props: {placeholder: 'email...', name: 'email', type: 'email'}
+                type: "Input",
+                props: {
+                  placeholder: "email...",
+                  name: "email",
+                  type: "email",
+                },
               },
               {
-                type: 'Input',
-                props: {placeholder: 'password...', name: 'password', type: 'password'}
+                type: "Input",
+                props: {
+                  placeholder: "password...",
+                  name: "password",
+                  type: "password",
+                },
               },
               {
-                type: 'Button',
-                props: {color: 'primary', col: '6', mx: 'auto'},
-                slot: ['Submit']
-              }
-            ]
-          }
+                type: "Button",
+                props: { color: "primary", col: "6", mx: "auto" },
+                slot: ["Submit"],
+              },
+            ],
+          },
         ],
       },
     ],
@@ -123,8 +132,8 @@ export async function load({ locals, params }) {
 
         slot.props[key] = get_value(slot.props[key]);
       }
-      if(slot.slot?.length > 0) {
-        render(slot)
+      if (slot.slot?.length > 0) {
+        render(slot);
       }
     }
 
