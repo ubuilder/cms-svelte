@@ -14,6 +14,8 @@
     TabList,
     TabContent,
     TabPanel,
+    Input,
+    FormField,
   } from "yesvelte";
 
   let items = [
@@ -38,7 +40,7 @@
     {
       name: "HtmlText",
       hasSlot: false,
-      props: [{ name: "content", type: "string" }],
+      props: [{ name: "text", type: "string" }],
     },
   ];
 
@@ -58,7 +60,10 @@
 
     {#if item}
       {#each item.props as prop}
-        <FormInput label={prop.name} bind:value={slot.props[prop.name]} />
+        <FormField style="position: relative" label={prop.name} bind:value={slot.props[prop.name]}>
+          <div class="dynamic-icon"></div>
+          <Input bind:value={slot.props[prop.name]}/>
+        </FormField>
       {/each}
     {/if}
   </ModalBody>
@@ -70,3 +75,26 @@
     </ButtonList>
   </ModalFooter>
 </Modal>
+
+<style>
+  .dynamic-icon {
+    z-index: 10;transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position:absolute;top: 22px;background: #57bfffc2;border-radius: 50%;left: -7px;width: 15px;height: 15px;
+  }
+
+  .dynamic-icon::before {
+    content: '+';
+    color: white;
+    margin-bottom: 1px;
+  }
+  .dynamic-icon:hover {
+    top: 17px;background: #1da1f2;left: -12px;width: 25px;height: 25px;
+  }
+  .dynamic-icon:hover::before {
+    font-size: 20px;
+    margin-bottom: 5px;
+  }
+</style>
