@@ -1,8 +1,6 @@
 <script lang="ts">
 	import DragDrop, { utilsFunction as uf} from './utils';
 	import { onMount } from 'svelte';
-	// import x from '../../../../static/editor/x.svg'
-	// import holder from '../../../../static/editor/holder.svg'
 	import { createEventDispatcher } from 'svelte';
 	const dispatch = createEventDispatcher()
 	export let screenSize: string; 
@@ -27,7 +25,6 @@
 	}
 	function dragLeaveHandler(e: MouseEvent): void {
 		e.preventDefault();
-
 	}
 	function dragOverhandler(e: MouseEvent): void {
 		e.preventDefault();
@@ -36,16 +33,13 @@
 		insertHandler(e, {id,target,slots, parent, index});
 	})
 	dragDrop.onFocusIn((e: Event, {id, target, parent})=>{
-		console.log('focus in', id, target, parent)
 		dispatch('componentFocusIn', {id,target, parent})
 	})
 	dragDrop.onFocusOut((e: Event, {})=>{
-		// console.log('focus out', id, target, parent)
 		dispatch('componentFocusOut')
 	})
 	dragDrop.onResize((event: Event, {id, target, parent, parentId, slots})=>{
 		console.log('resize', id, target, parent, parentId, slots)
-
 	})
 
 	function insertHandler(e: ElementEventMap, {target, parent, index}) {
@@ -65,7 +59,6 @@
 
 <style>
 	.drop-zone {
-		/* background-color: rgba(196, 190, 196, 0.3); */
 		border: 1px solid rgb(0, 119, 255);
 		border-radius: 5px;
 		grid-column-start: 2;
@@ -77,12 +70,11 @@
 		margin-left: auto;
 		margin-right: auto;
 		margin-top: 5px;
-		width:  100%;
+		width:  calc(100% - 5px);
 		background-color: white;
 		overflow-x: auto;
 	}
-	.laptop{
-		
+	.laptop{		
 		
 	}
 	.tablet{

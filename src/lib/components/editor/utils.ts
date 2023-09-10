@@ -237,7 +237,7 @@ function findIndex(e: Event): number {
 		range.detach();
 		if (e.clientY < top) return 0;
 	} else {
-		if (e.clientY < children[0].querySelector('.u-component').getBoundingClientRect().top) return 0;
+		if (e.clientY < children[0].querySelector('.u-component')?.getBoundingClientRect().top) return 0;
 	}
 	for (let i = 0; i < children.length; i++) {
 		let child;
@@ -250,9 +250,9 @@ function findIndex(e: Event): number {
 			range.detach();
 		} else {
 			child = children[i].querySelector('.u-component');
-			rect = child.getBoundingClientRect();
+			rect = child?.getBoundingClientRect();
 		}
-		if (e.clientY > rect.top && e.clientY < rect.bottom) {
+		if (e.clientY > rect?.top && e.clientY < rect?.bottom) {
 			return e.clientY < rect.top + rect.height / 2 ? i : i + 1;
 		}
 	}
