@@ -4,6 +4,8 @@
   export let edit = false;
 </script>
 
+<!-- 
+  
 {#if edit}
   Edit Button
 {:else}
@@ -11,3 +13,15 @@
     <slot />
   </Button>
 {/if}
+
+-->
+
+<div class="u-component">
+  {#if edit}
+    Edit Button
+  {:else}
+    <Button {...$$restProps}>
+      <slot />
+    </Button>
+  {/if}
+</div>
