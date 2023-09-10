@@ -1,85 +1,87 @@
 import hbs from "handlebars";
 
 export async function load({ locals, params }) {
-  const page: any = {
-    load: {
-      blog: {
-        table: "blogs",
-        where: {
-          slug: "{{page.slug}}",
-        },
-        with: {
-          author: {
-            table: "u-users",
-            field: "author_id",
-          },
-        },
-        // multiple: false
-      },
-    },
-    props: {
-      title: "{{blog.title}}",
-      description: "{{blog.description}}",
-      theme: "tabler",
-    },
-    slot: [
-      {
-        type: "Container",
-        props: {size: 'xl'},
-        slot: [
-          {
-            type: "Input",
-            props: { value: 123 },
-          },
-          {
-            type: "Button",
-            props: {
-              color: "red",
-            },
-            slot: ["Hello"],
-          },
-          {
-            type: "HtmlText",
-            props: {
-              text: "{{{blog.content}}}",
-            },
-          },
-          {
-            type: "HtmlText",
-            props: {
-              text: "by {{{blog.author.name}}}",
-            },
-          },
-          {
-            type: 'Container',
-            props: {
-              p: 'sm',
-              style: 'display: flex; flex-direction: column; gap: 20px'
-            },
-            slot: [
-              {
-                type: 'Input',
-                props: {placeholder: 'name...', name: 'name'}
-              },
-              {
-                type: 'Input',
-                props: {placeholder: 'email...', name: 'email', type: 'email'}
-              },
-              {
-                type: 'Input',
-                props: {placeholder: 'password...', name: 'password', type: 'password'}
-              },
-              {
-                type: 'Button',
-                props: {color: 'primary', col: '6', mx: 'auto'},
-                slot: ['Submit']
-              }
-            ]
-          }
-        ],
-      },
-    ],
-  };
+  // const page: any = {
+  //   load: {
+  //     blog: {
+  //       table: "blogs",
+  //       where: {
+  //         slug: "{{page.slug}}",
+  //       },
+  //       with: {
+  //         author: {
+  //           table: "u-users",
+  //           field: "author_id",
+  //         },
+  //       },
+  //       // multiple: false
+  //     },
+  //   },
+  //   props: {
+  //     title: "{{blog.title}}",
+  //     description: "{{blog.description}}",
+  //     theme: "tabler",
+  //   },
+  //   slot: [
+  //     {
+  //       type: "Container",
+  //       props: {size: 'xl'},
+  //       slot: [
+  //         {
+  //           type: "Input",
+  //           props: { value: 123 },
+  //         },
+  //         {
+  //           type: "Button",
+  //           props: {
+  //             color: "red",
+  //           },
+  //           slot: ["Hello"],
+  //         },
+  //         {
+  //           type: "HtmlText",
+  //           props: {
+  //             text: "{{{blog.content}}}",
+  //           },
+  //         },
+  //         {
+  //           type: "HtmlText",
+  //           props: {
+  //             text: "by {{{blog.author.name}}}",
+  //           },
+  //         },
+  //         {
+  //           type: 'Container',
+  //           props: {
+  //             p: 'sm',
+  //             style: 'display: flex; flex-direction: column; gap: 20px'
+  //           },
+  //           slot: [
+  //             {
+  //               type: 'Input',
+  //               props: {placeholder: 'name...', name: 'name'}
+  //             },
+  //             {
+  //               type: 'Input',
+  //               props: {placeholder: 'email...', name: 'email', type: 'email'}
+  //             },
+  //             {
+  //               type: 'Input',
+  //               props: {placeholder: 'password...', name: 'password', type: 'password'}
+  //             },
+  //             {
+  //               type: 'Button',
+  //               props: {color: 'primary', col: '6', mx: 'auto'},
+  //               slot: ['Submit']
+  //             }
+  //           ]
+  //         }
+  //       ],
+  //     },
+  //   ],
+  // };
+  
+  const page = await locals.db('u-pages').get({where: {slug: params.slug}})
 
   const props: any = {
     page: {

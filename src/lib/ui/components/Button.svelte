@@ -1,6 +1,7 @@
-<script>
+<script lang="ts">
   import { Button } from "yesvelte";
 
+  export let text: string;
   export let edit = false;
 </script>
 
@@ -21,7 +22,7 @@
     Edit Button
   {:else}
     <Button {...$$restProps}>
-      <slot />
+      {text}
     </Button>
   {/if}
 </div>

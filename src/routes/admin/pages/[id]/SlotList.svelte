@@ -16,11 +16,14 @@
   } from "yesvelte";
   import SlotModal from "./SlotModal.svelte";
   import ConfirmModal from "$lib/components/core/modal/ConfirmModal.svelte";
-  import { createEventDispatcher, onMount } from "svelte";
+  import { createEventDispatcher, onDestroy, onMount } from "svelte";
 
   export let slots: any[] = [];
   export let id = '';
 
+
+  let element: HTMLDivElement;
+  let instance: Sortable;
 
   async function onEditSlot(slot: any, index: number) {
     const result = await modal.open(SlotModal, {
@@ -43,20 +46,56 @@
       slots = slots;
     }
   }
-//   onMount(() => {      
-    //     console.log('itemEl',evt.item);  // dragged HTMLElement
-    //     console.log('to', evt.to);    // target list
-    //     console.log('from', evt.from);  // previous list
-    //     console.log('oldIndex', evt.oldIndex);  // element's old index within old parent
-    //     console.log('newIndex', evt.newIndex);  // element's new index within new parent
-    //     console.log('oldDraggableIndex', evt.oldDraggableIndex); // element's old index within old parent, only counting draggable elements
-    //     console.log('newDraggableIndex', evt.newDraggableIndex); // element's new index within new parent, only counting draggable elements
-    //     console.log('clone', evt.clone) // the clone element
-    //     console.log('pullMode', evt.pullMode);  // when item is in another sortable: `"clone"` if cloning, `true` if moving
-    //   }
-    //   });
-    //   console.log(i)
-//   });
+
+  function onMove(obj) {
+    console.log(obj)
+    
+    // 
+  }
+  
+  onMount(() => {
+    instance = new Sortable(element, {
+      animation: 150,
+      easing: "cubic-bezier(1, 0, 0, 1)",
+      draggable: ".sortable-item",
+      group: "nested",
+      onEnd: function (/**Event*/ evt) {
+        const fromId = evt.from.id;
+        const toId = evt.to.id;
+        const from = fromId
+          .split("-")
+          .slice(1)
+          .map((x) => +x);
+        const to = toId
+          .split("-")
+          .slice(1)
+          .map((x) => +x);
+
+        if (fromId == toId) {
+          onMove({
+            from,
+            to,
+            fromIndex: evt.oldIndex,
+            toIndex: evt.newIndex,
+          });
+        } else {
+          onMove({
+            from,
+            to,
+            fromIndex: evt.oldIndex,
+            toIndex: evt.newIndex,
+          });
+        }
+      },
+    });
+
+  });
+
+  onDestroy(() => {
+    if(instance) {
+      instance.destroy();
+    }
+  })
 
   async function onAddSlot() {
     console.log("onAddSlot");
@@ -72,6 +111,8 @@
 </script>
 
 <Accordions {id}>
+  <div bind:this={element}>
+
   {#each slots as slot, index}
     <Card id={id + "_" + index} class="sortable-item" my="2">
       {#if slot.type === "Container"}
@@ -120,5 +161,8 @@
       {/if}
     </Card>
   {/each}
+</div>
+
 </Accordions>
+
 <Button on:click={onAddSlot}>+ Add Slot</Button>

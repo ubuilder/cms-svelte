@@ -147,67 +147,32 @@
       }).then(res => invalidateAll())
     }
 
-  function initSlot(slots, id) {
-    const i = new Sortable(document.getElementById(id), {
-      animation: 150,
-      easing: "cubic-bezier(1, 0, 0, 1)",
-      draggable: ".sortable-item",
-      group: "nested",
-      onEnd: function (/**Event*/ evt) {
-        const fromId = evt.from.id;
-        const toId = evt.to.id;
-        const from = fromId
-          .split("-")
-          .slice(1)
-          .map((x) => +x);
-        const to = toId
-          .split("-")
-          .slice(1)
-          .map((x) => +x);
+//   function initSlot(slots, id) {
+    
 
-        if (fromId == toId) {
-          onMove({
-            from,
-            to,
-            fromIndex: evt.oldIndex,
-            toIndex: evt.newIndex,
-          });
-        } else {
-          onMove({
-            from,
-            to,
-            fromIndex: evt.oldIndex,
-            toIndex: evt.newIndex,
-          });
-        }
-      },
-    });
+//     console.log(i);
 
-    console.log(i);
+//     for (let index in slots) {
+//       console.log("index: ", index, id);
+//       console.log(slots[index].type);
+//       if (slots[index].type === "Container") {
+//         initSlot(slots[index].slot, id + "-" + index);
+//       }
+//     }
+//   }
+//   onMount(() => {
+//     initSlot(request.slot, "slot");
+//   });
 
-    for (let index in slots) {
-      console.log("index: ", index, id);
-      console.log(slots[index].type);
-      if (slots[index].type === "Container") {
-        initSlot(slots[index].slot, id + "-" + index);
-      }
-    }
-  }
-  onMount(() => {
-   
-    initSlot(request.slot, "slot");
-  });
-
-  async function addPage() {
-    await fetch("?/addPage", {
+  function updatePage() {
+    fetch("?/updatePage", {
+      method: 'POST',
       body: JSON.stringify(request),
-    }).then((res) => res.json());
-
-    invalidateAll();
+    }).then((res) => invalidateAll());
   }
 </script>
 
-<Page title="Add Page">
+<Page title="Update Page '{data.page.title}'">
   <El row>
     <FormInput bind:value={request.title} label="Title" />
 
@@ -217,8 +182,13 @@
       <SlotList id="slot" on:move={onMove} bind:slots={request.slot} />
     </FormField>
 
-    <El col my="2">
-      <Button on:click={addPage} color="primary">Add</Button>
+    <El col justifyContent="end" w="100" d="flex" my="2">
+      <ButtonList ms="auto">
+
+      <Button href="/admin/pages">Cancel</Button>
+      <Button on:click={updatePage} color="primary">Save</Button>
+    </ButtonList>
+
     </El>
   </El>
 </Page>

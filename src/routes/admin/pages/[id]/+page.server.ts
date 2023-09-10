@@ -1,8 +1,7 @@
-export async function load({locals}) {
-    const page = locals.db('pages').get({where: {id: '12'}});
-
-
-    return {page} 
+export async function load({locals, params}) {
+    return {
+        page: await locals.db('u-pages').get({where: {id: params.id}})
+    } 
 }
 
 export const actions = {
@@ -19,7 +18,7 @@ export const actions = {
     },
     async updatePage({request, locals}) {
         const body = await request.json()
-        await locals.db('pages').update(body.id, body)
+        await locals.db('u-pages').update(body.id, body)
 
         return  {success: true}
     }
