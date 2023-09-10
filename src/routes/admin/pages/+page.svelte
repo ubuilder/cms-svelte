@@ -10,7 +10,7 @@
 
 <Page title="Pages">
   <ButtonList slot="header-buttons">
-    <Button color="primary">
+    <Button href="/admin/pages/add" color="primary">
         <Icon name="plus"/>
         Add Page
     </Button>

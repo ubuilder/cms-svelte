@@ -28,6 +28,7 @@
 		"handlebars": "^4.7.8",
 		"interactjs": "^1.10.18",
 		"pg": "^8.11.1",
+		"sortablejs": "^1.15.0",
 		"yesvelte": "^0.0.2-next.201"
 	}
 }
