@@ -27,6 +27,7 @@
 
   async function onEditSlot(slot: any, index: number) {
     const result = await modal.open(SlotModal, {
+      mode: 'edit',
       slot: JSON.parse(JSON.stringify(slot)),
     });
 
@@ -100,6 +101,7 @@
   async function onAddSlot() {
     console.log("onAddSlot");
     const slot = await modal.open(SlotModal, {
+      mode: 'add',
       slot: {},
     });
 
@@ -115,7 +117,7 @@
 
   {#each slots as slot, index}
     <Card id={id + "_" + index} class="sortable-item" my="2">
-      {#if slot.type === "Container"}
+      {#if ["Container", "Form"].includes(slot.type)}
         <Accordion>
           <AccordionHeader>
             <El w="100" d="flex" alignItems="center" justifyContent="between">
@@ -135,8 +137,8 @@
             </El>
           </AccordionHeader>
           <AccordionBody>
-            {#if slot.type === "Container"}
-              <svelte:self
+            {#if ["Container", "Form"].includes(slot.type)}
+            <svelte:self
                 on:move
                 id={id + "-" + index}
                 bind:slots={slot.slot}
@@ -165,4 +167,7 @@
 
 </Accordions>
 
-<Button on:click={onAddSlot}>+ Add Slot</Button>
+<Button on:click={onAddSlot}>
+  <Icon name="plus"/>
+   Add Slot
+  </Button>

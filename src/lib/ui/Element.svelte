@@ -14,21 +14,21 @@
     {element}
   {:else if type === "html"}
     {#if slot.length > 0}
-      <svelte:element this={element.props.tag} {...element.props}>
+      <svelte:element this={element.props.tag} props={element.props}>
         {#each slot as slotItem}
           <svelte:self element={slotItem} {components}/>
         {/each}
       </svelte:element>
     {:else}
-      <svelte:element this={element.props.tag} {...element.props} />
+      <svelte:element this={element.props.tag} props={element.props} />
     {/if}
   {:else if slot.length > 0}
-    <svelte:component this={component} {...props}>
+    <svelte:component this={component} {props}>
       {#each slot as slotItem}
         <svelte:self element={slotItem} {components} />
       {/each}
     </svelte:component>
   {:else}
-    <svelte:component this={component} {...props} />
+    <svelte:component this={component} {props} />
   {/if}
   

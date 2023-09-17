@@ -1,14 +1,24 @@
-<script>
-  import { El } from "yesvelte";
-
-  export let size = true 
-
+<script context="module">
+  export const hasSlot = true
 </script>
 
-<!-- <El container={size} >
-    <slot/>
-</El> -->
+<script lang="ts">
+  import { El, FormInput } from "yesvelte";
 
-<El container={size} {...$$restProps} class = 'u-component'>
-    <slot/>
-</El>
+  export const data = {
+    props: [{ type: "plain_text", name: "size" }],
+    hasSlot: true,
+  };
+
+  export let props: any = {};
+
+export let edit = false;
+</script>
+
+{#if edit}
+  <FormInput label="Size" bind:value={props.size} />
+{:else}
+  <El container={props.size} {...$$restProps}>
+    <slot />
+  </El>
+{/if}

@@ -17,10 +17,10 @@
     AccordionTitle,
     Icon,
   } from "yesvelte";
-  import SlotModal from "./SlotModal.svelte";
+  import SlotModal from "$lib/ui/SlotModal.svelte";
   import ButtonList from "$lib/components/core/ButtonList.svelte";
   import ConfirmModal from "$lib/components/core/modal/ConfirmModal.svelte";
-  import SlotList from "./SlotList.svelte";
+  import SlotList from "$lib/ui/SlotList.svelte";
   import { onMount } from "svelte";
   export let data;
 

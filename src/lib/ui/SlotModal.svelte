@@ -2,7 +2,7 @@
   import ButtonList from "$lib/components/core/ButtonList.svelte";
   import { modal } from "$lib/components/core/modal";
   import Modal from "$lib/components/core/modal/Modal.svelte";
-  import { tick } from "svelte";
+  import { onMount, tick } from "svelte";
   import {
     FormInput,
     Button,
@@ -18,54 +18,64 @@
     FormField,
   } from "yesvelte";
 
+  export let mode: 'add' | 'edit' = 'add' 
+
   let items = [
-    {
-      hasSlot: false,
-      name: "Button",
-      props: [
-        { name: "text", type: "string" },
-        { name: "color", type: "string" },
-      ],
-    },
-    {
-      name: "Container",
-      hasSlot: true,
-      props: [{ name: "size", type: "string" }],
-    },
-    {
-      name: "Input",
-      hasSlot: false,
-      props: [{ name: "value", type: "string" }],
-    },
-    {
-      name: "HtmlText",
-      hasSlot: false,
-      props: [{ name: "text", type: "string" }],
-    },
+    "Button",
+     "Container",
+    "Input",
+     "HtmlText",
+    "Form"
   ];
 
-  let slot: any = {
+  export let slot: any = {
     props: {},
     slot: [],
   };
 
-  $: item = items.find((x) => x.name === slot.type);
+  let component: any;
+
+  async function updateType(type: string) {
+    const module = await import(`./components/${type}.svelte`);
+
+    const data = module.data;
+
+    component = module.default;
+
+  }
+
+  onMount(() => {
+    console.log(slot)
+    if(mode==='edit') {
+      updateType(slot.type)
+    }
+  })
+
+  $: if(slot.type) updateType(slot.type)
 </script>
 
 <Modal>
   <ModalBody>
-    <FormSelect {items} label="Type" key="name" bind:value={slot.type} let:item>
-      {item.name}
-    </FormSelect>
+    {#if mode === 'add'}
+      <FormSelect {items} label="Type" bind:value={slot.type} let:item>
+        {item}
+      </FormSelect>
+    {/if}
 
-    {#if item}
+    <div>
+      {#if component}
+        <svelte:component this={component} edit={true} bind:props={slot.props}/>
+      {/if}
+    </div>
+
+    <!-- {#if item}
       {#each item.props as prop}
         <FormField style="position: relative" label={prop.name} bind:value={slot.props[prop.name]}>
           <div class="dynamic-icon"></div>
           <Input bind:value={slot.props[prop.name]}/>
         </FormField>
       {/each}
-    {/if}
+    {/if} -->
   </ModalBody>
 
   <ModalFooter>

@@ -1,8 +1,21 @@
-<script lang="ts">
-  import { Button } from "yesvelte";
+<script context="module">
+    export const data = {
+    props: [
+      {type: 'plain_text', name: 'Text'},
+      {type: 'plain_text', name: 'Color'},
+    ],
+    hasSlot: false
+  }
+</script>
 
-  export let text: string;
-  export let edit = false;
+<script lang="ts">
+ import { Button, FormInput } from "yesvelte";
+
+
+
+ export let props: any = {};
+
+ export let edit = false;
 </script>
 
 <!-- 
@@ -16,13 +29,13 @@
 {/if}
 
 -->
-
-<div class="u-component">
   {#if edit}
-    Edit Button
+  <FormInput label="Text" bind:value={props.text} />
+  <FormInput label="Color" bind:value={props.color} />
+  <FormInput label="type"  bind:value={props.type} />
+
   {:else}
-    <Button {...$$restProps}>
-      {text}
+    <Button type={props.type} color={props.color} {...$$restProps}>
+      {props.text}
     </Button>
   {/if}
-</div>

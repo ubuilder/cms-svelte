@@ -45,8 +45,8 @@
     <SidebarItem title="Tables" icon="database" href="/admin/data" />
     <SidebarItem title="Pages" href="/admin/pages" icon="file" />
     <SidebarItem title="Assets" href="/admin/assets" icon="photo" />
+    <SidebarItem title="Actions" href="/admin/actions" icon="adjustments-horizontal" />
     <SidebarItem title="Market" href="/admin/market" icon="building-store" />
-
     <SidebarItem title="Settings" href="/admin/settings" icon="settings" />
   </svelte:fragment>
   <svelte:fragment slot="header-end">
