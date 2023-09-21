@@ -16,17 +16,12 @@
     TabPanel,
     Input,
     FormField,
+    El,
   } from "yesvelte";
 
-  export let mode: 'add' | 'edit' = 'add' 
+  export let mode: "add" | "edit" = "add";
 
-  let items = [
-    "Button",
-     "Container",
-    "Input",
-     "HtmlText",
-    "Form"
-  ];
+  let items = ["Button", "Container", "Input", "HtmlText", "Form"];
 
   export let slot: any = {
     props: {},
@@ -41,32 +36,50 @@
     const data = module.data;
 
     component = module.default;
-
   }
 
   onMount(() => {
-    console.log(slot)
-    if(mode==='edit') {
-      updateType(slot.type)
+    console.log(slot);
+    if (mode === "edit") {
+      updateType(slot.type);
     }
-  })
+    if (!slot.props) {
+      slot.props = {};
+    }
+  });
 
-  $: if(slot.type) updateType(slot.type)
+  $: if (slot.type) updateType(slot.type);
 </script>
 
-<Modal>
-  <ModalBody>
-    {#if mode === 'add'}
-      <FormSelect {items} label="Type" bind:value={slot.type} let:item>
-        {item}
-      </FormSelect>
-    {/if}
+<Modal title={slot.type ?? "Choose a type"}>
+    {#if mode === "add" && !slot.type}
+    <ModalBody>
+      <El row g="2">
+        {#each items as item}
+          <El col="3">
+            <El
+              style="cursor: pointer"
+              border
+              py="3"
+              textAlign="center"
+              shadow="sm"
+              borderRoundSize="2"
+              on:click={() => (slot.type = item)}
+            >
+              {item}
+            </El>
+          </El>
+        {/each}
+      </El>
+      </ModalBody>
+      {:else}
 
-    <div>
-      {#if component}
-        <svelte:component this={component} edit={true} bind:props={slot.props}/>
+    {#key slot.type}
+      {#if component} 
+        <svelte:component this={component} edit bind:props={slot.props} />
       {/if}
-    </div>
+    {/key}
+    {/if}
 
     <!-- {#if item}
       {#each item.props as prop}
@@ -76,35 +89,16 @@
         </FormField>
       {/each}
     {/if} -->
-  </ModalBody>
 
   <ModalFooter>
     <ButtonList>
       <Button on:click={() => $modal.close()}>Cancel</Button>
-      <Button on:click={() => $modal.resolve(JSON.parse(JSON.stringify(slot)))} color="primary">Add</Button>
+      <Button
+        on:click={() => $modal.resolve(slot)}
+        color="primary">
+        Add
+        </Button
+      >
     </ButtonList>
   </ModalFooter>
 </Modal>
-
-<style>
-  .dynamic-icon {
-    z-index: 10;transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position:absolute;top: 22px;background: #57bfffc2;border-radius: 50%;left: -7px;width: 15px;height: 15px;
-  }
-
-  .dynamic-icon::before {
-    content: '+';
-    color: white;
-    margin-bottom: 1px;
-  }
-  .dynamic-icon:hover {
-    top: 17px;background: #1da1f2;left: -12px;width: 25px;height: 25px;
-  }
-  .dynamic-icon:hover::before {
-    font-size: 20px;
-    margin-bottom: 5px;
-  }
-</style>

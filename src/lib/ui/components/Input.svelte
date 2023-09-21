@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { FormInput } from "yesvelte";
+  import { FormInput, ModalBody, TabContent, TabItem, TabList, TabPanel, Tabs } from "yesvelte";
 
   export const data = {
     props: [
@@ -22,7 +22,12 @@
  -->
 
 {#if edit}
-  <FormInput label="Value" bind:value={props.value} />
+
+<FormInput label="Label" bind:value={props.label} />
+<FormInput label="Type" bind:value={props.type} />
+<FormInput label="Name" bind:value={props.name} />
+ 
+<FormInput label="Default Value" bind:value={props.defaultValue}/>
 {:else}
-  <FormInput {...$$restProps} value={props.value}/>
+  <FormInput label={props.label} type={props.type} name={props.name} {...$$restProps} value={props.value ?? props.defaultValue}/>
 {/if}
