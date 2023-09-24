@@ -20,161 +20,12 @@
   } from "yesvelte";
   import Button from "./Button.svelte";
   import ButtonList from "$lib/components/core/ButtonList.svelte";
+  import { page } from "$app/stores";
 
   export let edit: any;
   export let props: any = {};
 
-  const tables = [
-    {
-      id: "RqHFCvmv",
-      name: "Table Name",
-      slug: "name",
-      icon: "database",
-      fields: [
-        {
-          name: "First Field",
-          type: "number",
-          hint: "hint",
-          negative: false,
-          placeholder: "Enter first field...",
-        },
-        {
-          name: "field2",
-          type: "plain_text",
-          required: true,
-          input_type: "input",
-          placeholder: "Enter field2",
-        },
-        { name: "field3", type: "plain_text" },
-        {
-          name: "test",
-          type: "select",
-          hint: "hint of select",
-          options: "abc,def,addd",
-        },
-        { name: "Something", type: "date_time", range: false },
-        { name: "abc", type: "number", negative: false },
-        { name: "boolean", type: "switch" },
-      ],
-    },
-    {
-      id: "pLMiSGkz",
-      name: "Name",
-      slug: "name",
-      icon: "database",
-      fields: [
-        { name: "123", type: "plain_text" },
-        { name: "abc", type: "image", mode: "single" },
-      ],
-    },
-    {
-      id: "yAcGxFeT",
-      name: "Users",
-      slug: "u-users",
-      icon: "database",
-      fields: [
-        {
-          name: "name",
-          type: "plain_text",
-          mode: "single",
-          required: true,
-        },
-        {
-          name: "username",
-          type: "plain_text",
-          mode: "single",
-          required: true,
-        },
-        { name: "profile", type: "image", mode: "single" },
-        { name: "enabled", type: "switch", mode: "single" },
-        { name: "date", type: "date_time", mode: "single" },
-        { name: "age", type: "number", mode: "single", negative: false },
-      ],
-    },
-    {
-      id: "WMIyWjsS",
-      name: "",
-      slug: "",
-      icon: "database",
-      fields: [
-        {
-          name: "Plain (textarea)",
-          type: "plain_text",
-          mode: "single",
-          required: true,
-          input_type: "textarea",
-        },
-      ],
-    },
-    {
-      id: "uoJJDUyM",
-      name: "abc",
-      slug: "abc",
-      icon: "database",
-      fields: [
-        {
-          name: "plain (textarea)",
-          type: "plain_text",
-          mode: "single",
-          input_type: "textarea",
-          required: true,
-        },
-        { name: "plain (input)", type: "plain_text", mode: "single" },
-        {
-          name: "number",
-          type: "number",
-          mode: "single",
-          negative: false,
-        },
-        { name: "rich text", type: "rich_text", mode: "single" },
-        { name: "file", type: "file", mode: "single" },
-        { name: "image", type: "image", mode: "single" },
-        {
-          name: "date (single)",
-          type: "date_time",
-          mode: "single",
-          range: false,
-        },
-        {
-          name: "date (range)",
-          type: "date_time",
-          mode: "single",
-          range: true,
-        },
-      ],
-    },
-    {
-      id: "rdVJXAix",
-      name: "u-users",
-      slug: "u_users",
-      icon: "database",
-      fields: [
-        { name: "name", type: "plain_text", mode: "single" },
-        { name: "username", type: "plain_text", mode: "single" },
-        { name: "profile", type: "image", mode: "single" },
-        { name: "email", type: "plain_text", mode: "single" },
-        { name: "password", type: "plain_text", mode: "single" },
-      ],
-    },
-    {
-      id: "QZwuRLgc",
-      name: "Blogs",
-      slug: "blogs",
-      icon: "database",
-      fields: [
-        { name: "content", type: "rich_text", mode: "single" },
-        { name: "title", type: "plain_text", mode: "single" },
-        {
-          name: "description",
-          type: "plain_text",
-          mode: "single",
-          input_type: "textarea",
-        },
-        { name: "slug", type: "plain_text", mode: "single" },
-        { name: "author_id", type: "plain_text", mode: "single" },
-      ],
-    },
-  ];
+  const tables =$page.data.tables
 
   let table: any;
 
@@ -185,8 +36,8 @@
     }).then((res) => res.json());
   }
 
-  $: if (props.table) {
-    table = tables.find((x) => x.id == props.table);
+  $: if (props.table && edit) {
+    table = tables.find((x) => x.slug == props.table);
   }
 
   $: if (!props.data) {
@@ -237,7 +88,7 @@
 
           <FormSelect
             label="Table"
-            key="id"
+            key="slug"
             bind:value={props.table}
             items={tables}
             let:item

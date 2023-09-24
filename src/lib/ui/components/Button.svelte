@@ -1,12 +1,4 @@
-<script context="module">
-    export const data = {
-    props: [
-      {type: 'plain_text', name: 'Text'},
-      {type: 'plain_text', name: 'Color'},
-    ],
-    hasSlot: false
-  }
-</script>
+
 
 <script lang="ts">
  import { Button, FormInput, ModalBody, TabContent, TabItem, TabList, TabPanel, Tabs } from "yesvelte";

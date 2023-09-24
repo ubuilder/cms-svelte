@@ -122,7 +122,7 @@
 
   {#each slots as slot, index}
     <Card id={id + "_" + index} class="sortable-item" my="2">
-      {#if ["Container"].includes(slot.type)}
+      {#if ["Container", "DynamicList"].includes(slot.type)}
         <Accordion>
           <AccordionHeader>
             <El w="100" d="flex" alignItems="center" justifyContent="between">
@@ -142,7 +142,7 @@
             </El>
           </AccordionHeader>
           <AccordionBody>
-            {#if ["Container"].includes(slot.type)}
+            {#if ["Container", "DynamicList"].includes(slot.type)}
             <svelte:self
                 on:move
                 id={id + "-" + index}
