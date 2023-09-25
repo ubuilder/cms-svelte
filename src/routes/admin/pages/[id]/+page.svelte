@@ -23,6 +23,7 @@
   import SlotList from "$lib/ui/SlotList.svelte";
   import { onMount } from "svelte";
   export let data;
+  console.log('data', data)
 
 
   let request: any = data.page

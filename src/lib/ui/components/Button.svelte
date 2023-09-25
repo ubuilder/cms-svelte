@@ -30,9 +30,9 @@
 
 -->
   {#if edit}
-  <FormInput label="Text" bind:value={props.text} />
-  <FormInput label="Color" bind:value={props.color} />
-  <FormInput label="type"  bind:value={props.type} />
+  <FormInput  label="Text" bind:value={props.text} />
+  <FormInput  label="Color" bind:value={props.color} />
+  <FormInput  label="type"  bind:value={props.type} />
 
   {:else}
     <Button type={props.type} color={props.color} {...$$restProps}>

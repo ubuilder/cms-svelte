@@ -16,7 +16,7 @@ export let edit = false;
 </script>
 
 {#if edit}
-  <FormInput label="Size" bind:value={props.size} />
+  <FormInput class = 'u-component' label="Size" bind:value={props.size} />
 {:else}
   <El container={props.size} {...$$restProps}>
     <slot />

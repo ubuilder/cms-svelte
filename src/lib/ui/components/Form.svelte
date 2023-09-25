@@ -9,7 +9,7 @@
 </script>
 
 {#if edit}
-<FormSelect bind:value={props.actionid} items={["create", "remove", "edit"]} let:item>
+<FormSelect class = 'u-component' bind:value={props.actionid} items={["create", "remove", "edit"]} let:item>
     {item}
 </FormSelect>
 {:else}

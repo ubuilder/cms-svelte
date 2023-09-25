@@ -29,7 +29,7 @@
 {#if edit}
   <Editor bind:value={props.text}  class = 'u-component'/>
 {:else}
-  <div {...$$restProps} class = 'u-component'>
+  <div {...$$restProps} >
     {@html props.text}
   </div>
 {/if}

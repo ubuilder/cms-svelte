@@ -8,6 +8,7 @@
 	import ControlPanel from '$lib/components/editor/ControlPanel.svelte';
 	import tabler from 'yesvelte/css/tabler.min.css?url'
     import  {Element ,components} from '$lib/ui/index';
+    import Control from '$lib/components/editor/Control.svelte';
 	let componentFocusIn = false
 	let screenSize: 'laptop' | 'tablet'| 'mobile' = 'laptop';
 	export let data;
@@ -36,9 +37,11 @@
 	</div>
 	<DropZone {screenSize} on:componentFocusOut = {(e)=>componentFocusIn = false} on:componentFocusIn = {()=>{componentFocusIn = true}} >
 		{#each data.page.slot as slot}
-            <Element element = {slot} {components}></Element>
+            <Element  element = {slot} {components}></Element>
 		{/each}
+		<Control  />
 	</DropZone>
+
 </div>
 
 

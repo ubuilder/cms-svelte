@@ -22,7 +22,7 @@
  -->
 
 {#if edit}
-  <FormInput label="Value" bind:value={props.value} />
+  <FormInput class = 'u-component' label="Value" bind:value={props.value} />
 {:else}
   <FormInput {...$$restProps} value={props.value}/>
 {/if}
