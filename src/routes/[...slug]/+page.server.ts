@@ -82,12 +82,16 @@ export async function load({ locals, params }) {
   // };
   
   const page = await locals.db('u-pages').get({where: {slug: params.slug}})
+  console.log('page: ', page)
+  
 
   const props: any = {
     page: {
       slug: params.slug,
     },
-  };
+  };  
+
+  console.log(page)
 
   for (let key in page.load) {
     const load = page.load[key];
@@ -109,8 +113,12 @@ export async function load({ locals, params }) {
     }
   }
 
-  function get_value(template: string) {
-    return hbs.compile(`${template}`)(props);
+  function get_value(template: string | any) {
+    if(typeof template === 'string') {
+      return hbs.compile(`${template}`)(props);
+    }
+
+    return template;
   }
 
   async function render(page: any) {

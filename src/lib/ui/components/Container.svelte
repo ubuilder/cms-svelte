@@ -3,7 +3,7 @@
 </script>
 
 <script lang="ts">
-  import { El, FormInput } from "yesvelte";
+  import { El, FormInput, ModalBody } from "yesvelte";
 
   export const data = {
     props: [{ type: "plain_text", name: "size" }],
@@ -16,7 +16,9 @@ export let edit = false;
 </script>
 
 {#if edit}
-  <FormInput class = 'u-component' label="Size" bind:value={props.size} />
+  <ModalBody>
+    <FormInput label="Size" bind:value={props.size} />
+  </ModalBody>
 {:else}
   <El container={props.size} {...$$restProps}>
     <slot />
