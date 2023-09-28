@@ -22,6 +22,7 @@
   import ConfirmModal from "$lib/components/core/modal/ConfirmModal.svelte";
   import SlotList from "$lib/ui/SlotList.svelte";
   import { onMount } from "svelte";
+  import PreviewModal from "./PreviewModal.svelte";
   export let data;
 
 
@@ -163,6 +164,14 @@
 //   onMount(() => {
 //     initSlot(request.slot, "slot");
 //   });
+async function openPreviewModal() {
+  await modal.open(PreviewModal, {
+    slug: request.slug,
+    title: request.title
+  }, {
+    size: 'lg'
+  })
+}
 
   function updatePage() {
     fetch("?/updatePage", {
@@ -173,6 +182,9 @@
 </script>
 
 <Page title="Update Page '{data.page.title}'">
+  <Button on:click={openPreviewModal} color="primary" slot="header-buttons">
+    Preview
+  </Button>
   <El row>
     <FormInput bind:value={request.title} label="Title" />
 

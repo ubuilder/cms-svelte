@@ -21,7 +21,7 @@
 
   export let mode: "add" | "edit" = "add";
 
-  let items = ["Button", "Container", "Input", "HtmlText", "Form"];
+  let items = ["Button", "Container", "Row", "Input", "HtmlText", "Form"];
 
   export let slot: any = {
     props: {},
@@ -51,8 +51,8 @@
   $: if (slot.type) updateType(slot.type);
 </script>
 
-<Modal title={slot.type ?? "Choose a type"}>
-    {#if mode === "add" && !slot.type}
+<Modal title={"Choose a type"}>
+    <!-- {#if mode === "add" && !slot.type} -->
     <ModalBody>
       <El row g="2">
         {#each items as item}
@@ -60,10 +60,12 @@
             <El
               style="cursor: pointer"
               border
+              borderColor={slot.type === item ? 'primary' : undefined}
               py="3"
               textAlign="center"
               shadow="sm"
               borderRoundSize="2"
+              on:dblclick={() => $modal.resolve({...slot, type: item})}
               on:click={() => (slot.type = item)}
             >
               {item}
@@ -72,14 +74,15 @@
         {/each}
       </El>
       </ModalBody>
-      {:else}
+      <!-- {:else} -->
 
-    {#key slot.type}
+
+    <!-- {#key slot.type}
       {#if component} 
         <svelte:component this={component} edit bind:props={slot.props} />
       {/if}
-    {/key}
-    {/if}
+    {/key} -->
+    <!-- {/if} -->
 
     <!-- {#if item}
       {#each item.props as prop}

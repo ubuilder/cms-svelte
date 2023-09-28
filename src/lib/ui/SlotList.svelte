@@ -17,6 +17,7 @@
   import SlotModal from "./SlotModal.svelte";
   import ConfirmModal from "$lib/components/core/modal/ConfirmModal.svelte";
   import { createEventDispatcher, onDestroy, onMount } from "svelte";
+  import { components } from ".";
 
   export let slots: any[] = [];
   export let id = '';
@@ -112,46 +113,47 @@
 
     if (slot) {
       console.log({ slots, slot });
-      slots = [...slots, slot];
+      slots = [...(slots ??[]), slot];
     }
   }
 </script>
 
 <Accordions {id}>
-  <div bind:this={element}>
+  <div style="padding: 8px 0px" bind:this={element}>
 
-  {#each slots as slot, index}
-    <Card id={id + "_" + index} class="sortable-item" my="2">
-      {#if ["Container"].includes(slot.type)}
+  {#each slots ?? [] as slot, index}
+    <Card style="border: none;" id={id + "_" + index} class="sortable-item" my="2">
         <Accordion>
-          <AccordionHeader>
+          <AccordionHeader p=0>
             <El w="100" d="flex" alignItems="center" justifyContent="between">
-              <AccordionTitle style="flex: 1">
+              <AccordionTitle px=3 style="flex: 1">
                 {slot.type}
               </AccordionTitle>
-              <ButtonList on:click me="2">
-                <Button
+              <ButtonList on:click>
+                <!-- <Button
                   on:click!stopPropagation={() => onEditSlot(slot, index)}
                 >
                   <Icon name="pencil" />
-                </Button>
-                <Button on:click!stopPropagation={() => onRemoveSlot(index)}>
+                </Button> -->
+                <Button border="0" on:click!stopPropagation={() => onRemoveSlot(index)}>
                   <Icon name="trash" />
                 </Button>
               </ButtonList>
             </El>
           </AccordionHeader>
-          <AccordionBody>
-            {#if ["Container"].includes(slot.type)}
+          <AccordionBody p=0>
+            <svelte:component this={components[slot.type]} edit bind:slots={slot.slot} bind:props={slot.props} />
+
+            <!-- {#if ["Container"].includes(slot.type)}
             <svelte:self
                 on:move
                 id={id + "-" + index}
                 bind:slots={slot.slot}
               />
-            {/if}
+            {/if} -->
           </AccordionBody>
         </Accordion>
-      {:else}
+      <!-- {:else}
         <El p="3" d="flex">
           <El w="100" d="flex" alignItems="center" justifyContent="between">
             <AccordionTitle style="flex: 1">{slot.type}</AccordionTitle>
@@ -165,7 +167,7 @@
             </ButtonList>
           </El>
         </El>
-      {/if}
+      {/if} -->
     </Card>
   {/each}
 </div>
@@ -176,3 +178,16 @@
   <Icon name="plus"/>
    Add Slot
   </Button>
+
+
+  <style>
+    :global(.y-el-p-0 .y-accordion-body-inner) {
+      padding: 0;
+    }
+    :global(.y-el-p-0 .y-accordion-header-button) {
+      padding: 0;
+    }
+    :global(.y-accordion-header-button::after) {
+      content: unset;
+    }
+  </style>
