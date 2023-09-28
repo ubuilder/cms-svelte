@@ -28,7 +28,6 @@
   import Element from "../Element.svelte";
 
   export let props: any = {}
-  export let slots: any[] = [];
 
   let new_size = 'auto'
   export let edit = false;
