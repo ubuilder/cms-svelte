@@ -21,7 +21,7 @@
 
   export let mode: "add" | "edit" = "add";
 
-  let items = ["Button", "Container", "Row", "Input", "HtmlText", "Form"];
+  let items = ["Button", "Container", "Row", "DynamicList", "Input", "HtmlText", "Form"];
 
   export let slot: any = {
     props: {},

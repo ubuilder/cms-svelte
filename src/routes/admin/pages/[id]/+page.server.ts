@@ -1,5 +1,7 @@
 export async function load({locals, params}) {
+    const tables = await locals.db("u-tables").query({perPage: 100}).then(x=>x.data)
     return {
+        tables,
         page: await locals.db('u-pages').get({where: {id: params.id}})
     } 
 }
