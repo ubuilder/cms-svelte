@@ -61,8 +61,8 @@
       <TabItem>Buttons</TabItem>
     </TabList>
     <TabContent>
-      <TabPanel>
-        <ModalBody>
+      <TabPanel p=3>
+
           <FormField mb="3" label="Choose action">
             <El row g="2">
               {#each ["create", "remove", "update"] as item}
@@ -110,22 +110,17 @@
               />
             {/each}
           {/if}
-        </ModalBody>
       </TabPanel>
-      <TabPanel>
-        <ModalBody>
+      <TabPanel p="3">
           <FormFields bind:fields={props.fields} />
-        </ModalBody>
       </TabPanel>
-      <TabPanel>
-        <ModalBody>
+      <TabPanel p="3">
           <FormField label="First Button">
             <Button edit bind:props={props.buttons[0]} />
           </FormField>
           <FormField label="Second Button">
             <Button edit bind:props={props.buttons[1]} />
           </FormField>
-        </ModalBody>
       </TabPanel>
     </TabContent>
   </Tabs>
