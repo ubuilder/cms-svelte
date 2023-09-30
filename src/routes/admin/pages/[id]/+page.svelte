@@ -16,17 +16,19 @@
     Card,
     AccordionTitle,
     Icon,
+    FormSelect,
   } from "yesvelte";
   import SlotModal from "$lib/ui/SlotModal.svelte";
   import ButtonList from "$lib/components/core/ButtonList.svelte";
   import ConfirmModal from "$lib/components/core/modal/ConfirmModal.svelte";
   import SlotList from "$lib/ui/SlotList.svelte";
   import { onMount } from "svelte";
+  import FormFields from "$lib/components/data/FormFields.svelte";
   export let data;
 
 
   let request: any = data.page
-
+  let new_load_name: any = ''
 
   // const page: any = {
   //   load: {
@@ -51,7 +53,7 @@
   //   },
   //   slot: [
   //     {
-  //       type: "Container",
+  //       type: "Container",<
   //       props: { size: "xl" },
   //       slot: [
   //         {
@@ -177,6 +179,33 @@
     <FormInput bind:value={request.title} label="Title" />
 
     <FormInput bind:value={request.slug} label="Slug" />
+
+    <FormField label="Load">
+      <Accordions>
+
+      {#each Object.keys(request.load) as key}
+        <Accordion>
+          <AccordionHeader>
+            {key}
+              <Button on:click={()=> delete request.load[key]}>
+                <Icon name="trash"/>
+              </Button>
+          </AccordionHeader>
+          <AccordionBody>
+            <FormSelect label="Table Name" items={data.tables} key="slug" bind:value={request.load[key].table} let:item>
+              {item.name}
+              </FormSelect>
+            <FormField label="Filters">
+              Todo
+            </FormField>
+          </AccordionBody>
+        </Accordion>
+      {/each}
+    </Accordions>
+
+      <FormInput bind:value={new_load_name} label="New Load Name"/>
+      <Button on:click={() => request.load[new_load_name] = {table: ''}}>+ Load Table</Button>
+    </FormField>
 
     <FormField label="Content">
       <SlotList id="slot" on:move={onMove} bind:slots={request.slot} />
