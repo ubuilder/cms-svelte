@@ -33,7 +33,7 @@ export const actions = {
                 title: body.title,
             },
             slot: body.slot,
-            load: {}
+            load: []
         })
     },
     async updatePage({request, locals}) {

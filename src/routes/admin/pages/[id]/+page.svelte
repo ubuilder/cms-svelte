@@ -2,7 +2,7 @@
   import { invalidateAll } from "$app/navigation";
   import Sortable from "sortablejs";
   import Page from "$lib/components/core/Page.svelte";
-  import { createEventDispatcher } from "svelte";
+  import { createEventDispatcher, setContext } from "svelte";
   import { modal } from "$lib/components/core/modal";
   import {
     Button,
@@ -11,7 +11,8 @@
     AccordionBody,
     AccordionHeader,
     El,
-    FormInput,
+    FormInput,    FormCheckbox,
+
     Accordions,
     Card,
     AccordionTitle,
@@ -24,6 +25,7 @@
   import SlotList from "$lib/ui/SlotList.svelte";
   import { onMount } from "svelte";
   import PreviewModal from "./PreviewModal.svelte";
+  import { writable } from "svelte/store";
 
   export let data;
 
@@ -120,6 +122,20 @@
   //   ],
   // };
 
+  let items = writable<any>({})
+
+
+  $: {
+    for(let load of request.load) {
+      $items[load.name] = load.name
+    }
+  }
+
+  setContext("items", items)
+  function onRemoveLoad(item: any) {
+    request.load = request.load.filter(x => x !== item)
+  }
+
   function onMove(detail) {
     console.log("onMove", detail);
     console.log(request.slot.map((x) => x.type));
@@ -195,28 +211,84 @@ async function openPreviewModal() {
     <FormField label="Load">
       <Accordions>
 
-      {#each Object.keys(request.load) as key}
-        <Accordion>
-          <AccordionHeader>
-            {key}
-              <Button on:click={()=> delete request.load[key]}>
-                <Icon name="trash"/>
-              </Button>
+        <!-- {
+          "name": "blog-item", 
+          "table": "blogs", 
+          "filters": [
+              {"field": "slug", "operator": "=", "value": "home"}
+          ],
+          "multiple": false
+      },
+      {
+          "name": "users", 
+          "table": "users", 
+          "filters": [
+              {"field": "status", "operator": "=", "value": "active"}
+          ],
+          "multiple": true
+      }             -->
+      {#each request.load as load}
+        <Card my="2">
+
+        <Accordion style="border: none">
+          <AccordionHeader p=0>
+            <El w="100" d="flex" alignItems="center" justifyContent="between">
+              <AccordionTitle px=3 style="flex: 1">
+                {load.name}
+              </AccordionTitle>
+              <ButtonList on:click>
+                <!-- <Button
+                  on:click!stopPropagation={() => onEditSlot(slot, index)}
+                >
+                  <Icon name="pencil" />
+                </Button> -->
+                <Button border="0" on:click!stopPropagation={() => onRemoveLoad(load)}>
+                  <Icon name="trash" />
+                </Button>
+              </ButtonList>
+            </El>
           </AccordionHeader>
+
           <AccordionBody>
-            <FormSelect label="Table Name" items={data.tables} key="slug" bind:value={request.load[key].table} let:item>
+            <FormInput label="Name" bind:value={load.name} />
+            <FormSelect label="Table Name" items={data.tables} key="slug" bind:value={load.table} let:item>
               {item.name}
               </FormSelect>
-            <FormField label="Filters">
-              Todo
-            </FormField>
+              <FormCheckbox label="Multiple" bind:checked={load.multiple}/>
+              <FormField label="Filters">
+                {#each load.filters as filter}
+                {@const table = data.tables.find(x => x.slug === load.table)}
+
+              <El row>
+
+                <FormSelect col="3" label="Field" items={table.fields} key="name" bind:value={filter.field} let:item>
+                  <Icon name="user"/>
+
+                  {item.name}
+                  </FormSelect>
+                <FormSelect col="2" label="Operator" items={['=', '!=', 'like']} bind:value={filter.operator} let:item>
+                  {item}
+                  </FormSelect>
+                  <FormInput col label="Value" bind:value={filter.value} />                  
+                  <Button color="danger" ghost px="2" mb="3" mt="4" col="auto" on:click={() => load.filters = load.filters.filter(x => x !== filter)}><Icon name="trash"/></Button>
+                </El>
+
+             {/each}
+
+            <Button color="primary" on:click={() => load.filters = [...load.filters, {}]}>                      <Icon name="plus" /> 
+              Add New Filter
+            </Button>
+          </FormField>
+
           </AccordionBody>
-        </Accordion>
+
+              </Accordion>
+              </Card>
       {/each}
     </Accordions>
 
       <FormInput bind:value={new_load_name} label="New Load Name"/>
-      <Button on:click={() => request.load[new_load_name] = {table: ''}}>+ Load Table</Button>
+      <Button on:click={() => request.load = [...request.load, {table: '', name: new_load_name, filters:[]}]}>+ Load Table</Button>
     </FormField>
 
     <FormField label="Content">
@@ -233,3 +305,16 @@ async function openPreviewModal() {
     </El>
   </El>
 </Page>
+
+
+<style>
+  :global(.y-el-p-0 .y-accordion-body-inner) {
+    padding: 0;
+  }
+  :global(.y-el-p-0 .y-accordion-header-button) {
+    padding: 0;
+  }
+  :global(.y-accordion-header-button::after) {
+    content: unset;
+  }
+</style>

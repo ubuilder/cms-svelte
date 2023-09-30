@@ -33,7 +33,7 @@
     const a = await fetch("/actions/" + props.actionid, {
       method: "POST",
       body: JSON.stringify({ data: props.data, table: props.table }),
-    }).then((res) => res.json());
+    }).then((res) => res.json()).then(x => location.reload());
   }
 
   $: if (props.table && edit) {
