@@ -10,12 +10,30 @@ export const actions = {
     async addPage({request, locals}) {
         const body = await request.json();
 
+        const load = {
+            blog: {
+                table: "blogs",
+                where: {
+                    slug: "{{page.slug}}",
+                },
+                // with: {
+                //     author: {
+                //         table: "u-users",
+                //         field: "author_id",
+                //     },
+                // },
+                // multiple: false
+            },
+        }
+        
+
         locals.db('pages').insert({
             slug: body.slug,
             props: {
                 title: body.title,
             },
-            slot: body.slot
+            slot: body.slot,
+            load: []
         })
     },
     async updatePage({request, locals}) {

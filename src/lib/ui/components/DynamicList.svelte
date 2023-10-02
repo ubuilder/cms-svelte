@@ -1,48 +1,53 @@
 ><script lang="ts">
   import { page } from "$app/stores";
-    import { Button, FormInput, FormSelect, ModalBody, TabContent, TabItem, TabList, TabPanel, Tabs } from "yesvelte";
-      
-    const tables = $page.data.tables
-    export let props: any = {};
-   
-    export let edit = false;
-   </script>
-   
-   {#if edit}
-   <Tabs>
-     <TabList>
-       <TabItem>General</TabItem>
-       <TabItem>Filters</TabItem>
-       <TabItem>Pagination</TabItem>
-     </TabList>
-     <TabContent>
-       <TabPanel p="3">
+  import { getContext } from "svelte";
+  import {
+    Button,
+    El,
+    FormInput,
+    FormSelect,
+    ModalBody,
+    TabContent,
+    TabItem,
+    TabList,
+    TabPanel,
+    Tabs,
+  } from "yesvelte";
+  import SlotList from "../SlotList.svelte";
+  import { components } from "$lib/ui";
+  import Element from "../Element.svelte";
+  const items = getContext("items")
 
-        <FormSelect
-        label="Table"
-        key="slug"
-        bind:value={props.table}
-        items={tables}
-        let:item
-      >
-        {item.name}
-      </FormSelect>
-    <FormInput label="Name" bind:value={props.name} />
-      
+  export let props: any = {};
 
-    </TabPanel>
-       <TabPanel p="3">
-        TODO
-         <!-- <FormInput label="Fil" bind:value={props.color} /> -->
-       </TabPanel>
-       <TabPanel p="3">
-        <FormInput label="page" bind:value={props.page} />
-        <FormInput label="perPage" bind:value={props.perPage} />
-       </TabPanel>
-     </TabContent>
-   </Tabs>
-   
-   {:else}
-      <slot/>
-   {/if}
-   
+  function updateStore(data: any) {
+    $items[data] = 'test'
+  }
+
+  export let edit = false;
+</script>
+
+{#if edit}
+<El p=3>
+<El row>
+
+<FormSelect col="6"
+    label="items"
+    bind:value={props.itemName}
+    items={Object.keys($items)}
+    let:item
+  >
+    {$items[item]}
+  </FormSelect>
+  <FormInput col="6" label="Name" bind:value={props.name} />
+</El>
+
+<SlotList bind:slots={props.slot} />
+</El>
+
+  {:else}
+  
+    {#each props.slot as slot}
+      <Element element={{...slot, slot: slot.props.slot}} {components}/>
+    {/each}
+{/if}

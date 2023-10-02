@@ -1,10 +1,14 @@
 import { connect } from "@ulibs/db";
+import { existsSync, mkdirSync } from "fs";
 import qs from "qs";
 
 const enable_test_user = true;
 
 export const handle = async ({ event, resolve }) => {
-  console.log('in handle')
+  if(!existsSync('./data')) {
+    mkdirSync('./data');
+  }
+
   const sitesDb = connect({ filename: "data/db.json" });
   const sites = await sitesDb.getModel("sites").query();
 
@@ -24,6 +28,9 @@ export const handle = async ({ event, resolve }) => {
   }
   if (!siteId) throw new Error("Site not found");
 
+  if(!existsSync("data/" + siteId)) {
+    mkdirSync("data/" + siteId)
+  }
   // get model based on domain
   const { getModel } = connect({ filename: "data/" + siteId + "/db.json" }); // based on url
   event.locals.db = (table: string) => getModel(table);
