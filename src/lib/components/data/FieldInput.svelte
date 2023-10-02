@@ -14,6 +14,7 @@
     Popover,
     PopoverBody,
   } from "yesvelte";
+  import FilePicker from "./FilePicker.svelte";
 
   export let field: any;
   export let data: any = {};
@@ -76,8 +77,10 @@
     </FormSelect>
   <!-- <FormFileUpload {...props} label="use Asset picker (check multiple)" bind:value={data[field.name]}/> -->
   {:else if field.type === "file"}
-  <!-- <FormFileUpload {...props} label="use Asset picker (check multiple)" bind:value={data[field.name]}/> -->
+  <FilePicker {...props} bind:value={data[field.name]}/>
 {:else if field.type === "image"}
+  <FilePicker type="image" {...props} bind:value={data[field.name]}/>
+
   <!-- <FormFileUpload {...props} label="use Asset picker (check multiple)" bind:value={data[field.name]}/> -->
 {:else if field.type === "switch"}
   <FormSwitch {...props} bind:checked={data[field.name]} />
