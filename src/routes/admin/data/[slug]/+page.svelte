@@ -80,7 +80,7 @@
       Back
     </Button>
 
-    <Button on:click={() => insertItem()} color="primary">
+    <Button href="/admin/data/{data.table.slug}/insert" color="primary">
       <Icon name="plus" />
       Insert
     </Button>
@@ -127,10 +127,10 @@
     {/each}
     <ListItem style="width: 0" name="Actions">
       <El d="flex" gap="2">
-        <Button size="sm" on:click={() => previewItem(item)}>
+        <Button size="sm" href="/admin/data/{data.table.slug}/{item.id}">
           <Icon name="eye" />
         </Button>
-        <Button color="primary" size="sm" on:click={() => updateItem(item)}>
+        <Button color="primary" size="sm" href="/admin/data/{data.table.slug}/{item.id}/edit">
           <Icon name="pencil" />
         </Button>
         <Button color="danger" size="sm" on:click={() => removeItem(item)}>

@@ -1,12 +1,10 @@
 import { fail } from "@sveltejs/kit";
 import { join } from "path";
 import { rm, writeFile } from "fs/promises";
+import { getAssets } from "$lib/server/index.js";
 
 export async function load({ locals }) {
-  const assets = locals
-    .db("u-files")
-    .query({ perPage: 50, where: locals.filters })
-    .then((res: any) => res.data);
+  const assets = await getAssets({filters: locals.filters, db: locals.db});
 
   return {
     assets,

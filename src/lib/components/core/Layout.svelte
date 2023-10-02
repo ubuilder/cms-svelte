@@ -99,6 +99,8 @@
 <style>
   :global(.layout-content) {
     margin-left: 0;
+    overflow: auto;
+    height: calc(100% - 57px);
   }
 
   @media (min-width: 576px) {

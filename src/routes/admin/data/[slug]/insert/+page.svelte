@@ -1,0 +1,42 @@
+<script lang="ts">
+  import { goto } from "$app/navigation";
+  import ButtonList from "$lib/components/core/ButtonList.svelte";
+  import PageHeader from "$lib/components/core/PageHeader.svelte";
+  import FieldInput from "$lib/components/data/FieldInput.svelte";
+  import { Button, El, Icon } from "yesvelte";
+
+  export let data;
+
+  async function onSubmit() {
+    await fetch('/admin/data/' + data.table.slug + '?/insert', {method: 'POST', body: JSON.stringify(value)}).then(res => res.json())
+    await goto('/admin/data/' + data.table.slug);
+  }
+
+  let value: any = {};
+</script>
+
+<PageHeader title="Insert {data.table.name}">
+  <Button href="/admin/data/{data.table.slug}">
+    <Icon name="chevron-left" />
+    Back
+  </Button>
+</PageHeader>
+
+<El container="lg" mt="4">
+  <El tag="form" on:submit={onSubmit} row>
+    {#each data.table.fields as field}
+      <FieldInput {field} bind:data={value} />
+    {/each}
+
+    <El col d="flex" mt="3">
+      <ButtonList ms="auto">
+        <Button>Cancel</Button>
+
+        <Button type="submit" color="primary">
+          <Icon name="plus" />
+          Insert
+        </Button>
+      </ButtonList>
+    </El>
+  </El>
+</El>
