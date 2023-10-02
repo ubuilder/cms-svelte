@@ -59,9 +59,9 @@
       <El p="3">
         <FormField label="Sizes (add resize handle)">
           <El row m="0">
-            {#each props.slots ?? [] as _, i}          
+            {#each props.sizes ?? [] as size, i}          
             <El col="auto" d="flex" me="2" border py="1" px="2">
-              <Input border="0" style="width: 64px; padding: 0" col="6" bind:value={props.sizes[i]}/>
+              <Input border="0" style="width: 64px; padding: 0" col="6" bind:value={size}/>
               <Button on:click={() => removeSlot(i)} border="0" col="6" me="2" style="background-color: transparent"><Icon name="minus"/></Button>
             </El>
             {/each}
