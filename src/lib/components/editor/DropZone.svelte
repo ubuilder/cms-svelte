@@ -4,11 +4,29 @@
   import { createEventDispatcher } from "svelte";
   export let screenSize: string;
   export let dropZone: HTMLElement;
+
+  export let page: any;
+  
   const dragDrop = DragDrop();
+
+  function onDrop(e) {
+    console.log('onDrop')
+    const element = e.dataTransfer.getData('text/html')
+
+
+    page.slot = [...page.slot, {
+      type: element,
+      slot: [],
+      props: {}
+    }]
+
+
+
+  }
   onMount(() => {
-    dragDrop.makeDropZone(dropZone, {});
-    dragDrop.makeDragAbleSelector(".u-component");
-    dragDrop.makeReiszeAbleSelector(".u-component");
+    dragDrop.makeDropZone(dropZone, { onDrop });
+    dragDrop.makeDragAbleSelector(".component-wraper");
+    dragDrop.makeReiszeAbleSelector(".component-wraper");
   });
 
   $: console.log("dropzone", dropZone);
@@ -27,6 +45,7 @@
 
 <style>
   .drop-zone {
+    position: relative;
     /* background-color: rgba(196, 190, 196, 0.3); */
     border: 1px solid rgb(0, 119, 255);
     border-radius: 5px;

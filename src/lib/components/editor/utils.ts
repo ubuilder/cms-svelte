@@ -26,11 +26,11 @@ export default function () {
 			slots: undefined
 		};
 		const target =event.target
-		if (!(target?.tagName && target.classList.contains('u-component'))){
+		if (!(target?.tagName && target.classList.contains('component-wrapper'))){
 			return response
 		}
 
-		const parent = target?.parentElement.closest('.u-component') ?? target?.closest('.drop-zone');
+		const parent = target?.parentElement.closest('.component-wrapper') ?? target?.closest('.drop-zone');
 		let index;
 		if(parent.classList.contains('drop-zone')){
 			index = Array.from(parent.childNodes).indexOf(event.target)
@@ -320,12 +320,12 @@ export default function () {
 		if (!event?.target?.tagName)
 			return response
 		
-		const target = event?.target?.classList?.contains('u-component')
+		const target = event?.target?.classList?.contains('component-wrapper')
 		? event?.target
-		: event?.target?.querySelector('.u-component');
+		: event?.target?.querySelector('.component-wrapper');
 		if(!target)return response;
 
-		const parent = target?.parentElement.closest('.u-component') ?? target?.closest('.drop-zone');
+		const parent = target?.parentElement.closest('.component-wrapper') ?? target?.closest('.drop-zone');
 		let index;
 		if(parent.classList.contains('drop-zone')){
 			index = Array.from(parent.childNodes).indexOf(event.target)
@@ -530,7 +530,7 @@ function findIndex(e: Event): number {
 		range.detach();
 		if (e.clientY < top) return 0;
 	} else {
-		if (e.clientY < children[0].querySelector('.u-component').getBoundingClientRect().top) return 0;
+		if (e.clientY < children[0].querySelector('.component-wrapper').getBoundingClientRect().top) return 0;
 	}
 	for (let i = 0; i < children.length; i++) {
 		let child;
@@ -542,7 +542,7 @@ function findIndex(e: Event): number {
 			rect = range.getBoundingClientRect();
 			range.detach();
 		} else {
-			child = children[i].querySelector('.u-component');
+			child = children[i].querySelector('.component-wrapper');
 			rect = child.getBoundingClientRect();
 		}
 		if (e.clientY > rect.top && e.clientY < rect.bottom) {

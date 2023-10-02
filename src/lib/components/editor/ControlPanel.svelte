@@ -7,7 +7,7 @@
     FormSelect,
     FormTextarea,
   } from "yesvelte";
-  import { selectedComponent } from "$lib/stores/selectedComponent";
+  // import { selectedComponent } from "$lib/stores/selectedComponent";
 
   let one = true;
 </script>

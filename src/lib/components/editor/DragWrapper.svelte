@@ -1,7 +1,6 @@
 <script lang="ts">
 	export let name: string;
 	export let image: string;
-	export let template: string;
 
 	function dragHandler(e: DragEvent): void {
 		console.log('drag started');
@@ -15,7 +14,7 @@
 		if(!e.dataTransfer)return
 		e.dataTransfer.effectAllowed = 'copy';
 
-		e.dataTransfer.setData('text/html', template);
+		e.dataTransfer.setData('text/html', name);
 	}
 </script>
 
@@ -26,7 +25,7 @@
 	role="region"
 >
 	<div class="name">{name}</div>
-	<img class="thumb" src={image} alt={name} />
+	<!-- <img class="thumb" src={image} alt={name} /> -->
 </div>
 
 <style>

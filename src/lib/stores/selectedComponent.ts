@@ -1,3 +1,3 @@
 import { writable } from "svelte/store";
 
-export let selectedComponent = writable()
+export let selectedComponents = writable<any[]>([])
