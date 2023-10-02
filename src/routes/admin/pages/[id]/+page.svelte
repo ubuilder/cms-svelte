@@ -24,6 +24,7 @@
   import { onMount } from "svelte";
   import PreviewModal from "./PreviewModal.svelte";
   export let data;
+  console.log('data', data)
 
 
   let request: any = data.page

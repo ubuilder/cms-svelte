@@ -1,4 +1,4 @@
-<script lang="ts">
+><script lang="ts">
   import { page } from "$app/stores";
     import { Button, FormInput, FormSelect, ModalBody, TabContent, TabItem, TabList, TabPanel, Tabs } from "yesvelte";
       

@@ -12,7 +12,7 @@ export const actions = {
 
         await locals.db('u-pages').insert({
             title: body.title,
-            slug: body.slug?.startsWith('/') ? body.slug.substring(1) : body.slug,
+            slug: body.slug?.startsWith('/') ? body.slug?.substring(1) : body.slug,
             props: {},
             load: {},
             slot: []
