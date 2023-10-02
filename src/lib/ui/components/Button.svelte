@@ -1,13 +1,18 @@
 
 
 <script lang="ts">
+  import { selectedComponent } from "$lib/stores/selectedComponent";
  import { Button, FormInput, ModalBody, TabContent, TabItem, TabList, TabPanel, Tabs } from "yesvelte";
 
 
 
  export let props: any = {};
 
+ 
  export let edit = false;
+ function selectThis(e){
+  $selectedComponent = e.target
+ }
 </script>
 
 {#if edit}
@@ -31,7 +36,7 @@
 </Tabs>
 
 {:else}
-  <Button type={props.type} color={props.color} {...$$restProps}>
+  <Button on:click ={selectThis} type={props.type} color={props.color} {...$$restProps}>
     {props.text}
   </Button>
 {/if}

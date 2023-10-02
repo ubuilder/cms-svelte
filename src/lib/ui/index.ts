@@ -12,7 +12,7 @@ export const components = {
     HtmlText,    
     Input,
     Form,
-    Row
+    Row,
     DynamicList
 }
 

@@ -4,6 +4,7 @@ import qs from "qs";
 const enable_test_user = true;
 
 export const handle = async ({ event, resolve }) => {
+  console.log('in handle')
   const sitesDb = connect({ filename: "data/db.json" });
   const sites = await sitesDb.getModel("sites").query();
 
