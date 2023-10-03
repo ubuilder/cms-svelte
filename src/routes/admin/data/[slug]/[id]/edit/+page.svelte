@@ -3,7 +3,7 @@
     import ButtonList from "$lib/components/core/ButtonList.svelte";
     import PageHeader from "$lib/components/core/PageHeader.svelte";
     import FieldInput from "$lib/components/data/FieldInput.svelte";
-    import { Button, El, Icon } from "yesvelte";
+    import { Button, Card, CardBody, El, Icon } from "yesvelte";
   
     export let data;
   
@@ -15,15 +15,18 @@
     let value: any = data.value;
   </script>
   
-  <PageHeader title="Update {data.table.name} ({data.value.id})">
-    <Button href="/admin/data/{data.table.slug}">
-      <Icon name="chevron-left" />
-      Back
-    </Button>
-  </PageHeader>
   
-  <El container="lg" mt="4">
-    <El tag="form" on:submit={onSubmit} row>
+  <El container="lg">
+    <PageHeader title="Update {data.table.name} ({data.value.id})">
+      <Button href="/admin/data/{data.table.slug}">
+        <Icon name="chevron-left" />
+        Back
+      </Button>
+    </PageHeader>
+    
+    <Card mt="4" tag="form" on:submit={onSubmit}>
+      <CardBody row>
+  
       {#each data.table.fields as field}
         <FieldInput {field} bind:data={value} />
       {/each}
@@ -37,6 +40,8 @@
           </Button>
         </ButtonList>
       </El>
-    </El>
+    </CardBody>
+  
+    </Card>
   </El>
   

@@ -30,6 +30,7 @@ export const handle = async ({ event, resolve }) => {
 
   if(!existsSync("data/" + siteId)) {
     mkdirSync("data/" + siteId)
+    mkdirSync("data/" + siteId + '/assets')
   }
   // get model based on domain
   const { getModel } = connect({ filename: "data/" + siteId + "/db.json" }); // based on url

@@ -1,39 +1,104 @@
-
 <script>
-  import PageHeader from '$lib/components/core/PageHeader.svelte';
-  import { Button, El, Icon } from 'yesvelte';
+  import PageHeader from "$lib/components/core/PageHeader.svelte";
+  import { Badge, Button, Card, CardBody, El, Icon } from "yesvelte";
 
-    export let data;
+  export let data;
 </script>
 
-
-<PageHeader title="Preview {data.table.name} ({data.value.id})">
+<El container="lg">
+  <PageHeader title="Preview {data.table.name} ({data.value.id})">
     <Button href="/admin/data/{data.table.slug}">
-        <Icon name="chevron-left"/>
-        Back
-    </Button>    
-</PageHeader>
+      <Icon name="chevron-left" />
+      Back
+    </Button>
+    <Button
+      color="primary"
+      href="/admin/data/{data.table.slug}/{data.value.id}/edit"
+    >
+      Edit
+    </Button>
+  </PageHeader>
+  <El my="4" />
 
-<El container="lg" my="4">
-{#each data.table.fields as field}
-    <El my="2" d="flex">
-        <div class="label">{field.name}:</div>
-        <div class="value">{data.value[field.name]}</div>
-    </El>
-{/each}
+  <Card mt="2">
+    <CardBody>
+      {#each data.table.fields as field}
+        {@const value = data.value[field.name]}
+        <El px="3" pt="2" class="label">{field.name}:</El>
+
+        {#if field.type === "rich_text"}
+          <El ps="5" pb="3" class="value">{@html value ?? "---"}</El>
+        {:else if field.type === "image"}
+          {#if value}
+            <El ps="5" pb="3" class="value">
+              <img class="image" src="/files/{value}" alt="" />
+            </El>
+          {/if}
+        {:else if field.type === "date_time"}
+          <El ps="5" pb="3" class="value">
+            {#if value}
+              {#if field.range}
+                {new Date(value[0]).toDateString()} - {new Date(
+                  value[1]
+                ).toDateString()}
+              {:else}
+                {new Date(value).toDateString()}
+              {/if}
+            {:else}
+              ---
+            {/if}
+          </El>
+        {:else if field.type === "file"}
+          {#if value}
+            <El
+              ps="5"
+              pb="3"
+              class="value"
+              d="flex"
+              style="flex-direction: column"
+            >
+              <img width="100" src="/images/file.png" alt="" />
+              {value}
+            </El>
+          {/if}
+
+        {:else if field.type === 'select'}
+        <El ps="5" pb="3" class="value">
+          
+            {#if value}
+                {#if field.multiple}
+                {#each value as item}
+                    <Badge size="lg">{item}</Badge>
+                {/each}
+
+                {:else}
+                    <Badge size="lg">{value}</Badge>
+                {/if}
+            {:else}
+                ---
+            {/if}
+            </El>
+        {:else}
+          <El ps="5" pb="3" class="value">{value}</El>
+        {/if}
+      {/each}
+    </CardBody>
+  </Card>
 </El>
 
 <style>
-    .label {
-        font-weight: bold;
-        font-size: 24px;
-        width: 200px;
-        display: block;
-        text-align: end;
-    }
-    
-    .value {
-        font-size: 24px;
-        margin-left: 1rem;
-    }
+  :global(.label) {
+    font-weight: bold;
+    font-size: 24px;
+  }
+
+  :global(.value) {
+    font-size: 20px;
+    margin-left: 1rem;
+  }
+
+  .image {
+    width: 300px;
+    height: auto;
+  }
 </style>
