@@ -1,1 +1,1 @@
-git pull origin main && npm i && npm run build && pm2 restart node/index.js
+git pull origin main && npm i && npm run build && pm2 restart build/index.js
