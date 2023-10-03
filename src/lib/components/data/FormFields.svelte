@@ -1,8 +1,10 @@
 <script lang="ts">
-  import { FormField, El, Icon, Accordion, AccordionHeader, Button, FormRadioGroup, FormSwitch, AccordionBody, Badge, FormInput,  FormAutocomplete, Accordions } from "yesvelte";
+  import type { AnyARecord } from "dns";
+  import { transferableAbortSignal } from "util";
+  import { FormCheckbox, FormField, El, Icon, Accordion, AccordionHeader, Button, FormRadioGroup, FormSwitch, AccordionBody, Badge, FormInput,  FormAutocomplete, Accordions, FormSlider, FormSelect, FormCheckboxGroup } from "yesvelte";
 
   export let fields: any[] = [];
-
+  export let tables: any[] = [];
   
   const icons: any = {
     plain_text: "abc",
@@ -135,6 +137,16 @@
                 />
               {:else if field.type === 'date_time'}
                 <FormSwitch label="Range?" bind:checked={field.range}/>
+              {:else if field.type === 'relation'}
+                <FormAutocomplete col="9" label="Table" bind:value={field.table} key="slug" items={tables} let:item>
+                  <Icon me="2" name={item.icon} />
+                  {item.name}
+                </FormAutocomplete>
+                <FormCheckbox col="3" label="Multiple" bind:checked={field.multiple}/>
+                
+                <FormSelect items={tables.find(x => x.slug === field.table)?.fields ?? []} label="Title" bind:value={field.title} key="name" let:item>
+                  {item.name}
+                  </FormSelect>
               {/if}
 
               <El col="12" d="flex" justifyContent="end">

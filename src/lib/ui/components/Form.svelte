@@ -112,7 +112,7 @@
           {/if}
       </TabPanel>
       <TabPanel p="3">
-          <FormFields bind:fields={props.fields} />
+          <FormFields {tables} bind:fields={props.fields} />
       </TabPanel>
       <TabPanel p="3">
           <FormField label="First Button">

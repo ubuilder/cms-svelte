@@ -8,7 +8,24 @@
     export let data;
   
     async function onSubmit() {
-      await fetch('/admin/data/' + data.table.slug + '?/update', {method: 'POST', body: JSON.stringify(value)}).then(res => res.json())
+      const value2: any = {}
+
+      for(let field of data.table.fields) {
+      console.log(value[field.name], value);
+
+        if(field.type === 'relation' && typeof value[field.name] === 'object' && !Array.isArray(value[field.name])) {
+
+          if(field.multiple) {
+            value2[field.name] = value[field.name].map(x => x.id)
+          } else {
+            value2[field.name] = value[field.name].id
+          }
+        } else {
+          value2[field.name] = value[field.name]
+        }        
+      }
+      
+      await fetch('/admin/data/' + data.table.slug + '?/update', {method: 'POST', body: JSON.stringify(value2)}).then(res => res.json())
       await goto('/admin/data/' + data.table.slug);
     }
   

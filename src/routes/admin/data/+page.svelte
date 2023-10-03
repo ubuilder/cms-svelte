@@ -10,19 +10,20 @@
   export let data;
 
   async function createTable() {
-    const data = await modal.open(TableEditModal, {
+    const res = await modal.open(TableEditModal, {
       table: {
         icon: "database",
         name: "",
         fields: [],
       },
+      tables: data.tables,
       submitText: 'Create'
     });
 
-    if (data) {
+    if (res) {
       await fetch("?/create", {
         method: "POST",
-        body: JSON.stringify(data),
+        body: JSON.stringify(res),
       }).then((res) => res.json());
 
       await invalidateAll();
@@ -30,16 +31,17 @@
   }
 
   async function editTable(table: any) {
-    const data = await modal.open(TableEditModal, {
+    const res = await modal.open(TableEditModal, {
       table,
       title: "Edit Table",
+      tables: data.tables,
       submitText: "Update",
     });
 
-    if (data) {
+    if (res) {
       await fetch("?/update", {
         method: "POST",
-        body: JSON.stringify(data),
+        body: JSON.stringify(res),
       }).then((res) => res.json());
 
       await invalidateAll();
@@ -47,7 +49,6 @@
   }
 
 </script>
-
 <Page title="Tables">
   <Button on:click={() => createTable()} slot="header-buttons" color="primary">
     <Icon name="plus" /> Create Table

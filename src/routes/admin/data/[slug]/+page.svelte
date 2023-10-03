@@ -13,6 +13,7 @@
   import TextFilter from "$lib/components/filters/TextFilter.svelte";
   import DateFilter from "$lib/components/filters/DateFilter.svelte";
   import NumberFilter from "$lib/components/filters/NumberFilter.svelte";
+  import RelationItem from "./[id]/RelationItem.svelte";
 
   export let data;
 
@@ -117,9 +118,21 @@
     {#each data.table.fields as field}
       <ListItem name={field.name}>
         {#if field.type === "switch"}
-          <Switch checked={item[field.name]} />
+          <Switch disabled checked={item[field.name]} />
         {:else if field.type === "image"}
           <El tag="img" width="64px" src="/files/{item[field.name]}" />
+        {:else if field.type === "relation"}
+          {#if field.multiple}
+            {#each item[field.name] as x}
+              <RelationItem value={x} table={field.table} title={field.title} />
+            {/each}
+          {:else}
+            <RelationItem
+              value={item[field.name]}
+              table={field.table}
+              title={field.title}
+            />
+          {/if}
         {:else}
           {item[field.name]}
         {/if}
@@ -130,7 +143,11 @@
         <Button size="sm" href="/admin/data/{data.table.slug}/{item.id}">
           <Icon name="eye" />
         </Button>
-        <Button color="primary" size="sm" href="/admin/data/{data.table.slug}/{item.id}/edit">
+        <Button
+          color="primary"
+          size="sm"
+          href="/admin/data/{data.table.slug}/{item.id}/edit"
+        >
           <Icon name="pencil" />
         </Button>
         <Button color="danger" size="sm" on:click={() => removeItem(item)}>

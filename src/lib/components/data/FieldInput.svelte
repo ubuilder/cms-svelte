@@ -4,6 +4,7 @@
     DropdownItem,
   DropdownMenu,
   El,
+    FormAutocomplete,
     FormDatePicker,
     FormEditor,
     FormField,
@@ -15,6 +16,7 @@
     PopoverBody,
   } from "yesvelte";
   import FilePicker from "./FilePicker.svelte";
+  import FormDataSelect from "./FormDataSelect.svelte";
 
   export let field: any;
   export let data: any = {};
@@ -84,7 +86,10 @@
   <!-- <FormFileUpload {...props} label="use Asset picker (check multiple)" bind:value={data[field.name]}/> -->
 {:else if field.type === "switch"}
   <FormSwitch {...props} bind:checked={data[field.name]} />
+{:else if field.type === 'relation'}
+  <FormDataSelect multiple={field.multiple} table={field.table} title={field.title} bind:value={data[field.name]}/>
 {:else}
+
   NOT SUPPORTED {field.type}
 {/if}
 </El>

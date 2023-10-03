@@ -1,13 +1,15 @@
 <script>
+  import RelationItem from './RelationItem.svelte';
+
   import PageHeader from "$lib/components/core/PageHeader.svelte";
-  import { Badge, Button, Card, CardBody, El, Icon } from "yesvelte";
+  import { Badge, Button, Card, CardBody, El, Icon, Switch } from "yesvelte";
 
   export let data;
 </script>
 
 <El container="lg">
   <PageHeader title="Preview {data.table.name} ({data.value.id})">
-    <Button href="/admin/data/{data.table.slug}">
+    <Button on:click={() => history.back()}>
       <Icon name="chevron-left" />
       Back
     </Button>
@@ -61,23 +63,36 @@
               {value}
             </El>
           {/if}
-
-        {:else if field.type === 'select'}
-        <El ps="5" pb="3" class="value">
-          
+        {:else if field.type === "switch"}
+          <El ps="5" pb="3" class="value">
+            <Switch checked={value} disabled />
+          </El>
+        {:else if field.type === "select"}
+          <El ps="5" pb="3" class="value">
             {#if value}
-                {#if field.multiple}
+              {#if field.multiple}
                 {#each value as item}
-                    <Badge size="lg">{item}</Badge>
+                  <Badge size="lg">{item}</Badge>
                 {/each}
-
-                {:else}
-                    <Badge size="lg">{value}</Badge>
-                {/if}
+              {:else}
+                <Badge size="lg">{value}</Badge>
+              {/if}
             {:else}
-                ---
+              ---
             {/if}
-            </El>
+          </El>
+        {:else if field.type === "relation"}
+        <El ps="5" pb="3" class="value" >
+        {#if field.multiple}
+
+        
+        {#each value as item}
+        <RelationItem value={item} table={field.table} title={field.title}/>
+        {/each}
+        {:else}
+        <RelationItem {value} table={field.table} title={field.title}/>
+        {/if}
+      </El>
         {:else}
           <El ps="5" pb="3" class="value">{value}</El>
         {/if}

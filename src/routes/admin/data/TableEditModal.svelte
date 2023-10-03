@@ -18,6 +18,7 @@
   export let submitText = "Create";
 
   export let table: any = {};
+  export let tables: any[] = [];
 </script>
 
 <Modal {title}>
@@ -39,7 +40,7 @@
       <FormInput required label="Name" bind:value={table.name} />
     </El>
     <El col="12">
-      <FormFields bind:fields={table.fields} />
+      <FormFields {tables} bind:fields={table.fields} />
     </El>
   </El>
 
