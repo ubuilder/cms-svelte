@@ -43,12 +43,10 @@
       ]}/>
 
       <TextFilter  text="Title" key="title"/>
-      
       <SelectFilter text="Theme" key="theme" items={[
         { key: 'daisyui', text: 'Daisy UI' },      
         { key: 'tabler', text: 'Tabler' },
         ]}/>
-  
   </FilterList>
   {#each data.pages as page}
     <PageItem {page}/>
