@@ -69,6 +69,16 @@
       body: JSON.stringify(request),
     }).then((res) => invalidateAll());
   }
+
+  function getItems(load: any) {
+    let items: any = {}
+    for(let item of load){
+      items[item.name] = true;
+    }
+
+    return items;
+  }
+  
 </script>
 
 <Page title="Update Page '{data.page.title}'">
@@ -94,6 +104,7 @@
     <FormField label="Content">
       <SlotList
         id="slot"
+        items={getItems(request.load)}
         on:move={onMove}
         bind:slots={request.slot} />
     </FormField>

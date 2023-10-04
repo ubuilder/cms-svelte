@@ -5,7 +5,7 @@ import Input from './components/Input.svelte'
 import Form from './components/Form.svelte'
 import Row from './components/Row.svelte'
 import DynamicList from "./components/DynamicList.svelte"
-import FormSelect from './components/FormSelect.svelte'
+// import FormSelect from './components/FormSelect.svelte'
 
 export const components = {
     Button,
@@ -15,7 +15,7 @@ export const components = {
     Form,
     Row,
     DynamicList,
-    FormSelect
+    // FormSelect
 }
 
 export {default as Element} from './Element.svelte'

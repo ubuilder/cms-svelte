@@ -1,6 +1,6 @@
 import type { Actions, ServerLoad } from "@sveltejs/kit"
 
-export const load: ServerLoad = async({params, locals}) {
+export const load: ServerLoad = async({params, locals}) => {
     const table = await locals.db('u-tables').get({where: {slug: params.slug }})
 
     const rows = await locals.db(params.slug).query({where: locals.filters})

@@ -1,5 +1,3 @@
-
-
 <script lang="ts">
  import { Button, FormInput, ModalBody, TabContent, TabItem, TabList, TabPanel, Tabs } from "yesvelte";
 

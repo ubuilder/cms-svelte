@@ -31,6 +31,7 @@
 
   let new_size = 'auto'
   export let edit = false;
+  export let items: any = {}
 
   function addSlot() {
     console.log(props, new_size)
@@ -106,7 +107,7 @@
     {#each props.slots ?? [] as slot, i}
       <El col={props.sizes[i] ??'auto'}>
         {#each slot as slotItem}
-          <Element element={slotItem} {components} />
+          <Element element={slotItem} {items} {components} />
         {/each}
       </El>
     {/each}

@@ -21,6 +21,7 @@
 
   export let slots: any[] = [];
   export let id = '';
+  export let items: any = {}
 
 
   let element: HTMLDivElement;
@@ -142,7 +143,7 @@
             </El>
           </AccordionHeader>
           <AccordionBody p=0>
-            <svelte:component this={components[slot.type]} edit bind:slots={slot.slot} bind:props={slot.props} />
+            <svelte:component this={components[slot.type]} edit bind:slots={slot.slot} {items} bind:props={slot.props} />
 
             <!-- {#if ["Container"].includes(slot.type)}
             <svelte:self

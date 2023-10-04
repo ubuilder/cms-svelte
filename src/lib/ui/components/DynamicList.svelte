@@ -1,4 +1,4 @@
-><script lang="ts">
+<script lang="ts">
   import { page } from "$app/stores";
   import { getContext } from "svelte";
   import {
@@ -16,38 +16,38 @@
   import SlotList from "../SlotList.svelte";
   import { components } from "$lib/ui";
   import Element from "../Element.svelte";
-  const items = getContext("items")
 
+  export let items: any = {};
   export let props: any = {};
 
-  function updateStore(data: any) {
-    $items[data] = 'test'
-  }
+  // function updateStore(data: any) {
+  //   $items[data] = 'test'
+  // }
 
   export let edit = false;
 </script>
 
 {#if edit}
-<El p=3>
-<El row>
+  <El p="3">
+    <El row>
+      <FormSelect
+        col="6"
+        label="items"
+        bind:value={props.itemName}
+        items={Object.keys(items)}
+        let:item
+      >
+        {item}
+      </FormSelect>
+      <FormInput col="6" label="Name" bind:value={props.name} />
+    </El>
 
-<FormSelect col="6"
-    label="items"
-    bind:value={props.itemName}
-    items={Object.keys($items)}
-    let:item
-  >
-    {$items[item]}
-  </FormSelect>
-  <FormInput col="6" label="Name" bind:value={props.name} />
-</El>
-
-<SlotList bind:slots={props.slot} />
-</El>
-
-  {:else}
-  
+    <SlotList bind:slots={props.slot} />
+  </El>
+{:else}
+  {#each items[props.itemName] as key}
     {#each props.slot as slot}
-      <Element element={{...slot, slot: slot.props.slot}} {components}/>
+      <Element element={{ ...slot, slot: slot.props.slot }} items={{...items, [props.name]: key}} {components} />
     {/each}
+  {/each}
 {/if}

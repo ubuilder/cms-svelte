@@ -80,15 +80,16 @@ export async function load({ locals, params }) {
   //     },
   //   ],
   // };
-  
-  const page = await locals.db('u-pages').get({where: {slug: params.slug}})
-  
 
-  const props: any = {
+  console.log(locals.db("u-pages"));
+
+  const page = await locals.db("u-pages").get({ where: { slug: params.slug } });
+
+  const items: any = {
     page: {
       slug: params.slug,
     },
-  };  
+  };
 
   // filters: [
   //   {field: 'slug', operator: '=', value: "{{page.slug}}"}
@@ -97,15 +98,15 @@ export async function load({ locals, params }) {
 
   for (let load of page.load) {
     // const load = page.load[key];
-    const where: any = {}
+    const where: any = {};
 
-    const with_: any = {}
+    const with_: any = {};
 
     for (let filter of load.filters) {
       where[filter.field] = {
         operator: filter.operator,
-        value: get_value(filter.value)
-      }
+        value: get_value(filter.value),
+      };
     }
 
     // const a = {
@@ -114,82 +115,72 @@ export async function load({ locals, params }) {
     //     table: 'users',
     //     // where: {},
     //     multiple: true
-    //   } 
+    //   }
 
     // }
-    
 
     if (load.multiple) {
-
-      props[load.name] = await locals
+      items[load.name] = await locals
         .db(load.table)
         .query({ where, with: with_ })
         .then((res: any) => res.data);
     } else {
-      props[load.name] = await locals
-        .db(load.table)
-        .get({ where, with: with_ });
+      console.log('load: ', load)
+      items[load.name] = await locals.db(load.table).get({ where, with: with_ });
     }
   }
 
   function get_value(template: string | any) {
-    if(typeof template === 'string') {
-      return hbs.compile(`${template}`)(props);
-    } else if(typeof template === 'object' && !Array.isArray(template)) {
-      const result: any = {}
+    if (typeof template === "string") {
+      return hbs.compile(`${template}`)(items);
+    } else if (typeof template === "object" && !Array.isArray(template)) {
+      const result: any = {};
 
-      Object.keys(template).map(key => {
-        result[key] = get_value(template[key])
-      })
-      return result
+      Object.keys(template).map((key) => {
+        result[key] = get_value(template[key]);
+      });
+      return result;
     }
-
     return template;
   }
 
   async function renderSlotItem(slot: any) {
-   for (let key in slot.props ?? {}) {
-      slot.props[key] = get_value(slot.props[key]);
-    }
+      slot.props = get_value(slot.props);
 
-    if(slot.type === 'DynamicList') {
-      const template = slot.props.slot;
+    // if (slot.type === "DynamicList") {
+    //   const template = slot.props.slot;
 
-      slot.props.slot = []
+    //   slot.props.slot = [];
 
-      const items = props[slot.props.itemName];
+    //   const items = props[slot.props.itemName];
 
+    //   for (let item of items) {
+    //     props[slot.props.name] = item;
 
-      for(let item of items) {
-        props[slot.props.name] = item;
+    //     for (let index in template) {
+    //       const templateItem = JSON.parse(JSON.stringify(template[index]));
+    //       renderSlotItem(templateItem);
+    //       slot.props.slot.push(templateItem);
+    //     }
+    //   }
 
-        for(let index in template) {
-          const templateItem = JSON.parse(JSON.stringify(template[index]))
-          renderSlotItem(templateItem)
-          slot.props.slot.push(templateItem);
-        }
-      }
+    //   // slot.props[slot.props.itemName] = props[slot.props.itemName]
+    //   props[slot.props.name] = props[slot.props.itemName];
+    // }
 
-
-      // slot.props[slot.props.itemName] = props[slot.props.itemName]
-      props[slot.props.name] = props[slot.props.itemName]
-    }
-
-    if(slot.slot?.length > 0) {
-      for(let slotItem of slot.slot) {
-        renderSlotItem(slotItem)
+    if (slot.slot?.length > 0) {
+      for (let slotItem of slot.slot) {
+        renderSlotItem(slotItem);
       }
     }
+  }
 
-  } 
-  
   async function render(page: any) {
     page.title = get_value(page.title);
     page.description = get_value(page.description);
 
-    
     for (let slot of page.slot) {
-      renderSlotItem(slot)
+      renderSlotItem(slot);
     }
 
     return page;
@@ -197,5 +188,6 @@ export async function load({ locals, params }) {
 
   return {
     page: await render(page),
+    items
   };
 }

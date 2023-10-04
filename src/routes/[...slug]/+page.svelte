@@ -8,5 +8,5 @@
     <link rel="stylesheet" href="node_modules/yesvelte/css/tabler.min.css"/>
 </svelte:head>
 {#each data.page.slot as element}
-    <Element {element} {components}/>
+    <Element {element} items={data.items} {components}/>
 {/each}
