@@ -143,7 +143,7 @@
             </El>
           </AccordionHeader>
           <AccordionBody p=0>
-            <svelte:component this={components[slot.type]} edit bind:slots={slot.slot} {items} bind:props={slot.props} />
+            <svelte:component this={components[slot.type]} edit bind:slots={slot.slot} bind:props={slot.props} {items} />
 
             <!-- {#if ["Container"].includes(slot.type)}
             <svelte:self

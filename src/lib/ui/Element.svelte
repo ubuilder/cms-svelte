@@ -5,11 +5,11 @@
 
   export let components = {};
   export let mode: "edit" | "view" = "view";
+  export let items: any = {};
 
   console.log({ element, components });
   let type = element.type ?? "html";
 
-  export let items: any = {};
   let props = element.props ?? {}; // dynamic types
   let component = components[element.type] ?? null;
   let slot = element.slot ?? [];

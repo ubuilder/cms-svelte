@@ -17,6 +17,8 @@ export async function load({ locals, params }) {
     },
   };
   for (let load of page.load) {
+    if(!load.table) continue;
+    
     const where: any = {};
 
     const with_: any = {};
@@ -26,6 +28,19 @@ export async function load({ locals, params }) {
         operator: filter.operator,
         value: renderVariable(filter.value, items),
       };
+    }
+
+    const table = await locals.db('u-tables').get({where: {slug: load.table}});
+
+    console.log(table)
+    for(let field of table.fields) {
+      if(field.type === 'relation') {
+        with_[field.name] = {
+          table: field.table,
+          field: field.field + '_id',
+          multiple: field.multiple
+        }
+      }
     }
 
     if (load.multiple) {
@@ -38,6 +53,8 @@ export async function load({ locals, params }) {
         .db(load.table)
         .get({ where, with: with_ });
     }
+
+    console.log('after load: ', items)
   }
 
   async function render(page: any) {

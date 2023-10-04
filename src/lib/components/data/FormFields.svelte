@@ -141,7 +141,12 @@
                   {item.name}
                 </FormAutocomplete>
                 <FormCheckbox col="3" label="Multiple" bind:checked={field.multiple}/>
-                
+                {#if field.multiple}
+                  <FormSelect items={tables.find(x => x.slug === field.table)?.fields ?? []} label="Connect With Field" bind:value={field.field} key="name" let:item>
+                    {item.name}
+                    </FormSelect>
+                {/if}
+
                 <FormSelect items={tables.find(x => x.slug === field.table)?.fields ?? []} label="Title" bind:value={field.title} key="name" let:item>
                   {item.name}
                   </FormSelect>

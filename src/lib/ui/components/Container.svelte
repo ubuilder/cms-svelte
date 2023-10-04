@@ -11,6 +11,7 @@
     hasSlot: true,
   };
 
+  export let items: any = {};
   export let slots: any[] = []
   export let props: any = {};
 
@@ -21,7 +22,7 @@ export let edit = false;
 <El p="3">
   <FormInput label="Size" bind:value={props.size} />
   <FormField label="Slot">
-    <SlotList bind:slots />
+    <SlotList bind:slots {items} />
   </FormField>
 </El>
 

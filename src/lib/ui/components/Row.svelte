@@ -83,7 +83,7 @@
                   style="left: -2px; position: absolute; width: 1px; background-color: #dbe0e6; height: 100%"
                 /> -->
                 <Card style="border: none;" my="2">
-                  <SlotList bind:slots={props.slots[i]} />
+                  <SlotList bind:slots={props.slots[i]} {items}/>
                 </Card>
                 <!-- <El
                   top="0"

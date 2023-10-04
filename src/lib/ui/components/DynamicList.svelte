@@ -23,6 +23,52 @@
   // function updateStore(data: any) {
   //   $items[data] = 'test'
   // }
+  function getItemsArray(items: any, array: any[] = [], key= '') {
+    let list: any[] = []
+
+    Object.keys(items).map(item => {
+      list.push({
+        text: items[item].text,
+        key: key ? key + '.' + item : item,
+        type: items[item].type
+      })
+      if(items[item].type === 'object' && items[item].content) {
+        list = getItemsArray(items[item].content, list, item)
+        console.log(list)
+      }
+    })
+
+    console.log({array, list})
+    return [...array, ...list];
+  }
+  
+  // TODO: use recursive function
+  function getItemsContent(items: any, key: string) {
+    items[props.name] = getItems(items, props.itemName)[props.itemName];
+
+    if(key.includes('.')) {
+      console.log(items, key)
+      const [a, b] = key.split('.')
+      return getItems(items, props.name)[a][b];
+    }
+    return getItems(items, props.name)[key]
+  }
+
+  function getItems(items: any, key: string) {
+
+    if(!items[key]) return items;
+
+    console.log('items: ', items, key)
+
+    return {
+      ...items, 
+      [props.name]: {
+        type: 'object',
+        text: props.name,
+        content: items[key].content
+      }
+    }
+  }
 
   export let edit = false;
 </script>
@@ -34,20 +80,23 @@
         col="6"
         label="items"
         bind:value={props.itemName}
-        items={Object.keys(items)}
+        items={getItemsArray(items).filter(item => item.type === 'array')}
+        key="key"
         let:item
       >
-        {item}
+        {item.text}
       </FormSelect>
       <FormInput col="6" label="Name" bind:value={props.name} />
     </El>
 
-    <SlotList bind:slots={props.slot} />
+    <SlotList bind:slots={props.slot} items={getItems(items, props.itemName)}/>
   </El>
 {:else}
-  {#each items[props.itemName] as key}
+{JSON.stringify(getItemsContent(items, props.itemName))}
+  <!-- {#each getItemsContent(items, props.itemName) as item}
     {#each props.slot as slot}
-      <Element element={{ ...slot, slot: slot.props.slot }} items={{...items, [props.name]: key}} {components} />
+      {@const items2 = getItems(items, item)}
+      <Element element={{ ...slot, slot: slot.props.slot }} items={items2} {components} />
     {/each}
-  {/each}
+  {/each} -->
 {/if}

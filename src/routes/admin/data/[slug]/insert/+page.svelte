@@ -14,12 +14,13 @@
       console.log(value[field.name], value);
         if(field.type === 'relation' && typeof value[field.name] === 'object') {
           
+          value2[field.name] = value[field.name]
 
-          if(field.multiple) {
-            value2[field.name] = value[field.name].map(x => x.id)
-          } else {
-            value2[field.name] = value[field.name].id
-          }
+          // if(field.multiple) {
+            // value2[field.name] = value[field.name].map(x => x.id)
+          // } else {
+            // value2[field.name] = value[field.name].id
+          // }
         } else {
           value2[field.name] = value[field.name]
         }        
@@ -48,6 +49,7 @@
       <FieldInput {field} bind:data={value} />
     {/each}
 
+    {JSON.stringify(value)}
     <El col d="flex" mt="3">
       <ButtonList ms="auto">
         <Button>Cancel</Button>
