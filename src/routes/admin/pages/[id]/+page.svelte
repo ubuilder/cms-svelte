@@ -71,7 +71,12 @@
   }
 
   function getItems(load: any) {
-    let items: any = {}
+    let items: any = {
+      page: {
+        slug: data.page.slug,
+        params: {}
+      }
+    }
     for(let item of load){
       items[item.name] = true;
     }
