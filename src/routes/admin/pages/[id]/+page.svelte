@@ -100,10 +100,10 @@
 
       const fields: any = {};
       for (let field of table.fields) {
-        const text = (fields[field.name] = {
+        fields[field.name] = {
           text: `${item.name}'s ${field.name}`,
           type: field.type,
-        });
+        };
 
         if (field.type === "relation") {
           const otherTable = data.tables.find((x) => x.slug === field.table);
@@ -138,15 +138,13 @@
 
 <Page title="Update Page '{data.page.title}'">
   <ButtonList slot="header-buttons">
-    <Button on:click={()=> history.back()} >
+    <Button on:click={() => history.back()}>
       <Icon name="chevron-left" />
       Back
     </Button>
-    <Button on:click={openPreviewModal} color="primary">
-      Preview
-    </Button>
+    <Button on:click={openPreviewModal} color="primary">Preview</Button>
   </ButtonList>
-  
+
   <El row>
     <Tabs>
       <Card>
@@ -157,8 +155,8 @@
             <TabItem>Content</TabItem>
           </TabList>
         </CardHeader>
-      
-      <TabContent>
+
+        <TabContent>
           <CardBody>
             <TabPanel>
               <FormInput bind:value={request.title} label="Title" />
@@ -172,12 +170,12 @@
               <PageLoad bind:load={request.load} bind:tables={data.tables} />
             </TabPanel>
             <TabPanel>
-                <SlotList
-                  id="slot"
-                  items={getItems(request.load)}
-                  on:move={onMove}
-                  bind:slots={request.slot}
-                />
+              <SlotList
+                id="slot"
+                items={getItems(request.load)}
+                on:move={onMove}
+                bind:slots={request.slot}
+              />
             </TabPanel>
           </CardBody>
           <CardFooter>
@@ -186,8 +184,8 @@
               <Button on:click={updatePage} color="primary">Save</Button>
             </ButtonList>
           </CardFooter>
-      </TabContent>
-    </Card>
+        </TabContent>
+      </Card>
     </Tabs>
   </El>
 </Page>

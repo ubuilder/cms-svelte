@@ -72,7 +72,7 @@
         start="0"
         end="0"
       >
-        <El tag="strong">{asset.name}</El>
+        <El tag="strong" style="overflow: hidden">{asset.name}</El>
         <Icon on:click!stopPropagation={() => onRemove()} name="trash" />
       </El>
     {:else if asset.type === "audio"}
