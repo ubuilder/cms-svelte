@@ -1,14 +1,33 @@
 import { renderVariable } from "$lib/helpers/index.js";
 
 async function findPageBySlug({locals, slug}: any = {}) {
-  const page = await locals.db("u-pages").get({ where: { slug} });
+  let routes =  []
+  const pages = await locals.db('u-pages').query({where: {}})
+  for (let page of pages.data){
+    routes.push(page.slug) 
+  }
+  routes.sort()
+  routes.sort((route)=>{
+    return route.includes('[')? -1: 1
+  })
+  routes.sort((route)=>{
+    return route.includes('[...')? -1: 1
+  })
+  routes.reverse()
 
+  for(let route of routes){1
+    if(route == slug){
+      const page = await locals.db("u-pages").get({ where: {slug: route} });
+      return page; 
+    }
+  }
+  console.log("not such route found: ", slug)
 
-  return page;
 }
 
 export async function load({ locals, params }) {
   const page = await findPageBySlug({locals, slug: params.slug});
+  console.log('page ==' , page)
 
   const items: any = {
     page: {
