@@ -21,7 +21,7 @@
 
   let new_load_name: any = "";
   function onRemoveLoad(item: any) {
-    load = load.filter((x) => x !== item);
+    load = load.filter((x:any) => x !== item);
   }
 
 
@@ -63,7 +63,7 @@
             <FormCheckbox label="Multiple" bind:checked={loadItem.multiple} />
             <FormField label="Filters">
               {#each loadItem.filters as filter}
-                {@const table = tables.find((x) => x.slug === loadItem.table)}
+                {@const table = tables.find((x:any) => x.slug === loadItem.table)}
 
                 {#if table}
                 <El row>

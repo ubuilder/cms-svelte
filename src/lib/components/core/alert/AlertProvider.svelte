@@ -6,8 +6,8 @@
 	export let alerts: AlertType[] = []
 </script>
 
+{#if alerts.length}
 <El
-	if={alerts?.length}
 	class="y-alert-container"
 	position={fixed ? 'fixed' : undefined}
 	top="0"
@@ -28,3 +28,4 @@
 	{/each}
 </El>
 
+{/if}
