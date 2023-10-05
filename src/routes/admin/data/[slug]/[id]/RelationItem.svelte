@@ -7,7 +7,7 @@
 </script>
 
 <div>
-  <Badge href="/admin/data/{table}/{value.id}" color="info" ghost my="1"
-    >{value[title]}</Badge
-  >
+  <Badge href="/admin/data/{table}/{value}" color="info" ghost my="1">
+    {value[title]}
+  </Badge>
 </div>

@@ -14,7 +14,7 @@ export const actions = {
             title: body.title,
             slug: body.slug?.startsWith('/') ? body.slug?.substring(1) : body.slug,
             props: {},
-            load: {},
+            load: [],
             slot: []
         })
         return {success: true}

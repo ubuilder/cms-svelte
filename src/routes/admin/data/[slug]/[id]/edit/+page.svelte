@@ -24,6 +24,8 @@
           value2[field.name] = value[field.name]
         }        
       }
+
+      value2['id'] = value.id
       
       await fetch('/admin/data/' + data.table.slug + '?/update', {method: 'POST', body: JSON.stringify(value2)}).then(res => res.json())
       await goto('/admin/data/' + data.table.slug);

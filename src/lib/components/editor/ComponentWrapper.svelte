@@ -1,4 +1,3 @@
-<script lang="ts">
   import { selectedComponents } from "$lib/stores/selectedComponent";
 
   let element: HTMLDivElement;

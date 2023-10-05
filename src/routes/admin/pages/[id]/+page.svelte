@@ -14,14 +14,7 @@
   console.log("data", data);
 
   let request: any = data.page;
-  let items = writable<any>({});
 
-  $: {
-    for (let load of request.load) {
-      $items[load.name] = load.name;
-    }
-  }
-  setContext("items", items);
   function onMove(detail) {
     console.log("onMove", detail);
     console.log(request.slot.map((x) => x.type));
@@ -69,46 +62,91 @@
       body: JSON.stringify(request),
     }).then((res) => invalidateAll());
   }
+
+  function getItems(load: any) {
+    let items: any = {
+      page: {
+        text: "Page",
+        type: "object",
+        content: {
+          slug: {
+            text: "Page's Slug",
+            type: "plain_text",
+          },
+        },
+      },
+    };
+
+    console.log('load: ', load)
+    for (let item of load) {
+      const table = data.tables.find((x) => x.slug === item.table);
+      if(!table) continue;
+
+      const fields: any = {};
+      for (let field of table.fields) {
+        const text = 
+        fields[field.name] = {
+          text: `${item.name}'s ${field.name}`,
+          type: field.type,
+        };
+
+        if (field.type === "relation") {
+          const otherTable = data.tables.find((x) => x.slug === field.table);
+          const otherFields: any = {};
+          for (let otherField of otherTable.fields) {
+            otherFields[otherField.name] = {
+              text: `${item.name} ${field.name} ${otherField.name}`,
+              type: otherField.type,
+            }
+          }
+
+          fields[field.name].content = otherFields;
+          fields[field.name].type = field.multiple ? "array" : "object";
+
+        }
+
+        if(field.type === 'image' || field.type === 'file') {
+          // alt, url, caption from assets....
+        }
+
+      }
+
+      items[item.name] = {
+        type: item.multiple ? "array" : "object",
+        text: item.name,
+        content: fields,
+      };
+    }
+
+    console.log(items)
+    return items;
+  }
 </script>
 
 <Page title="Update Page '{data.page.title}'">
-  <Button
-    on:click={openPreviewModal}
-    color="primary"
-    slot="header-buttons">
+  <Button on:click={openPreviewModal} color="primary" slot="header-buttons">
     Preview
   </Button>
   <El row>
-    <FormInput
-      bind:value={request.title}
-      label="Title" />
+    <FormInput bind:value={request.title} label="Title" />
 
-    <FormInput
-      bind:value={request.slug}
-      label="Slug" />
+    <FormInput bind:value={request.slug} label="Slug" />
 
-    <PageLoad
-      bind:load={request.load}
-      bind:tables={data.tables} />
+    <PageLoad bind:load={request.load} bind:tables={data.tables} />
 
     <FormField label="Content">
       <SlotList
         id="slot"
+        items={getItems(request.load)}
         on:move={onMove}
-        bind:slots={request.slot} />
+        bind:slots={request.slot}
+      />
     </FormField>
 
-    <El
-      col
-      justifyContent="end"
-      w="100"
-      d="flex"
-      my="2">
+    <El col justifyContent="end" w="100" d="flex" my="2">
       <ButtonList ms="auto">
         <Button href="/admin/pages">Cancel</Button>
-        <Button
-          on:click={updatePage}
-          color="primary">Save</Button>
+        <Button on:click={updatePage} color="primary">Save</Button>
       </ButtonList>
     </El>
   </El>

@@ -31,6 +31,7 @@
 
   let new_size = 'auto'
   export let edit = false;
+  export let items: any = {}
 
   function addSlot() {
     console.log(props, new_size)
@@ -82,7 +83,7 @@
                   style="left: -2px; position: absolute; width: 1px; background-color: #dbe0e6; height: 100%"
                 /> -->
                 <Card style="border: none;" my="2">
-                  <SlotList bind:slots={props.slots[i]} />
+                  <SlotList bind:slots={props.slots[i]} {items}/>
                 </Card>
                 <!-- <El
                   top="0"
@@ -106,7 +107,7 @@
     {#each props.slots ?? [] as slot, i}
       <El col={props.sizes[i] ??'auto'}>
         {#each slot as slotItem}
-          <Element element={slotItem} {components} />
+          <Element element={slotItem} {items} {components} />
         {/each}
       </El>
     {/each}

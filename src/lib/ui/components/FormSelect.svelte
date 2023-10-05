@@ -1,37 +1,64 @@
-<script lang='ts'>
-  import FormCheckbox from "$lib/components/core/form/FormCheckbox.svelte";
-import { title } from "process";
+<script lang="ts">
   import { getContext } from "svelte";
-import { Autocomplete, FormInput, FormSelect } from "yesvelte";
-  import DynamicList from "./DynamicList.svelte";
-let items = getContext('items')
-export let props = {}
-export let edit = false
+  import {
+    Autocomplete,
+    FormAutocomplete,
+    FormCheckbox,
+    FormInput,
+    FormSelect,
+  } from "yesvelte";
 
+  let items = getContext("items");
+  export let props: any = {};
+  export let edit = false;
+  export let items: ay = {}
+
+
+  let selectItems: any[] = []
+  function onCreated({ detail }: CustomEvent) {
+    console.log(detail)
+    selectItems = [...selectItems, detail];
+    props.items =[...(props.items ?? []), detail]
+  }
 </script>
 
 {#if edit}
-    <!-- <FormSelect col="6"
+  <!-- <FormSelect col="6"
     label="items"
     bind:value={props.itemName}
     items={Object.keys($items)}
     let:item
   > -->
-    <!-- {$items[item]} -->
-<!-- </FormSelect> -->
+  <!-- {$items[item]} -->
+  <!-- </FormSelect> -->
 
-<FormInput bind:value = {props.itemName} />
+  <FormInput bind:value={props.itemName} />
 
-<FormCheckbox  bind:value = {props.dynamicList} name = 'Dynamic' />
-{#if props.DynamicList}
-<Autocomplete title = "Items"  items={Object.keys($items)} bind:value = {props.items} create />
+  <FormCheckbox bind:checked={props.dynamicList} label="Dynamic" />
+  {#if props.dynamicList}
+    <FormAutocomplete
+      title="Items"
+      items={Object.keys($items)}
+      bind:value={props.items}
+    />
+  {:else}
+    <FormAutocomplete
+      on:created={onCreated}
+      label="Items"
+      multiple
+      bind:items={selectItems}
+      bind:value={props.items}
+      create
+    />
+  {/if}
 {:else}
-<Autocomplete title = "Items"   bind:value = {props.items} create />
-{/if}
-{:else}
-<FormSelect {...props} bind:value = {props.value} name = {props.name} bind:items = { props.items} let:item> 
+  <FormSelect
+    {...props}
+    bind:value={props.value}
+    name={props.name}
+    bind:items={$items[props.items]}
+    let:item
+  >
     {item}
-</FormSelect>
+  </FormSelect>
 {/if}
-
-
