@@ -2,7 +2,7 @@
   import RelationItem from './RelationItem.svelte';
 
   import PageHeader from "$lib/components/core/PageHeader.svelte";
-  import { Badge, Button, Card, CardBody, El, Icon, Switch } from "yesvelte";
+  import { Badge, Button, Card, CardBody, El, Icon, Status, Switch } from "yesvelte";
 
   export let data;
 </script>
@@ -72,10 +72,11 @@
             {#if value}
               {#if field.multiple}
                 {#each value as item}
-                  <Badge size="lg">{item}</Badge>
+                  <Status color="secondary">{item}</Status>
                 {/each}
               {:else}
-                <Badge size="lg">{value}</Badge>
+              <Status color="secondary">{value}</Status>
+
               {/if}
             {:else}
               ---

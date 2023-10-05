@@ -7,6 +7,7 @@
   
     export let data;
   
+    console.log('ssssss', data)
     async function onSubmit() {
       const value2: any = {}
 

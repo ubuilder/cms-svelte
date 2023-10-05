@@ -3,7 +3,7 @@
   import ListBox from "$lib/components/core/list/ListBox.svelte";
   import ListItem from "$lib/components/core/list/ListItem.svelte";
   import { modal } from "$lib/components/core/modal/modal.js";
-  import { Button, Card, CardBody, El, Icon, Switch } from "yesvelte";
+  import { Button, Card, CardBody, El, Icon, Status, Switch } from "yesvelte";
   import DynamicDataModal from "./DynamicDataModal.svelte";
   import { invalidateAll } from "$app/navigation";
   import ButtonList from "$lib/components/core/ButtonList.svelte";
@@ -119,6 +119,8 @@
       <ListItem name={field.name}>
         {#if field.type === "switch"}
           <Switch disabled checked={item[field.name]} />
+        {:else if field.type === "select"}
+          <Status color="secondary">{item[field.name]}</Status>
         {:else if field.type === "image"}
           <El tag="img" width="64px" src="/files/{item[field.name]}" />
         {:else if field.type === "relation"}

@@ -1,6 +1,7 @@
 export async function load({params, locals}) {
     const table = await locals.db('u-tables').get({where: {slug: params.slug }})
 
+    console.log('load value: ', table.slug, params.id)
 
     const value = await locals.db(table.slug).get({where: {id: params.id}})   
 
@@ -11,7 +12,7 @@ export async function load({params, locals}) {
             console.log('field is relation', field.name)
             if(field.multiple) {
                 // blog.posts
-                    console.log('field is multiple relation', field)
+                    console.log('field is multiple relation', field, value)
                     console.log('get all ', field.table, 'where', field.field + '_id', 'is equal to ', value.id);
 
                 value[field.name] = await locals.db(field.table).query({where: {

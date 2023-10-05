@@ -74,7 +74,7 @@
     bind:value={data[field.name]}
   />
 {:else if field.type === "select"}
-    <FormSelect items={(field.options??'').split(',').map(x => x.trim())} {...props} let:item>
+    <FormSelect items={(field.options??'').split(',').map(x => x.trim())} {...props} let:item bind:value={data[field.name]}> 
         {item}
     </FormSelect>
   <!-- <FormFileUpload {...props} label="use Asset picker (check multiple)" bind:value={data[field.name]}/> -->

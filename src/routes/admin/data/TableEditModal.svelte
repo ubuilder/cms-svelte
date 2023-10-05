@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { invalidateAll } from "$app/navigation";
   import ButtonList from "$lib/components/core/ButtonList.svelte";
   import { modal } from "$lib/components/core/modal";
   import Modal from "$lib/components/core/modal/Modal.svelte";
@@ -19,6 +20,13 @@
 
   export let table: any = {};
   export let tables: any[] = [];
+
+  async function removeTable() {
+    fetch('?/remove', {
+      method: 'POST',
+      body: JSON.stringify({id: table.id})
+    }).then(() => {$modal.close(); invalidateAll()})
+  }
 </script>
 
 <Modal {title}>
@@ -46,6 +54,7 @@
 
   <ButtonList justifyContent="end" slot="footer">
     <Button on:click={() => $modal.close()}>Cancel</Button>
+    <Button color="danger" on:click={() => removeTable()}>Remove</Button>
     <Button
       disabled={!table.name}
       color="primary"

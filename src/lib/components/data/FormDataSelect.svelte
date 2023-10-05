@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import { FormAutocomplete } from "yesvelte";
+  import { El, FormAutocomplete } from "yesvelte";
   
   export let multiple = false
   export let table: string | undefined = undefined
@@ -9,20 +9,22 @@
   export let value: any;
 
   let items: any[] = []
+  let loading = true
 
   onMount(async () => {
     const data = await fetch(`/items/${table}`).then(res => res.json())
 
+    loading = false
     items = data.data
   })
   
 
 </script>
 
-{#if items.length}
-<FormAutocomplete {multiple} {items} key="id" {...$$restProps} bind:value let:item>
-    {item[title ?? 'id']}
-</FormAutocomplete>
+{#if loading}
+  <El p="3">Loading...</El>
 {:else}
-Loading...
+  <FormAutocomplete {multiple} {items} key="id" {...$$restProps} bind:value let:item>
+      {item[title ?? 'id']}
+  </FormAutocomplete>
 {/if}

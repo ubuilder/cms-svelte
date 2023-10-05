@@ -21,13 +21,19 @@ export const load: ServerLoad = async ({ params, locals }) => {
                 } else {
                     const id = value[field.name + '_id']
 
-                    const filters = { id: id }
-                    value[field.name] = await locals.db(field.table).get({ where: filters })
+                    if(id) {
+                        console.log(field, field.table, locals.db(field.table))
+                        const filters = { id: id }
+                        value[field.name] = await locals.db(field.table).get({ where: filters })
+                    }
+
                 }
 
             }
         }
     }
+
+    console.log(rows.data[0])
     return {
         table,
         rows
