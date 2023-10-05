@@ -21,15 +21,16 @@
   import Button from "./Button.svelte";
   import ButtonList from "$lib/components/core/ButtonList.svelte";
   import { page } from "$app/stores";
+  import type { Table } from "$lib/types";
 
   export let edit: any;
   export let props: any = {};
 
-  const tables =$page.data.tables
+  const tables: Table[] = $page.data.tables
 
   let table: any;
 
-  async function onSubmit(event) {
+  async function onSubmit(event: SubmitEvent) {
     const a = await fetch("/actions/" + props.actionid, {
       method: "POST",
       body: JSON.stringify({ data: props.data, table: props.table }),
@@ -103,7 +104,7 @@
               <FieldInput
                 {field}
                 bind:data={props.data}
-                tokens={props.fields.map((field) => ({
+                items={props.fields.map((field) => ({
                   text: field.name,
                   key: field.id,
                 }))}

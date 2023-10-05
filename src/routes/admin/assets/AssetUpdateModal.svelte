@@ -5,8 +5,9 @@
   import { Button, El } from "yesvelte";
   import AssetImage from "./AssetTypes/AssetImage.svelte";
   import { Form } from "$lib/components/core/form";
+  import type { AssetType } from "$lib/types/asset";
 
-  export let asset: any;
+  export let asset: AssetType;
 </script>
 
 <Modal>

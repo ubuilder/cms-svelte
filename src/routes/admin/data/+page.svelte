@@ -17,7 +17,7 @@
         fields: [],
       },
       tables: data.tables,
-      submitText: 'Create'
+      submitText: "Create",
     });
 
     if (res) {
@@ -47,8 +47,8 @@
       await invalidateAll();
     }
   }
-
 </script>
+
 <Page title="Tables">
   <Button on:click={() => createTable()} slot="header-buttons" color="primary">
     <Icon name="plus" /> Create Table
@@ -61,7 +61,7 @@
   <El row>
     {#each data.tables as table}
       <El mb="2" col="12" colMd="6" colLg="4" colXl="3">
-        <El tag="a" href="/admin/data/{table.slug}">
+        <a href="/admin/data/{table.slug}">
           <Card>
             <CardBody d="flex" alignItems="center" justifyContent="between">
               <El d="flex" gap="3" alignItems="center">
@@ -75,9 +75,8 @@
               />
             </CardBody>
           </Card>
-        </El>
+        </a>
       </El>
     {/each}
   </El>
-
 </Page>

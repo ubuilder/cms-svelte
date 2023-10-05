@@ -17,8 +17,9 @@
   import { writable } from "svelte/store";
   import { setContext } from "svelte";
   import ModalAssetItem from "./ModalAssetItem.svelte";
-  import { invalidateAll } from "$app/navigation";
+  import type { AssetType } from "$lib/types/asset";
 
+  let assets: AssetType[] = [];
   let uploadInput: HTMLInputElement;
 
   export let multiple = false;
@@ -60,8 +61,6 @@
   let title: string;
   $: title = type === "image" ? "Choose Image" : "Choose File";
   $: title = multiple ? title + "s" : title;
-
-  let assets: any[] = [];
 
   const filters = writable({
     type: {

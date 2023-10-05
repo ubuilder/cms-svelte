@@ -2,10 +2,10 @@
   import { createEventDispatcher } from "svelte";
   import { Button, El, Icon } from "yesvelte";
 
-  const dispatch = createEventDispatcher()
+  const dispatch = createEventDispatcher();
 
   function onClear() {
-    dispatch('clear')
+    dispatch("clear");
   }
 
   export let active = false;
@@ -19,9 +19,7 @@
   color={active ? "primary" : undefined}
   size="sm"
 >
-  <slot>
-    
-  </slot>
+  <slot />
   {#if active}
     <El
       style="line-height: 0; padding-left: 0.5rem; padding-right: 0.5rem"
