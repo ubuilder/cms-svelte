@@ -92,10 +92,34 @@
     <SlotList bind:slots={props.slot} items={getItems(items, props.itemName)}/>
   </El>
 {:else}
-{JSON.stringify(getItemsContent(items, props.itemName))}
+<!-- <pre>
+
+  {JSON.stringify(items, null, 2)}
+</pre> -->
+
+{#each  items[props.itemName] as item}
+<!-- <pre>
+
+  {JSON.stringify(item, null, 2)}
+</pre> -->
+
+{#each props.slot as slot}
+    <Element element={{ ...slot, slot: slot.props.slot }} items={{...items, [props.name]: item}} {components} />
+{/each}
+
+{/each}
+  <!-- {#each getItemsArray(items) as item}
+    
+  {JSON.stringify(items)}
+    {#each props.slot as slot}
+      <Element element={{ ...slot, slot: slot.props.slot }} items={{...items, [props.name]: item}} {components} />
+    {/each}
+  {/each} -->
   <!-- {#each getItemsContent(items, props.itemName) as item}
+    {JSON.stringify(item)}
     {#each props.slot as slot}
       {@const items2 = getItems(items, item)}
+      {JSON.stringify(items2)}
       <Element element={{ ...slot, slot: slot.props.slot }} items={items2} {components} />
     {/each}
   {/each} -->

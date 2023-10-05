@@ -20,52 +20,57 @@
   export let tables: any;
 
   let new_load_name: any = "";
-  function onRemoveLoad(item: any) {
-    load = load.filter((x:any) => x !== item);
+  let new_load_table: any = undefined;
+
+  function onAddLoad() {
+    load = [...load, { table: new_load_table, name: new_load_name, filters: [] }]
+    new_load_name = ''
+    new_load_table = undefined
   }
-
-
+  
+  function onRemoveLoad(item: any) {
+    load = load.filter((x: any) => x !== item);
+  }
 </script>
 
-<FormField label="Load">
-  <Accordions>
-    {#each load as loadItem}
-      <Card my="2">
-        <Accordion style="border: none">
-          <AccordionHeader p="0">
-            <El w="100" d="flex" alignItems="center" justifyContent="between">
-              <AccordionTitle px="3" style="flex: 1">
-                {loadItem.name}
-              </AccordionTitle>
-              <ButtonList on:click>
-                <Button
-                  border="0"
-                  on:click!stopPropagation={() => onRemoveLoad(loadItem)}
-                >
-                  <Icon name="trash" />
-                </Button>
-              </ButtonList>
-            </El>
-          </AccordionHeader>
+<Accordions>
+  {#each load as loadItem}
+    <Card my="2">
+      <Accordion style="border: none">
+        <AccordionHeader p="0">
+          <El w="100" d="flex" alignItems="center" justifyContent="between">
+            <AccordionTitle px="3" style="flex: 1">
+              {loadItem.name}
+            </AccordionTitle>
+            <ButtonList on:click>
+              <Button
+                border="0"
+                on:click!stopPropagation={() => onRemoveLoad(loadItem)}
+              >
+                <Icon name="trash" />
+              </Button>
+            </ButtonList>
+          </El>
+        </AccordionHeader>
 
-          <AccordionBody>
-            <FormInput label="Name" bind:value={loadItem.name} />
-            <FormSelect
-              placeholder="Choose a table...."
-              label="Table Name"
-              items={tables}
-              key="slug"
-              bind:value={loadItem.table}
-              let:item
-            >
-              {item.name}
-            </FormSelect>
-            <FormCheckbox label="Multiple" bind:checked={loadItem.multiple} />
-            <FormField label="Filters">
-              {#each loadItem.filters as filter}
-                {@const table = tables.find((x) => x.slug === loadItem.table)}
+        <AccordionBody>
+          <FormInput label="Name" bind:value={loadItem.name} />
+          <FormSelect
+            placeholder="Choose a table...."
+            label="Table Name"
+            items={tables}
+            key="slug"
+            bind:value={loadItem.table}
+            let:item
+          >
+            {item.name}
+          </FormSelect>
+          <FormCheckbox label="Multiple" bind:checked={loadItem.multiple} />
+          <FormField label="Filters">
+            {#each loadItem.filters as filter}
+              {@const table = tables.find((x) => x.slug === loadItem.table)}
 
-                {#if table}
+              {#if table}
                 <El row>
                   <FormSelect
                     col="3"
@@ -102,30 +107,45 @@
                       ))}><Icon name="trash" /></Button
                   >
                 </El>
-                {/if}
-              {/each}
+              {/if}
+            {/each}
 
-              <Button
-                color="primary"
-                on:click={() => (loadItem.filters = [...loadItem.filters, {}])}
-              >
-                <Icon name="plus" />
-                Add New Filter
-              </Button>
-            </FormField>
-          </AccordionBody>
-        </Accordion>
-      </Card>
-    {/each}
-  </Accordions>
+            <Button
+              color="primary"
+              on:click={() => (loadItem.filters = [...loadItem.filters, {}])}
+            >
+              <Icon name="plus" />
+              Add New Filter
+            </Button>
+          </FormField>
+        </AccordionBody>
+      </Accordion>
+    </Card>
+  {/each}
+</Accordions>
 
-  <FormInput bind:value={new_load_name} label="New Load Name" />
 
-  <Button
-    on:click={() =>
-      (load = [...load, { table: undefined, name: new_load_name, filters: [] }])}
-  >
-    <Icon name="plus" />
-    Load Table
-  </Button>
-</FormField>
+<El row>
+  <FormInput colLg=5 bind:value={new_load_name} label="New Load Name" />
+  <FormSelect colLg=5
+  placeholder="Choose a table...."
+  label="Table Name"
+  items={tables}
+  key="slug"
+  bind:value={new_load_table}
+  let:item
+>
+  {item.name}
+</FormSelect>
+<El col mt="1">
+  <Button w="100" mt="4"
+  color="primary"
+  on:click={onAddLoad}
+>
+  <Icon name="plus" />
+  Load Table
+</Button>
+
+  </El>
+</El>
+

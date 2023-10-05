@@ -175,7 +175,7 @@
 
 </Accordions>
 
-<Button on:click={onAddSlot}>
+<Button color="primary" on:click={onAddSlot}>
   <Icon name="plus"/>
    Add Slot
   </Button>

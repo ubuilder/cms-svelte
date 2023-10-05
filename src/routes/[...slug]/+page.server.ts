@@ -65,16 +65,19 @@ export async function load({ locals, params }) {
 
     const table = await locals.db('u-tables').get({where: {slug: load.table}});
 
-    console.log(table)
     for(let field of table.fields) {
       if(field.type === 'relation') {
         with_[field.name] = {
           table: field.table,
-          field: field.field + '_id',
+          // field: field.field + '_id', // not working
+          field: 'author' + '_id', // working
+
           multiple: field.multiple
         }
       }
     }
+
+    console.log('with_', with_)
 
     if (load.multiple) {
       items[load.name] = await locals

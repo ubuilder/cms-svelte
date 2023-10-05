@@ -55,8 +55,8 @@ export const actions : Actions = {
 
         const data = JSON.parse(await readFile(fileName, 'utf-8'));
 
+        console.log('table slug: ', table.slug, table)
         delete data[table.slug]
-        console.log(data[table.slug])
 
         await writeFile(fileName, JSON.stringify(data));
 

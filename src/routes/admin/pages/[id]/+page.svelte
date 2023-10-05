@@ -3,7 +3,23 @@
   import Page from "$lib/components/core/Page.svelte";
   import { createEventDispatcher, setContext } from "svelte";
   import { modal } from "$lib/components/core/modal";
-  import { Button, FormField, El, FormInput } from "yesvelte";
+  import {
+    Button,
+    FormField,
+    El,
+    FormInput,
+    Tabs,
+    TabList,
+    TabItem,
+    TabContent,
+    TabPanel,
+    FormTextarea,
+    Card,
+    CardBody,
+    CardFooter,
+    CardHeader,
+    Icon,
+  } from "yesvelte";
   import ButtonList from "$lib/components/core/ButtonList.svelte";
   import SlotList from "$lib/ui/SlotList.svelte";
   import PreviewModal from "./PreviewModal.svelte";
@@ -77,18 +93,17 @@
       },
     };
 
-    console.log('load: ', load)
+    console.log("load: ", load);
     for (let item of load) {
       const table = data.tables.find((x) => x.slug === item.table);
-      if(!table) continue;
+      if (!table) continue;
 
       const fields: any = {};
       for (let field of table.fields) {
-        const text = 
-        fields[field.name] = {
+        const text = (fields[field.name] = {
           text: `${item.name}'s ${field.name}`,
           type: field.type,
-        };
+        });
 
         if (field.type === "relation") {
           const otherTable = data.tables.find((x) => x.slug === field.table);
@@ -97,18 +112,16 @@
             otherFields[otherField.name] = {
               text: `${item.name} ${field.name} ${otherField.name}`,
               type: otherField.type,
-            }
+            };
           }
 
           fields[field.name].content = otherFields;
           fields[field.name].type = field.multiple ? "array" : "object";
-
         }
 
-        if(field.type === 'image' || field.type === 'file') {
+        if (field.type === "image" || field.type === "file") {
           // alt, url, caption from assets....
         }
-
       }
 
       items[item.name] = {
@@ -118,37 +131,64 @@
       };
     }
 
-    console.log(items)
+    console.log(items);
     return items;
   }
 </script>
 
 <Page title="Update Page '{data.page.title}'">
-  <Button on:click={openPreviewModal} color="primary" slot="header-buttons">
-    Preview
-  </Button>
+  <ButtonList slot="header-buttons">
+    <Button on:click={()=> history.back()} >
+      <Icon name="chevron-left" />
+      Back
+    </Button>
+    <Button on:click={openPreviewModal} color="primary">
+      Preview
+    </Button>
+  </ButtonList>
+  
   <El row>
-    <FormInput bind:value={request.title} label="Title" />
-
-    <FormInput bind:value={request.slug} label="Slug" />
-
-    <PageLoad bind:load={request.load} bind:tables={data.tables} />
-
-    <FormField label="Content">
-      <SlotList
-        id="slot"
-        items={getItems(request.load)}
-        on:move={onMove}
-        bind:slots={request.slot}
-      />
-    </FormField>
-
-    <El col justifyContent="end" w="100" d="flex" my="2">
-      <ButtonList ms="auto">
-        <Button href="/admin/pages">Cancel</Button>
-        <Button on:click={updatePage} color="primary">Save</Button>
-      </ButtonList>
-    </El>
+    <Tabs>
+      <Card>
+        <CardHeader>
+          <TabList>
+            <TabItem>General</TabItem>
+            <TabItem>Load</TabItem>
+            <TabItem>Content</TabItem>
+          </TabList>
+        </CardHeader>
+      
+      <TabContent>
+          <CardBody>
+            <TabPanel>
+              <FormInput bind:value={request.title} label="Title" />
+              <FormTextarea
+                label="Description"
+                bind:value={request.description}
+              />
+              <FormInput bind:value={request.slug} label="Slug" />
+            </TabPanel>
+            <TabPanel>
+              <PageLoad bind:load={request.load} bind:tables={data.tables} />
+            </TabPanel>
+            <TabPanel>
+                <SlotList
+                  id="slot"
+                  items={getItems(request.load)}
+                  on:move={onMove}
+                  bind:slots={request.slot}
+                />
+            </TabPanel>
+          </CardBody>
+          <CardFooter>
+            <ButtonList ms="auto">
+              <Button href="/admin/pages">Cancel</Button>
+              <Button on:click={updatePage} color="primary">Save</Button>
+            </ButtonList>
+          </CardFooter>
+      </TabContent>
+    </Card>
+    </Tabs>
   </El>
 </Page>
 

@@ -3,6 +3,7 @@
   import { modal } from "$lib/components/core/modal";
   import Modal from "$lib/components/core/modal/Modal.svelte";
   import { onMount, tick } from "svelte";
+  import {components} from "$lib/ui"
   import {
     FormInput,
     Button,
@@ -21,8 +22,7 @@
 
   export let mode: "add" | "edit" = "add";
 
-  let items = ["Button", "Container", "Row", "DynamicList", "FormSelect", "Input", "HtmlText", "Form"];
-
+  let items = Object.keys(components);
   export let slot: any = {
     props: {},
     slot: [],
@@ -30,12 +30,8 @@
 
   let component: any;
 
-  async function updateType(type: string) {
-    const module = await import(`./components/${type}.svelte`);
-
-    const data = module.data;
-
-    component = module.default;
+  async function updateType(type: keyof typeof components) {
+    component = components[type];
   }
 
   onMount(() => {

@@ -1,5 +1,6 @@
 import { connect } from "@ulibs/db";
 import { existsSync, mkdirSync } from "fs";
+import { writeFile } from "fs/promises";
 import qs from "qs";
 
 const enable_test_user = true;
@@ -7,6 +8,7 @@ const enable_test_user = true;
 export const handle = async ({ event, resolve }) => {
   if(!existsSync('./data')) {
     mkdirSync('./data');
+    await writeFile('data/db.json', "{}");
   }
 
   const sitesDb = connect({ filename: "data/db.json" });
