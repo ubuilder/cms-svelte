@@ -68,7 +68,7 @@
   <El d="none" dMd="block">
     <Navbar>
       {#each props.links as link}
-        <NavbarItem title={link.title} icon={link.icon} href={link.url} />
+        <NavbarItem title={link.title} icon={link.icon} href={link.link} />
       {/each}
     </Navbar>
   </El>
