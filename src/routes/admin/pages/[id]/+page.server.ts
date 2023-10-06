@@ -44,4 +44,10 @@ export const actions = {
 
     return { success: true };
   },
+  async removePage({ request, locals, params }) {
+    console.log("remove page", params.id);
+    const id = params.id;
+    await locals.db("u-pages").remove(id)
+    return { success: true };
+  },
 };

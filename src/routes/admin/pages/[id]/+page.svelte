@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { invalidateAll } from "$app/navigation";
+  import { goto, invalidateAll } from "$app/navigation";
   import Page from "$lib/components/core/Page.svelte";
   import { createEventDispatcher, setContext } from "svelte";
   import { modal } from "$lib/components/core/modal";
@@ -25,6 +25,7 @@
   import PreviewModal from "./PreviewModal.svelte";
   import { writable } from "svelte/store";
   import PageLoad from "$lib/components/core/pages/PageLoad.svelte";
+  import ConfirmModal from "$lib/components/core/modal/ConfirmModal.svelte";
 
   export let data;
   console.log("data", data);
@@ -65,11 +66,26 @@
       {
         slug: request.slug,
         title: request.title,
+        autoClose: true,
       },
       {
         size: "lg",
+        autoClose: true,
       }
     );
+  }
+  async function openRemoveConfirmModal() {
+    const res = await modal.open(
+      ConfirmModal,
+      {status: "danger",},
+      {autoClose: true,}
+    );
+    if (res) {
+      fetch("?/removePage", {
+        method: "POST",
+        body: JSON.stringify(request),
+      }).then((res) => goto("/admin/pages"));
+    }
   }
 
   function updatePage() {
@@ -142,7 +158,9 @@
       <Icon name="chevron-left" />
       Back
     </Button>
-    <Button on:click={openPreviewModal} color="primary">Preview</Button>
+    <Button
+      on:click={openPreviewModal}
+      color="primary">Preview</Button>
   </ButtonList>
 
   <El row>
@@ -159,29 +177,38 @@
         <TabContent>
           <CardBody>
             <TabPanel>
-              <FormInput bind:value={request.title} label="Title" />
+              <FormInput
+                bind:value={request.title}
+                label="Title" />
               <FormTextarea
                 label="Description"
-                bind:value={request.description}
-              />
-              <FormInput bind:value={request.slug} label="Slug" />
+                bind:value={request.description} />
+              <FormInput
+                bind:value={request.slug}
+                label="Slug" />
             </TabPanel>
             <TabPanel>
-              <PageLoad bind:load={request.load} bind:tables={data.tables} />
+              <PageLoad
+                bind:load={request.load}
+                bind:tables={data.tables} />
             </TabPanel>
             <TabPanel>
               <SlotList
                 id="slot"
                 items={getItems(request.load)}
                 on:move={onMove}
-                bind:slots={request.slot}
-              />
+                bind:slots={request.slot} />
             </TabPanel>
           </CardBody>
           <CardFooter>
             <ButtonList ms="auto">
+              <Button
+                on:click={openRemoveConfirmModal}
+                color="danger">Remove</Button>
               <Button href="/admin/pages">Cancel</Button>
-              <Button on:click={updatePage} color="primary">Save</Button>
+              <Button
+                on:click={updatePage}
+                color="primary">Save</Button>
             </ButtonList>
           </CardFooter>
         </TabContent>
