@@ -30,29 +30,40 @@
 
 {#if type === "image"}
   <El border borderRoundSize="2" mb="3" position="relative" style="max-width: 300px; min-height: 200px">
-    {#if value}
-      <img src="/files/{value}" alt="test" />
+    {#if value} 
+    {#if !value.includes('{{')}
+    
+    <img src="/files/{value}" alt="test" />
+    {/if}
     {/if}
 
     <El
-      class="overlay {value ? '' : 'show'}"
+      class="overlay {value && !value.includes('{{') ? '' : 'show'}"
       position="absolute"
       end="0"
       bottom="0"
       start="0"
       top="0"
       d="flex"
+      style="flex-direction: column"
       alignItems="center"
       justifyContent="center"
     >
+    {#if value?.includes('{{')}
+    <El tag="span" mb="2">
+      Dynamic: {value}
+    </El>
+    {/if}
       <ButtonList>
         {#if value}
+          
           <Button color="primary" on:click={() => openFilePicker()}>
             <Icon name="refresh" />
           </Button>
           <Button on:click={() => (value = null)} color="danger">
             <Icon name="trash" />
           </Button>
+      
         {:else}
           <Button on:click={openFilePicker}>
             {#if type === "image"}

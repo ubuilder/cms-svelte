@@ -1,7 +1,7 @@
 <script lang="ts">
   import { nanoid } from "nanoid";
   import {
-  Dropdown,
+    Dropdown,
     DropdownItem,
     DropdownMenu,
     El,
@@ -9,63 +9,114 @@
     FormField,
     FormInput,
     Label,
-    Popover,
+    Button,
     FormSelect,
+    FormSwitch,
+    Icon,
   } from "yesvelte";
   import FilePicker from "./FilePicker.svelte";
 
   const id = "form-field-" + nanoid();
 
   function onAdd(key: string) {
-    if(type === 'image') {
-        localValue = '{{' + key + '}}'
+    if (type === "image" || type === "file") {
+      localValue = "{{" + key + "}}";
+    } else if (type === "switch") {
+      localValue = "{{" + key + "}}";
     } else {
-        localValue = localValue + '{{' + key + '}}'
+      localValue = localValue + "{{" + key + "}}";
     }
   }
 
-  export let items: any[] = [];
+  export let items: any = {};
   export let type: string = "plain_text";
 
   export let label: string | undefined = undefined;
   export let required: boolean = false;
   export let value: any;
 
-  let localValue = value ?? '';
+  let localValue = value ?? "";
 
   $: value = localValue;
+
+  function getItemsArray(items: any, array: any[] = [], key = "") {
+    let list: any[] = [];
+
+    Object.keys(items).map((item) => {
+      list.push({
+        text: items[item].text,
+        key: key ? key + "." + item : item,
+        type: items[item].type,
+      });
+      if (items[item].type === "object" && items[item].content) {
+        list = getItemsArray(items[item].content, list, item);
+        console.log(list);
+      }
+    });
+
+    console.log({ array, list });
+    return [...array, ...list];
+  }
+
+  $: itemsArray = getItemsArray(items);
+  $: isDynamic = localValue?.includes?.("{{");
 </script>
 
 <FormField {...$$restProps}>
   <Label d="flex" gap="2" for={id} {required} slot="label">
     <span>{label}</span>
-    {#if items.length > 0}
-    <Dropdown arrow={false} placement="right-start">
+    {#if itemsArray.length > 0}
+      <Dropdown arrow={false} placement="right-start">
         <div slot="target" tabindex="0" class="dynamic-icon" />
         <DropdownMenu>
-            {#each items as item}
-            <DropdownItem on:click={() => onAdd(item.key)}>
-              {item.text}
-            </DropdownItem>
+          {#each itemsArray as item}
+            {#if item.type === type}
+              <DropdownItem on:click={() => onAdd(item.key)}>
+                {item.text}
+              </DropdownItem>
+            {/if}
           {/each}
         </DropdownMenu>
-    </Dropdown>
+      </Dropdown>
     {/if}
   </Label>
-  {value}
   {#if type === "plain_text"}
     <FormInput {...$$restProps} bind:value={localValue} />
-
   {:else if type === "rich_text"}
     <FormEditor {...$$restProps} bind:value={localValue} />
-  {:else if type === 'select'}
-    <FormSelect {...$$restProps} bind:value={localValue} let:item>
+  {:else if type === "select"}
+    {#if isDynamic}
+      <FormInput disabled value="Dynamic: {value}">
+        <Button color="danger" slot="end" on:click={() => (localValue = "")}>
+          <Icon name="minus" />
+        </Button>
+      </FormInput>
+    {:else}
+      <FormSelect
+        {...$$restProps}
+        items={$$restProps.options}
+        bind:value={localValue}
+        let:item
+      >
         {item}
-    </FormSelect>
-    {:else if type === 'image'}
-    <FilePicker {...$$restProps} bind:value={localValue} type="image"/>
+      </FormSelect>
+    {/if}
+  {:else if type === "image"}
+    <FilePicker {...$$restProps} bind:value={localValue} type="image" />
+  {:else if type === "file"}
+    <FilePicker {...$$restProps} bind:value={localValue} type="file" />
+  {:else if type === "switch"}
+    {#if isDynamic}
+      <FormInput disabled value="Dynamic: {value}">
+        <Button color="danger" slot="end" on:click={() => (localValue = "")}>
+          <Icon name="minus" />
+        </Button>
+      </FormInput>
+    {:else}
+      <FormSwitch {...$$restProps} bind:checked={localValue} />
+    {/if}
   {/if}
-  
+
   <slot />
 </FormField>
 
