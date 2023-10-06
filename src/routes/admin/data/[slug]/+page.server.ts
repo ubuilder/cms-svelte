@@ -1,16 +1,18 @@
-import { error, type Actions, type ServerLoad } from "@sveltejs/kit"
+import type { Db, DbTable, Table } from "$lib/types"
+import { error, type ServerLoad } from '@sveltejs/kit'
+
+import type { Actions } from "./$types"
 
 export const load: ServerLoad = async ({ params, locals }) => {
-    const table = await locals.db('u-tables').get({ where: { slug: params.slug } })
+    const table = await locals.db<Table>('u-tables').get({ where: { slug: params.slug! } })
 
-    const rows = await locals.db(params.slug).query({ where: locals.filters })
+    const rows = await locals.db<DbTable>(params.slug!).query({ where: locals.filters })
     for (let value of rows.data) {
 
         for (let field of table.fields) {
             if (field.type === 'relation') {
                 if (field.multiple) {
-                    console.log('loiad multuple relations: ', field.table, field.field, value.id)
-                    value[field.name] = await locals.db(field.table).query({ 
+                    value[field.name] = await locals.db(field.table).query({
                         where: {
                             [field.field + '_id']: {
                                 operator: '=',
@@ -21,33 +23,29 @@ export const load: ServerLoad = async ({ params, locals }) => {
                 } else {
                     const id = value[field.name + '_id']
 
-                    if(id) {
-                        console.log(field, field.table, locals.db(field.table))
+                    if (id) {
                         const filters = { id: id }
                         value[field.name] = await locals.db(field.table).get({ where: filters })
                     }
-
                 }
-
             }
         }
     }
 
-    console.log(rows.data[0])
     return {
         table,
         rows
     }
 }
 
-async function preparePayload({locals, params, body, id = undefined, afterInsert, mode = 'insert'} = {}) {
-    const table = await locals.db('u-tables').get({ where: { slug: params.slug } })
+async function preparePayload({ db, params, body, id = undefined, afterInsert, mode = 'insert' }: { db: Db, params: Record<string, string>, afterInsert?: any, mode: 'update' | 'insert', id?: string, body: any }) {
+    const table = await db<Table>('u-tables').get({ where: { slug: params.slug } })
 
     const payload: any = {}
 
     for (let field of table.fields) {
         // check required only on insert
-        if(mode === 'insert' && field.required) {
+        if (mode === 'insert' && field.required) {
             if (!body[field.name]) {
                 throw error(400, `the "${field.name}" field is required`);
             }
@@ -69,37 +67,37 @@ async function preparePayload({locals, params, body, id = undefined, afterInsert
             if (typeof field.max !== undefined && field.max < body[field.name]) {
                 throw error(400, `the "${field.name}" field should be smaller than ${field.min}`);
             }
-            if (field.negative  && 0 < body[field.name]) {
+            if (field.negative && 0 < body[field.name]) {
                 throw error(400, `the "${field.name}" field should not be negative`);
             }
         }
 
-        if(body[field.name] && field.type === 'relation') {
-            if(field.multiple) { // user.posts
+        if (body[field.name] && field.type === 'relation') {
+            if (field.multiple) { // user.posts
                 // update other table
-                const otherTable = await locals.db('u-tables').get({where: {slug: field.table}});
-                const otherField = otherTable.fields.find(x => x.name === field.field) ;
-                
-                if(otherField) {   
-                    // update other table
-                    if(mode === 'insert') {
+                const otherTable = await db<Table>('u-tables').get({ where: { slug: field.table } });
+                const otherField = otherTable.fields.find(x => x.type === 'relation' && x.name === field.field);
 
-                    afterInsert(async (id: string) => {
-                        console.log('after insert: id: ', id, 'body field name: ', body[field.name])
-                        for(let otherId of body[field.name]) {
-                            await locals.db(otherTable.slug).update(otherId, {
+                if (otherField) {
+                    // update other table
+                    if (mode === 'insert') {
+
+                        afterInsert(async (id: string) => {
+                            console.log('after insert: id: ', id, 'body field name: ', body[field.name])
+                            for (let otherId of body[field.name]) {
+                                await db(otherTable.slug).update(otherId, {
+                                    [field.field + '_id']: id // id of new inserted item
+                                })
+                            }
+                        })
+                    } else {
+                        console.log(`[${mode} - ${id}] set `, field.field + '_id', 'of ', otherTable.slug, ' to ' + id, 'where there ids are', body[field.name])
+                        for (let otherId of body[field.name]) {
+                            await db(otherTable.slug).update(otherId, {
                                 [field.field + '_id']: id // id of new inserted item
                             })
                         }
-                    })
-                } else {
-                    console.log(`[${mode} - ${id}] set `, field.field + '_id', 'of ', otherTable.slug,' to ' + id, 'where there ids are', body[field.name])
-                    for(let otherId of body[field.name]) {
-                        await locals.db(otherTable.slug).update(otherId, {
-                            [field.field + '_id']: id // id of new inserted item
-                        })
                     }
-                }
 
 
                 } else {
@@ -110,10 +108,10 @@ async function preparePayload({locals, params, body, id = undefined, afterInsert
 
 
             } else { // blog.author
-                const otherTable = await locals.db('u-tables').get({where: {slug: field.table}});
+                const otherTable = await db<Table>('u-tables').get({ where: { slug: field.table } });
                 const otherField = otherTable.fields.find(x => x.type === 'relation' && x.table === params.slug && x.multiple && x.field === field.name);
-            
-                if(otherField) {
+
+                if (otherField) {
                     payload[field.name + '_id'] = body[field.name]
                 } else {
                     // not connected
@@ -130,19 +128,19 @@ async function preparePayload({locals, params, body, id = undefined, afterInsert
 
 export const actions: Actions = {
     async insert({ request, locals, params }) {
-        let afterInsertFn: any = null
-        function afterInsert(callback: any) {
+        let afterInsertFn: any = undefined
+        function afterInsert(callback: (id: string) => Promise<void>) {
             afterInsertFn = callback
         }
 
         const body = await request.json()
 
-        const payload: any = await preparePayload({body, params, locals, afterInsert})
-        
+        const payload: any = await preparePayload({ body, params, db: locals.db, afterInsert, mode: 'insert' })
+
 
         const ids = await locals.db(params.slug).insert(payload)
 
-        if(afterInsertFn) {
+        if (afterInsertFn) {
             await afterInsertFn(ids[0])
         }
 
@@ -153,8 +151,7 @@ export const actions: Actions = {
 
         const { id, ...fields } = body
 
-        console.log('in update: ', id)
-        const payload = await preparePayload({locals, id, params, body: fields, mode: 'update', afterInsert: () =>{}});
+        const payload = await preparePayload({ db: locals.db, id, params, body: fields, mode: 'update', afterInsert: () => { } });
         await locals.db(params.slug).update(id, payload)
 
         return { success: true }

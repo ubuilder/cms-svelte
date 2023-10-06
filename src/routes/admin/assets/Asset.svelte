@@ -5,8 +5,9 @@
   import ConfirmModal from "$lib/components/core/modal/ConfirmModal.svelte";
   import { invalidateAll } from "$app/navigation";
   import AssetUpdateModal from "./AssetUpdateModal.svelte";
+  import type { AssetType } from "$lib/types/asset";
 
-  export let asset: any;
+  export let asset: AssetType;
 
   async function onRemove() {
     const choice = await modal.open(ConfirmModal, {
@@ -72,7 +73,7 @@
         start="0"
         end="0"
       >
-        <El tag="strong">{asset.name}</El>
+        <El tag="strong" style="overflow: hidden">{asset.name}</El>
         <Icon on:click!stopPropagation={() => onRemove()} name="trash" />
       </El>
     {:else if asset.type === "audio"}

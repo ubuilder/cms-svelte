@@ -1,10 +1,11 @@
 <script lang="ts">
-  import { Button } from "yesvelte";
+  import { Button, El, Icon } from "yesvelte";
   import { modal } from "../core/modal";
   import FilePickerModal from "./FilePickerModal.svelte";
   import ButtonList from "../core/ButtonList.svelte";
 
   export let type: "image" | "video" | "file" = "file";
+  export let multiple: boolean = false;
 
   export let value: string | undefined = undefined;
 
@@ -13,6 +14,7 @@
       FilePickerModal,
       {
         type,
+        multiple,
       },
       {
         size: "lg",
@@ -20,32 +22,64 @@
       }
     );
 
-    if(file_id) {
-        value = file_id
+    if (file_id) {
+      value = file_id;
     }
-
-    console.log(file_id);
   }
 </script>
 
-{#if value}
-  {#if type === "image"}
-  <Button on:click={() => openFilePicker()}>Replace Image</Button>
-  <Button on:click={() => value = null} color="danger">Remove Image</Button>
-    <img src="/files/{value}" alt="test" />
-  {:else}
-    Type
-  {/if}
-{:else}
-<ButtonList>
-
-  <Button on:click={openFilePicker}>
-    {#if type === "image"}
-      Choose Image
-    {:else}
-      Choose File
+{#if type === "image"}
+  <El border borderRoundSize="2" mb="3" position="relative" style="max-width: 300px; min-height: 200px">
+    {#if value}
+      <img src="/files/{value}" alt="test" />
     {/if}
-  </Button>
-</ButtonList>
 
+    <El
+      class="overlay {value ? '' : 'show'}"
+      position="absolute"
+      end="0"
+      bottom="0"
+      start="0"
+      top="0"
+      d="flex"
+      alignItems="center"
+      justifyContent="center"
+    >
+      <ButtonList>
+        {#if value}
+          <Button color="primary" on:click={() => openFilePicker()}>
+            <Icon name="refresh" />
+          </Button>
+          <Button on:click={() => (value = null)} color="danger">
+            <Icon name="trash" />
+          </Button>
+        {:else}
+          <Button on:click={openFilePicker}>
+            {#if type === "image"}
+              {#if multiple}
+                Choose Images
+              {:else}
+                Choose Image
+              {/if}
+            {:else}
+              Choose File
+            {/if}
+          </Button>
+        {/if}
+      </ButtonList>
+    </El>
+  </El>
+{:else}
+  Type
 {/if}
+
+<style>
+  :global(.overlay) {
+    transition: all 0.3s ease;
+    opacity: 0;
+  }
+  :global(.overlay):hover, :global(.overlay.show) {
+    opacity: 1;
+    background-color: #20202020;
+  }
+</style>

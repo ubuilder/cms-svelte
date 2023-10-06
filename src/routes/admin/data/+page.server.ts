@@ -1,4 +1,6 @@
-import type { Actions } from "@sveltejs/kit";
+import { slugify } from "$lib/helpers/index.js";
+import type { Table } from "$lib/types/table.js";
+import type { Actions } from "./$types";
 import { readFile, writeFile } from "fs/promises";
 
 export async function load({locals}) {
@@ -8,18 +10,6 @@ export async function load({locals}) {
         tables
     }
 }
-
-function slugify(str: string, separator = '_') {
-    let result = "";
-    for (let i = 0; i < str.length; i++) {
-      if (str[i] === " " || str[i] === "-" || str[i] === ":" || str[i] === "_") {
-        result += separator;
-        i++;
-      }
-      result += str[i].toLowerCase();
-    }
-    return result;
-} 
 
 export const actions : Actions = {
     async create(event) {
@@ -48,7 +38,7 @@ export const actions : Actions = {
     async remove(event) {
         const body = await event.request.json();
 
-        const table = await event.locals.db('u-tables').get({where: {id: body.id}})
+        const table = await event.locals.db<Table>('u-tables').get({where: {id: body.id}})
 
         // remove {table.slug} table
         const fileName = `./data/${event.locals.siteId}/db.json`
@@ -62,8 +52,6 @@ export const actions : Actions = {
 
 
         await event.locals.db('u-tables').remove(body.id);
-
-        
 
         return {success: true}
     }

@@ -8,15 +8,16 @@
   import FilterButton from "./FilterButton.svelte";
   import { getContext } from "svelte";
   import type { Writable } from "svelte/store";
+  import type { DbFilter } from "$lib/types";
 
   export let key: string;
   export let text: string;
 
-  const filters = getContext<Writable<any>>("FILTERS");
+  const filters = getContext<Writable<DbFilter>>("FILTERS");
 
   if (!$filters[key]) {
     $filters[key] = {
-        value: [undefined, undefined],
+        value: ['', ''],
         operator: "between",
     };
   }

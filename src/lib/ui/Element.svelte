@@ -1,14 +1,11 @@
 <script lang="ts">
   import { renderVariable } from "$lib/helpers";
 
-  export let element = {};
+  export let element: any = {};
 
-  export let components = {};
+  export let components: any = {};
   export let mode: "edit" | "view" = "view";
   export let items: any = {};
-
-  console.log({ element, components });
-  let type = element.type ?? "html";
 
   let props = element.props ?? {}; // dynamic types
   let component = components[element.type] ?? null;
@@ -18,11 +15,19 @@
 {#if typeof element === "string"}
   {renderVariable(element, items)}
 {:else if slot.length > 0}
-  <svelte:component this={component} props={renderVariable(props, items)} {items}>
+  <svelte:component
+    this={component}
+    props={renderVariable(props, items)}
+    {items}
+  >
     {#each slot as slotItem}
       <svelte:self {mode} element={slotItem} {items} {components} />
     {/each}
   </svelte:component>
 {:else}
-  <svelte:component this={component} props={renderVariable(props, items)} {items} />
+  <svelte:component
+    this={component}
+    props={renderVariable(props, items)}
+    {items}
+  />
 {/if}

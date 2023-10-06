@@ -4,6 +4,7 @@
   import { modal } from "$lib/components/core/modal";
   import Modal from "$lib/components/core/modal/Modal.svelte";
   import FormFields from "$lib/components/data/FormFields.svelte";
+  import type { Table } from "$lib/types";
   import {
     Button,
     El,
@@ -18,8 +19,8 @@
 
   export let submitText = "Create";
 
-  export let table: any = {};
-  export let tables: any[] = [];
+  export let table: Partial<Table> = {};
+  export let tables: Table[] = [];
 
   async function removeTable() {
     fetch('?/remove', {

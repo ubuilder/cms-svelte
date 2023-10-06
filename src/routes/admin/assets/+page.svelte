@@ -26,7 +26,6 @@
     await invalidateAll();
     console.log(result);
   }
-
 </script>
 
 <Page title="Assets">

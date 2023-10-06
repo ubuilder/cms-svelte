@@ -8,10 +8,10 @@
     FormSelect,
   } from "yesvelte";
 
-  let items = getContext("items");
+  // let items = getContext("items");
   export let props: any = {};
   export let edit = false;
-  export let items: ay = {}
+  export let items: any = {}
 
 
   let selectItems: any[] = []

@@ -1,6 +1,6 @@
 <script lang="ts">
   import FilePicker from "$lib/components/data/FilePicker.svelte";
-    import { El, FormField, FormInput, FormSelect } from "yesvelte";
+  import { El, FormField, FormInput, FormSelect } from "yesvelte";
   import SlotList from "../SlotList.svelte";
   import DynamicFormField from "$lib/components/data/DynamicFormField.svelte";
   
@@ -30,10 +30,9 @@
       justifyContent="between"
     >
     <El d="flex" gap="3" alignItems="center">
-        <img src="/files/{props.logo}" alt={props.title} width="50"/>
-        <h1 style="margin:0">{props.title}</h1>
+      <img src="/files/{props.logo}" alt={props.title} width="50" />
+      <h1 style="margin:0">{props.title}</h1>
     </El>
-      <slot />
-    </El>
-  {/if}
-  
+    <slot />
+  </El>
+{/if}
