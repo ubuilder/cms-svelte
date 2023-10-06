@@ -1,8 +1,10 @@
 <script lang="ts">
+  import DynamicFormField from "$lib/components/data/DynamicFormField.svelte";
  import { Button, FormInput, ModalBody, TabContent, TabItem, TabList, TabPanel, Tabs } from "yesvelte";
 
  export let props: any = {};
 
+ export let items: any = {};
  
  export let edit = false;
 </script>
@@ -16,13 +18,13 @@
   </TabList>
   <TabContent>
     <TabPanel p="3">
-      <FormInput label="Text" bind:value={props.text} />
+      <DynamicFormField {items} type="plain_text" label="Text" bind:value={props.text} />
     </TabPanel>
     <TabPanel p="3">
-      <FormInput label="Color" bind:value={props.color} />
+      <DynamicFormField {items} type="plain_text" label="Color" bind:value={props.color} />
     </TabPanel>
     <TabPanel p="3">
-      <FormInput label="type" bind:value={props.type} />
+      <DynamicFormField {items} type="plain_text" label="type" bind:value={props.type} />
     </TabPanel>
   </TabContent>
 </Tabs>

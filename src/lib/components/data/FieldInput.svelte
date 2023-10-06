@@ -35,18 +35,7 @@
 </script>
 
 <FormField position="relative" {...fieldProps}>
-  {#if items.length > 0}
-    <div tabindex="0" class="dynamic-icon" />
-    <Popover trigger="focus">
-      <El class="y-dropdown-menu">
-        {#each items as item}
-          <DropdownItem on:click={() => console.log("add ", item.key)}>
-            {item.text}
-          </DropdownItem>
-        {/each}
-      </El>
-    </Popover>
-  {/if}
+  
   <El row>
     {#if field.type === "plain_text"}
       {#if field.input_type === "textarea"}
@@ -104,36 +93,3 @@
   </El>
 </FormField>
 
-<style>
-  .dynamic-icon {
-    z-index: 10;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: absolute;
-    top: 22px;
-    background: #57bfffc2;
-    border-radius: 50%;
-    left: -7px;
-    width: 15px;
-    height: 15px;
-  }
-
-  .dynamic-icon::before {
-    content: "+";
-    color: white;
-    margin-bottom: 1px;
-  }
-  .dynamic-icon:hover {
-    top: 17px;
-    background: #1da1f2;
-    left: -12px;
-    width: 25px;
-    height: 25px;
-  }
-  .dynamic-icon:hover::before {
-    font-size: 20px;
-    margin-bottom: 5px;
-  }
-</style>

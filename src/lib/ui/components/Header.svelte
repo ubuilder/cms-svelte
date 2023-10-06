@@ -2,20 +2,36 @@
   import FilePicker from "$lib/components/data/FilePicker.svelte";
   import { El, FormField, FormInput, FormSelect } from "yesvelte";
   import SlotList from "../SlotList.svelte";
+  import DynamicFormField from "$lib/components/data/DynamicFormField.svelte";
 
   export let props: any = {};
-  export let items: any = {};
+  let items: any = [{ text: "Page slot", key: "page.slot" }];
   export let slots: any[] = [];
   export let edit = false;
 </script>
 
 {#if edit}
   <El p="3">
-    <FormInput label="Title" bind:value={props.title} />
-    <FormField label="Logo">
-      <FilePicker type="image" bind:value={props.logo} />
-    </FormField>
-    <FormInput label="Background color" bind:value={props.bgcolor} />
+    <DynamicFormField
+      label="Title"
+      type="plain_text"
+      {items}
+      bind:value={props.title}
+    />
+
+    <DynamicFormField
+      type="image"
+      bind:value={props.logo}
+      {items}
+      label="Logo"
+    />
+    <DynamicFormField
+      type="plain_text"
+      bind:value={props.bgcolor}
+      {items}
+      label="Background Color"
+    />
+
     <SlotList bind:slots {items} />
   </El>
 {:else}
