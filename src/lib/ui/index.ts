@@ -10,7 +10,7 @@ import Menu from "./components/Menu.svelte"
 import Footer from "./components/Footer.svelte"
 import Header from "./components/Header.svelte"
 import Card from "./components/Card.svelte"
-
+import Link from './components/Link.svelte'
 // import FormSelect from './components/FormSelect.svelte'
 
 export const components = {
@@ -25,7 +25,8 @@ export const components = {
     Header,
     Menu,
     Footer,
-    Card
+    Card,
+    Link
     // FormSelect
 }
 

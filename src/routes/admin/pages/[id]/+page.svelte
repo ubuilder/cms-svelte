@@ -1,7 +1,7 @@
 <script lang="ts">
   import { goto, invalidateAll } from "$app/navigation";
-  import Page from "$lib/components/core/Page.svelte";
-  import { createEventDispatcher, setContext } from "svelte";
+  import type {FieldRelation, Page as PageType} from '$lib/types'
+import Page from '$lib/components/core/Page.svelte';
   import { modal } from "$lib/components/core/modal";
   import {
     Button,
@@ -19,18 +19,19 @@
     CardFooter,
     CardHeader,
     Icon,
+    FormRadioGroup,
   } from "yesvelte";
   import ButtonList from "$lib/components/core/ButtonList.svelte";
   import SlotList from "$lib/ui/SlotList.svelte";
   import PreviewModal from "./PreviewModal.svelte";
   import { writable } from "svelte/store";
-  import PageLoad from "$lib/components/core/pages/PageLoad.svelte";
   import ConfirmModal from "$lib/components/core/modal/ConfirmModal.svelte";
+  import PageLoad from "$lib/components/core/pages/PageLoad.svelte";
 
   export let data;
   console.log("data", data);
 
-  let request: any = data.page;
+  let request: Partial<PageType> = data.page;
 
   function onMove(detail) {
     console.log("onMove", detail);
@@ -95,7 +96,7 @@
     }).then((res) => invalidateAll());
   }
 
-  function getItems(load: any) {
+  function getItems(load: any): any[] {
     let items: any = {
       page: {
         text: "Page",
@@ -122,7 +123,7 @@
         };
 
         if (field.type === "relation") {
-          const otherTable = data.tables.find((x) => x.slug === field.table);
+          const otherTable = data.tables.find((x) => x.slug === (field as FieldRelation).table);
           const otherFields: any = {};
           for (let otherField of otherTable.fields) {
             otherFields[otherField.name] = {
@@ -186,6 +187,10 @@
               <FormInput
                 bind:value={request.slug}
                 label="Slug" />
+                
+                <FormRadioGroup items={["rtl", "ltr"]} bind:value={request.dir} label="Direction" let:item>
+                  {item === 'rtl' ? "Right to Left" : "Left to Right"}
+                </FormRadioGroup>
             </TabPanel>
             <TabPanel>
               <PageLoad

@@ -1,5 +1,5 @@
 <script context="module">
-  export const hasSlot = true
+  export const hasSlot = true;
 </script>
 
 <script lang="ts">
@@ -12,21 +12,26 @@
     hasSlot: true,
   };
 
-  let items: any = [{text: 'slot', key: 'slot'}];
-  export let slots: any[] = []
+  export let items: any = {};
+  export let slots: any[] = [];
   export let props: any = {};
 
-export let edit = false;
+  export let edit = false;
 </script>
 
 {#if edit}
-<El p="3">
-  <DynamicFormField {items} type="select" label="Size" options={["sm" , 'md', 'lg', 'xl', true]} bind:value={props.size} />
-  <FormField label="Slot">
-    <SlotList bind:slots {items} />
-  </FormField>
-</El>
-
+  <El p="3">
+    <DynamicFormField
+      {items}
+      type="select"
+      label="Size"
+      options={["sm", "md", "lg", "xl", true]}
+      bind:value={props.size}
+    />
+    <FormField label="Slot">
+      <SlotList bind:slots {items} />
+    </FormField>
+  </El>
 {:else}
   <El container={props.size} {...$$restProps}>
     <slot />

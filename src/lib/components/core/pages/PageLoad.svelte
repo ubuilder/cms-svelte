@@ -15,19 +15,28 @@
     Icon,
   } from "yesvelte";
   import ButtonList from "../ButtonList.svelte";
+  import type { PageLoad, Table } from "$lib/types";
 
-  export let load: any;
-  export let tables: any;
+  export let load: PageLoad[];
+  export let tables: Table[];
 
   let new_load_name: any = "";
   let new_load_table: any = undefined;
 
   function onAddLoad() {
-    load = [...load, { table: new_load_table, name: new_load_name, filters: [] }]
-    new_load_name = ''
-    new_load_table = undefined
+    load = [
+      ...load,
+      {
+        table: new_load_table,
+        name: new_load_name,
+        filters: [],
+        multiple: true,
+      },
+    ];
+    new_load_name = "";
+    new_load_table = undefined;
   }
-  
+
   function onRemoveLoad(item: any) {
     load = load.filter((x: any) => x !== item);
   }
@@ -112,7 +121,7 @@
 
             <Button
               color="primary"
-              on:click={() => (loadItem.filters = [...loadItem.filters, {}])}
+              on:click={() => (loadItem.filters = [...loadItem.filters, {field: '', operator: '=', value: ''}])}
             >
               <Icon name="plus" />
               Add New Filter
@@ -124,28 +133,23 @@
   {/each}
 </Accordions>
 
-
 <El row>
-  <FormInput colLg=5 bind:value={new_load_name} label="New Load Name" />
-  <FormSelect colLg=5
-  placeholder="Choose a table...."
-  label="Table Name"
-  items={tables}
-  key="slug"
-  bind:value={new_load_table}
-  let:item
->
-  {item.name}
-</FormSelect>
-<El col mt="1">
-  <Button w="100" mt="4"
-  color="primary"
-  on:click={onAddLoad}
->
-  <Icon name="plus" />
-  Load Table
-</Button>
-
+  <FormInput colLg="5" bind:value={new_load_name} label="New Load Name" />
+  <FormSelect
+    colLg="5"
+    placeholder="Choose a table...."
+    label="Table Name"
+    items={tables}
+    key="slug"
+    bind:value={new_load_table}
+    let:item
+  >
+    {item.name}
+  </FormSelect>
+  <El col mt="1">
+    <Button w="100" mt="4" color="primary" on:click={onAddLoad}>
+      <Icon name="plus" />
+      Load Table
+    </Button>
   </El>
 </El>
-

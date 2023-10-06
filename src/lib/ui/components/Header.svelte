@@ -5,7 +5,7 @@
   import DynamicFormField from "$lib/components/data/DynamicFormField.svelte";
 
   export let props: any = {};
-  let items: any = [{ text: "Page slot", key: "page.slot" }];
+  export let items: any = {}; // [{ text: "Page slot", key: "page.slot" }];
   export let slots: any[] = [];
   export let edit = false;
 </script>
@@ -27,27 +27,35 @@
     />
     <DynamicFormField
       type="plain_text"
+      accept={["select"]}
       bind:value={props.bgcolor}
       {items}
       label="Background Color"
-    />
+    />    
+    
+    <DynamicFormField
+    type="select"
+    bind:value={props.container_size}
+    {items}
+    options={['sm', 'md', 'lg', 'xl']}
+    label="Container Size"
+  />
 
     <SlotList bind:slots {items} />
   </El>
 {:else}
-  <El
-    bgColor={props.bgcolor}
-    bgOpacity="50"
-    borderBottom
-    p="4"
-    d="flex"
-    alignItems="center"
-    justifyContent="between"
-  >
-    <El d="flex" gap="3" alignItems="center">
-      <img src="/files/{props.logo}" alt={props.title} width="50" />
-      <h1 style="margin:0">{props.title}</h1>
+  <El bgColor={props.bgcolor} bgOpacity="50" borderBottom p="4">
+    <El
+      container={props.container_size}
+      d="flex"
+      alignItems="center"
+      justifyContent="between"
+    >
+      <El d="flex" gap="3" alignItems="center">
+        <img src="/files/{props.logo}" alt={props.title} width="50" />
+        <h1 style="margin:0">{props.title}</h1>
+      </El>
+      <slot />
     </El>
-    <slot />
   </El>
 {/if}

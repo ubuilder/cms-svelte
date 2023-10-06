@@ -8,13 +8,14 @@
   export let items: any = {};
 
   let props = element.props ?? {}; // dynamic types
-  let component = components[element.type] ?? null;
+  let component = components[element.type] ?? undefined;
   let slot = element.slot ?? [];
 </script>
 
 {#if typeof element === "string"}
   {renderVariable(element, items)}
 {:else if slot.length > 0}
+{#if component}
   <svelte:component
     this={component}
     props={renderVariable(props, items)}
@@ -24,10 +25,13 @@
       <svelte:self {mode} element={slotItem} {items} {components} />
     {/each}
   </svelte:component>
+  {/if}
 {:else}
+{#if component}
   <svelte:component
     this={component}
     props={renderVariable(props, items)}
     {items}
   />
+  {/if}
 {/if}

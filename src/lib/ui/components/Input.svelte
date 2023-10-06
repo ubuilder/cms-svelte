@@ -1,6 +1,7 @@
 <script lang="ts">
   import InsertVariable from "$lib/components/core/InsertVariable.svelte";
-  import { FormInput, ModalBody, TabContent, TabItem, TabList, TabPanel, Tabs } from "yesvelte";
+  import DynamicFormField from "$lib/components/data/DynamicFormField.svelte";
+  import { El, FormInput, ModalBody, TabContent, TabItem, TabList, TabPanel, Tabs } from "yesvelte";
 
   export const data = {
     props: [{ type: "plain_text", name: "value" }],
@@ -10,8 +11,7 @@
   export let edit = false;
 
   export let props: any = {};
-  let valueInput: FormInput;
-  export let insertVariable = true;
+  export let items: any = {};
 </script>
 
 <!-- 
@@ -23,22 +23,24 @@
  -->
 
 {#if edit}
-  <FormInput
+<El p="3">
+  <DynamicFormField type="plain_text" {items}
     label="Label"
     bind:value={props.label} />
-  <FormInput
+  <DynamicFormField type="plain_text" {items}
     label="Type"
     bind:value={props.type} />
-  <FormInput
+  <DynamicFormField type="plain_text" {items}
     label="Name"
     bind:value={props.name} />
-  {#if insertVariable}
+  <!-- {#if insertVariable}
     <InsertVariable target={valueInput} />
-  {/if}
-  <FormInput
-    bind:this={valueInput}
+  {/if} -->
+  <DynamicFormField type="plain_text" {items}
     label="Default Value"
     bind:value={props.defaultValue} />
+  </El>
+
 {:else}
   <FormInput
     label={props.label}

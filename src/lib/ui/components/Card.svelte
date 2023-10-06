@@ -3,6 +3,8 @@
   import SlotList from "../SlotList.svelte";
   import {components} from '$lib/ui'
   import Element from "../Element.svelte";
+  import DynamicFormField from "$lib/components/data/DynamicFormField.svelte";
+  import Image from "./Image.svelte";
   
     export let props: any = {};
     export let items: any = {};
@@ -11,17 +13,21 @@
 
   {#if edit}
     <El p="3">
-      <FormInput label="Title" bind:value={props.title} />
+      <DynamicFormField type="plain_text" {items} label="Title" bind:value={props.title} />
+      <DynamicFormField type="image" {items} label="Card Image" bind:value={props.image} />
       <SlotList bind:slots={props.slot} {items} />
     </El>
   {:else}
-    <Card>
+    <Card mb="3">
         {#if props.title}
         <CardHeader>
             <CardTitle>
                 {props.title}
             </CardTitle>
         </CardHeader>
+        {/if}
+        {#if props.image}
+          <img src="/files/{props.image}" alt={props.title} />
         {/if}
         <CardBody>
             {#each props.slot as slot}

@@ -19,9 +19,7 @@
   const id = "form-field-" + nanoid();
 
   function onAdd(key: string) {
-    if (type === "image" || type === "file") {
-      localValue = "{{" + key + "}}";
-    } else if (type === "switch") {
+    if (['image', 'file','switch','select'].includes(type)) {
       localValue = "{{" + key + "}}";
     } else {
       localValue = localValue + "{{" + key + "}}";
@@ -30,11 +28,14 @@
 
   export let items: any = {};
   export let type: string = "plain_text";
+  export let accept: string[] = [];
 
   export let label: string | undefined = undefined;
   export let required: boolean = false;
   export let value: any;
 
+  export let col: any | undefined = undefined;
+  
   let localValue = value ?? "";
 
   $: value = localValue;
@@ -59,22 +60,21 @@
   }
 
   $: itemsArray = getItemsArray(items);
+  $: filteredItems= itemsArray.filter(x => x.type === type || accept.includes(x.type))
   $: isDynamic = localValue?.includes?.("{{");
 </script>
 
-<FormField {...$$restProps}>
+<FormField colSm={col} {...$$restProps}>
   <Label d="flex" gap="2" for={id} {required} slot="label">
     <span>{label}</span>
-    {#if itemsArray.length > 0}
+    {#if filteredItems.length > 0}
       <Dropdown arrow={false} placement="right-start">
         <div slot="target" tabindex="0" class="dynamic-icon" />
         <DropdownMenu>
-          {#each itemsArray as item}
-            {#if item.type === type}
+          {#each filteredItems as item}
               <DropdownItem on:click={() => onAdd(item.key)}>
                 {item.text}
               </DropdownItem>
-            {/if}
           {/each}
         </DropdownMenu>
       </Dropdown>
@@ -92,13 +92,15 @@
         </Button>
       </FormInput>
     {:else}
+      {@const isObject = typeof $$restProps.options?.[0] === 'object'}
       <FormSelect
         {...$$restProps}
         items={$$restProps.options}
         bind:value={localValue}
+        key={isObject ? ($$props.key ?? 'key') : undefined}
         let:item
       >
-        {item}
+        {isObject ? (item[$$props.text ?? 'text']) : item}
       </FormSelect>
     {/if}
   {:else if type === "image"}

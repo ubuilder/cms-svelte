@@ -1,26 +1,22 @@
 <script lang="ts">
+  import DynamicFormField from "$lib/components/data/DynamicFormField.svelte";
   import FilePicker from "$lib/components/data/FilePicker.svelte";
   import { El, FormField, FormInput, FormSelect } from "yesvelte";
 
   export let props: any = {};
+  export let items: any = {};
 
   export let edit = false;
 </script>
 
 {#if edit}
   <El p="3">
-    <FormInput label="alt" bind:value={props.alt} />
-    <FormField label="Image">
-      <FilePicker type="image" bind:value={props.file_id} />
-    </FormField>
-    <FormInput label="image_url" bind:value={props.image_url} />
+    <DynamicFormField {items} type="plain_text" label="alt" bind:value={props.alt} />
+    <DynamicFormField {items} type="image" label="Image" bind:value={props.image_id} />
   </El>
 {:else}
   <El>
-    {#if props.file_id}
-      <img src="/files/{props.file_id}" alt={props.alt} />
-    {:else}
-      <img src={props.image_url} alt={props.alt} />
-    {/if}
+    <img src="/files/{props.image_id}" alt={props.alt} />
+   
   </El>
 {/if}

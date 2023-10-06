@@ -16,6 +16,7 @@
   import SlotList from "../SlotList.svelte";
   import { components } from "$lib/ui";
   import Element from "../Element.svelte";
+  import DynamicFormField from "$lib/components/data/DynamicFormField.svelte";
 
   export let items: any = {};
   export let props: any = {};
@@ -86,6 +87,30 @@
         {item.text}
       </FormSelect>
       <FormInput col="6" label="Name" bind:value={props.name} />
+
+      <DynamicFormField
+        type="select"
+        {items}
+        col="6"
+        label="Column Size (1-12)"
+        bind:value={props.size}
+        options={[
+          "auto",
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6",
+          "7",
+          "8",
+          "9",
+          "10",
+          "11",
+          "12",
+          true,
+        ]}
+      />
     </El>
 
     <SlotList bind:slots={props.slot} items={getItems(items, props.itemName)} />
@@ -96,20 +121,27 @@
   {JSON.stringify(items, null, 2)}
 </pre> -->
 
-  {#each items[props.itemName] as item}
-    <!-- <pre>
+  <El row>
+    {#each items[props.itemName]??[] as item}
+      <!-- <pre>
 
-  {JSON.stringify(item, null, 2)}
-</pre> -->
+        {JSON.stringify(props, null, 2)}
+      </pre> -->
 
-    {#each props.slot as slot}
-      <Element
-        element={{ ...slot, slot: slot.props.slot }}
-        items={{ ...items, [props.name]: item }}
-        {components}
-      />
+      <El col={props.size}>
+
+        
+        {#each props.slot as slot}
+          <Element
+            element={{ ...slot, slot: slot.props.slot }}
+            items={{ ...items, [props.name]: item }}
+            {components}
+          />
+        {/each}
+      </El>
     {/each}
-  {/each}
+  </El>
+
   <!-- {#each getItemsArray(items) as item}
     
   {JSON.stringify(items)}

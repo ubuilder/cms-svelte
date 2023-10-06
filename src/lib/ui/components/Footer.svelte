@@ -1,23 +1,23 @@
 <script lang="ts">
-  import { El, FormInput, FormSelect } from "yesvelte";
+  import DynamicFormField from "$lib/components/data/DynamicFormField.svelte";
+import { El  } from "yesvelte";
 
   export let props: any = {};
+  export let items: any = {};
 
   export let edit = false;
 </script>
 
 {#if edit}
   <El p="3">
-    <FormInput label="text" bind:value={props.text} />
-    <FormSelect
-      label="position"
-      items={["start", "center", "end"]}
+    <DynamicFormField {items} type="plain_text" label="text" bind:value={props.text} />
+    <DynamicFormField type="select"
+      {items}
+      label="Position"
+      options={["start", "center", "end"]}
       bind:value={props.position}
-      let:item
-    >
-      {item}
-    </FormSelect>
-    <FormInput label="Background color" bind:value={props.bgcolor} />
+     />
+    <DynamicFormField {items} type="select" label="Background color" bind:value={props.bgcolor} />
   </El>
 {:else}
   <El

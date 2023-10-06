@@ -21,9 +21,11 @@ export type PageSlot = {
 }
 
 export type Page = {
+    id: string;
     title: string;
     description?: string;
     slug: string;
+    dir: 'ltr' | 'rtl';
     load: PageLoad[];
     slot: PageSlot[]
 }
