@@ -38,12 +38,9 @@ export const handle = async ({ event, resolve }) => {
   const { getModel } = connect({ filename: "data/" + siteId + "/db.json" }); // based on url
   event.locals.db = (table: string) => getModel(table);
 
-
-  console.log(event.cookies.getAll())
-
   if (event.cookies.get("auth")) {
     const user = event.locals
-      .db("u-users")
+      .db<any>("u-users")
       .get({ where: { id: event.cookies.get("auth") } });
 
     event.locals.user = user;

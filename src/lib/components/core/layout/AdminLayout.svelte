@@ -10,7 +10,6 @@
 	onMount(() => {
 		dark = localStorage.getItem('THEME_DARK') === 'dark'
 
-		console.log({ dark })
 	})
 
 	$: if (browser) {

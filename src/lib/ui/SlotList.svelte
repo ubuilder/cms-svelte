@@ -36,7 +36,6 @@
     });
 
     if (result) {
-      console.log({ slots, index });
       slots[index] = result;
     }
   }
@@ -113,7 +112,6 @@
     });
 
     if (slot) {
-      console.log({ slots, slot });
       slots = [...(slots ??[]), slot];
     }
   }

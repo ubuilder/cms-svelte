@@ -6,7 +6,6 @@ export const actions = {
     const username = formData.get("username");
     const password = formData.get("password");
 
-    console.log(event.locals.siteId)
     const user = await event.locals.db("u-users").get({ where: { username } });
 
     console.log(user)

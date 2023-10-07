@@ -55,7 +55,6 @@
       }
     });
 
-    console.log({ array, list });
     return [...array, ...list];
   }
 
