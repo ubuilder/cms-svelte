@@ -7,7 +7,7 @@
   export let data;
 </script>
 
-<Page title="Tables">
+<Page title="Content">
   <Button href="./create" slot="header-buttons" color="primary">
     <Icon name="plus" />
     Create Table

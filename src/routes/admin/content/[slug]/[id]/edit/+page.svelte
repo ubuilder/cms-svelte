@@ -3,7 +3,7 @@
     import ButtonList from "$lib/components/core/ButtonList.svelte";
     import PageHeader from "$lib/components/core/PageHeader.svelte";
     import FieldInput from "$lib/components/content/FieldInput.svelte";
-    import { Button, Card, CardBody, El, Icon } from "yesvelte";
+    import { Button, Card, CardBody, El } from "yesvelte";
   
     export let data;
   
@@ -29,7 +29,7 @@
       value2['id'] = value.id
       
       await fetch('../../' + '?/update', {method: 'POST', body: JSON.stringify(value2)}).then(res => res.json())
-      await goto('../..');
+      await goto('../..', {invalidateAll: true});
     }
   
     let value: any = data.value;
@@ -37,12 +37,8 @@
   
   
   <El container="lg">
-    <PageHeader title="Update {data.table.name} ({data.value.id})">
-      <Button href="../../{data.table.slug}">
-        <Icon name="chevron-left" />
-        Back
-      </Button>
-    </PageHeader>
+    <PageHeader title="Update {data.table.name} ({data.value.id})" back />
+
     
     <Card mt="4" tag="form" on:submit={onSubmit}>
       <CardBody row>

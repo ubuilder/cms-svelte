@@ -1,8 +1,17 @@
 <script>
-  import RelationItem from './RelationItem.svelte';
+  import RelationItem from "./RelationItem.svelte";
 
   import PageHeader from "$lib/components/core/PageHeader.svelte";
-  import { Badge, Button, Card, CardBody, El, Icon, Status, Switch } from "yesvelte";
+  import {
+    Badge,
+    Button,
+    Card,
+    CardBody,
+    El,
+    Icon,
+    Status,
+    Switch,
+  } from "yesvelte";
 
   export let data;
 </script>
@@ -13,11 +22,10 @@
       <Icon name="chevron-left" />
       Back
     </Button>
-    <Button
-      color="primary"
-      href="./{data.value.id}/edit"
-    >
-      Edit
+    <Button  color="info" href="./edit">Edit</Button>
+    <Button  color="primary" href="./history">
+      <Icon name="history"/>
+      History
     </Button>
   </PageHeader>
   <El my="4" />
@@ -75,25 +83,26 @@
                   <Status color="secondary">{item}</Status>
                 {/each}
               {:else}
-              <Status color="secondary">{value}</Status>
-
+                <Status color="secondary">{value}</Status>
               {/if}
             {:else}
               ---
             {/if}
           </El>
         {:else if field.type === "relation"}
-        <El ps="5" pb="3" class="value" >
-        {#if field.multiple}
-
-        
-        {#each value as item}
-        <RelationItem value={item} table={field.table} title={field.title}/>
-        {/each}
-        {:else}
-        <RelationItem {value} table={field.table} title={field.title}/>
-        {/if}
-      </El>
+          <El ps="5" pb="3" class="value">
+            {#if field.multiple}
+              {#each value as item}
+                <RelationItem
+                  value={item}
+                  table={field.table}
+                  title={field.title}
+                />
+              {/each}
+            {:else}
+              <RelationItem {value} table={field.table} title={field.title} />
+            {/if}
+          </El>
         {:else}
           <El ps="5" pb="3" class="value">{value}</El>
         {/if}
