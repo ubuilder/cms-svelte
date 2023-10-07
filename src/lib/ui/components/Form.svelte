@@ -3,8 +3,8 @@
 </script>
 
 <script lang="ts">
-  import FieldInput from "$lib/components/data/FieldInput.svelte";
-  import FormFields from "$lib/components/data/FormFields.svelte";
+  import FieldInput from "$lib/components/content/FieldInput.svelte";
+  import FormFields from "$lib/components/content/FormFields.svelte";
 
   import {
     El,

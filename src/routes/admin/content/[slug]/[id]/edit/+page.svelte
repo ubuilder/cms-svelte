@@ -2,7 +2,7 @@
     import { goto } from "$app/navigation";
     import ButtonList from "$lib/components/core/ButtonList.svelte";
     import PageHeader from "$lib/components/core/PageHeader.svelte";
-    import FieldInput from "$lib/components/data/FieldInput.svelte";
+    import FieldInput from "$lib/components/content/FieldInput.svelte";
     import { Button, Card, CardBody, El, Icon } from "yesvelte";
   
     export let data;
@@ -28,8 +28,8 @@
 
       value2['id'] = value.id
       
-      await fetch('/admin/data/' + data.table.slug + '?/update', {method: 'POST', body: JSON.stringify(value2)}).then(res => res.json())
-      await goto('/admin/data/' + data.table.slug);
+      await fetch('../../' + '?/update', {method: 'POST', body: JSON.stringify(value2)}).then(res => res.json())
+      await goto('../..');
     }
   
     let value: any = data.value;
@@ -38,7 +38,7 @@
   
   <El container="lg">
     <PageHeader title="Update {data.table.name} ({data.value.id})">
-      <Button href="/admin/data/{data.table.slug}">
+      <Button href="../../{data.table.slug}">
         <Icon name="chevron-left" />
         Back
       </Button>

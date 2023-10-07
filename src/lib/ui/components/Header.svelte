@@ -1,8 +1,8 @@
 <script lang="ts">
-  import FilePicker from "$lib/components/data/FilePicker.svelte";
+  import FilePicker from "$lib/components/content/FilePicker.svelte";
   import { El, FormField, FormInput, FormSelect } from "yesvelte";
   import SlotList from "../SlotList.svelte";
-  import DynamicFormField from "$lib/components/data/DynamicFormField.svelte";
+  import DynamicFormField from "$lib/components/content/DynamicFormField.svelte";
 
   export let props: any = {};
   export let items: any = {}; // [{ text: "Page slot", key: "page.slot" }];

@@ -5,12 +5,7 @@
 <script lang="ts">
   import { El, FormField, FormInput } from "yesvelte";
   import SlotList from "../SlotList.svelte";
-  import DynamicFormField from "$lib/components/data/DynamicFormField.svelte";
-
-  export const data = {
-    props: [{ type: "plain_text", name: "size" }],
-    hasSlot: true,
-  };
+  import DynamicFormField from "$lib/components/content/DynamicFormField.svelte";
 
   export let items: any = {};
   export let slots: any[] = [];

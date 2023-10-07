@@ -61,7 +61,7 @@
   <El row>
     {#each data.tables as table}
       <El mb="2" col="12" colMd="6" colLg="4" colXl="3">
-        <a href="/admin/data/{table.slug}">
+        <a href="/admin/content/{table.slug}">
           <Card>
             <CardBody d="flex" alignItems="center" justifyContent="between">
               <El d="flex" gap="3" alignItems="center">

@@ -15,7 +15,7 @@
     </Button>
     <Button
       color="primary"
-      href="/admin/data/{data.table.slug}/{data.value.id}/edit"
+      href="./{data.value.id}/edit"
     >
       Edit
     </Button>

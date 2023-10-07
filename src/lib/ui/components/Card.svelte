@@ -3,7 +3,7 @@
   import SlotList from "../SlotList.svelte";
   import {components} from '$lib/ui'
   import Element from "../Element.svelte";
-  import DynamicFormField from "$lib/components/data/DynamicFormField.svelte";
+  import DynamicFormField from "$lib/components/content/DynamicFormField.svelte";
   import Image from "./Image.svelte";
   
     export let props: any = {};

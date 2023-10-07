@@ -1,5 +1,5 @@
 <script lang="ts">
-  import DynamicFormField from "$lib/components/data/DynamicFormField.svelte";
+  import DynamicFormField from "$lib/components/content/DynamicFormField.svelte";
  import { Button, FormInput, ModalBody, TabContent, TabItem, TabList, TabPanel, Tabs } from "yesvelte";
 
  export let props: any = {};

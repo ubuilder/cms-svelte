@@ -76,12 +76,12 @@
 
 <Page title={data.table.name}>
   <ButtonList slot="header-buttons">
-    <Button href="/admin/data">
+    <Button href="..">
       <Icon name="chevron-left" />
       Back
     </Button>
 
-    <Button href="/admin/data/{data.table.slug}/insert" color="primary">
+    <Button href="../{data.table.slug}/insert" color="primary">
       <Icon name="plus" />
       Insert
     </Button>
@@ -142,13 +142,13 @@
     {/each}
     <ListItem style="width: 0" name="Actions">
       <El d="flex" gap="2">
-        <Button size="sm" href="/admin/data/{data.table.slug}/{item.id}">
+        <Button size="sm" href="../{data.table.slug}/{item.id}">
           <Icon name="eye" />
         </Button>
         <Button
           color="primary"
           size="sm"
-          href="/admin/data/{data.table.slug}/{item.id}/edit"
+          href="../{data.table.slug}/{item.id}/edit"
         >
           <Icon name="pencil" />
         </Button>

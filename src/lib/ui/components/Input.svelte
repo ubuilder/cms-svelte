@@ -1,6 +1,6 @@
 <script lang="ts">
   import InsertVariable from "$lib/components/core/InsertVariable.svelte";
-  import DynamicFormField from "$lib/components/data/DynamicFormField.svelte";
+  import DynamicFormField from "$lib/components/content/DynamicFormField.svelte";
   import { El, FormInput, ModalBody, TabContent, TabItem, TabList, TabPanel, Tabs } from "yesvelte";
 
   export const data = {

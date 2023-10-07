@@ -3,7 +3,7 @@
   import ButtonList from "$lib/components/core/ButtonList.svelte";
   import { modal } from "$lib/components/core/modal";
   import Modal from "$lib/components/core/modal/Modal.svelte";
-  import FormFields from "$lib/components/data/FormFields.svelte";
+  import FormFields from "$lib/components/content/FormFields.svelte";
   import type { Table } from "$lib/types";
   import {
     Button,

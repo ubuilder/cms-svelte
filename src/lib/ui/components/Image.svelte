@@ -1,6 +1,6 @@
 <script lang="ts">
-  import DynamicFormField from "$lib/components/data/DynamicFormField.svelte";
-  import FilePicker from "$lib/components/data/FilePicker.svelte";
+  import DynamicFormField from "$lib/components/content/DynamicFormField.svelte";
+  import FilePicker from "$lib/components/content/FilePicker.svelte";
   import { El, FormField, FormInput, FormSelect } from "yesvelte";
 
   export let props: any = {};

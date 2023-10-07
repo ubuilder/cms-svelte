@@ -8,7 +8,7 @@
 
 {#if value}
   <div>
-    <Badge href="/admin/data/{table}/{value.id}" color="info" ghost my="1">
+    <Badge href="./{table}/{value.id}" color="info" ghost my="1">
       {value[title ?? "id"]}
     </Badge>
   </div>

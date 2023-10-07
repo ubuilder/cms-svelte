@@ -4,7 +4,7 @@
 
 
   import Modal from "$lib/components/core/modal/Modal.svelte";
-  import FieldInput from "$lib/components/data/FieldInput.svelte";
+  import FieldInput from "$lib/components/content/FieldInput.svelte";
   import { Button, El, FormDatePicker, FormEditor, FormFileUpload, FormInput, FormSwitch, FormTextarea } from "yesvelte";
 
   export let data: any = {}

@@ -2,7 +2,7 @@
   import { goto } from "$app/navigation";
   import ButtonList from "$lib/components/core/ButtonList.svelte";
   import PageHeader from "$lib/components/core/PageHeader.svelte";
-  import FieldInput from "$lib/components/data/FieldInput.svelte";
+  import FieldInput from "$lib/components/content/FieldInput.svelte";
   import { Button, Card, CardBody, El, Icon } from "yesvelte";
 
   export let data;
@@ -14,11 +14,11 @@
       value2[field.name] = value[field.name];
     }
 
-    await fetch("/admin/data/" + data.table.slug + "?/insert", {
+    await fetch("../" + "?/insert", {
       method: "POST",
       body: JSON.stringify(value2),
     }).then((res) => res.json());
-    await goto("/admin/data/" + data.table.slug);
+    await goto("../");
   }
 
   let value: any = {};
@@ -26,7 +26,7 @@
 
 <El container="lg">
   <PageHeader title="Insert {data.table.name}">
-    <Button href="/admin/data/{data.table.slug}">
+    <Button href="../">
       <Icon name="chevron-left" />
       Back
     </Button>
