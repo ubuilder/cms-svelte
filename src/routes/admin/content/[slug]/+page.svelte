@@ -73,8 +73,13 @@
     }
   }
 </script>
-
 <Page title={data.table.name}>
+  <svelte:fragment slot="title">
+    {data.table.name}
+    <Button ghost color="secondary" href="./edit">
+      <Icon name="settings"/>
+    </Button>
+  </svelte:fragment>
   <ButtonList slot="header-buttons">
     <Button href="..">
       <Icon name="chevron-left" />
@@ -88,7 +93,7 @@
   </ButtonList>
 
   <FilterList>
-    {#each data.table.fields as field}
+    {#each data.table.fields.filter(x => x.show_in_list !== false) as field}
       {#if field.type === "select"}
         <SelectFilter
           items={field.options ?? []}
@@ -115,7 +120,7 @@
   </FilterList>
 
   <ListBox title="" items={data.rows.data} let:item>
-    {#each data.table.fields as field}
+    {#each data.table.fields.filter(x => x.show_in_list !== false) as field}
       <ListItem name={field.name}>
         {#if field.type === "switch"}
           <Switch disabled checked={item[field.name]} />

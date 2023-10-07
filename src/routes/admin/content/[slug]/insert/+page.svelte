@@ -18,10 +18,12 @@
       method: "POST",
       body: JSON.stringify(value2),
     }).then((res) => res.json());
-    await goto("../");
+    await goto("../", {invalidateAll: true});
   }
 
-  let value: any = {};
+  let value: any = data.table.fields.reduce((prev, curr) => {
+    return {...prev, [curr.name]: curr.default_value}
+  }, {});
 </script>
 
 <El container="lg">
@@ -38,7 +40,6 @@
         <FieldInput {field} bind:data={value} />
       {/each}
 
-      {JSON.stringify(value)}
       <El col d="flex" mt="3">
         <ButtonList ms="auto">
           <Button>Cancel</Button>

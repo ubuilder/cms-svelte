@@ -3,6 +3,11 @@ export type FieldBase = {
     required: boolean;
     hint: string;
     placeholder: string;
+    show_in_create: boolean;
+    show_in_list: boolean;
+    show_in_update: boolean;
+    show_in_preview: boolean;
+    default_value: Field['value'];
 }
 export type FieldPlainText = FieldBase & {
     type: 'plain_text',

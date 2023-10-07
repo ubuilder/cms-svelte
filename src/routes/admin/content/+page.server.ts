@@ -3,14 +3,6 @@ import type { Table } from "$lib/types/table.js";
 import type { Actions } from "./$types";
 import { readFile, writeFile } from "fs/promises";
 
-export async function load({locals}) {
-    const tables = await locals.db('u-tables').query({perPage: 50, where: locals.filters}).then(res => res.data)
-    
-    return {
-        tables
-    }
-}
-
 export const actions : Actions = {
     async create(event) {
         const body = await event.request.json()

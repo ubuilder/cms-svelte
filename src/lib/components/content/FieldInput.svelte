@@ -1,10 +1,6 @@
 <script lang="ts">
   import {
-    Dropdown,
-    DropdownItem,
-    DropdownMenu,
     El,
-    FormAutocomplete,
     FormDatePicker,
     FormEditor,
     FormField,
@@ -20,13 +16,14 @@
   import type { Field } from "$lib/types";
 
   export let field: Field;
-  export let data: any = {};
+  export let data: any = {}; 
 
+  export let label: string = field.name;
   export let items: any[] = [];
 
   $: fieldProps = {
     required: field.required,
-    label: field.name,
+    label,
   };
   $: props = {
     required: field.required,

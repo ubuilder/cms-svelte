@@ -67,7 +67,10 @@
 </svelte:head>
 
 <El container="lg">
-  <PageHeader px="0" {title}>
+  <PageHeader px="0">
+    <slot name="title" slot="title">
+      {title}
+    </slot>
     <slot name="header-buttons" />
   </PageHeader>
 
