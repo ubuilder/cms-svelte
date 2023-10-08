@@ -36,7 +36,7 @@ export const handle = async ({ event, resolve }) => {
   }
   // get model based on domain
   const { getModel } = connect({ filename: "data/" + siteId + "/db.json" }); // based on url
-  event.locals.db = (table: string) => {
+    event.locals.db = (table: string) => {
     const db = getModel(table);
     const historyDb = getModel(table + '_history');
 

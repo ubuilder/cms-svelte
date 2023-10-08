@@ -15,37 +15,9 @@
     El,
     CardHeader,
   } from "yesvelte";
-  // import { Identity, routeTo } from '@services'
-  // import { news, user } from '@stores'
-  // import Logo from '@components/layout/Logo.svelte'
 
   export let form;
-
   let loading = false;
-  let request = {
-    userName: "",
-    password: "",
-  };
-
-  let login = async () => {
-    // loading = true
-    // try {
-    // 	await $user.login(request)
-    // 	if ($user.isInRole('INVESTOR')) {
-    // 		news.load()
-    // 		await routeTo('')
-    // 	} else if ($user.isInRole('MARKETER')) {
-    // 		news.load()
-    // 		await routeTo('marketer')
-    // 	} else {
-    // 		await routeTo('admin')
-    // 	}
-    // } catch (err) {
-    // 	console.error(err)
-    // } finally {
-    // 	loading = false
-    // }
-  };
   import tabler from "yesvelte/css/tabler.min.css?url";
 
   $: if (browser && form?.success) {
@@ -79,7 +51,6 @@
         colXl="4">
         <form
           method="POST"
-          action="?/login"
           use:enhance>
           <Card>
             <CardHeader
@@ -88,7 +59,7 @@
               <El tag="h1">UBuilder</El>
             </CardHeader>
             <CardBody>
-              <El tag="h1">Login From</El>
+				<El tag="h1">Register Form</El>
               <FormInput
                 name="username"
                 value=""
@@ -113,18 +84,13 @@
                 <ButtonList>
                   <Button
                     type="button"
-                    href="/auth/register">
-                    Do not have an account
-                  </Button>
-                  <Button
-                    type="button"
-                    on:click={async () => await routeTo("account/forgot-password")}>
-                    Forgot Password
+                    href="/auth/login">
+                    Already have an account?
                   </Button>
                   <Button
                     type="submit"
                     color="primary"
-                    {loading}>Log in</Button>
+                    {loading}>Register</Button>
                 </ButtonList>
               </CardActions>
             </CardFooter>
