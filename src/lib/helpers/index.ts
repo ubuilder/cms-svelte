@@ -2,6 +2,10 @@ import type { Items } from '$lib/types';
 import hbs from 'handlebars'
 
 export function renderVariable<T extends (string | Record<string, any>)>(template: T, items: Items): T {
+  if(Array.isArray(template)) {
+    return template.map(x => renderVariable(x, items))
+  }
+  
   if (typeof template === "string") {
     return hbs.compile(`${template}`)(items) as string;
   } else if (typeof template === "object" && !Array.isArray(template)) {

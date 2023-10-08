@@ -4,21 +4,13 @@
     El,
     FormInput,
     Button,
-    Icon,
-    Navbar,
-    NavbarItem,
-    Offcanvas,
-    OffcanvasBody,
-    Sidebar,
-    SidebarItem,
+    Icon
   } from "yesvelte";
 
   export let props: any = {};
-  let show: boolean = false;
-  export let edit = false;
+  
 </script>
 
-{#if edit}
   <El p="3">
     <El row>
       {#each props.links ?? [] as link}
@@ -52,31 +44,3 @@
 
     </El>
   </El>
-{:else}
-  <El dMd="none">
-    <Icon name="user" on:click={() => show = true}/>
-    <Offcanvas placement="end" autoClose backdrop bind:show>
-      <OffcanvasBody>
-        <Sidebar w="100">
-          {#each props.links as link}
-            <SidebarItem title={link.title} icon={link.icon} href={link.link} />
-          {/each}
-        </Sidebar>
-      </OffcanvasBody>
-    </Offcanvas>
-  </El>
-  <El d="none" dMd="block">
-    <Navbar>
-      {#each props.links as link}
-        <NavbarItem title={link.title} icon={link.icon} href={link.link} />
-      {/each}
-    </Navbar>
-  </El>
-{/if}
-
-<style>
-    :global(.y-navbar-wrapper) {
-        background-color: transparent;
-
-    }
-    </style>

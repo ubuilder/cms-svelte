@@ -23,9 +23,9 @@
     TabPanel,
     Tabs,
   } from "yesvelte";
-  import SlotList from "../SlotList.svelte";
-  import { components } from "..";
-  import Element from "../Element.svelte";
+  import SlotList from "../../SlotList.svelte";
+  import { components } from "../..";
+  import Element from "../../Element.svelte";
 
   export let props: any = {}
 

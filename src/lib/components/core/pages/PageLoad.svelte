@@ -15,10 +15,38 @@
     Icon,
   } from "yesvelte";
   import ButtonList from "../ButtonList.svelte";
-  import type { PageLoad, Table } from "$lib/types";
+  import type { Field, PageLoad, Table } from "$lib/types";
+  import DynamicFormField from "$lib/components/content/DynamicFormField.svelte";
 
   export let load: PageLoad[];
   export let tables: Table[];
+
+  function getFilterType(type: Field['type']) {
+    if(type === 'date_time') {
+      return {
+        operator: 'between',
+        type: 'date_range'
+      }
+    }
+    // if(type === 'date_time') => range picker
+
+    // 
+
+    // if(type === 'plain_text')
+    if(type === 'rich_text') {
+      return {
+        operator: 'like',
+        type: 'plain_text'
+      }
+    }
+
+    return {
+      operator: '=',
+      type: type
+    }
+  }
+
+  export let items: any ={}
 
   let new_load_name: any = "";
   let new_load_table: any = undefined;
@@ -78,6 +106,7 @@
           <FormField label="Filters">
             {#each loadItem.filters as filter}
               {@const table = tables.find((x) => x.slug === loadItem.table)}
+              {@const field = table.fields.find(x => x.name === filter.field)}
 
               {#if table}
                 <El row>
@@ -93,16 +122,27 @@
 
                     {item.name}
                   </FormSelect>
+                  {#if field}
+                  {@const filterType = getFilterType(field.type)}
+
                   <FormSelect
                     col="2"
                     label="Operator"
-                    items={["=", "!=", "like"]}
+                    items={["=", "!=", "like", 'between', 'in']}
                     bind:value={filter.operator}
                     let:item
                   >
                     {item}
                   </FormSelect>
-                  <FormInput col label="Value" bind:value={filter.value} />
+                    {#if filterType.type !== 'date_range'}
+
+                      <DynamicFormField col label="value" {items} type={filterType.type} bind:value={filter.value}/>
+                    {:else}
+                      <DynamicFormField col label="from" {items} type='date_time' bind:value={filter.from}/>
+                      <DynamicFormField col label="to" {items} type='date_time' bind:value={filter.to}/>
+                    {/if}
+                  {/if}
+                  <!-- <FormInput col label="Value" bind:value={filter.value} /> -->
                   <Button
                     color="danger"
                     ghost
@@ -113,8 +153,9 @@
                     on:click={() =>
                       (loadItem.filters = loadItem.filters.filter(
                         (x) => x !== filter
-                      ))}><Icon name="trash" /></Button
-                  >
+                      ))}>
+                      <Icon name="trash" />
+                      </Button>
                 </El>
               {/if}
             {/each}

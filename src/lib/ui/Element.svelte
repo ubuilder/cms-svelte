@@ -1,5 +1,6 @@
 <script lang="ts">
   import { renderVariable } from "$lib/helpers";
+  import { El } from "yesvelte";
 
   export let element: any = {};
 
@@ -8,7 +9,8 @@
   export let items: any = {};
 
   let props = element.props ?? {}; // dynamic types
-  let component = components[element.type] ?? undefined;
+  console.log({element}, components[element.type])
+  let component = components[element.type]?.[mode] ?? undefined;
   let slot = element.slot ?? [];
 </script>
 
@@ -18,11 +20,11 @@
 {#if component}
   <svelte:component
     this={component}
-    props={renderVariable(props, items)}
+    bind:props
     {items}
   >
     {#each slot as slotItem}
-      <svelte:self {mode} element={slotItem} {items} {components} />
+      <svelte:self {mode} bind:element={slotItem} {items} {components} />
     {/each}
   </svelte:component>
   {/if}
@@ -30,7 +32,7 @@
 {#if component}
   <svelte:component
     this={component}
-    props={renderVariable(props, items)}
+    bind:props
     {items}
   />
   {/if}

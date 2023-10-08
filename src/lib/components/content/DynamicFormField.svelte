@@ -13,13 +13,14 @@
     FormSelect,
     FormSwitch,
     Icon,
+    FormRadioGroup,
   } from "yesvelte";
   import FilePicker from "./FilePicker.svelte";
 
   const id = "form-field-" + nanoid();
 
   function onAdd(key: string) {
-    if (['image', 'file','switch','select'].includes(type)) {
+    if (["image", "file", "switch", "select"].includes(type)) {
       localValue = "{{" + key + "}}";
     } else {
       localValue = localValue + "{{" + key + "}}";
@@ -35,7 +36,7 @@
   export let value: any;
 
   export let col: any | undefined = undefined;
-  
+
   let localValue = value ?? "";
 
   $: value = localValue;
@@ -59,7 +60,9 @@
   }
 
   $: itemsArray = getItemsArray(items);
-  $: filteredItems= itemsArray.filter(x => x.type === type || accept.includes(x.type))
+  $: filteredItems = itemsArray.filter(
+    (x) => x.type === type || accept.includes(x.type)
+  );
   $: isDynamic = localValue?.includes?.("{{");
 </script>
 
@@ -67,13 +70,13 @@
   <Label d="flex" gap="2" for={id} {required} slot="label">
     <span>{label}</span>
     {#if filteredItems.length > 0}
-      <Dropdown arrow={false} placement="right-start">
+      <Dropdown autoClose arrow={false} placement="right-start">
         <div slot="target" tabindex="0" class="dynamic-icon" />
         <DropdownMenu>
           {#each filteredItems as item}
-              <DropdownItem on:click={() => onAdd(item.key)}>
-                {item.text}
-              </DropdownItem>
+            <DropdownItem on:click={() => onAdd(item.key)}>
+              {item.text}
+            </DropdownItem>
           {/each}
         </DropdownMenu>
       </Dropdown>
@@ -91,16 +94,28 @@
         </Button>
       </FormInput>
     {:else}
-      {@const isObject = typeof $$restProps.options?.[0] === 'object'}
-      <FormSelect
-        {...$$restProps}
-        items={$$restProps.options}
-        bind:value={localValue}
-        key={isObject ? ($$props.key ?? 'key') : undefined}
-        let:item
-      >
-        {isObject ? (item[$$props.text ?? 'text']) : item}
-      </FormSelect>
+      {@const isObject = typeof $$restProps.options?.[0] === "object"}
+      {#if $$props.input_type === "radio_group"}
+        <FormRadioGroup
+          {...$$restProps}
+          items={$$restProps.options}
+          bind:value={localValue}
+          key={isObject ? $$props.key ?? "key" : undefined}
+          let:item
+        >
+          {isObject ? item[$$props.text ?? "text"] : item}
+        </FormRadioGroup>
+      {:else}
+        <FormSelect
+          {...$$restProps}
+          items={$$restProps.options}
+          bind:value={localValue}
+          key={isObject ? $$props.key ?? "key" : undefined}
+          let:item
+        >
+          {isObject ? item[$$props.text ?? "text"] : item}
+        </FormSelect>
+      {/if}
     {/if}
   {:else if type === "image"}
     <FilePicker {...$$restProps} bind:value={localValue} type="image" />

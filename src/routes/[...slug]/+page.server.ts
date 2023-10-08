@@ -103,6 +103,11 @@ export async function load({ locals, params }) {
     if(page.description) {
       page.description = renderVariable(page.description, items);
     }
+    if(page.dir) {
+      page.dir = renderVariable(page.dir, items);
+    }
+
+    page.slot = renderVariable(page.slot, items)
 
     return page;
   }
