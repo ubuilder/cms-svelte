@@ -113,7 +113,7 @@
       />
     </El>
 
-    <SlotList bind:slots={props.slot} items={getItems(items, props.itemName)} />
+    <SlotList bind:slots={props.slot} items={getItems(items, props.itemName)} id = {$$props.id}/>
   </El>
 {:else}
   <!-- <pre>

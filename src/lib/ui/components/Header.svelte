@@ -41,7 +41,7 @@
     label="Container Size"
   />
 
-    <SlotList bind:slots {items} />
+    <SlotList bind:slots {items} id = {$$props.id}/>
   </El>
 {:else}
   <El bgColor={props.bgcolor} bgOpacity="50" borderBottom p="4">

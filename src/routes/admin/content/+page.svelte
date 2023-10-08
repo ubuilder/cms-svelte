@@ -3,7 +3,6 @@
   import FilterList from "$lib/components/filters/FilterList.svelte";
   import { Button, Card, CardBody, El, Icon } from "yesvelte";
   import TextFilter from "$lib/components/filters/TextFilter.svelte";
-
   export let data;
 </script>
 

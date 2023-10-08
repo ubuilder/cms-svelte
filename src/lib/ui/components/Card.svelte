@@ -15,7 +15,7 @@
     <El p="3">
       <DynamicFormField type="plain_text" {items} label="Title" bind:value={props.title} />
       <DynamicFormField type="image" {items} label="Card Image" bind:value={props.image} />
-      <SlotList bind:slots={props.slot} {items} />
+      <SlotList bind:slots={props.slot} {items} id = {$$props.id}/>
     </El>
   {:else}
     <Card mb="3">

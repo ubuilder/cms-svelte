@@ -1,7 +1,7 @@
 <script lang="ts">
   import { goto, invalidateAll } from "$app/navigation";
   import type {FieldRelation, Page as PageType} from '$lib/types'
-import Page from '$lib/components/core/Page.svelte';
+  import Page from '$lib/components/core/Page.svelte';
   import { modal } from "$lib/components/core/modal";
   import {
     Button,
@@ -27,11 +27,26 @@ import Page from '$lib/components/core/Page.svelte';
   import { writable } from "svelte/store";
   import ConfirmModal from "$lib/components/core/modal/ConfirmModal.svelte";
   import PageLoad from "$lib/components/core/pages/PageLoad.svelte";
+  import { slots } from "$lib/stores/pageSlots"; 
 
   export let data;
-  console.log("data", data);
-
   let request: Partial<PageType> = data.page;
+
+    //sets and syncs with slots store
+  let flag = false
+  slots.subscribe((s)=>{
+    if(flag){
+      data.page.slot = s
+    }
+  })
+  $:{
+    if($slots !== data.page.slot){
+      if(data?.page?.slot){
+        slots.set(data.page.slot)
+        flag = true
+      } 
+    }
+  }
 
   function onMove(detail) {
     console.log("onMove", detail);
@@ -199,7 +214,6 @@ import Page from '$lib/components/core/Page.svelte';
             </TabPanel>
             <TabPanel>
               <SlotList
-                id="slot"
                 items={getItems(request.load)}
                 on:move={onMove}
                 bind:slots={request.slot} />

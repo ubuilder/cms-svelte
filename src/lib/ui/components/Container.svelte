@@ -24,7 +24,7 @@
       bind:value={props.size}
     />
     <FormField label="Slot">
-      <SlotList bind:slots {items} />
+      <SlotList bind:slots {items} id = {$$props.id} />
     </FormField>
   </El>
 {:else}
