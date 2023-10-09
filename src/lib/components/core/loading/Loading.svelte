@@ -2,9 +2,10 @@
 	import { Spinner } from 'yesvelte'
 
 	export let show = false
+	export let absolute = false
 </script>
 
-<div class="loading" class:show>
+<div class="loading" class:absolute class:show>
 	<Spinner color="primary" />
 	<h1>Loading ...</h1>
 </div>
@@ -19,6 +20,7 @@
 		pointer-events: none;
 		width: 100%;
 		height: 100%;
+		
 		position: fixed;
 		top: 0;
 		left: 0;
@@ -41,6 +43,9 @@
 		pointer-events: unset;
 	}
 
+	.loading.absolute {
+		position: absolute;
+	}
 	:global(.y-spinner) {
 		width: 64px;
 		height: 64px;

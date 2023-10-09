@@ -1,50 +1,96 @@
 <script context="module">
-    export const hasSlot = true;
-  </script>
-  
-  <script lang="ts">
-    import FieldInput from "$lib/components/content/FieldInput.svelte";
-    import FormFields from "$lib/components/content/FormFields.svelte";
-  
-    import {
-      El,
-      FormField,
-      FormInput,
-      FormSelect,
-      TabContent,
-      TabItem,
-      TabList,
-      TabPanel,
-      Tabs,
-    } from "yesvelte";
-    import Button from "../Button/ViewButton.svelte";
-    import { page } from "$app/stores";
-    import type { Table } from "$lib/types";
-  
-    export let edit: any;
-    export let props: any = {};
-  
-    const tables: Table[] = $page.data.tables
-  
-    let table: any;
-  
-  
-    $: if (props.table && edit) {
-      table = tables.find((x) => x.slug == props.table);
-    }
-  
-    $: if (!props.data) {
-      props.data = {};
-    }
-    $: if (!props.buttons) {
-      props.buttons = [];
-    }
-    $: if (!props.fields) {
-      props.fields = [];
-    }
-  
-  </script>
-  TODO: Clean this component and use DynamicFormField
+  export const hasSlot = true;
+</script>
+
+<script lang="ts">
+  import FieldInput from "$lib/components/content/FieldInput.svelte";
+  import FormFields from "$lib/components/content/FormFields.svelte";
+
+  import {
+    El,
+    FormField,
+    FormInput,
+    FormSelect,
+    TabContent,
+    TabItem,
+    TabList,
+    TabPanel,
+    Tabs,
+  } from "yesvelte";
+  import Button from "../Button/ViewButton.svelte";
+  import { page } from "$app/stores";
+  import type { Table } from "$lib/types";
+  import DynamicFormField from "$lib/components/content/DynamicFormField.svelte";
+  import SlotList from "$lib/ui/SlotList.svelte";
+
+  export let edit: any;
+  export let props: any = {};
+  export let items: any = {};
+
+  const tables: Table[] = $page.data.tables;
+
+  let table: any;
+
+  const actions = [
+    {
+      name: "Create",
+      key: "create",
+      fields: [
+        {
+          name: 'Table',
+          key: 'table',
+          options: tables.map(x => ({key: x.slug, text: x.name, fields: x.fields}))
+        }
+      ],
+    },
+    {
+      name: "Remove",
+      key: "remove",
+      fields: [
+        {
+          name: 'Table',
+          key: 'table',
+          options: tables.map(x => ({key: x.slug, text: x.name, fields: [{name: 'id', type: 'plain_text'}]}))
+        }
+      ],
+    },
+  ];
+
+  $: if (props.table && edit) {
+    table = tables.find((x) => x.slug == props.table);
+  }
+
+  $: if (!props.data) {
+    props.data = {};
+  }
+  $: if (!props.buttons) {
+    props.buttons = [];
+  }
+  $: if (!props.fields) {
+    props.fields = [];
+  }
+
+  $: action = actions.find((x) => x.key === props.action);
+  $: field = action?.fields.find(x => x.key === props.field)
+</script>
+
+<FormInput bind:value={props.name} label="Name"/>
+
+<FormField label="Content">
+  <SlotList bind:slots={props.slot}/>
+</FormField>
+<!-- 
+<FormSelect items={actions} key="key" let:item>
+  {item.name}
+</FormSelect> -->
+
+<!-- {#if action}
+  {#each action.fields as field}
+    <DynamicFormField type="select" {items} label={field.name} bind:value={props[field.name]}/>
+  {/each}
+
+{/if} -->
+<!-- TODO: Clean this component and use DynamicFormField
     <Tabs style="overflow-y: auto">
       <TabList>
         <TabItem>General</TabItem>
@@ -115,4 +161,4 @@
         </TabPanel>
       </TabContent>
     </Tabs>
-  
+   -->

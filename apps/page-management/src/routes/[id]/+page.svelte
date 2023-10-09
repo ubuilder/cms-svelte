@@ -19,6 +19,7 @@
     CardFooter,
     CardHeader,
     Icon,
+    FormSelect,
     FormRadioGroup,
   } from "yesvelte";
   import ButtonList from "$lib/components/core/ButtonList.svelte";
@@ -29,6 +30,7 @@
   import PageLoad from "$lib/components/core/pages/PageLoad.svelte";
   import { slots } from "$lib/stores/pageSlots";
   import DynamicFormField from "$lib/components/content/DynamicFormField.svelte";
+  import PageActions from "./PageActions.svelte";
 
   export let data;
   let request: Partial<PageType> = data.page;
@@ -188,6 +190,7 @@
             <TabItem>General</TabItem>
             <TabItem>Load</TabItem>
             <TabItem>Content</TabItem>
+            <TabItem>Actions</TabItem>
           </TabList>
         </CardHeader>
 
@@ -210,13 +213,17 @@
                 bind:value={request.description}
               />
 
-              <DynamicFormField type="select" items={getItems(request.load)} input_type="radio_group"
+              <DynamicFormField
+                type="select"
+                items={getItems(request.load)}
+                input_type="radio_group"
                 options={[
-                  {key: "rtl", 'text': 'Right to left'}, 
-                  {key: "ltr", 'text': 'Left to right'}]}
+                  { key: "rtl", text: "Right to left" },
+                  { key: "ltr", text: "Left to right" },
+                ]}
                 bind:value={request.dir}
                 label="Direction"
-               />
+              />
             </TabPanel>
             <TabPanel>
               <PageLoad
@@ -232,12 +239,16 @@
                 bind:slots={request.slot}
               />
             </TabPanel>
+
+            <TabPanel>
+              <PageActions items={getItems(request.load)} bind:page={request} />
+            </TabPanel>
           </CardBody>
           <CardFooter>
             <ButtonList ms="auto">
-              <Button on:click={openRemoveConfirmModal} color="danger"
-                >Remove</Button
-              >
+              <Button on:click={openRemoveConfirmModal} color="danger">
+                Remove
+              </Button>
               <Button href="/admin/pages">Cancel</Button>
               <Button on:click={updatePage} color="primary">Save</Button>
             </ButtonList>

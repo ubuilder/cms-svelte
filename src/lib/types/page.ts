@@ -14,6 +14,12 @@ export type PageLoad = {
     filters: LoadFilter[]
 }
 
+export type PageAction = {
+    form: string,
+    action: string,
+    props: Record<string, any>
+} 
+
 export type PageSlot = {
     props: Record<string, any>,
     type: keyof typeof components;
@@ -27,5 +33,6 @@ export type Page = {
     slug: string;
     dir: 'ltr' | 'rtl';
     load: PageLoad[];
-    slot: PageSlot[]
+    slot: PageSlot[];
+    actions: Partial<PageAction>[]
 }
