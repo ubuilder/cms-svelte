@@ -10,8 +10,6 @@
 
 <El row>
   {#each items[props.itemName] ?? [] as item}
-  {JSON.stringify(item)}
-
     <El col={props.size}>
       {#each props.slot as slot}
         <Element

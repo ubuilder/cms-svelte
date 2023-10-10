@@ -7,7 +7,6 @@
   export let items: any = {};
 </script>
 
-{JSON.stringify(props)}
 <Button type={props.type} color={props.color} {...$$restProps}>
   {props.text}
 </Button>

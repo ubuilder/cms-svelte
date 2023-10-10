@@ -56,9 +56,7 @@ export const handle = async ({ event, resolve }) => {
     }
 
     async function update(id: string, data: any) {
-
-      const row = await db.get({where: {id}});
-      await historyDb.insert({...row, ...data});
+      await historyDb.insert(data);
       // Audit table
       return db.update(id, data)
       // return db.insert({
