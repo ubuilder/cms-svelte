@@ -6,7 +6,6 @@ import type { Actions } from "./$types.js";
 
 export async function load({ locals }) {
   const assets = await getAssets({ filters: locals.filters, db: locals.db });
-
   return {
     assets,
   };

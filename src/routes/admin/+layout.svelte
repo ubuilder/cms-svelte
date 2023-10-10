@@ -87,6 +87,8 @@
           <El textColor="warning" bgColor="light" bgOpacity="25" tag="code">
             src/hooks.server.ts
           </El> file. This warning will be hidden in production.
+          <br />
+            if you do not want to see this message please login <El tag = 'a' href = "/auth/login" >here</El>
         </El>
       </El>
     {/if}
