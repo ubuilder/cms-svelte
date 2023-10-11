@@ -4,27 +4,24 @@ export async function GET({ locals }) {
     const tables = await locals.db<Table>('u-tables').query({ perPage: 50 }).then(res => res.data)
 
 
-    const data = [
+    const data = tables.map(table => ([
         {
-            name: 'Create',
+            name: 'Create ' + table.name,
             key: 'create',
-            label: 'table',
-            fields: tables.map(x => ({ text: x.name, key: x.slug, fields: x.fields }))
+            fields: [{name: 'table', type: 'hidden', value: table.slug}, ...table.fields]
         },
         {
-            name: 'Update',
+            name: 'Update ' + table.name,
             key: 'update',
-            label: 'table',
-            fields: tables.map(x => ({ text: x.name, key: x.slug, fields: [{ name: 'id', type: 'plain_text' }, ...x.fields] }))
+            fields: [{name: 'table', type: 'hidden', value: table.slug}, { name: 'id', type: 'plain_text' }, ...table.fields]
         },
         {
-            name: 'Remove',
+            name: 'Remove ' + table.name,
             key: 'remove',
-            label: 'table',
-            fields: tables.map(x => ({ text: x.name, key: x.slug, fields: [{ name: 'id', type: 'plain_text' }] }))
+            fields: [{name: 'table', type: 'hidden', value: table.slug}, { name: 'id', type: 'plain_text' }]
         },
 
-    ]
+    ]))
 
 
     return new Response(JSON.stringify(data))

@@ -6,6 +6,8 @@ import qs from "qs";
 const enable_test_user = true;
 
 export const handle = async ({ event, resolve }) => {
+
+  console.log('request: ', event.request.url)
   if(!existsSync('./data')) {
     mkdirSync('./data');
     await writeFile('data/db.json', "{}");
