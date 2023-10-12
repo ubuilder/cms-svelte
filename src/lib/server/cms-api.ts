@@ -1,6 +1,6 @@
 import fetch from "node-fetch";
 import type { User } from "../../app";
-import type { DbQuery, Page, Table } from "$lib/types";
+import { DbTable, type DbList, type Page, type Table } from "$lib/types";
 
 type ApiResponse<T = any> = {
   status: number;
@@ -85,14 +85,14 @@ export function cms_api(
       return res;
     },
     async getPages(filters = {}) {
-      return call<DbQuery<Page>>("/pages/getPages", filters);
+      return call<DbList<Page>>("/pages/getPages", filters);
     },
     async createPage({ title, slug }: any) {
       return call("/pages/createPage", { title, slug });
     },
     async getPage(id: string) {
-      return call<DbQuery<Page>>("/pages/getPages", { where: { id } }).then(
-        (res) => res.data.data[0]
+      return call<DbList<Page>>("/pages/getPages", { where: { id } }).then(
+        (res) => res.data!.data[0]
       );
     },
     async updatePage({id, data}: any) {
@@ -102,13 +102,40 @@ export function cms_api(
       return call<any>("/pages/removePage", {id}).then(res => res.data)
 
     },
-    async getTables(filters = {}) {
-      return call<DbQuery<Table>>("/content/getTables", filters);
+    async createTable({name, icon, fields = []}: Partial<Table>) {
+      return call<any>("/content/createTable", {name, icon, fields}).then(res => res.data);
     },
-    async getTable(id: string): Promise<Table> {
-      return call<DbQuery<Table>>("/content/getTables", { where: { id } }).then(
-        (res) => res.data[0]
+    async updateTable({id, data}: {id: string, data: Partial<Table>}) {
+      return call<any>("/content/updateTable", {id, data}).then(res => res.data);
+    },
+    async getTables(filters = {}) {
+      return call<DbList<Table>>("/content/getTables", filters);
+    },
+    async getTableBySlug(slug: string): Promise<Table> {
+      return call<DbList<Table>>("/content/getTables", { where: { slug } }).then(
+        (res) => res.data!.data[0]
       );
+    },
+
+    async getTable(id: string): Promise<Table> {
+      return call<DbList<Table>>("/content/getTables", { where: { id } }).then(
+        (res) => res.data!.data[0]
+      );
+    },
+    async removeTable(id: string) {
+      return call<any>("/content/removeTable", {id}).then(res => res.data)
+    },
+    async insertData(params: any) {
+      return call<any>("/data/insertData", params).then(res => res.data)
+    },
+    async updateData(params: any) {
+      return call<any>("/data/insertData", params).then(res => res.data)
+    },
+    async removeData(params: any) {
+      return call<any>("/data/removeData", params).then(res => res.data)
+    },
+      async getData(params: any) {
+      return call<DbList<DbTable>>("/data/getData", params).then(res => res.data!)
     },
   };
 }

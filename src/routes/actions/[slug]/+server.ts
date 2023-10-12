@@ -5,13 +5,13 @@ export async function POST(event:any){
         const data = body.data;
         const table = body.table;
 
-        await event.locals.db(table).insert(data)
+        await event.locals.api.insertData({table, data})
     }
     else if(event.params.slug === "remove"){
         const data = body.data;
         const table = body.table;
         
-        await event.locals.db(table).remove(data.id)
+        await event.locals.api.removeData({table, id: data.id})
     }
     
     console.log("action called: ", event.params.slug, body);

@@ -1,9 +1,9 @@
 export async function load({params, locals}) {
-    const table = await locals.db('u-tables').get({where: {slug: params.slug }})
+    const table = await locals.api.getTableBySlug(params.slug)
 
     console.log('load value: ', table.slug, params.id)
 
-    const value = await locals.db(table.slug).get({where: {id: params.id}})   
+    const value = await locals.api.getData({table: params.slug, where: {id: params.id}}).then(res => res.data![0])  
 
     console.log('layout load', value)
 

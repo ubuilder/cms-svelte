@@ -9,6 +9,11 @@
   <meta name="description" content={data.page.description} />
 </svelte:head>
 
+<pre>
+
+  {JSON.stringify(data.page, null, 2)}
+
+</pre> 
 {#key data.page.id}
 <div style="height: 100%;" dir={data.page.dir}>
   {#each data.page.slot as element}

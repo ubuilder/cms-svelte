@@ -7,10 +7,12 @@
   export let items: any = {};
 </script>
 
+{JSON.stringify(props)}
+
 <El container={props.size} {...$$restProps}>
-  {#each props.slot as slot}
+  {#each props.slot ?? [] as slot}
     <Element
-      element={{ ...slot, slot: slot.props.slot }}
+      element={slot}
       {items}
       {components}
     />
