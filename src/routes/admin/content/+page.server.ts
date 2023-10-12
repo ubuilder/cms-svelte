@@ -7,9 +7,8 @@ export const actions : Actions = {
     async create(event) {
         const body = await event.request.json()
 
-        await event.locals.db('u-tables').insert({
+        await event.locals.api.createTable({
             name: body.name,
-            slug: slugify(body.name),
             icon: body.icon,
             fields: body.fields
         })
@@ -19,10 +18,13 @@ export const actions : Actions = {
     async update(event) {
         const body = await event.request.json()
 
-        await event.locals.db('u-tables').update(body.id, {
-            name: body.name,
-            icon: body.icon,
-            fields: body.fields
+        await event.locals.api.updateTable({
+            id: body.id, 
+            data: {
+                name: body.name,
+                icon: body.icon,
+                fields: body.fields
+            }
         })
 
         return {success: true}
@@ -30,20 +32,18 @@ export const actions : Actions = {
     async remove(event) {
         const body = await event.request.json();
 
-        const table = await event.locals.db<Table>('u-tables').get({where: {id: body.id}})
+        await event.locals.api.removeTable(body.id)
 
-        // remove {table.slug} table
-        const fileName = `./data/${event.locals.siteId}/db.json`
+        // // remove {table.slug} table
+        // const fileName = `./data/${event.locals.siteId}/db.json`
 
-        const data = JSON.parse(await readFile(fileName, 'utf-8'));
+        // const data = JSON.parse(await readFile(fileName, 'utf-8'));
 
-        // console.log('table slug: ', table.slug, table)
-        delete data[table.slug]
+        // // console.log('table slug: ', table.slug, table)
+        // delete data[table.slug]
 
-        await writeFile(fileName, JSON.stringify(data));
+        // await writeFile(fileName, JSON.stringify(data));
 
-
-        await event.locals.db('u-tables').remove(body.id);
 
         return {success: true}
     }

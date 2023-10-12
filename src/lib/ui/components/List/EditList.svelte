@@ -84,7 +84,7 @@
   </El>
 
   <SlotList
-    bind:slots={props.slot}
+    bind:slotList={props.slot}
     items={getItems(items, props.itemName)}
     id={$$props.id}
   />

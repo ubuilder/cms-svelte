@@ -5,17 +5,17 @@ export const actions = {
     const username = formData.get("username");
     const password = formData.get("password");
 
-    const user = await event.locals.db("u-users").get({ where: { username } });
-
-    if (!user) {
-      return fail(401, { field: 'username', message: "this account does not exist" });
+    const response = await event.locals.api.login({username, password})
+    if (response.status !== 200) {
+      return fail(response.status, { field: 'username', message: response.message });
     }
 
-    if (user.password !== password + "_hashed") {
-      return fail(401, { field: 'password', message: "Password is incorrect" });
-    }
+    console.log(response.data)
+    // if (user.password !== password + "_hashed") {
+    //   return fail(401, { field: 'password', message: "Password is incorrect" });
+    // }
 
-    event.cookies.set('auth', user.id, {
+    event.cookies.set('token', response.data.token, {
         path: '/',
         maxAge: 60 * 60 * 24 *15
     })

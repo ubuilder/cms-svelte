@@ -37,5 +37,5 @@ options={}
 label="Container Size"
 /> -->
 
-<SlotList bind:slots={props.slot} {items} />
+<SlotList bind:slotList={props.slot} {items} />
 </El>

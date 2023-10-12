@@ -21,8 +21,10 @@ export type DbWith = {
     }
 }
 
+export type DbList<T> = {data: T[], page: number, perPage: number, total: number }
+
 export type DbGet<T> = (params: {where?: DbFilter, with?: DbWith}) => Promise<T>
-export type DbQuery<T> = (params: {where?: DbFilter, with?: DbWith, page?: number, perPage?: number;}) => Promise<{data: T[], page: number, perPage: number, total: number }>
+export type DbQuery<T> = (params: {where?: DbFilter, with?: DbWith, page?: number, perPage?: number;}) => Promise<DbList<T>>
 export type DbInsert<T> = (data: Partial<T>) => Promise<string[]>
 export type DbUpdate<T> = (id: string, data: Partial<T>) => Promise<T>
 export type DbRemove<T> = (id: string) => Promise<boolean>

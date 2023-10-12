@@ -20,7 +20,7 @@
   import { slots as slotsStore } from "$lib/stores/pageSlots";
   import Element from "./Element.svelte";
 
-  export let slots: any[] = [];
+  export let slotList: any[] = [];
   export let id = "";
   export let items: any = {};
 
@@ -33,8 +33,8 @@
     });
 
     if (choice) {
-      slots.splice(index, 1);
-      slots = slots;
+      slotList.splice(index, 1);
+      slotList = slotList;
     }
   }
   type MoveCustomeEvent = {
@@ -99,14 +99,14 @@
     });
 
     if (slot) {
-      slots = [...(slots ?? []), slot];
+      slotList = [...(slotList ?? []), slot];
     }
   }
 </script>
 
 <Accordions id={id + "_"}>
   <div style="padding: 8px 0px" bind:this={element}>
-    {#each slots ?? [] as slot, index}
+    {#each slotList ?? [] as slot, index}
       <Card
         style="border: none;"
         id={id + "_" + index}

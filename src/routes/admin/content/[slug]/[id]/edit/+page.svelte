@@ -13,9 +13,12 @@
       for(let field of data.table.fields) {
 
         if(field.type === 'relation' && typeof value[field.name] === 'object' && !Array.isArray(value[field.name])) {
+          console.log("multiple: "+field.multiple)
           if(field.multiple) {
+            console.log("yes")
             value2[field.name] = value[field.name].map((x:any)=> x.id)
           } else {
+            console.log("no")
             value2[field.name] = value[field.name].id
           }
         } else {

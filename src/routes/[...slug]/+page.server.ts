@@ -2,10 +2,10 @@ import { renderVariable } from "$lib/helpers/index.js";
 import type { Db, DbFilter, DbWith, Items, Table } from "$lib/types/index.js";
 import type { Page } from "$lib/types/page.js";
 
-async function findPageBySlug({ db, slug }: {db: Db, slug: string}): Promise<{ page?: Page, params: Record<string, string> }> {
+async function findPageBySlug({ api, slug }: {api: App.Locals['api'], slug: string}): Promise<{ page?: Page, params: Record<string, string> }> {
   let routes = []
-  const pages = await db<Page>('u-pages').query({ where: {} })
-  for (let page of pages.data) {
+  const pages = await api.getPages({ where: {} }).then(res => res.data.data)
+  for (let page of pages) {
     routes.push(page.slug)
   }
   routes.sort()
@@ -21,11 +21,11 @@ async function findPageBySlug({ db, slug }: {db: Db, slug: string}): Promise<{ p
   console.log("slug", slug)
   for (let route of routes) {
     if (route == slug) {
-      const page = await db<Page>("u-pages").get({ where: { slug: route } });
+      const page = await api.getPages({ where: { slug: route } }).then(res => res.data!.data[0]);
       return { page, params: {} };
     } else if (route.indexOf('/{') > -1 && route.startsWith(slug.split("/")[0])) {
       console.log('this')
-      const page = await db<Page>("u-pages").get({ where: { slug: route } });
+      const page = await api.getPages({ where: { slug: route } }).then(res => res.data!.data[0]);
       console.log(route)
       let key = route.split("/")[1]
       key = key.substring(1, key.length - 1)
@@ -43,7 +43,7 @@ async function findPageBySlug({ db, slug }: {db: Db, slug: string}): Promise<{ p
 }
 
 export async function load({ locals, params }) {
-  const { page, params: pageParams } = await findPageBySlug({ db: locals.db, slug: params.slug });
+  const { page, params: pageParams } = await findPageBySlug({ api: locals.api, slug: params.slug });
   console.log('page ==', page)
 
   if(!page) throw new Error('Page not found!');
@@ -68,7 +68,7 @@ export async function load({ locals, params }) {
       };
     }
 
-    const table: Table = await locals.db<Table>('u-tables').get({ where: { slug: load.table } });
+    const table = await locals.api.getTableBySlug(load.table);
 
     for (let field of table.fields) {
       if (field.type === 'relation') {
@@ -85,14 +85,9 @@ export async function load({ locals, params }) {
     console.log('with_', with_)
 
     if (load.multiple) {
-      items[load.name] = await locals
-        .db(load.table)
-        .query({ where, with: with_ })
-        .then((res: any) => res.data);
+      items[load.name] = await locals.api.getData({table: load.table, where, with: with_}).then(res => res.data!)
     } else {
-      items[load.name] = await locals
-        .db(load.table)
-        .get({ where, with: with_ });
+      items[load.name] = await locals.api.getData({table: load.table, where, with: with_}).then(res => res.data[0]!)
     }
 
     console.log('after load: ', items)
@@ -107,11 +102,13 @@ export async function load({ locals, params }) {
       page.dir = renderVariable(page.dir, items);
     }
 
-    page.slot = renderVariable(page.slot, items)
+    // page.slot = renderVariable(page.slot, items)
 
+    console.log(JSON.stringify(page, null, 4))
     return page;
   }
 
+  console.log({items})
   return {
     page: await render(page),
     items,
