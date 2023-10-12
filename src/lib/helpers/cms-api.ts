@@ -1,6 +1,6 @@
-import fetch from "node-fetch";
+// import fetch from "node-fetch";
 import type { User } from "../../app";
-import { DbTable, type DbList, type Page, type Table } from "$lib/types";
+import type { DbTable, DbList, Page, Table } from "$lib/types";
 
 type ApiResponse<T = any> = {
   status: number;

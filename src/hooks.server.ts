@@ -2,7 +2,7 @@ import { connect } from "@ulibs/db";
 import { existsSync, mkdirSync } from "fs";
 import { writeFile } from "fs/promises";
 import qs from "qs";
-import { cms_api } from "$lib/server/cms-api";
+import { cms_api } from "$lib/helpers/cms-api";
 
 const enable_test_user = true;
 

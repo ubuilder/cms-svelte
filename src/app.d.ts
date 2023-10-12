@@ -1,6 +1,6 @@
 // See https://kit.svelte.dev/docs/types#app
 
-import type { cms_api } from "$lib/server/cms-api";
+import type { cms_api } from "$lib/helpers/cms-api";
 import type { Db, DbFilter } from "$lib/types";
 
 // for information about these interfaces

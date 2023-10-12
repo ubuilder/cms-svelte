@@ -1,9 +1,6 @@
-export async function load({url}) {
-
-    const item = url.searchParams.get('item') ?? 0
-
-
+export async function load({cookies, locals}) {
     return {
-        item
+        token: cookies.get('token'),
+        siteId: locals.siteId
     }
 }

@@ -46,6 +46,7 @@
     <SidebarItem title="Pages" href="/admin/pages" icon="file" />
     <SidebarItem title="Assets" href="/admin/assets" icon="photo" />
     <SidebarItem title="Market" href="/admin/market" icon="building-store" />
+    <SidebarItem title="Test API" href="/admin/test" icon="test" />
     <SidebarItem title="Settings" href="/admin/settings" icon="settings" />
   </svelte:fragment>
   <svelte:fragment slot="header-end">
