@@ -7,17 +7,14 @@
   
     export let data;
   
-    console.log('ssssss', data)
     async function onSubmit() {
       const value2: any = {}
 
       for(let field of data.table.fields) {
-      console.log(value[field.name], value);
 
         if(field.type === 'relation' && typeof value[field.name] === 'object' && !Array.isArray(value[field.name])) {
-
           if(field.multiple) {
-            value2[field.name] = value[field.name].map(x => x.id)
+            value2[field.name] = value[field.name].map((x:any)=> x.id)
           } else {
             value2[field.name] = value[field.name].id
           }
@@ -34,7 +31,6 @@
   
     let value: any = data.value;
   </script>
-  
   
   <El container="lg">
     <PageHeader title="Update {data.table.name} ({data.value.id})">

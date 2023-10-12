@@ -31,7 +31,7 @@
 {#if value}
   {#if type === "image"}
   <Button on:click={() => openFilePicker()}>Replace Image</Button>
-  <Button on:click={() => value = null} color="danger">Remove Image</Button>
+  <Button on:click={() => value = undefined} color="danger">Remove Image</Button>
     <img src="/files/{value}" alt="test" />
   {:else}
     Type

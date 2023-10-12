@@ -1,1 +1,240 @@
-{"u-pages":[{"id":"SdiuiIya","title":"blogs","slug":"blogs","props":{},"load":[{"table":"blogs","name":"blogs","filters":[],"multiple":true}],"slot":[{"props":{"title":"EEE","logo":"fPlwadkO","bgcolor":"dark"},"type":"Header","slot":[{"props":{"links":[{"title":"abc","link":"/abc"},{"title":"def","link":"/def"}],"title":"user","link":"/todos"},"type":"Menu"}]},{"props":{"size":"lg"},"slot":[{"props":{"text":"<h1>blog lists</h1>"},"type":"HtmlText"},{"props":{"itemName":"blogs","name":"blog","slot":[{"props":{"title":"{{blog.title}}","slot":[{"props":{"alt":"Image","image_url":"/files/{{blog.image}}"},"type":"Image"},{"props":{"image_url":"/files/{{blog.author.profile}}","alt":"{{blog.author.name}}"},"type":"Image"},{"props":{"text":"<p>By: <strong>{{blog.author.name}}</strong></p>"},"type":"HtmlText"}]},"type":"Card"}]},"type":"DynamicList"}],"type":"Container"},{"props":{"text":"copyright &copy; 2023 Mohammad Edriss Aria alright reserved","position":"center","bgcolor":"light"},"type":"Footer"}],"description":"this a blog site"}],"u-tables":[{"id":"lNqSpIQE","name":"blogs","slug":"blogs","icon":"file","fields":[{"name":"title","type":"plain_text","mode":"single","required":true},{"name":"content","type":"rich_text","mode":"single","required":true},{"name":"slug","type":"plain_text","mode":"single"},{"name":"author","type":"relation","mode":"single","multiple":false,"table":"users","title":"name","field":"blogs"},{"name":"image","type":"image","mode":"single"}]},{"id":"liJvdohV","name":"users","slug":"users","icon":"database","fields":[{"name":"username","type":"plain_text","mode":"single","required":true},{"name":"email","type":"plain_text","mode":"single","required":false},{"name":"password","type":"plain_text","mode":"single","required":true},{"name":"name","type":"plain_text","mode":"single"},{"name":"profile","type":"image","mode":"single"},{"name":"blogs","type":"relation","mode":"single","multiple":true,"table":"blogs","title":"title","field":"author"}]}],"users":[{"id":"cJDncObI","username":"Aria","email":"Aria@gmail.com","password":"123","name":"edriss","profile":"fPlwadkO"},{"id":"IOWBrBhs","username":"Jawad","email":"jawad@gmail.com","password":"123","name":"jawad","profile":"fPlwadkO"},{"id":"wjJbugcA","username":"hadigak","email":"hadi@gmail.com","password":"123","name":"hadi","profile":"fPlwadkO"}],"u-files":[{"id":"fPlwadkO","name":"allef-vinicius-zR7Js1a2JRs-unsplash.jpg","type":"image","size":1773536,"alt":"","description":""},{"id":"NeIgQdEZ","name":"jon-flobrant-rB7-LCa_diU-unsplash.jpg","type":"image","size":6872493,"alt":"","description":""},{"id":"QoyEtxbT","name":"jesse-gardner-OwWbUOIbhDY-unsplash.jpg","type":"image","size":1348977,"alt":"","description":""},{"id":"vdbrPcPj","name":"karl-kohler-oK0CdViFwXA-unsplash.jpg","type":"image","size":2395547,"alt":"","description":""}],"blogs":[{"id":"fvmEmPCM","title":"nature","content":"<p><strong>the nature is beatifull</strong></p>","slug":"nature","author_id":"cJDncObI","image":"vdbrPcPj"},{"id":"hgosTRUP","title":"haid post","content":"<p>hadi post something goes here...</p>","slug":"h-post","author_id":"wjJbugcA","image":"QoyEtxbT"},{"id":"NOKLLTBk","title":"edrissjan","content":"<p><strong>edisjan....alksfjladlkfjalk</strong>edisjan....alksfjladlkfjalkdjfedisjan....alksfjladlkfjalkdjfedisjan....alksfjladlkfjalkdjfedisjan....alksfjladlkfjalkdjfedisjan....alksfjladlkfjalkdjfedisjan....alksfjladlkfjalkdjfedisjan....alksfjladlkfjalkdjfedisjan....alksfjladlkfjalkdjfedisjan....alksfjladlkfjalkdjfedisjan....alksfjladlkfjalkdjfedisjan....alksfjladlkfjalkdjfedisjan....alksfjladlkfjalkdjfedisjan....alksfjladlkfjalkdjfedisjan....alksfjladlkfjalkdjfedisjan....alksfjladlkfjalkdjfedisjan....alksfjladlkfjalkdjfedisjan....alksfjladlkfjalkdjfedisjan....alksfjladlkfjalkdjfedisjan....alksfjladlkfjalkdjfedisjan....alksfjladlkfjalkdjfedisjan....alksfjladlkfjalkdjf<strong>djf</strong></p>","slug":"adis","author_id":"cJDncObI"}]}
+{
+  "u-pages": [
+    {
+      "id": "SdiuiIya",
+      "title": "blogs",
+      "slug": "blogs",
+      "props": {},
+      "load": [
+        { "table": "blogs", "name": "blogs", "filters": [], "multiple": true }
+      ],
+      "slot": [
+        {
+          "props": { "title": "EEE", "logo": "fPlwadkO", "bgcolor": "dark" },
+          "type": "Header",
+          "slot": [
+            {
+              "props": {
+                "links": [
+                  { "title": "abc", "link": "/abc" },
+                  { "title": "def", "link": "/def" }
+                ],
+                "title": "user",
+                "link": "/todos"
+              },
+              "type": "Menu"
+            }
+          ]
+        },
+        {
+          "props": { "size": "lg" },
+          "slot": [
+            { "props": { "text": "<h1>blog lists</h1>" }, "type": "HtmlText" },
+            {
+              "props": {
+                "itemName": "blogs",
+                "name": "blog",
+                "slot": [
+                  {
+                    "props": {
+                      "title": "{{blog.title}}",
+                      "slot": [
+                        {
+                          "props": {
+                            "alt": "Image",
+                            "image_url": "/files/{{blog.image}}"
+                          },
+                          "type": "Image"
+                        },
+                        {
+                          "props": {
+                            "image_url": "/files/{{blog.author.profile}}",
+                            "alt": "{{blog.author.name}}"
+                          },
+                          "type": "Image"
+                        },
+                        {
+                          "props": {
+                            "text": "<p>By: <strong>{{blog.author.name}}</strong></p>"
+                          },
+                          "type": "HtmlText"
+                        }
+                      ]
+                    },
+                    "type": "Card"
+                  }
+                ]
+              },
+              "type": "DynamicList"
+            }
+          ],
+          "type": "Container"
+        },
+        {
+          "props": {
+            "text": "copyright &copy; 2023 Mohammad Edriss Aria alright reserved",
+            "position": "center",
+            "bgcolor": "light"
+          },
+          "type": "Footer"
+        }
+      ],
+      "description": "this a blog site"
+    }
+  ],
+  "u-tables": [
+    {
+      "id": "lNqSpIQE",
+      "name": "blogs",
+      "slug": "blogs",
+      "icon": "file",
+      "fields": [
+        {
+          "name": "title",
+          "type": "plain_text",
+          "mode": "single",
+          "required": true
+        },
+        {
+          "name": "content",
+          "type": "rich_text",
+          "mode": "single",
+          "required": true
+        },
+        { "name": "slug", "type": "plain_text", "mode": "single" },
+        {
+          "name": "author",
+          "type": "relation",
+          "mode": "single",
+          "multiple": false,
+          "table": "users",
+          "title": "name",
+          "field": "blogs"
+        },
+        { "name": "image", "type": "image", "mode": "single" }
+      ]
+    },
+    {
+      "id": "liJvdohV",
+      "name": "users",
+      "slug": "users",
+      "icon": "database",
+      "fields": [
+        {
+          "name": "username",
+          "type": "plain_text",
+          "mode": "single",
+          "required": true
+        },
+        {
+          "name": "email",
+          "type": "plain_text",
+          "mode": "single",
+          "required": false
+        },
+        {
+          "name": "password",
+          "type": "plain_text",
+          "mode": "single",
+          "required": true
+        },
+        { "name": "name", "type": "plain_text", "mode": "single" },
+        { "name": "profile", "type": "image", "mode": "single" },
+        {
+          "name": "blogs",
+          "type": "relation",
+          "mode": "single",
+          "multiple": true,
+          "table": "blogs",
+          "title": "title",
+          "field": "author"
+        }
+      ]
+    }
+  ],
+  "users": [
+    {
+      "id": "cJDncObI",
+      "username": "Aria",
+      "email": "Aria@gmail.com",
+      "password": "123",
+      "name": "edriss",
+      "profile": "fPlwadkO"
+    },
+    {
+      "id": "IOWBrBhs",
+      "username": "Jawad",
+      "email": "jawad@gmail.com",
+      "password": "123",
+      "name": "jawad",
+      "profile": "fPlwadkO"
+    },
+    {
+      "id": "wjJbugcA",
+      "username": "hadigak",
+      "email": "hadi@gmail.com",
+      "password": "123",
+      "name": "hadi",
+      "profile": "fPlwadkO"
+    }
+  ],
+  "u-files": [
+    {
+      "id": "fPlwadkO",
+      "name": "allef-vinicius-zR7Js1a2JRs-unsplash.jpg",
+      "type": "image",
+      "size": 1773536,
+      "alt": "",
+      "description": ""
+    },
+    {
+      "id": "NeIgQdEZ",
+      "name": "jon-flobrant-rB7-LCa_diU-unsplash.jpg",
+      "type": "image",
+      "size": 6872493,
+      "alt": "",
+      "description": ""
+    },
+    {
+      "id": "QoyEtxbT",
+      "name": "jesse-gardner-OwWbUOIbhDY-unsplash.jpg",
+      "type": "image",
+      "size": 1348977,
+      "alt": "",
+      "description": ""
+    },
+    {
+      "id": "vdbrPcPj",
+      "name": "karl-kohler-oK0CdViFwXA-unsplash.jpg",
+      "type": "image",
+      "size": 2395547,
+      "alt": "",
+      "description": ""
+    }
+  ],
+  "blogs": [
+    {
+      "id": "fvmEmPCM",
+      "title": "nature",
+      "content": "<p><strong>the nature is beatifull</strong></p>",
+      "slug": "nature",
+      "author_id": "cJDncObI",
+      "image": "vdbrPcPj"
+    },
+    {
+      "id": "hgosTRUP",
+      "title": "haid post",
+      "content": "<p>hadi post something goes here...</p>",
+      "slug": "h-post",
+      "author_id": "wjJbugcA",
+      "image": "QoyEtxbT"
+    },
+    {
+      "id": "NOKLLTBk",
+      "title": "edrissjan",
+      "content": "<p><strong>edisjan....alksfjladlkfjalk</strong>edisjan....alksfjladlkfjalkdjfedisjan....alksfjladlkfjalkdjfedisjan....alksfjladlkfjalkdjfedisjan....alksfjladlkfjalkdjfedisjan....alksfjladlkfjalkdjfedisjan....alksfjladlkfjalkdjfedisjan....alksfjladlkfjalkdjfedisjan....alksfjladlkfjalkdjfedisjan....alksfjladlkfjalkdjfedisjan....alksfjladlkfjalkdjfedisjan....alksfjladlkfjalkdjfedisjan....alksfjladlkfjalkdjfedisjan....alksfjladlkfjalkdjfedisjan....alksfjladlkfjalkdjfedisjan....alksfjladlkfjalkdjfedisjan....alksfjladlkfjalkdjfedisjan....alksfjladlkfjalkdjfedisjan....alksfjladlkfjalkdjfedisjan....alksfjladlkfjalkdjfedisjan....alksfjladlkfjalkdjfedisjan....alksfjladlkfjalkdjf<strong>djf</strong></p>",
+      "slug": "adis",
+      "author_id": "cJDncObI"
+    }
+  ]
+}
