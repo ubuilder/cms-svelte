@@ -26,7 +26,7 @@
     });
 
     if (item) {
-      console.log("item: ", item);
+      // console.log("item: ", item);
       await fetch("?/insert", {
         method: "POST",
         body: JSON.stringify(item),
