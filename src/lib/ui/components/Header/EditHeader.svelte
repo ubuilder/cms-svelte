@@ -5,7 +5,6 @@
 
   export let props: any = {};
   export let items: any = {}; // [{ text: "Page slot", key: "page.slot" }];
-  export let slots: any[] = [];
 </script>
 
 <El p="3">
@@ -33,5 +32,5 @@
     label="Container Size"
   />
 
-  <SlotList bind:slots {items} id={$$props.id} />
+  <SlotList bind:slotList={props.slot} {items} id={$$props.id} />
 </El>

@@ -4,7 +4,6 @@ import type { Actions } from '@sveltejs/kit';
 export async function load({locals, params}) {
     return {
         pages: await locals.api.getPages({where: locals.filters}).then((res:any)=> res.data.data)
-        // pages: await locals.db('u-pages').query({where: locals.filters}).then(res => res.data)
     }
 }
 

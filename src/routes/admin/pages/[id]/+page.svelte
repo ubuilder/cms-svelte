@@ -229,7 +229,7 @@
               <SlotList
                 items={getItems(request.load)}
                 on:move={onMove}
-                bind:slots={request.slot}
+                bind:slotList={request.slot}
               />
             </TabPanel>
           </CardBody>
