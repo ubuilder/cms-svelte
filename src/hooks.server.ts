@@ -2,6 +2,7 @@ import { connect } from "@ulibs/db";
 import { existsSync, mkdirSync } from "fs";
 import { writeFile } from "fs/promises";
 import qs from "qs";
+import { cms_api } from "$lib/server/cms-api";
 
 const enable_test_user = true;
 
@@ -117,24 +118,28 @@ export const handle = async ({ event, resolve }) => {
     }
   }
 
-  if (event.cookies.get("auth")) {
-    const user = event.locals
-      .db<any>("u-users")
-      .get({ where: { id: event.cookies.get("auth") } });
+  event.locals.api = cms_api({
+    baseUrl: "http://localhost:3000/api/"+siteId,
+    fetch: event.fetch,
+    token: event.cookies.get('token') ?? '';
+  })
+
+  if (event.cookies.get("token")) {
+    const user = await event.locals.api.getUser()
 
     event.locals.user = user;
   }
 
-  if(!event.locals.user && event.request.headers.get('host')?.includes('localhost') && enable_test_user) {
-    event.locals.user = {
-      id: '123',
-      name: 'Default',
-      email: 'default@gmail.com',
-      username: 'default',
-      profile: '',
-      password: '123_hashed'
-    }
-  }
+  // if(!event.locals.user && event.request.headers.get('host')?.includes('localhost') && enable_test_user) {
+  //   event.locals.user = {
+  //     id: '123',
+  //     name: 'Default',
+  //     email: 'default@gmail.com',
+  //     username: 'default',
+  //     profile: '',
+  //     password: '123_hashed'
+  //   }
+  // }
 
   event.locals.siteId = siteId;
 
@@ -145,4 +150,5 @@ export const handle = async ({ event, resolve }) => {
   }
 
   return resolve(event);
+
 };
