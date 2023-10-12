@@ -119,13 +119,13 @@ export const handle = async ({ event, resolve }) => {
   }
 
   event.locals.api = cms_api({
-    baseUrl: "http://localhost:3000/api/"+siteId,
+    baseUrl: "https://cms-api.hadiahmadi.dev/api/"+siteId,
     fetch: event.fetch,
-    token: event.cookies.get('token') ?? '';
+    token: event.cookies.get('token') ?? ''
   })
 
   if (event.cookies.get("token")) {
-    const user = await event.locals.api.getUser()
+    const user = await event.locals.api.getUser().then(res => res.data)
 
     event.locals.user = user;
   }

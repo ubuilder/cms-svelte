@@ -6,10 +6,11 @@ export const actions = {
     const password = formData.get("password");
 
     const response = await event.locals.api.login({username, password})
-    if (!response.data) {
+    if (response.status !== 200) {
       return fail(response.status, { field: 'username', message: response.message });
     }
 
+    console.log(response.data)
     // if (user.password !== password + "_hashed") {
     //   return fail(401, { field: 'password', message: "Password is incorrect" });
     // }
