@@ -1,15 +1,12 @@
 import { fail } from "@sveltejs/kit";
-
 export const actions = {
   async login(event) {
     const formData = await event.request.formData();
     const username = formData.get("username");
     const password = formData.get("password");
 
-    console.log(event.locals.siteId)
     const user = await event.locals.db("u-users").get({ where: { username } });
 
-    console.log(user)
     if (!user) {
       return fail(401, { field: 'username', message: "this account does not exist" });
     }
@@ -19,7 +16,8 @@ export const actions = {
     }
 
     event.cookies.set('auth', user.id, {
-        path: '/'
+        path: '/',
+        maxAge: 60 * 60 * 24 *15
     })
     
     return {

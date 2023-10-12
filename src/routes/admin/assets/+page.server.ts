@@ -2,17 +2,17 @@ import { fail } from "@sveltejs/kit";
 import { join } from "path";
 import { rm, writeFile } from "fs/promises";
 import { getAssets } from "$lib/server/index.js";
+import type { Actions } from "./$types.js";
 
 export async function load({ locals }) {
-  const assets = await getAssets({filters: locals.filters, db: locals.db});
-
+  const assets = await getAssets({ filters: locals.filters, db: locals.db });
   return {
     assets,
   };
 }
 
-export const actions = {
-  upload: async ({ request, locals, ...rest }) => {
+export const actions: Actions = {
+  upload: async ({ request, locals }) => {
     const formData = Object.fromEntries(await request.formData());
 
     if (

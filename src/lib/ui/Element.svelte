@@ -1,28 +1,39 @@
 <script lang="ts">
   import { renderVariable } from "$lib/helpers";
+  import { El } from "yesvelte";
 
-  export let element = {};
+  export let element: any = {};
 
-  export let components = {};
+  export let components: any = {};
   export let mode: "edit" | "view" = "view";
   export let items: any = {};
 
-  console.log({ element, components });
-  let type = element.type ?? "html";
-
   let props = element.props ?? {}; // dynamic types
-  let component = components[element.type] ?? null;
+  console.log({element}, components[element.type])
+  let component = components[element.type]?.[mode] ?? undefined;
   let slot = element.slot ?? [];
 </script>
 
 {#if typeof element === "string"}
   {renderVariable(element, items)}
 {:else if slot.length > 0}
-  <svelte:component this={component} props={renderVariable(props, items)} {items}>
+{#if component}
+  <svelte:component
+    this={component}
+    bind:props
+    {items}
+  >
     {#each slot as slotItem}
-      <svelte:self {mode} element={slotItem} {items} {components} />
+      <svelte:self {mode} bind:element={slotItem} {items} {components} />
     {/each}
   </svelte:component>
+  {/if}
 {:else}
-  <svelte:component this={component} props={renderVariable(props, items)} {items} />
+{#if component}
+  <svelte:component
+    this={component}
+    bind:props
+    {items}
+  />
+  {/if}
 {/if}

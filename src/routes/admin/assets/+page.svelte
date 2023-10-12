@@ -12,7 +12,6 @@
   let uploadInput: any;
 
   async function onSubmit(event: any) {
-    console.log(event.target.files);
 
     const formData = new FormData();
 
@@ -26,7 +25,6 @@
     await invalidateAll();
     console.log(result);
   }
-
 </script>
 
 <Page title="Assets">

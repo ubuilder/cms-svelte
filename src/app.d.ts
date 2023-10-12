@@ -1,4 +1,7 @@
 // See https://kit.svelte.dev/docs/types#app
+
+import type { Db, DbFilter } from "$lib/types";
+
 // for information about these interfaces
 type User = {
 	id: string;
@@ -13,9 +16,9 @@ declare global {
 	namespace App {
 		// interface Error {}
 		interface Locals {
-			db: any;
+			db: Db;
 			siteId: string;
-			filters: Record<string, object>
+			filters: DbFilter
 			user: User
 		}
 		// interface PageData {}

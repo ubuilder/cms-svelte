@@ -1,7 +1,7 @@
 <script lang="ts">
-  import { invalidateAll } from "$app/navigation";
+  import { goto, invalidateAll } from "$app/navigation";
+  import type { FieldRelation, Page as PageType } from "$lib/types";
   import Page from "$lib/components/core/Page.svelte";
-  import { createEventDispatcher, setContext } from "svelte";
   import { modal } from "$lib/components/core/modal";
   import {
     Button,
@@ -19,17 +19,35 @@
     CardFooter,
     CardHeader,
     Icon,
+    FormRadioGroup,
   } from "yesvelte";
   import ButtonList from "$lib/components/core/ButtonList.svelte";
   import SlotList from "$lib/ui/SlotList.svelte";
   import PreviewModal from "./PreviewModal.svelte";
   import { writable } from "svelte/store";
+  import ConfirmModal from "$lib/components/core/modal/ConfirmModal.svelte";
   import PageLoad from "$lib/components/core/pages/PageLoad.svelte";
+  import { slots } from "$lib/stores/pageSlots";
+  import DynamicFormField from "$lib/components/content/DynamicFormField.svelte";
 
   export let data;
-  console.log("data", data);
+  let request: Partial<PageType> = data.page;
 
-  let request: any = data.page;
+  //sets and syncs with slots store
+  let flag = false;
+  slots.subscribe((s) => {
+    if (flag) {
+      data.page.slot = s;
+    }
+  });
+  $: {
+    if ($slots !== data.page.slot) {
+      if (data?.page?.slot) {
+        slots.set(data.page.slot);
+        flag = true;
+      }
+    }
+  }
 
   function onMove(detail) {
     console.log("onMove", detail);
@@ -65,11 +83,26 @@
       {
         slug: request.slug,
         title: request.title,
+        autoClose: true,
       },
       {
         size: "lg",
+        autoClose: true,
       }
     );
+  }
+  async function openRemoveConfirmModal() {
+    const res = await modal.open(
+      ConfirmModal,
+      { status: "danger" },
+      { autoClose: true }
+    );
+    if (res) {
+      fetch("?/removePage", {
+        method: "POST",
+        body: JSON.stringify(request),
+      }).then((res) => goto("/admin/pages"));
+    }
   }
 
   function updatePage() {
@@ -79,7 +112,7 @@
     }).then((res) => invalidateAll());
   }
 
-  function getItems(load: any) {
+  function getItems(load: any): any[] {
     let items: any = {
       page: {
         text: "Page",
@@ -100,13 +133,15 @@
 
       const fields: any = {};
       for (let field of table.fields) {
-        const text = (fields[field.name] = {
+        fields[field.name] = {
           text: `${item.name}'s ${field.name}`,
           type: field.type,
-        });
+        };
 
         if (field.type === "relation") {
-          const otherTable = data.tables.find((x) => x.slug === field.table);
+          const otherTable = data.tables.find(
+            (x) => x.slug === (field as FieldRelation).table
+          );
           const otherFields: any = {};
           for (let otherField of otherTable.fields) {
             otherFields[otherField.name] = {
@@ -138,15 +173,13 @@
 
 <Page title="Update Page '{data.page.title}'">
   <ButtonList slot="header-buttons">
-    <Button on:click={()=> history.back()} >
+    <Button on:click={() => history.back()}>
       <Icon name="chevron-left" />
       Back
     </Button>
-    <Button on:click={openPreviewModal} color="primary">
-      Preview
-    </Button>
+    <Button on:click={openPreviewModal} color="primary">Preview</Button>
   </ButtonList>
-  
+
   <El row>
     <Tabs>
       <Card>
@@ -157,37 +190,60 @@
             <TabItem>Content</TabItem>
           </TabList>
         </CardHeader>
-      
-      <TabContent>
+
+        <TabContent>
           <CardBody>
             <TabPanel>
-              <FormInput bind:value={request.title} label="Title" />
-              <FormTextarea
+              <FormInput bind:value={request.slug} label="Slug" />
+
+              <DynamicFormField
+                items={getItems(request.load)}
+                type="plain_text"
+                bind:value={request.title}
+                label="Title"
+              />
+              <DynamicFormField
+                items={getItems(request.load)}
+                type="plain_text"
+                input_type="textarea"
                 label="Description"
                 bind:value={request.description}
               />
-              <FormInput bind:value={request.slug} label="Slug" />
+
+              <DynamicFormField type="select" items={getItems(request.load)} input_type="radio_group"
+                options={[
+                  {key: "rtl", 'text': 'Right to left'}, 
+                  {key: "ltr", 'text': 'Left to right'}]}
+                bind:value={request.dir}
+                label="Direction"
+               />
             </TabPanel>
             <TabPanel>
-              <PageLoad bind:load={request.load} bind:tables={data.tables} />
+              <PageLoad
+                items={getItems(request.load)}
+                bind:load={request.load}
+                bind:tables={data.tables}
+              />
             </TabPanel>
             <TabPanel>
-                <SlotList
-                  id="slot"
-                  items={getItems(request.load)}
-                  on:move={onMove}
-                  bind:slots={request.slot}
-                />
+              <SlotList
+                items={getItems(request.load)}
+                on:move={onMove}
+                bind:slots={request.slot}
+              />
             </TabPanel>
           </CardBody>
           <CardFooter>
             <ButtonList ms="auto">
+              <Button on:click={openRemoveConfirmModal} color="danger"
+                >Remove</Button
+              >
               <Button href="/admin/pages">Cancel</Button>
               <Button on:click={updatePage} color="primary">Save</Button>
             </ButtonList>
           </CardFooter>
-      </TabContent>
-    </Card>
+        </TabContent>
+      </Card>
     </Tabs>
   </El>
 </Page>

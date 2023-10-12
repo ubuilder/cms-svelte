@@ -1,3 +1,5 @@
+import type { Page } from '$lib/types/index.js';
+
 export async function load({locals, params}) {
     return {
         pages: await locals.db('u-pages').query({where: locals.filters}).then(res => res.data)
@@ -10,10 +12,11 @@ export const actions = {
         const body = await request.json();
 
 
-        await locals.db('u-pages').insert({
+        await locals.db<Page>('u-pages').insert({
             title: body.title,
             slug: body.slug?.startsWith('/') ? body.slug?.substring(1) : body.slug,
-            props: {},
+            dir: 'ltr',
+            description: '',
             load: [],
             slot: []
         })
