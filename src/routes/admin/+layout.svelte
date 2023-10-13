@@ -17,6 +17,17 @@
   import tabler from "yesvelte/css/tabler.min.css?url";
   import { goto } from "$app/navigation";
 
+  const apps = [
+        {
+            id: "xvsawe",
+            slug: 'test-api',
+            repo: 'TheHadiAhmadi/cms-app-test-api',
+            url: 'http://localhost:5174',
+            name: 'Test API',
+            icon: 'test'
+        }
+    ]
+
   export let data;
 
   const show_auth_warning = true
@@ -46,8 +57,11 @@
     <SidebarItem title="Pages" href="/admin/pages" icon="file" />
     <SidebarItem title="Assets" href="/admin/assets" icon="photo" />
     <SidebarItem title="Market" href="/admin/market" icon="building-store" />
-    <SidebarItem title="Test API" href="/admin/test" icon="test" />
     <SidebarItem title="Settings" href="/admin/settings" icon="settings" />
+    {#each apps as app}
+      <SidebarItem title={app.name} href="/admin/apps/{app.slug}" icon={app.icon} />
+
+    {/each}
   </svelte:fragment>
   <svelte:fragment slot="header-end">
     <El>
