@@ -18,19 +18,19 @@
   import { goto } from "$app/navigation";
 
   const apps = [
-        {
-            id: "xvsawe",
-            slug: 'test-api',
-            repo: 'TheHadiAhmadi/cms-app-test-api',
-            url: 'http://localhost:5174',
-            name: 'Test API',
-            icon: 'test'
-        }
-    ]
+    {
+      id: "xvsawe",
+      slug: "test-api",
+      repo: "ubuilder/cms-app-test-api",
+      url: "https://cms-app-test-api.hadiahmadi.dev",
+      name: "Test API",
+      icon: "test",
+    },
+  ];
 
   export let data;
 
-  const show_auth_warning = true
+  const show_auth_warning = true;
 
   async function logout() {
     const result = await fetch("/auth?/logout", {
@@ -59,8 +59,11 @@
     <SidebarItem title="Market" href="/admin/market" icon="building-store" />
     <SidebarItem title="Settings" href="/admin/settings" icon="settings" />
     {#each apps as app}
-      <SidebarItem title={app.name} href="/admin/apps/{app.slug}" icon={app.icon} />
-
+      <SidebarItem
+        title={app.name}
+        href="/admin/apps/{app.slug}"
+        icon={app.icon}
+      />
     {/each}
   </svelte:fragment>
   <svelte:fragment slot="header-end">
@@ -103,7 +106,10 @@
             src/hooks.server.ts
           </El> file. This warning will be hidden in production.
           <br />
-            if you do not want to see this message please login <El tag = 'a' href = "/auth/login" >here</El>
+          if you do not want to see this message please login <El
+            tag="a"
+            href="/auth/login">here</El
+          >
         </El>
       </El>
     {/if}

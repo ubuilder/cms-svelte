@@ -3,8 +3,8 @@ export async function load({cookies, params}) {
         {
             id: "xvsawe",
             slug: 'test-api',
-            repo: 'TheHadiAhmadi/cms-app-test-api',
-            url: 'http://localhost:5174',
+            repo: 'ubuilder/cms-app-test-api',
+            url: 'https://cms-app-test-api.hadiahmadi.dev',
             name: 'Test API',
             icon: 'test'
         }
