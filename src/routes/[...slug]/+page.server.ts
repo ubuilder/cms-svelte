@@ -1,5 +1,5 @@
 import { renderVariable } from "$lib/helpers/index.js";
-import type { Db, DbFilter, DbWith, Items, Table } from "$lib/types/index.js";
+import type { DbFilter, DbWith, Items, Table } from "$lib/types/index.js";
 import type { Page } from "$lib/types/page.js";
 
 async function findPageBySlug({ api, slug }: {api: App.Locals['api'], slug: string}): Promise<{ page?: Page, params: Record<string, string> }> {

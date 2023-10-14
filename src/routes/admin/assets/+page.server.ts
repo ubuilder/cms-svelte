@@ -1,11 +1,10 @@
 import { fail } from "@sveltejs/kit";
 import { join } from "path";
-import { rm, writeFile } from "fs/promises";
 import { getAssets } from "$lib/server/index.js";
 import type { Actions } from "./$types.js";
 
 export async function load({ locals }) {
-  const assets = await getAssets({ filters: locals.filters, db: locals.db });
+  const assets = await getAssets({ filters: locals.filters, api: locals.api });
   return {
     assets,
   };
@@ -25,19 +24,28 @@ export const actions: Actions = {
       });
     }
 
-    const { file } = formData as { file: File };
+    // const { file } = formData as { file: File };
 
-    const [fileId] = await locals.db("u-files").insert({
-      name: file.name,
-      type: file.type.split("/")[0],
-      size: file.size,
-      alt: "",
-      description: "",
-    });
+    // const [fileId] = locals.api.uploadFile({
+    //   name: file.name,
+    //   type: file.type.split('/')[0],
+    //   size: file.size,
+    //   alt: '',
+    //   description: ''
+    // })
 
-    const filePath = join("data", locals.siteId, "assets", fileId);
 
-    await writeFile(filePath, Buffer.from(await file.arrayBuffer()));
+    // const [fileId] = await locals.db("u-files").insert({
+    //   name: file.name,
+    //   type: file.type.split("/")[0],
+    //   size: file.size,
+    //   alt: "",
+    //   description: "",
+    // });
+
+    // const filePath = join("data", locals.siteId, "assets", fileId);
+
+    // await writeFile(filePath, Buffer.from(await file.arrayBuffer()));
 
     return { success: true };
   },
@@ -46,9 +54,9 @@ export const actions: Actions = {
 
     const id = body.id;
 
-    await event.locals.db("u-files").remove(id);
+    // await event.locals.db("u-files").remove(id);
 
-    await rm(join("data", event.locals.siteId, "assets", id));
+    // await rm(join("data", event.locals.siteId, "assets", id));
 
     return { success: true };
   },
@@ -58,11 +66,11 @@ export const actions: Actions = {
     const id = body.id;
     const data = body.data;
 
-    await event.locals.db("u-files").update(id, {
-      name: data.name,
-      alt: data.alt,
-      description: data.description,
-    });
+    // await event.locals.db("u-files").update(id, {
+    //   name: data.name,
+    //   alt: data.alt,
+    //   description: data.description,
+    // });
 
     return { success: true };
   },

@@ -88,7 +88,7 @@ event:  {
 export async function GET(event) {
     console.log('event: ', event)
 
-    const file = await readFile(join('data', event.locals.siteId, 'assets', event.params.id))
+    // const file = await readFile(join('data', event.locals.siteId, 'assets', event.params.id))
     
-    return new Response(file)
+    return new Response("file content stream from server...")
 }
