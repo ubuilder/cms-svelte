@@ -37,13 +37,18 @@ export function cms_api(
     console.log("calling fetch ", url, "body: ", body, "headers: ", headers);
 
     try {
-      const res = (await fetch(url, {
+      const raw = (await fetch(url, {
         method: "POST",
         body,
         headers,
-      }).then((res) => res.json())) as ApiResponse<T>;
+      }).then((res) => res.text())) as string;
+
+      console.log('raw response: ')
+      console.log(raw)
+      const res: ApiResponse<T> = JSON.parse(raw) 
 
       console.log(`[${res.status}]: ${res.message}.`);
+      
 
       return res ?? {};
     } catch (err: any) {
