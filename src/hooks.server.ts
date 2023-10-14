@@ -3,8 +3,11 @@ import { existsSync, mkdirSync } from "fs";
 import { writeFile } from "fs/promises";
 import qs from "qs";
 import { cms_api } from "$lib/helpers/cms-api";
+import { API_URL } from "$env/static/private";
 
 const enable_test_user = true;
+
+const apiUrl = API_URL ?? 'http://localhost:3000'
 
 export const handle = async ({ event, resolve }) => {
   if(!existsSync('./data')) {
@@ -119,7 +122,7 @@ export const handle = async ({ event, resolve }) => {
   }
 
   event.locals.api = cms_api({
-    baseUrl: "https://cms-api.hadiahmadi.dev/api/"+siteId,
+    baseUrl: apiUrl + "/api/" + siteId,
     fetch: event.fetch,
     token: event.cookies.get('token') ?? ''
   })
