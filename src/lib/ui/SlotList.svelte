@@ -110,13 +110,13 @@
       <Card
         style="border: none;"
         id={id + "_" + index}
-        class="sortable-item"
+        class="page-slot sortable-item"
         my="2"
       >
         <Accordion>
           <AccordionHeader p="0">
             <El w="100" d="flex" alignItems="center" justifyContent="between">
-              <AccordionTitle px="3" style="flex: 1">
+              <AccordionTitle px="3" style="flex: 1; color: #aaa">
                 {slot.type}
               </AccordionTitle>
               <ButtonList on:click>
@@ -126,7 +126,8 @@
                   <Icon name="pencil" />
                 </Button> -->
                 <Button
-                  border="0"
+                  ghost
+                  color="danger"
                   on:click!stopPropagation={() => onRemoveSlot(index)}
                 >
                   <Icon name="trash" />

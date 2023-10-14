@@ -143,19 +143,17 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    /* position: absolute; */
-    top: 22px;
-    background: #57bfffc2;
+    background: var(--y-primary);
     border-radius: 50%;
-    left: -7px;
-    width: 20px;
-    height: 20px;
+    width: 16px;
+    height: 16px;
+    margin-top: 2px;
   }
 
   .dynamic-icon::before {
     content: "+";
     color: white;
-    margin-bottom: 1px;
+    margin-bottom: -1px;
   }
   .dynamic-icon:hover {
     /* top: 17px; */

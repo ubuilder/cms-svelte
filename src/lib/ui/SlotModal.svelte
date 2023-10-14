@@ -55,11 +55,9 @@
           <El col="3">
             <El
               style="cursor: pointer"
-              border
-              borderColor={slot.type === item ? 'primary' : undefined}
+              class="component-item {slot.type === item ? 'active' : ''}"
               py="3"
               textAlign="center"
-              shadow="sm"
               borderRoundSize="2"
               on:dblclick={() => $modal.resolve({...slot, type: item})}
               on:click={() => (slot.type = item)}
