@@ -138,6 +138,9 @@ export const handle = async ({ event, resolve }) => {
       event.locals.user = user;
     }
   }
+  // if not user and route starts with admin:
+  // redirect to login page
+  
 
   // if(!event.locals.user && event.request.headers.get('host')?.includes('localhost') && enable_test_user) {
   //   event.locals.user = {
