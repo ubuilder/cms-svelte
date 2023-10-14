@@ -9,10 +9,10 @@ const enable_test_user = true;
 const apiUrl = API_URL ?? 'http://localhost:3000'
 
 export const handle = async ({ event, resolve }) => {
-  if(!existsSync('./data')) {
-    mkdirSync('./data');
-    await writeFile('data/db.json', "{}");
-  }
+  // if(!existsSync('./data')) {
+  //   mkdirSync('./data');
+  //   await writeFile('data/db.json', "{}");
+  // }
 
   // const sites = await sitesDb.getModel("sites").query();
   // const sites = []
