@@ -53,7 +53,7 @@
   <link rel="stylesheet" href={css} />
 </svelte:head>
 
-<Layout>
+<Layout theme="dark">
   <svelte:fragment slot="sidebar-items">
     <SidebarItem title="Dashboard" icon="dashboard" href="/admin" />
     <SidebarItem title="Content" icon="database" href="/admin/content" />

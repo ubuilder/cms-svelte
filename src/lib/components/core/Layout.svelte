@@ -11,6 +11,7 @@
   import ModalProvider from "./modal/ModalProvider.svelte";
 
   export let header = true;
+  export let theme = "light";
   export let sidebar = true;
   let offcanvasShow = false;
 </script>
@@ -24,6 +25,7 @@
     alignItems="center"
     justifyContent="between"
     class="layout-navbar"
+    data-bs-theme={theme}
   >
     <El dSm="none" me="3" style="margin-bottom: -0.4rem;">
       <Icon
@@ -56,6 +58,7 @@
     class="layout-sidebar"
     position="fixed"
     style="margin-top: 57px; width: 15rem;"
+    data-bs-theme={theme}
   >
     <slot name="sidebar-items">
       <SidebarItem title="User Management" icon="user">
@@ -65,6 +68,7 @@
     </slot>
   </Sidebar>
   <Offcanvas
+    data-bs-theme={theme}
     class="layout-offcanvas"
     style="width: 15rem;"
     backdrop
@@ -85,16 +89,18 @@
       </slot>
     </Sidebar>
   </Offcanvas>
-  <El class="layout-content">
-	<slot />
+  <El data-bs-theme={theme} class="layout-content">
+    <slot />
   </El>
-  {:else}
-  <El style="overflow-y: hidden">
-	<slot/>
+{:else}
+  <El data-bs-theme={theme} style="overflow-y: hidden">
+    <slot />
   </El>
-  {/if}
+{/if}
 
-<ModalProvider />
+<div data-bs-theme={theme}>
+  <ModalProvider />
+</div>
 
 <style>
   :global(.layout-content) {

@@ -32,6 +32,7 @@
 </svelte:head>
 
 <Layout
+theme = "dark"
   sidebar={false}
   header={false}>
   <Page
