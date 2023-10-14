@@ -12,6 +12,7 @@
 </script>
 
 <Button
+class="filter-button"
   style="border-radius: 20px"
   ps="3"
   pe={active ? "0" : "3"}

@@ -6,7 +6,7 @@
 </script>
 
 
-<El border bgColor="light" p="3" my="2">
+<El border class="page-item" p="3" my="3">
     {page.title}
     <El tag="small">
       (/{page.slug})
@@ -16,7 +16,7 @@
     <ButtonList>
 
     <Button ms="auto" color="primary" href="/admin/pages/{page.id}">Edit</Button>
-    <Button href="/admin/pages/editor/{page.id}">Edit</Button>
+    <!-- <Button href="/admin/pages/editor/{page.id}">Edit</Button> -->
   </ButtonList>
 
 </El>

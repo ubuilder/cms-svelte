@@ -15,6 +15,8 @@
   } from "yesvelte";
   import Layout from "$lib/components/core/Layout.svelte";
   import tabler from "yesvelte/css/tabler.min.css?url";
+  import css from '../../app.css?url';
+
   import { goto } from "$app/navigation";
 
   const apps = [
@@ -48,6 +50,7 @@
 
 <svelte:head>
   <link rel="stylesheet" href={tabler} />
+  <link rel="stylesheet" href={css} />
 </svelte:head>
 
 <Layout>
