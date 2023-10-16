@@ -46,7 +46,7 @@
   }
 </script>
 
-<Layout title="UBuilder" theme="dark" dir="ltr">
+<Layout title="UBuilder" theme={data.theme} dir={data.dir}>
   <svelte:fragment slot="sidebar-items">
     <SidebarItem title="Dashboard" icon="dashboard" href="/admin" />
     <SidebarItem title="Content" icon="database" href="/admin/content" />

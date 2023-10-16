@@ -30,7 +30,7 @@
     <iframe
       style="position: absolute; width: 100%; height: 100%; overflow: hidden; z-index: 300"
       title={data.app.name}
-      src={data.app.url}
+      src={data.app.url + '?lang=' + data.lang + '&dir=' + data.dir + '&siteId=' + data.siteId + '&theme=' + data.theme}
     />
     {/if}
   {:else}

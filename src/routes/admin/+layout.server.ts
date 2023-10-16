@@ -9,6 +9,10 @@ export async function load({request, locals}) {
 
     return {
         show_auth_warning: request.headers.get('host')?.includes('localhost') && show_auth_warning,
-        user: locals.user
+        user: locals.user,
+        lang: 'en',
+        dir: 'ltr',
+        theme: 'dark',
+        siteId: locals.siteId
     }
 }
