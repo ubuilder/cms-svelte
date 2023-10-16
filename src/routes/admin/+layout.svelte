@@ -14,6 +14,8 @@
     SidebarItem,
     Layout
   } from "@ulibs/yesvelte";
+  import '@ulibs/yesvelte/styles.css';
+  import '../../app.css';
 
   import { goto } from "$app/navigation";
 
@@ -22,7 +24,8 @@
       id: "xvsawe",
       slug: "test-api",
       repo: "ubuilder/cms-app-test-api",
-      url: "https://cms-app-test-api.hadiahmadi.dev",
+      // url: "https://cms-app-test-api.hadiahmadi.dev",
+      url: "http://localhost:5174",
       name: "Test API",
       icon: "test",
     },
