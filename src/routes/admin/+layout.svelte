@@ -19,18 +19,6 @@
 
   import { goto } from "$app/navigation";
 
-  const apps = [
-    {
-      id: "xvsawe",
-      slug: "test-api",
-      repo: "ubuilder/cms-app-test-api",
-      // url: "https://cms-app-test-api.hadiahmadi.dev",
-      url: "http://localhost:5174",
-      name: "Test API",
-      icon: "test",
-    },
-  ];
-
   export let data;
 
   const show_auth_warning = true;
@@ -58,7 +46,7 @@
     <SidebarItem title="Apps" href="/admin/apps" icon="building-store" />
     <SidebarItem title="Settings" href="/admin/settings" icon="settings" />
   
-    {#each apps as app}
+    {#each data.apps as app}
       <SidebarItem
         title={app.name}
         href="/admin/apps/{app.slug}"
