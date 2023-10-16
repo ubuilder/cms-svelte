@@ -1,8 +1,5 @@
 <script lang="ts">
-  import Page from "$lib/components/core/Page.svelte";
-  import FilterList from "$lib/components/filters/FilterList.svelte";
-  import { Button, Card, CardBody, El, Icon } from "yesvelte";
-  import TextFilter from "$lib/components/filters/TextFilter.svelte";
+  import { Page, FilterList, TextFilter, Button, Card, CardBody, El, Icon } from "@ulibs/yesvelte";
   export let data;
 </script>
 
@@ -23,7 +20,7 @@
           <Card class="table-item">
             <CardBody d="flex" alignItems="center" justifyContent="between">
               <El d="flex" gap="3" alignItems="center">
-                <Icon size="lg" name={table.icon} />
+                <Icon color="info" size="lg" name={table.icon} />
                 {table.name}
               </El>
             </CardBody>

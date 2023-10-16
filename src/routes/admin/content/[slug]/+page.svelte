@@ -1,18 +1,27 @@
 <script lang="ts">
-  import Page from "$lib/components/core/Page.svelte";
-  import ListBox from "$lib/components/core/list/ListBox.svelte";
-  import ListItem from "$lib/components/core/list/ListItem.svelte";
-  import { modal } from "$lib/components/core/modal/modal.js";
-  import { Button, Card, CardBody, El, Icon, Status, Switch } from "yesvelte";
+  import {
+    ButtonList,
+    Page,
+    ListBox,
+    FilterList,
+    SelectFilter,
+    TextFilter,
+    DateFilter,
+    NumberFilter,
+    ListItem,
+    confirmModal,
+    modal,
+    Button,
+    Card,
+    CardBody,
+    El,
+    Icon,
+    Status,
+    Switch,
+  } from "@ulibs/yesvelte";
   import DynamicDataModal from "./DynamicDataModal.svelte";
   import { invalidateAll } from "$app/navigation";
-  import ButtonList from "$lib/components/core/ButtonList.svelte";
-  import ConfirmModal from "$lib/components/core/modal/ConfirmModal.svelte";
-  import FilterList from "$lib/components/filters/FilterList.svelte";
-  import SelectFilter from "$lib/components/filters/SelectFilter.svelte";
-  import TextFilter from "$lib/components/filters/TextFilter.svelte";
-  import DateFilter from "$lib/components/filters/DateFilter.svelte";
-  import NumberFilter from "$lib/components/filters/NumberFilter.svelte";
+
   import RelationItem from "./[id]/RelationItem.svelte";
 
   export let data;
@@ -58,7 +67,7 @@
     //
   }
   async function removeItem(item: any) {
-    const choice = await modal.open(ConfirmModal, {
+    const choice = await confirmModal.open({
       status: "danger",
       title: "Are you sure to remove this Row?",
     });
@@ -73,11 +82,13 @@
     }
   }
 </script>
+
 <Page title={data.table.name}>
   <svelte:fragment slot="title">
+    <Icon mb="1" size="xl" name={data.table.icon} me="1"/>
     {data.table.name}
     <Button ghost color="secondary" href="./edit">
-      <Icon name="settings"/>
+      <Icon name="settings" />
     </Button>
   </svelte:fragment>
   <ButtonList slot="header-buttons">
@@ -93,10 +104,10 @@
   </ButtonList>
 
   <FilterList>
-    {#each data.table.fields.filter(x => x.show_in_list !== false) as field}
+    {#each data.table.fields.filter((x) => x.show_in_list !== false) as field}
       {#if field.type === "select"}
         <SelectFilter
-          items={field.options ?? []}
+          items={field.options.split(',').map(x => x.trim()) ?? []}
           text={field.name}
           key={field.name}
         />
@@ -120,7 +131,7 @@
   </FilterList>
 
   <ListBox title="" items={data.rows.data} let:item>
-    {#each data.table.fields.filter(x => x.show_in_list !== false) as field}
+    {#each data.table.fields.filter((x) => x.show_in_list !== false) as field}
       <ListItem name={field.name}>
         {#if field.type === "switch"}
           <Switch disabled checked={item[field.name]} />

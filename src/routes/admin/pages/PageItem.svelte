@@ -1,6 +1,5 @@
 <script>
-  import ButtonList from "$lib/components/core/ButtonList.svelte";
-  import { Button, El } from "yesvelte";
+  import { ButtonList, Button, El } from "@ulibs/yesvelte";
 
     export let page;
 </script>

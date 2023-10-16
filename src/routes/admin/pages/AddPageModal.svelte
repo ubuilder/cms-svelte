@@ -1,12 +1,11 @@
 <script>
-  import ButtonList from "$lib/components/core/ButtonList.svelte";
-  import { modal } from "$lib/components/core/modal";
-    import Modal from "$lib/components/core/modal/Modal.svelte";
-  import { Button, FormInput, ModalBody, ModalFooter } from "yesvelte";
+
+  import { Button, FormInput, ModalBody, ModalFooter, ButtonList, modal, BaseModal } from "@ulibs/yesvelte";
+
   export let page = {};
 
 </script>
-<Modal title="Add Page">
+<BaseModal title="Add Page">
     <ModalBody>
         <FormInput bind:value={page.title} label="Page Title" />
         <FormInput bind:value={page.slug} label="Slug" />
@@ -20,4 +19,4 @@
             </ButtonList>
     </ModalFooter>
 
-</Modal>
+</BaseModal>

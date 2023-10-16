@@ -6,7 +6,7 @@
     FormInput,
     FormSelect,
     FormTextarea,
-  } from "yesvelte";
+  } from "@ulibs/yesvelte";
   // import { selectedComponent } from "$lib/stores/selectedComponent";
 
   let one = true;

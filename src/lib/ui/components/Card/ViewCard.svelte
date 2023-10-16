@@ -7,7 +7,7 @@
     El,
     FormInput,
     FormSelect,
-  } from "yesvelte";
+  } from "@ulibs/yesvelte";
   import SlotList from "../../SlotList.svelte";
   import { components } from "$lib/ui";
   import Element from "../../Element.svelte";

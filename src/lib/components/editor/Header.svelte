@@ -1,5 +1,5 @@
 <script>	
-	import { Icon, Button } from "yesvelte";
+	import { Icon, Button } from "@ulibs/yesvelte";
     export let screenSize = undefined
 
 </script>

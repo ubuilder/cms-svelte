@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Badge } from "yesvelte";
+  import { Badge } from "@ulibs/yesvelte";
 
   export let table: string;
   export let title: string;

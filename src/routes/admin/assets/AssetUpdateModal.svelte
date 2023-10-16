@@ -1,16 +1,12 @@
 <script lang="ts">
-  import ButtonList from "$lib/components/core/ButtonList.svelte";
-  import { modal } from "$lib/components/core/modal";
-  import Modal from "$lib/components/core/modal/Modal.svelte";
-  import { Button, El } from "yesvelte";
+  import { Button, El, modal, ButtonList, BaseModal, FormInput } from "@ulibs/yesvelte";
   import AssetImage from "./AssetTypes/AssetImage.svelte";
-  import { Form } from "$lib/components/core/form";
   import type { AssetType } from "$lib/types/asset";
 
   export let asset: AssetType;
 </script>
 
-<Modal>
+<BaseModal>
   <El slot="body" row>
     <El col="12" colSm="8">
       {#if asset.type === "image"}
@@ -20,35 +16,27 @@
       {/if}
     </El>
     <El col="12" colSm="4">
-      <Form bind:value={asset} action="?/update">
-        <Form.Input
+      <form action="?/update">
+        <FormInput
           col="12"
-          colMd="12"
-          colSm="12"
-          colLg="12"
-          colXl="12"
           label="Name"
+          bind:value={asset.name}
           name="name"
         />
-        <Form.Input
+        <FormInput
           col="12"
-          colMd="12"
-          colSm="12"
-          colLg="12"
-          colXl="12"
           label="Description"
+          bind:value={asset.description}
           name="description"
         />
-        <Form.Input
+        <FormInput
           col="12"
-          colMd="12"
-          colSm="12"
-          colLg="12"
-          colXl="12"
           label="Alt text"
+
+          bind:value={asset.alt}
           name="alt"
         />
-      </Form>
+      </form>
     </El>
   </El>
 
@@ -59,4 +47,4 @@
       Update
     </Button>
   </ButtonList>
-</Modal>
+</BaseModal>

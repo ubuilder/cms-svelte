@@ -1,9 +1,6 @@
 <script>
-  import StatusItem from "../../lib/components/dashboard/StatusItem.svelte";
-
-  import ButtonList from "$lib/components/core/ButtonList.svelte";
-  import Page from "$lib/components/core/Page.svelte";
-  import { Alert, Button, Card, CardBody, El, Icon } from "yesvelte";
+  import {ButtonList, Page, Button, El, StatusItem} from '@ulibs/yesvelte' 
+  
   export let data;
 
   function openExportModal() {
@@ -29,29 +26,28 @@
   <El row pt="4">
     <StatusItem
       icon="file"
-      iconColor="success"
+      color="success"
       title="Page Count"
       value={data.page_count}
     />
     <StatusItem
       icon="database"
-      iconColor="warning"
+      color="warning"
       title="Table Count"
       value={data.table_count}
     />
     <StatusItem
       icon="columns"
-      iconColor="danger"
+      color="danger"
       title="Total Rows"
       value={data.total_rows}
     />
     <StatusItem
       icon="photo"
-      iconColor="info"
+      color="info"
       title="File Count"
       value={data.file_count}
     />
   </El>
 
-  Dashboard
 </Page>

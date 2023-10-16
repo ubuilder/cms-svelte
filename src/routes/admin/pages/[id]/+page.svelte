@@ -1,9 +1,9 @@
 <script lang="ts">
   import { goto, invalidateAll } from "$app/navigation";
   import type { FieldRelation, Page as PageType } from "$lib/types";
-  import Page from "$lib/components/core/Page.svelte";
-  import { modal } from "$lib/components/core/modal";
   import {
+    Page,
+    modal,
     Button,
     FormField,
     El,
@@ -20,13 +20,13 @@
     CardHeader,
     Icon,
     FormRadioGroup,
-  } from "yesvelte";
-  import ButtonList from "$lib/components/core/ButtonList.svelte";
+    ButtonList,
+    confirmModal,
+  } from "@ulibs/yesvelte";
   import SlotList from "$lib/ui/SlotList.svelte";
   import PreviewModal from "./PreviewModal.svelte";
   import { writable } from "svelte/store";
-  import ConfirmModal from "$lib/components/core/modal/ConfirmModal.svelte";
-  import PageLoad from "$lib/components/core/pages/PageLoad.svelte";
+  import PageLoad from "$lib/components/pages/PageLoad.svelte";
   import { slots } from "$lib/stores/pageSlots";
   import DynamicFormField from "$lib/components/content/DynamicFormField.svelte";
 
@@ -92,8 +92,7 @@
     );
   }
   async function openRemoveConfirmModal() {
-    const res = await modal.open(
-      ConfirmModal,
+    const res = await confirmModal.open(
       { status: "danger" },
       { autoClose: true }
     );
@@ -210,13 +209,17 @@
                 bind:value={request.description}
               />
 
-              <DynamicFormField type="select" items={getItems(request.load)} input_type="radio_group"
+              <DynamicFormField
+                type="select"
+                items={getItems(request.load)}
+                input_type="radio_group"
                 options={[
-                  {key: "rtl", 'text': 'Right to left'}, 
-                  {key: "ltr", 'text': 'Left to right'}]}
+                  { key: "rtl", text: "Right to left" },
+                  { key: "ltr", text: "Left to right" },
+                ]}
                 bind:value={request.dir}
                 label="Direction"
-               />
+              />
             </TabPanel>
             <TabPanel>
               <PageLoad

@@ -2,7 +2,7 @@
   import DynamicFormField from "$lib/components/content/DynamicFormField.svelte";
   import SlotList from "$lib/ui/SlotList.svelte";
 
-  import { El, FormInput, FormSelect } from "yesvelte";
+  import { El, FormInput, FormSelect } from "@ulibs/yesvelte";
 
   export let items: any = {};
   export let props: any = {};

@@ -10,7 +10,7 @@
     FormTextarea,
     Popover,
     PopoverBody,
-  } from "yesvelte";
+  } from "@ulibs/yesvelte";
   import FilePicker from "./FilePicker.svelte";
   import FormDataSelect from "./FormDataSelect.svelte";
   import type { Field } from "$lib/types";

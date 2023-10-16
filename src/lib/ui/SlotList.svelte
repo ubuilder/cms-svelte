@@ -1,8 +1,8 @@
 <script lang="ts">
   import Sortable from "sortablejs";
-  import ButtonList from "$lib/components/core/ButtonList.svelte";
-  import { modal } from "$lib/components/core/modal";
   import {
+    ButtonList,
+    modal,
     Accordion,
     AccordionBody,
     AccordionHeader,
@@ -10,11 +10,11 @@
     Accordions,
     Button,
     Card,
+    confirmModal,
     El,
     Icon,
-  } from "yesvelte";
+  } from "@ulibs/yesvelte";
   import SlotModal from "./SlotModal.svelte";
-  import ConfirmModal from "$lib/components/core/modal/ConfirmModal.svelte";
   import { onDestroy, onMount } from "svelte";
   import { components } from ".";
   import { slots as slotsStore } from "$lib/stores/pageSlots";
@@ -28,7 +28,7 @@
   let instance: Sortable;
 
   async function onRemoveSlot(index: number) {
-    const choice = await modal.open(ConfirmModal, {
+    const choice = await confirmModal.open({
       status: "danger",
     });
 

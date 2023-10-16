@@ -1,14 +1,10 @@
 <script>
-  import ButtonList from "$lib/components/core/ButtonList.svelte";
-  import Page from "$lib/components/core/Page.svelte";
-  import FilterList from "$lib/components/filters/FilterList.svelte";
-  import SelectFilter from "$lib/components/filters/SelectFilter.svelte";
-  import TextFilter from "$lib/components/filters/TextFilter.svelte";
-  import { Button, ButtonGroup, Icon } from "yesvelte";
+    import { invalidateAll } from "$app/navigation";
+
+  import {Page, FilterList, SelectFilter, TextFilter, Button, Icon, modal, ButtonList} from "@ulibs/yesvelte";
+
   import PageItem from "./PageItem.svelte";
-  import { modal } from "$lib/components/core/modal";
   import AddPageModal from "./AddPageModal.svelte";
-  import { invalidateAll } from "$app/navigation";
 
   export let data;
 

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Button } from "yesvelte";
+  import { Button } from "@ulibs/yesvelte";
 
   export let props: any = {};
 

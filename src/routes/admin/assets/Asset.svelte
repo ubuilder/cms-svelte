@@ -1,8 +1,6 @@
 <script lang="ts">
-  import { El, Icon } from "yesvelte";
+  import { El, Icon, modal, confirmModal } from "@ulibs/yesvelte";
   import AssetImage from "./AssetTypes/AssetImage.svelte";
-  import { modal } from "$lib/components/core/modal";
-  import ConfirmModal from "$lib/components/core/modal/ConfirmModal.svelte";
   import { invalidateAll } from "$app/navigation";
   import AssetUpdateModal from "./AssetUpdateModal.svelte";
   import type { AssetType } from "$lib/types/asset";
@@ -10,7 +8,7 @@
   export let asset: AssetType;
 
   async function onRemove() {
-    const choice = await modal.open(ConfirmModal, {
+    const choice = await confirmModal.open({
       status: "danger",
       title: "Are you sure to remove this Asset?",
     });

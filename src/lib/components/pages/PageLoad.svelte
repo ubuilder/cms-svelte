@@ -13,8 +13,8 @@
     FormInput,
     FormSelect,
     Icon,
-  } from "yesvelte";
-  import ButtonList from "../ButtonList.svelte";
+    ButtonList,
+  } from "@ulibs/yesvelte";
   import type { Field, PageLoad, Table } from "$lib/types";
   import DynamicFormField from "$lib/components/content/DynamicFormField.svelte";
 

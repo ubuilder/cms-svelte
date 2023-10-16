@@ -1,6 +1,6 @@
 <script lang="ts">
 
-  import { FormInput } from "yesvelte";
+  import { FormInput } from "@ulibs/yesvelte";
   export let props: any = {}
 
 </script>

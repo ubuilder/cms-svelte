@@ -2,7 +2,7 @@
   import DynamicFormField from "$lib/components/content/DynamicFormField.svelte";
 
 
-  import { TabContent, TabItem, TabList, TabPanel, Tabs } from "yesvelte";
+  import { TabContent, TabItem, TabList, TabPanel, Tabs } from "@ulibs/yesvelte";
 
   export let items: any = {}
   export let props: any = {}

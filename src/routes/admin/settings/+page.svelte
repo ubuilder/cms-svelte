@@ -1,5 +1,5 @@
 <script>
-    import Page from '$lib/components/core/Page.svelte'
+    import {Page} from '@ulibs/yesvelte'
     // export let data;
 </script>
 

@@ -1,11 +1,10 @@
 <script lang="ts">
   import { goto, invalidateAll } from "$app/navigation";
-  import PageHeader from "$lib/components/core/PageHeader.svelte";
+
   import type { Table } from "$lib/types";
-  import { Button, El } from "yesvelte";
+  import { Button, El,PageHeader, modal, confirmModal } from "@ulibs/yesvelte";
   import TableEditCard from "../../TableEditCard.svelte";
-  import { modal } from "$lib/components/core/modal";
-  import ConfirmModal from "$lib/components/core/modal/ConfirmModal.svelte";
+
   export let data;
 
   let table: Table = data.table;
@@ -19,7 +18,7 @@
   }
 
   async function removeTable() {
-    const choice = await modal.open(ConfirmModal, { status: "danger" });
+    const choice = await confirmModal.open({ status: "danger" });
     if (!choice) return;
 
     fetch("../../?/remove", {

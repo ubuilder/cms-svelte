@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { El, Icon } from "yesvelte";
+    import { El, Icon } from "@ulibs/yesvelte";
   
   import { createEventDispatcher } from "svelte";
   import AssetImage from "../../../routes/admin/assets/AssetTypes/AssetImage.svelte";

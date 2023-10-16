@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { El } from "yesvelte";
+  import { El } from "@ulibs/yesvelte";
 
   export let asset: any;
 

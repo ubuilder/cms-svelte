@@ -26,7 +26,7 @@
     TabPanel,
     CardHeader,
     CardBody,
-  } from "yesvelte";
+  } from "@ulibs/yesvelte";
   import FieldInput from "./FieldInput.svelte";
 
   export let fields: any[] = [];

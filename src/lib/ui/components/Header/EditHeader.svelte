@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { El } from "yesvelte";
+  import { El } from "@ulibs/yesvelte";
   import SlotList from "../../SlotList.svelte";
   import DynamicFormField from "$lib/components/content/DynamicFormField.svelte";
 

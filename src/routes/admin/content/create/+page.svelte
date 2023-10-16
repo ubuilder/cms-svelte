@@ -1,8 +1,7 @@
 <script lang="ts">
   import { goto, invalidateAll } from "$app/navigation";
-  import PageHeader from "$lib/components/core/PageHeader.svelte";
   import type { Table } from "$lib/types";
-  import { Button, El } from "yesvelte";
+  import {PageHeader, Button, El } from "@ulibs/yesvelte";
   import TableEditCard from "../TableEditCard.svelte";
 
   export let data;

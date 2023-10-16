@@ -14,7 +14,7 @@
     FormSwitch,
     Icon,
     FormRadioGroup,
-  } from "yesvelte";
+  } from "@ulibs/yesvelte";
   import FilePicker from "./FilePicker.svelte";
 
   const id = "form-field-" + nanoid();

@@ -1,9 +1,9 @@
 <script lang="ts">
-  import ButtonList from "$lib/components/core/ButtonList.svelte";
   import FormFields from "$lib/components/content/FormFields.svelte";
   import type { Table } from "$lib/types";
   import {
     Button,
+    ButtonList,
     El,
     Card,
     Icon,
@@ -13,7 +13,7 @@
     FormField,
     CardBody,
     CardFooter,
-  } from "yesvelte";
+  } from "@ulibs/yesvelte";
 
   export let table: Partial<Table> = {
     icon: 'database',

@@ -2,10 +2,10 @@
   import { browser } from "$app/environment";
   import { enhance } from "$app/forms";
   import { goto } from "$app/navigation";
-  import ButtonList from "$lib/components/core/ButtonList.svelte";
-  import Layout from "$lib/components/core/Layout.svelte";
-  import Page from "$lib/components/core/Page.svelte";
   import {
+    ButtonList,
+    Layout,
+    Page,
     Card,
     CardBody,
     CardFooter,
@@ -14,7 +14,7 @@
     FormInput,
     El,
     CardHeader,
-  } from "yesvelte";
+  } from "@ulibs/yesvelte";
   // import { Identity, routeTo } from '@services'
   // import { news, user } from '@stores'
   // import Logo from '@components/layout/Logo.svelte'

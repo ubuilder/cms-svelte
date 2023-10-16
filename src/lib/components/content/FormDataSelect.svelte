@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import { El, FormAutocomplete } from "yesvelte";
+  import { El, FormAutocomplete } from "@ulibs/yesvelte";
   
   export let multiple = false
   export let table: string | undefined = undefined

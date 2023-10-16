@@ -1,11 +1,10 @@
 <script lang="ts">
-  import ButtonList from "$lib/components/core/ButtonList.svelte";
-  import { modal } from "$lib/components/core/modal";
-  import Modal from "$lib/components/core/modal/Modal.svelte";
   import { onMount, tick } from "svelte";
   import {components} from "$lib/ui"
   import {
-    FormInput,
+    ButtonList,
+    modal,
+    BaseModal,
     Button,
     FormSelect,
     ModalBody,
@@ -18,7 +17,7 @@
     Input,
     FormField,
     El,
-  } from "yesvelte";
+  } from "@ulibs/yesvelte";
 
   export let mode: "add" | "edit" = "add";
 
@@ -47,7 +46,7 @@
   $: if (slot.type) updateType(slot.type);
 </script>
 
-<Modal title={"Choose a type"}>
+<BaseModal title={"Choose a type"}>
     <!-- {#if mode === "add" && !slot.type} -->
     <ModalBody>
       <El row g="2">
@@ -98,4 +97,4 @@
       >
     </ButtonList>
   </ModalFooter>
-</Modal>
+</BaseModal>

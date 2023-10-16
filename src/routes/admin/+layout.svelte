@@ -12,10 +12,8 @@
     DropdownMenu,
     El,
     SidebarItem,
-  } from "yesvelte";
-  import Layout from "$lib/components/core/Layout.svelte";
-  import tabler from "yesvelte/css/tabler.min.css?url";
-  import css from '../../app.css?url';
+    Layout
+  } from "@ulibs/yesvelte";
 
   import { goto } from "$app/navigation";
 
@@ -48,19 +46,15 @@
   }
 </script>
 
-<svelte:head>
-  <link rel="stylesheet" href={tabler} />
-  <link rel="stylesheet" href={css} />
-</svelte:head>
-
-<Layout theme="dark">
+<Layout title="UBuilder" theme="dark" dir="ltr">
   <svelte:fragment slot="sidebar-items">
     <SidebarItem title="Dashboard" icon="dashboard" href="/admin" />
     <SidebarItem title="Content" icon="database" href="/admin/content" />
     <SidebarItem title="Pages" href="/admin/pages" icon="file" />
     <SidebarItem title="Assets" href="/admin/assets" icon="photo" />
-    <SidebarItem title="Market" href="/admin/market" icon="building-store" />
+    <SidebarItem title="Apps" href="/admin/apps" icon="building-store" />
     <SidebarItem title="Settings" href="/admin/settings" icon="settings" />
+  
     {#each apps as app}
       <SidebarItem
         title={app.name}

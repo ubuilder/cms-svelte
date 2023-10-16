@@ -1,6 +1,6 @@
 <script lang="ts">
   import DynamicFormField from "$lib/components/content/DynamicFormField.svelte";
-  import { El } from "yesvelte";
+  import { El } from "@ulibs/yesvelte";
 
   export let props: any = {};
   export let items: any = {};

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { El } from "yesvelte";
+  import { El } from "@ulibs/yesvelte";
   import Element from "$lib/ui/Element.svelte";
   import { components } from "$lib/ui";
 

@@ -1,8 +1,8 @@
 <script>
   import RelationItem from "./RelationItem.svelte";
 
-  import PageHeader from "$lib/components/core/PageHeader.svelte";
   import {
+    PageHeader,
     Badge,
     Button,
     Card,
@@ -11,7 +11,7 @@
     Icon,
     Status,
     Switch,
-  } from "yesvelte";
+  } from "@ulibs/yesvelte";
 
   export let data;
 </script>
