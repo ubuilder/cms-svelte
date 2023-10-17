@@ -1,6 +1,8 @@
 import { renderVariable } from "$lib/helpers/index.js";
-import type { DbFilter, DbWith, Items, Table } from "$lib/types/index.js";
+import type { ComponentField, DbFilter, DbWith, Items, Table } from "$lib/types/index.js";
 import type { Page } from "$lib/types/page.js";
+import {components, type Component} from '$lib/ui'
+import hbs from 'handlebars'
 
 async function findPageBySlug({ api, slug }: {api: App.Locals['api'], slug: string}): Promise<{ page?: Page, params: Record<string, string> }> {
   let routes = []
@@ -94,7 +96,50 @@ export async function load({ locals, params }) {
   }
 
   async function render(page: Page) {
-    page.title = renderVariable(page.title, items);
+    
+
+    function renderSlot(slot: any) {
+      console.log('renderSlot')
+      const props: any = {}
+      const component: Component | undefined = components.find(x => x.name === slot.type)
+      if(component) {
+        let fields: ComponentField[] =  []
+        if(Array.isArray(component.fields)) {
+          fields = component.fields
+        } else {
+          Object.keys(component.fields).map(key => {
+            fields = [...fields, ...component.fields[key]]
+          })
+        }
+
+        
+        console.log(component.fields)
+      for(let field of fields) {
+        if(field.type === 'slot') {
+          props[field.name] = slot.props[field.name].map(slot => renderSlot(slot)).join('')
+        } else {
+          console.log(props, slot, field)
+          props[field.name] = renderVariable(slot.props[field.name], items);
+        }
+      }
+      console.log(props)
+      return hbs.compile(component.template)(props)
+      
+    }
+
+    }
+    
+    const html = page.slot.map(slot => {
+      return renderSlot(slot)
+    }).join('')
+
+    // page.slot = renderVariable(page.slot, items)
+
+    // console.log(JSON.stringify(page, null, 4))
+    return html;
+  }
+
+  page.title = renderVariable(page.title, items);
     if(page.description) {
       page.description = renderVariable(page.description, items);
     }
@@ -102,15 +147,10 @@ export async function load({ locals, params }) {
       page.dir = renderVariable(page.dir, items);
     }
 
-    // page.slot = renderVariable(page.slot, items)
-
-    console.log(JSON.stringify(page, null, 4))
-    return page;
-  }
-
-  console.log({items})
+  // console.log({items})
   return {
-    page: await render(page),
+    page,
+    html: await render(page),
     items,
   };
 }
