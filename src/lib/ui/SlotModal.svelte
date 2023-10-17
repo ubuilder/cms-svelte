@@ -65,7 +65,7 @@
                 on:click={() => (slot.type = item.name)}
               >
                 {item.name}
-              </El>
+              </Elnp>
             </El>
         {/if}
       {/each}

@@ -1,6 +1,7 @@
 // import fetch from "node-fetch";
 import type { User } from "../../app";
 import type { DbTable, DbList, Page, Table } from "$lib/types";
+import { goto } from "$app/navigation";
 
 type ApiResponse<T = any> = {
   status: number;
@@ -47,6 +48,17 @@ export function cms_api(
       console.log(raw)
       const res: ApiResponse<T> = JSON.parse(raw) 
 
+      if(res.status === 401) {
+        // 
+        await goto('/auth/login');
+
+        return {
+          status: 401,
+          message: res.message,
+          data: null
+        }  
+      }
+      
       console.log(`[${res.status}]: ${res.message}.`);
       
 
@@ -142,5 +154,41 @@ export function cms_api(
       async getData(params: any) {
       return call<DbList<DbTable>>("/data/getData", params).then(res => res.data!)
     },
+    async getAssets(params: any) {
+      return call<DbList<any>>("/assets/getFiles", params).then(res => res.data);
+    },
+    async removeAsset(id: string) {
+      return call<any>('/assets/removeFile', {id}).then(res => res.data);
+    },
+    async updateAsset(id: string,data: any) {
+      return call<any>('/assets/updateFile', {id, data}).then(res => res.data);
+    },
+    async uploadFile(file: File) {
+      const body = new FormData();
+      body.append('file', file);
+      console.log('start file upload')
+      const res = await fetch(baseUrl + '/assets/uploadFile', {
+        method: 'POST',
+        headers: {
+          'authorization': `bearer ${token}`
+        },
+        body
+      })
+
+      console.log('file upload result: ')
+      console.log(await res.text())
+
+      return {
+        data: []
+      }
+      // return (await res.json()).data;
+    },
+    async downloadFile(id: string) {
+      return fetch(baseUrl + '/files/' + id, {
+        headers: {
+          authorization: 'bearer ' + token
+        }
+      })
+    }
   };
 }

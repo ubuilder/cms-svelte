@@ -1,5 +1,5 @@
 <script>
-    import '../../app.css';
+    import '@ulibs/yesvelte/styles.css';
 </script>
 
 <slot />
