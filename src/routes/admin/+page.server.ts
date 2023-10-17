@@ -1,4 +1,5 @@
 export async function load({locals}) {
+    
 
     const pages = await locals.api.getPages({perPage: 1000});
     const tables = await locals.api.getTables({perPage: 1000})

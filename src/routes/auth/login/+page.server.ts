@@ -7,7 +7,7 @@ export const actions = {
 
     const response = await event.locals.api.login({username, password})
     if (response.status !== 200) {
-      return fail(response.status, { field: 'username', message: response.message });
+      return fail(response.status, { field: response.field ?? 'username', message: response.message });
     }
 
     console.log(response.data)

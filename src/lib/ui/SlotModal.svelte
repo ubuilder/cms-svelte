@@ -1,6 +1,5 @@
 <script lang="ts">
   import { onMount, tick } from "svelte";
-  import {components} from "$lib/ui"
   import {
     ButtonList,
     modal,
@@ -21,63 +20,67 @@
 
   export let mode: "add" | "edit" = "add";
 
-  let items = Object.keys(components);
+  export let components: any[] = []
+  export let allowedComponents: any[] = [];
+  export let disabledComponents: any[] = [];
+  let items = components.filter(x => !disabledComponents.includes(x.name));
   export let slot: any = {
     props: {},
     slot: [],
   };
 
-  let component: any;
+  // let component: any;
 
-  async function updateType(type: keyof typeof components) {
-    component = components[type];
-  }
+  // async function updateType(type: any) {
+  //   component = components[type];
+  // }
 
   onMount(() => {
     console.log(slot);
     if (mode === "edit") {
-      updateType(slot.type);
+      // updateType(slot.type);
     }
     if (!slot.props) {
       slot.props = {};
     }
   });
 
-  $: if (slot.type) updateType(slot.type);
+  // $: if (slot.type) updateType(slot.type);
 </script>
 
 <BaseModal title={"Choose a type"}>
-    <!-- {#if mode === "add" && !slot.type} -->
-    <ModalBody>
-      <El row g="2">
-        {#each items as item}
-          <El col="3">
-            <El
-              style="cursor: pointer"
-              class="component-item {slot.type === item ? 'active' : ''}"
-              py="3"
-              textAlign="center"
-              borderRoundSize="2"
-              on:dblclick={() => $modal.resolve({...slot, type: item})}
-              on:click={() => (slot.type = item)}
-            >
-              {item}
+  <!-- {#if mode === "add" && !slot.type} -->
+  <ModalBody>
+    <El row g="2">
+      {#each items as item}
+        {#if allowedComponents.length > 0 ? allowedComponents.includes(item.name): true }
+            <El col="3">
+              <El
+                style="cursor: pointer"
+                class="component-item {slot.type === item.name ? 'active' : ''}"
+                py="3"
+                textAlign="center"
+                borderRoundSize="2"
+                on:dblclick={() => $modal.resolve({ ...slot, type: item.name })}
+                on:click={() => (slot.type = item.name)}
+              >
+                {item.name}
+              </El>
             </El>
-          </El>
-        {/each}
-      </El>
-      </ModalBody>
-      <!-- {:else} -->
+        {/if}
+      {/each}
+    </El>
+  </ModalBody>
+  <!-- {:else} -->
 
-
-    <!-- {#key slot.type}
+  <!-- {#key slot.type}
       {#if component} 
         <svelte:component this={component} edit bind:props={slot.props} />
       {/if}
     {/key} -->
-    <!-- {/if} -->
+  <!-- {/if} -->
 
-    <!-- {#if item}
+  <!-- {#if item}
       {#each item.props as prop}
         <FormField style="position: relative" label={prop.name} bind:value={slot.props[prop.name]}>
           <div class="dynamic-icon"></div>
@@ -89,12 +92,7 @@
   <ModalFooter>
     <ButtonList>
       <Button on:click={() => $modal.close()}>Cancel</Button>
-      <Button
-        on:click={() => $modal.resolve(slot)}
-        color="primary">
-        Add
-        </Button
-      >
+      <Button on:click={() => $modal.resolve(slot)} color="primary">Add</Button>
     </ButtonList>
   </ModalFooter>
 </BaseModal>

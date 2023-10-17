@@ -4,21 +4,23 @@ import hbs from 'handlebars'
 export function renderVariable<T extends (string | Record<string, any>)>(template: T, items: Items): T {
   console.log('render varible', template)
   
-  if(Array.isArray(template)) {
-    return template.map(x => renderVariable(x, items))
-  }
+  // if(Array.isArray(template)) {
+  //   return template.map(x => renderVariable(x, items))
+  // }
   
   if (typeof template === "string") {
     return hbs.compile(`${template}`)(items) as string;
-  } else if (typeof template === "object" && !Array.isArray(template)) {
-    const result: any = {};
-
-    Object.keys(template).map((key) => {
-      result[key] = renderVariable(template[key], items);
-    });
-    return result;
   }
-  return template;
+  return template
+  //  else if (typeof template === "object" && !Array.isArray(template)) {
+  //   const result: any = {};
+
+  //   Object.keys(template).map((key) => {
+  //     result[key] = renderVariable(template[key], items);
+  //   });
+  //   return result;
+  // }
+  // return template;
 }
 
 
