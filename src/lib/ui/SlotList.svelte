@@ -25,13 +25,14 @@
   } from "@ulibs/yesvelte";
   import SlotModal from "./SlotModal.svelte";
   import { onDestroy, onMount } from "svelte";
-  import { components } from ".";
   import { slots as slotsStore } from "$lib/stores/pageSlots";
+  import type { Component } from ".";
 
   export let buttonText: string = 'Add Slot'
   export let allowedComponents: string[] = []
   export let disabledComponents: string[] = []
 
+  export let components: Component[] = []
   export let slotList: any[] = [];
 
   export let id = "";
@@ -104,6 +105,7 @@
   async function onAddSlot() {
     console.log("onAddSlot");
     const slot = await modal.open(SlotModal, {
+      components,
       allowedComponents,
       disabledComponents,
       mode: "add",
@@ -157,6 +159,7 @@
                 <El row>
                   {#each component.fields as field}
                     <ComponentProp
+                      {components}
                       {items}
                       {field}
                       bind:value={slot.props[field.name]}
@@ -182,6 +185,7 @@
                             <El row>
                               {#each component.fields[key] as field}
                                 <ComponentProp
+                                  {components}
                                   {items}
                                   {field}
                                   bind:value={slot.props[field.name]}

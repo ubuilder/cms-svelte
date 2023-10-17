@@ -1,6 +1,5 @@
 <script lang="ts">
   import { onMount, tick } from "svelte";
-  import { components } from "$lib/ui";
   import {
     ButtonList,
     modal,
@@ -21,6 +20,7 @@
 
   export let mode: "add" | "edit" = "add";
 
+  export let components: any[] = []
   export let allowedComponents: any[] = [];
   export let disabledComponents: any[] = [];
   let items = components.filter(x => !disabledComponents.includes(x.name));
@@ -65,7 +65,7 @@
                 on:click={() => (slot.type = item.name)}
               >
                 {item.name}
-              </Elnp>
+              </El>
             </El>
         {/if}
       {/each}

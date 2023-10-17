@@ -10,7 +10,7 @@
   <meta name="description" content={data.page.description} />
 </svelte:head>
 
-{#if true}
+{#if false}
   <pre>
     {JSON.stringify(data.page, null, 2)}
   </pre>

@@ -6,13 +6,15 @@
 
   export let field: ComponentField;
   export let items: any = {};
+  export let components: any[] = [];
+
 
   export let value: any;
 </script>
 
 {#if field.type === "slot"}
   <FormField colMd={field.col} label={field.name}>
-    <SlotList {items} bind:slotList={value} />
+    <SlotList {components} {items} bind:slotList={value} />
   </FormField>
 {:else}
   <DynamicFormField

@@ -2,6 +2,7 @@
 import type { User } from "../../app";
 import type { DbTable, DbList, Page, Table } from "$lib/types";
 import { goto } from "$app/navigation";
+import type { Component } from "$lib/ui";
 
 type ApiResponse<T = any> = {
   status: number;
@@ -141,6 +142,21 @@ export function cms_api(
     },
     async removeTable(id: string) {
       return call<any>("/content/removeTable", {id}).then(res => res.data)
+    },
+    async getComponents(params: any): Promise<Component> {
+      return call<any>('/components/getComponents', params).then(res => res.data)
+    },
+    async createComponent(component: Partial<Component>): Promise<Component> {
+      return call<any>('/components/createComponent', component).then(res => res.data)
+    },
+    async updateComponent(id: string, component: Partial<Component>): Promise<Component> {
+      return call<any>('/components/updateComponent', {id, data: component}).then(res => res.data)
+    },
+    async removeComponent(id: string): Promise<Component> {
+      return call<any>('/components/removeComponent', {id}).then(res => res.data)
+    },
+    async getComponent(id: string): Promise<Component> {
+      return call<any>('/components/getComponents', {where: {id}}).then(res => res.data.data[0])
     },
     async insertData(params: any) {
       return call<any>("/data/insertData", params).then(res => res.data)

@@ -1,7 +1,7 @@
 import { renderVariable } from "$lib/helpers/index.js";
 import type { ComponentField, DbFilter, DbWith, Items, Table } from "$lib/types/index.js";
 import type { Page } from "$lib/types/page.js";
-import {components, type Component} from '$lib/ui'
+import type{ Component} from '$lib/ui'
 import hbs from 'handlebars'
 
 async function findPageBySlug({ api, slug }: {api: App.Locals['api'], slug: string}): Promise<{ page?: Page, params: Record<string, string> }> {
@@ -45,6 +45,8 @@ async function findPageBySlug({ api, slug }: {api: App.Locals['api'], slug: stri
 }
 
 export async function load({ locals, params }) {
+
+  const components = await locals.api.getComponents({perPage: 500}).then(res => res.data)
   const { page, params: pageParams } = await findPageBySlug({ api: locals.api, slug: params.slug });
   console.log('page ==', page)
 
