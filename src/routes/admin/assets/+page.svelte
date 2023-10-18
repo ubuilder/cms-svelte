@@ -1,11 +1,7 @@
 <script lang="ts">
-  import Page from "$lib/components/core/Page.svelte";
-  import FilterList from "$lib/components/filters/FilterList.svelte";
-  import { Button, El, Icon } from "yesvelte";
+  import { Page, FilterList, TextFilter, SelectFilter, Button, El, Icon } from "@ulibs/yesvelte";
   import Asset from "./Asset.svelte";
   import { invalidateAll } from "$app/navigation";
-  import TextFilter from "$lib/components/filters/TextFilter.svelte";
-  import SelectFilter from "$lib/components/filters/SelectFilter.svelte";
 
   export let data;
 

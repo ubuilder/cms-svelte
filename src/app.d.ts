@@ -1,7 +1,7 @@
 // See https://kit.svelte.dev/docs/types#app
 
 import type { cms_api } from "$lib/helpers/cms-api";
-import type { Db, DbFilter } from "$lib/types";
+import type { DbFilter } from "$lib/types";
 
 // for information about these interfaces
 export type User = {
@@ -19,7 +19,7 @@ declare global {
 	namespace App {
 		// interface Error {}
 		interface Locals {
-			db: Db;
+			// db: Db;
 			siteId: string;
 			filters: DbFilter
 			user: User;

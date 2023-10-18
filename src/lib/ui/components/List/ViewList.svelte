@@ -2,7 +2,7 @@
   import Element from "$lib/ui/Element.svelte";
   import { components } from "$lib/ui";
 
-  import { El } from "yesvelte";
+  import { El } from "@ulibs/yesvelte";
 
   export let items: any = {};
   export let props: any = {};

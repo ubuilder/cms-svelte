@@ -7,13 +7,13 @@
     ModalFooter,
     ModalHeader,
     ModalTitle,
-  } from "yesvelte";
+    BaseModal,
+    FilterList,
+    SelectFilter,
+    TextFilter,
+    modal,
+  } from "@ulibs/yesvelte";
 
-  import Modal from "../core/modal/Modal.svelte";
-  import FilterList from "../filters/FilterList.svelte";
-  import SelectFilter from "../filters/SelectFilter.svelte";
-  import TextFilter from "../filters/TextFilter.svelte";
-  import { modal } from "../core/modal/modal";
   import { writable } from "svelte/store";
   import { setContext } from "svelte";
   import ModalAssetItem from "./ModalAssetItem.svelte";
@@ -73,7 +73,7 @@
   $: loadAssets($filters);
 </script>
 
-<Modal>
+<BaseModal>
   <ModalHeader>
     <ModalTitle>{title}</ModalTitle>
     <Button on:click={() => uploadInput.click()} color="primary">
@@ -121,4 +121,4 @@
   <ModalFooter>
     <Button on:click={() => $modal.close()}>Close</Button>
   </ModalFooter>
-</Modal>
+</BaseModal>

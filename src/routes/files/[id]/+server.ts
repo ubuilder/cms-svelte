@@ -1,5 +1,5 @@
-import { readFile } from 'fs/promises'
-import { join } from 'path'
+import { readFile } from "fs/promises";
+import { join } from "path";
 
 /*
 event:  {
@@ -86,9 +86,18 @@ event:  {
 
 */
 export async function GET(event) {
-    console.log('event: ', event)
+  // console.log('event: ', event)
 
-    const file = await readFile(join('data', event.locals.siteId, 'assets', event.params.id))
-    
-    return new Response(file)
+  const response = await event.locals.api.downloadFile(event.params.id);
+  return response;
+  // const reader = response.body.pipeThrough(new TextDecoderStream()).getReader();
+  // while (true) {
+  //   const { value, done } = await reader.read();
+  //   console.log("resp", done, value);
+  //   if (done) break;
+  //   result += `${value}<br>`;
+  // }
+  // // const file = await readFile(join('data', event.locals.siteId, 'assets', event.params.id))
+
+  // return new Response("file content stream from server...")
 }

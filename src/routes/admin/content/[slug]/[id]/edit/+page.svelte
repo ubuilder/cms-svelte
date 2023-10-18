@@ -1,9 +1,7 @@
 <script lang="ts">
     import { goto } from "$app/navigation";
-    import ButtonList from "$lib/components/core/ButtonList.svelte";
-    import PageHeader from "$lib/components/core/PageHeader.svelte";
     import FieldInput from "$lib/components/content/FieldInput.svelte";
-    import { Button, Card, CardBody, El } from "yesvelte";
+    import { Button, Card, CardBody, El, ButtonList, PageHeader } from "@ulibs/yesvelte";
   
     export let data;
   

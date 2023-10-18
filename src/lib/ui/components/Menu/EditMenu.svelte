@@ -1,11 +1,11 @@
 <script lang="ts">
-  import ButtonList from "$lib/components/core/ButtonList.svelte";
   import {
+    ButtonList,
     El,
     FormInput,
     Button,
     Icon
-  } from "yesvelte";
+  } from "@ulibs/yesvelte";
 
   export let props: any = {};
   

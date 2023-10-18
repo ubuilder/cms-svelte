@@ -13,18 +13,15 @@ export const actions = {
 
     const response = await event.locals.api.register({username, password, email, name})
     
-    if(!response.data) {
+    if(response.status !==200) {
       return fail(response.status, {message: response.message});
     }
-    //TODO get hashed password
-    const user = response.data.user
 
     event.cookies.set('token', response.data?.token, {
         path: '/',
         maxAge : 60  * 60 * 24 * 15
     })
 
-    redirect(307, "/")
 
     return {
       success: true,

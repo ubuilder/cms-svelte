@@ -5,9 +5,8 @@
 <script lang="ts">
   import FieldInput from "$lib/components/content/FieldInput.svelte";
 
-  import { El } from "yesvelte";
+  import { El, ButtonList } from "@ulibs/yesvelte";
   import Button from "../Button/ViewButton.svelte";
-  import ButtonList from "$lib/components/core/ButtonList.svelte";
   import { page } from "$app/stores";
   import type { Table } from "$lib/types";
 

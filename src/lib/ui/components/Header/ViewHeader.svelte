@@ -3,7 +3,7 @@
   import Element from "$lib/ui/Element.svelte";
 
 
-  import { El, Navbar } from "yesvelte";
+  import { El, Navbar } from "@ulibs/yesvelte";
   export let props: any = {}
   export let items: any = {}
 

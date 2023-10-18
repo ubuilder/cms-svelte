@@ -1,10 +1,8 @@
 <script lang="ts">
-    // your script goes here
-    import Page from '$lib/components/core/Page.svelte'
   import { cms_api } from '$lib/helpers/cms-api.js';
   import { onMount } from 'svelte';
 
-    import {FormSelect,Button, FormTextarea, El, FormField} from 'yesvelte'
+    import {Page , FormSelect,Button, FormTextarea, El, FormField} from "@ulibs/yesvelte"
     
     export let data;
 

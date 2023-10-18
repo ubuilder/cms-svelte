@@ -1,31 +1,35 @@
 <script lang="ts">
   import { goto, invalidateAll } from "$app/navigation";
-  import Page from "$lib/components/core/Page.svelte";
-  import PageHeader from "$lib/components/core/PageHeader.svelte";
-import ListBox from "$lib/components/core/list/ListBox.svelte";
-  import ListItem from "$lib/components/core/list/ListItem.svelte";
   import type { DbTable } from "$lib/types/index.js";
-  import { Button, El, Icon, Status, Switch } from "yesvelte";
+  import {
+    Button,
+    El,
+    Page,
+    PageHeader,
+    ListBox,
+    ListItem,
+    Status,
+    Switch,
+  } from "@ulibs/yesvelte";
   import RelationItem from "../RelationItem.svelte";
 
-    export let data;
+  export let data;
 
-    function onRollback(item: DbTable) {
-        fetch('?/rollback', {
-            method: "POST",
-            body: JSON.stringify(item)
-        }).then(res => {
-            goto('..', {invalidateAll: true})
-        })
-    }
+  function onRollback(item: DbTable) {
+    fetch("?/rollback", {
+      method: "POST",
+      body: JSON.stringify(item),
+    }).then((res) => {
+      goto("..", { invalidateAll: true });
+    });
+  }
 </script>
 
-<El container="lg" >
+<El container="lg">
+  <PageHeader title="History" back />
 
-<PageHeader title="History" back/>
-
-<ListBox mt="3" title='' items={data.rows.data} let:item>
-    {#each data.table.fields.filter(x => x.show_in_list !== false) as field}
+  <ListBox mt="3" title="" items={data.rows.data} let:item>
+    {#each data.table.fields.filter((x) => x.show_in_list !== false) as field}
       <ListItem name={field.name}>
         {#if field.type === "switch"}
           <Switch disabled checked={item[field.name]} />
@@ -51,8 +55,12 @@ import ListBox from "$lib/components/core/list/ListBox.svelte";
       </ListItem>
     {/each}
     <ListItem style="width: 0" name="Actions">
-        <Button size="sm" outline color="primary" on:click={() => onRollback(item)}>Rollback</Button>
-
+      <Button
+        size="sm"
+        outline
+        color="primary"
+        on:click={() => onRollback(item)}>Rollback</Button
+      >
     </ListItem>
-</ListBox>
+  </ListBox>
 </El>

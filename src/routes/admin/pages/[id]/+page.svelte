@@ -1,9 +1,9 @@
 <script lang="ts">
   import { goto, invalidateAll } from "$app/navigation";
   import type { FieldRelation, Page as PageType } from "$lib/types";
-  import Page from "$lib/components/core/Page.svelte";
-  import { modal } from "$lib/components/core/modal";
   import {
+    Page,
+    modal,
     Button,
     FormField,
     El,
@@ -20,13 +20,13 @@
     CardHeader,
     Icon,
     FormRadioGroup,
-  } from "yesvelte";
-  import ButtonList from "$lib/components/core/ButtonList.svelte";
+    ButtonList,
+    confirmModal,
+  } from "@ulibs/yesvelte";
   import SlotList from "$lib/ui/SlotList.svelte";
   import PreviewModal from "./PreviewModal.svelte";
   import { writable } from "svelte/store";
-  import ConfirmModal from "$lib/components/core/modal/ConfirmModal.svelte";
-  import PageLoad from "$lib/components/core/pages/PageLoad.svelte";
+  import PageLoad from "$lib/components/pages/PageLoad.svelte";
   import { slots } from "$lib/stores/pageSlots";
   import DynamicFormField from "$lib/components/content/DynamicFormField.svelte";
 
@@ -92,8 +92,7 @@
     );
   }
   async function openRemoveConfirmModal() {
-    const res = await modal.open(
-      ConfirmModal,
+    const res = await confirmModal.open(
       { status: "danger" },
       { autoClose: true }
     );
@@ -113,6 +112,9 @@
   }
 
   function getItems(load: any): any[] {
+
+    let params = request.slug?.match(/\{\w+\}/g);
+
     let items: any = {
       page: {
         text: "Page",
@@ -122,9 +124,29 @@
             text: "Page's Slug",
             type: "plain_text",
           },
+          params: {
+            type: 'object',
+            text: 'Page\'s URL params',
+            content: params?.reduce((prev, curr) => {
+              const key = curr.substring(1, curr.length -1);
+              return {...prev, [key]: {
+                text: 'Page\'s param (' + key + ')',
+                type: 'plain_text'
+              }}
+            }, {})
+          },
+          title: {
+            text: "Page's Title",
+            type: 'plain_text'
+          },
+          description: {
+            text: "Page's Description",
+            type: 'plain_text'
+          },
         },
       },
     };
+    console.log(items)
 
     console.log("load: ", load);
     for (let item of load) {
@@ -209,14 +231,25 @@
                 label="Description"
                 bind:value={request.description}
               />
+              <DynamicFormField
+                items={getItems(request.load)}
+                type="plain_text"
+                input_type="textarea"
+                label="Head"
+                bind:value={request.head}
+              />
 
-              <DynamicFormField type="select" items={getItems(request.load)} input_type="radio_group"
+              <DynamicFormField
+                type="select"
+                items={getItems(request.load)}
+                input_type="radio_group"
                 options={[
-                  {key: "rtl", 'text': 'Right to left'}, 
-                  {key: "ltr", 'text': 'Left to right'}]}
+                  { key: "rtl", text: "Right to left" },
+                  { key: "ltr", text: "Left to right" },
+                ]}
                 bind:value={request.dir}
                 label="Direction"
-               />
+              />
             </TabPanel>
             <TabPanel>
               <PageLoad
@@ -227,6 +260,7 @@
             </TabPanel>
             <TabPanel>
               <SlotList
+                components={data.components}
                 items={getItems(request.load)}
                 on:move={onMove}
                 bind:slotList={request.slot}

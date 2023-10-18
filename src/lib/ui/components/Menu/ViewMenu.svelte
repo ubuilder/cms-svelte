@@ -7,7 +7,7 @@
       OffcanvasBody,
       Sidebar,
       SidebarItem,
-    } from "yesvelte";
+    } from "@ulibs/yesvelte";
   
     export let props: any = {};
     let show: boolean = false;

@@ -1,11 +1,9 @@
 <script lang="ts">
-  import ButtonList from "$lib/components/core/ButtonList.svelte";
-  import { modal } from "$lib/components/core/modal";
-  import Modal from "$lib/components/core/modal/Modal.svelte";
   import { onMount, tick } from "svelte";
-  import {components} from "$lib/ui"
   import {
-    FormInput,
+    ButtonList,
+    modal,
+    BaseModal,
     Button,
     FormSelect,
     ModalBody,
@@ -18,69 +16,74 @@
     Input,
     FormField,
     El,
-  } from "yesvelte";
+  } from "@ulibs/yesvelte";
 
   export let mode: "add" | "edit" = "add";
 
-  let items = Object.keys(components);
+
+
+  export let components: any[] = []
+  export let allowedComponents: any[] = [];
+  export let disabledComponents: any[] = [];
+  let items = components.filter(x => !disabledComponents.includes(x.id));
+
   export let slot: any = {
     props: {},
     slot: [],
   };
 
-  let component: any;
+  // let component: any;
 
-  async function updateType(type: keyof typeof components) {
-    component = components[type];
-  }
+  // async function updateType(type: any) {
+  //   component = components[type];
+  // }
 
   onMount(() => {
     console.log(slot);
     if (mode === "edit") {
-      updateType(slot.type);
+      // updateType(slot.type);
     }
     if (!slot.props) {
       slot.props = {};
     }
   });
 
-  $: if (slot.type) updateType(slot.type);
+  // $: if (slot.type) updateType(slot.type);
 </script>
 
-<Modal title={"Choose a type"}>
-    <!-- {#if mode === "add" && !slot.type} -->
-    <ModalBody>
-      <El row g="2">
-        {#each items as item}
-          <El col="3">
-            <El
-              style="cursor: pointer"
-              border
-              borderColor={slot.type === item ? 'primary' : undefined}
-              py="3"
-              textAlign="center"
-              shadow="sm"
-              borderRoundSize="2"
-              on:dblclick={() => $modal.resolve({...slot, type: item})}
-              on:click={() => (slot.type = item)}
-            >
-              {item}
+<BaseModal title={"Choose a type"}>
+  <!-- {#if mode === "add" && !slot.type} -->
+  <ModalBody>
+    <El row g="2">
+      {#each items as item}
+        {#if allowedComponents.length > 0 ? allowedComponents.includes(item.id): true }
+            <El col="3">
+              <El
+                style="cursor: pointer"
+                class="component-item {slot.type === item.name ? 'active' : ''}"
+                py="3"
+                textAlign="center"
+                borderRoundSize="2"
+                on:dblclick={() => $modal.resolve({ ...slot, type: item.name })}
+                on:click={() => (slot.type = item.name)}
+              >
+                {item.name}
+              </El>
             </El>
-          </El>
-        {/each}
-      </El>
-      </ModalBody>
-      <!-- {:else} -->
+        {/if}
+      {/each}
+    </El>
+  </ModalBody>
+  <!-- {:else} -->
 
-
-    <!-- {#key slot.type}
+  <!-- {#key slot.type}
       {#if component} 
         <svelte:component this={component} edit bind:props={slot.props} />
       {/if}
     {/key} -->
-    <!-- {/if} -->
+  <!-- {/if} -->
 
-    <!-- {#if item}
+  <!-- {#if item}
       {#each item.props as prop}
         <FormField style="position: relative" label={prop.name} bind:value={slot.props[prop.name]}>
           <div class="dynamic-icon"></div>
@@ -92,12 +95,7 @@
   <ModalFooter>
     <ButtonList>
       <Button on:click={() => $modal.close()}>Cancel</Button>
-      <Button
-        on:click={() => $modal.resolve(slot)}
-        color="primary">
-        Add
-        </Button
-      >
+      <Button on:click={() => $modal.resolve(slot)} color="primary">Add</Button>
     </ButtonList>
   </ModalFooter>
-</Modal>
+</BaseModal>

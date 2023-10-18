@@ -12,14 +12,17 @@
     DropdownMenu,
     El,
     SidebarItem,
-  } from "yesvelte";
-  import Layout from "$lib/components/core/Layout.svelte";
-  import tabler from "yesvelte/css/tabler.rtl.min.css?url";
+
+    Layout
+  } from "@ulibs/yesvelte";
+  import '@ulibs/yesvelte/styles.css';
+  import '../../app.css';
+
   import { goto } from "$app/navigation";
 
   export let data;
 
-  const show_auth_warning = true
+  const show_auth_warning = true;
 
   async function logout() {
     const result = await fetch("/auth?/logout", {
@@ -34,20 +37,31 @@
     return !!data.user;
   }
 </script>
-
-<svelte:head>
-  <link rel="stylesheet" href={tabler} />
-</svelte:head>
-
-<Layout dir="rtl">
+<!-- <SidebarItem title="داشبورد" icon="dashboard" href="/admin" />
+<SidebarItem title="محتوا" icon="database" href="/admin/content" />
+<SidebarItem title="صفحات" href="/admin/pages" icon="file" />
+<SidebarItem title="فایل ها" href="/admin/assets" icon="photo" />
+<SidebarItem title="اپلیکیشن ها" href="/admin/market" icon="building-store" />
+<SidebarItem title="تست بک اند" href="/admin/test" icon="test" />
+<SidebarItem title="تنظیمات" href="/admin/settings" icon="settings" /> -->
+<Layout title="UBuilder" theme={data.theme} dir={data.dir}>
   <svelte:fragment slot="sidebar-items">
-    <SidebarItem title="داشبورد" icon="dashboard" href="/admin" />
-    <SidebarItem title="محتوا" icon="database" href="/admin/content" />
-    <SidebarItem title="صفحات" href="/admin/pages" icon="file" />
-    <SidebarItem title="فایل ها" href="/admin/assets" icon="photo" />
-    <SidebarItem title="اپلیکیشن ها" href="/admin/market" icon="building-store" />
-    <SidebarItem title="تست بک اند" href="/admin/test" icon="test" />
-    <SidebarItem title="تنظیمات" href="/admin/settings" icon="settings" />
+    <SidebarItem title="Dashboard" icon="dashboard" href="/admin" />
+    <SidebarItem title="Content" icon="database" href="/admin/content" />
+    <SidebarItem title="Pages" href="/admin/pages" icon="file" />
+    <SidebarItem title="Components" href="/admin/components" icon="box" />
+
+    <SidebarItem title="Assets" href="/admin/assets" icon="photo" />
+    <SidebarItem title="Apps" href="/admin/apps" icon="building-store" />
+    <SidebarItem title="Settings" href="/admin/settings" icon="settings" />
+  
+    {#each data.apps as app}
+      <SidebarItem
+        title={app.name}
+        href="/admin/apps/{app.slug}"
+        icon={app.icon}
+      />
+    {/each}
   </svelte:fragment>
   <svelte:fragment slot="header-end">
     <El>

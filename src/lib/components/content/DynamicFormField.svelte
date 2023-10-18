@@ -14,7 +14,8 @@
     FormSwitch,
     Icon,
     FormRadioGroup,
-  } from "yesvelte";
+    FormTextarea,
+  } from "@ulibs/yesvelte";
   import FilePicker from "./FilePicker.svelte";
 
   const id = "form-field-" + nanoid();
@@ -51,7 +52,7 @@
         type: items[item].type,
       });
       if (items[item].type === "object" && items[item].content) {
-        list = getItemsArray(items[item].content, list, item);
+        list = getItemsArray(items[item].content, list, (key ? (key + '.'): '') + item);
         console.log(list);
       }
     });
@@ -66,7 +67,7 @@
   $: isDynamic = localValue?.includes?.("{{");
 </script>
 
-<FormField colSm={col} {...$$restProps}>
+<FormField colMd={col} {...$$restProps}>
   <Label d="flex" gap="2" for={id} {required} slot="label">
     <span>{label}</span>
     {#if filteredItems.length > 0}
@@ -83,7 +84,11 @@
     {/if}
   </Label>
   {#if type === "plain_text"}
-    <FormInput {...$$restProps} bind:value={localValue} />
+    {#if $$props.input_type === 'textarea'}
+    <FormTextarea rows="5" {...$$restProps} bind:value={localValue} />
+    {:else}
+      <FormInput {...$$restProps} bind:value={localValue} />
+    {/if}
   {:else if type === "rich_text"}
     <FormEditor {...$$restProps} bind:value={localValue} />
   {:else if type === "select"}
@@ -95,7 +100,7 @@
       </FormInput>
     {:else}
       {@const isObject = typeof $$restProps.options?.[0] === "object"}
-      {#if $$props.input_type === "radio_group"}
+      {#if $$props.input_type === "radio_group"} <!-- Support Checkbox group -->
         <FormRadioGroup
           {...$$restProps}
           items={$$restProps.options}
@@ -143,19 +148,17 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    /* position: absolute; */
-    top: 22px;
-    background: #57bfffc2;
+    background: var(--y-primary);
     border-radius: 50%;
-    left: -7px;
-    width: 20px;
-    height: 20px;
+    width: 16px;
+    height: 16px;
+    margin-top: 2px;
   }
 
   .dynamic-icon::before {
     content: "+";
     color: white;
-    margin-bottom: 1px;
+    margin-bottom: -1px;
   }
   .dynamic-icon:hover {
     /* top: 17px; */

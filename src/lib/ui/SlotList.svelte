@@ -1,8 +1,10 @@
 <script lang="ts">
+  import ComponentProp from "./ComponentProp.svelte";
+
   import Sortable from "sortablejs";
-  import ButtonList from "$lib/components/core/ButtonList.svelte";
-  import { modal } from "$lib/components/core/modal";
   import {
+    ButtonList,
+    modal,
     Accordion,
     AccordionBody,
     AccordionHeader,
@@ -10,17 +12,33 @@
     Accordions,
     Button,
     Card,
+    confirmModal,
     El,
     Icon,
-  } from "yesvelte";
+    Tabs,
+    CardHeader,
+    TabList,
+    TabItem,
+    CardBody,
+    TabContent,
+    TabPanel,
+  } from "@ulibs/yesvelte";
   import SlotModal from "./SlotModal.svelte";
-  import ConfirmModal from "$lib/components/core/modal/ConfirmModal.svelte";
   import { onDestroy, onMount } from "svelte";
-  import { components } from ".";
   import { slots as slotsStore } from "$lib/stores/pageSlots";
-  import Element from "./Element.svelte";
+  import type { Component } from ".";
+  import ComponentProp from "./ComponentProp.svelte";
 
+  export let buttonText: string = "Add Slot";
+  export let allowedComponents: string[] = [];
+  export let disabledComponents: string[] = [];
+  export let componentId: string | undefined = undefined;
+
+  export let components: Component[] = [];
+
+  export let components: Component[] = []
   export let slotList: any[] = [];
+
   export let id = "";
   export let items: any = {};
 
@@ -28,7 +46,7 @@
   let instance: Sortable;
 
   async function onRemoveSlot(index: number) {
-    const choice = await modal.open(ConfirmModal, {
+    const choice = await confirmModal.open({
       status: "danger",
     });
 
@@ -90,16 +108,28 @@
 
   async function onAddSlot() {
     console.log("onAddSlot");
-    const slot = await modal.open(SlotModal, {
-      mode: "add",
-      slot: {
-        props: {},
-        slot: [],
-      },
-    });
 
-    if (slot) {
-      slotList = [...(slotList ?? []), slot];
+    if (componentId) {
+      const component = components.find((x) => x.id === componentId);
+      if (component) {
+        slotList = [...slotList, { type: component.name }];
+      } else {
+        console.log("component not found...");
+      }
+    } else {
+      const slot = await modal.open(SlotModal, {
+        components,
+        allowedComponents,
+        disabledComponents,
+        mode: "add",
+        slot: {
+          props: {},
+        },
+      });
+
+      if (slot) {
+        slotList = [...(slotList ?? []), slot];
+      }
     }
   }
 </script>
@@ -107,16 +137,17 @@
 <Accordions id={id + "_"}>
   <div style="padding: 8px 0px" bind:this={element}>
     {#each slotList ?? [] as slot, index}
+      {@const component = components.find(x => x.name === slot.type)}
       <Card
         style="border: none;"
         id={id + "_" + index}
-        class="sortable-item"
+        class="page-slot sortable-item"
         my="2"
       >
         <Accordion>
           <AccordionHeader p="0">
             <El w="100" d="flex" alignItems="center" justifyContent="between">
-              <AccordionTitle px="3" style="flex: 1">
+              <AccordionTitle px="3" style="flex: 1; color: #aaa">
                 {slot.type}
               </AccordionTitle>
               <ButtonList on:click>
@@ -126,7 +157,8 @@
                   <Icon name="pencil" />
                 </Button> -->
                 <Button
-                  border="0"
+                  ghost
+                  color="danger"
                   on:click!stopPropagation={() => onRemoveSlot(index)}
                 >
                   <Icon name="trash" />
@@ -135,7 +167,56 @@
             </El>
           </AccordionHeader>
           <AccordionBody p="0">
-            <Element bind:element={slot} {items} {components} mode="edit" />
+            {#if component}
+              {#if Array.isArray(component.fields)}
+                <Card p="3">
+                  <El row>
+                    {#each component.fields as field}
+                      <ComponentProp
+                        {components}
+                        {items}
+                        {field}
+                        bind:value={slot.props[field.name]}
+                      />
+                    {/each}
+                  </El>
+                </Card>
+              {:else}
+                <Card>
+                  <Tabs>
+                    <CardHeader>
+                      <TabList>
+                        {#each Object.keys(component.fields) as key}
+                          <TabItem>{key}</TabItem>
+                        {/each}
+                      </TabList>
+                    </CardHeader>
+                    <CardBody>
+                      <TabContent>
+                        {#each Object.keys(component.fields) as key}
+                          <TabPanel>
+                            <El row>
+                              {#each component.fields[key] as field}
+                                <ComponentProp
+                                  {components}
+                                  {items}
+                                  {field}
+                                  bind:value={slot.props[field.name]}
+                                />
+                              {/each}
+                            </El>
+                          </TabPanel>
+                        {/each}
+                      </TabContent>
+                    </CardBody>
+                  </Tabs>
+                </Card>
+                <!-- Tabs -->
+              {/if}
+            {:else}
+              Component not found ({slot.type})
+            {/if}
+            <!-- <Element bind:element={slot} {items} {components} mode="edit" /> -->
           </AccordionBody>
         </Accordion>
       </Card>
@@ -145,7 +226,7 @@
 
 <Button color="primary" on:click={onAddSlot}>
   <Icon name="plus" />
-  Add Slot
+  {buttonText}
 </Button>
 
 <style>

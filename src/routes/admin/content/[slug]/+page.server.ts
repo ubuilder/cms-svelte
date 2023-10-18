@@ -1,6 +1,3 @@
-import type { Db, DbTable, Table } from "$lib/types";
-import { error, type ServerLoad } from "@sveltejs/kit";
-
 import type { Actions } from "./$types";
 
 export const actions: Actions = {

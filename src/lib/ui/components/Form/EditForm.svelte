@@ -16,7 +16,7 @@
       TabList,
       TabPanel,
       Tabs,
-    } from "yesvelte";
+    } from "@ulibs/yesvelte";
     import Button from "../Button/ViewButton.svelte";
     import { page } from "$app/stores";
     import type { Table } from "$lib/types";

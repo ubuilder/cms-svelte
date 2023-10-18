@@ -1,8 +1,6 @@
 <script lang="ts">
-  import { Button, El, Icon } from "yesvelte";
-  import { modal } from "../core/modal";
+  import { Button, El, Icon, modal, ButtonList } from "@ulibs/yesvelte";
   import FilePickerModal from "./FilePickerModal.svelte";
-  import ButtonList from "../core/ButtonList.svelte";
 
   export let type: "image" | "video" | "file" = "file";
   export let multiple: boolean = false;
