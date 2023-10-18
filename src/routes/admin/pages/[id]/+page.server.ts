@@ -3,9 +3,11 @@ import type { Table } from '$lib/types/table.js';
 
 export async function load({ locals, params }) {
   const tables = await locals.api.getTables({perPage: 50, where: locals.filters}).then(res => res.data!.data)
+  const components = await locals.api.getComponents({perPage: 500}).then(res => res.data);
 
   return {
     tables,
+    components,
     page: await locals.api.getPage( params.id),
   };
 }

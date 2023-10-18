@@ -42,6 +42,8 @@
     <SidebarItem title="Dashboard" icon="dashboard" href="/admin" />
     <SidebarItem title="Content" icon="database" href="/admin/content" />
     <SidebarItem title="Pages" href="/admin/pages" icon="file" />
+    <SidebarItem title="Components" href="/admin/components" icon="box" />
+
     <SidebarItem title="Assets" href="/admin/assets" icon="photo" />
     <SidebarItem title="Apps" href="/admin/apps" icon="building-store" />
     <SidebarItem title="Settings" href="/admin/settings" icon="settings" />

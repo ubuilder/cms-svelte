@@ -24,7 +24,9 @@ export const actions: Actions = {
       });
     }
 
-    // const { file } = formData as { file: File };
+    const { file } = formData as { file: File };
+
+    const res = await locals.api.uploadFile(file);
 
     // const [fileId] = locals.api.uploadFile({
     //   name: file.name,
@@ -33,7 +35,6 @@ export const actions: Actions = {
     //   alt: '',
     //   description: ''
     // })
-
 
     // const [fileId] = await locals.db("u-files").insert({
     //   name: file.name,
@@ -52,11 +53,7 @@ export const actions: Actions = {
   async remove(event) {
     const body = await event.request.json();
 
-    const id = body.id;
-
-    // await event.locals.db("u-files").remove(id);
-
-    // await rm(join("data", event.locals.siteId, "assets", id));
+    await event.locals.api.removeAsset(body.id);
 
     return { success: true };
   },
@@ -66,11 +63,11 @@ export const actions: Actions = {
     const id = body.id;
     const data = body.data;
 
-    // await event.locals.db("u-files").update(id, {
-    //   name: data.name,
-    //   alt: data.alt,
-    //   description: data.description,
-    // });
+    await event.locals.api.updateAsset(id, {
+      name: data.name,
+      alt: data.alt,
+      description: data.description,
+    });
 
     return { success: true };
   },

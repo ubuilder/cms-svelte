@@ -142,6 +142,12 @@ export const handle = async ({ event, resolve }) => {
   }
   // if not user and route starts with admin:
   // redirect to login page
+  console.log(event.request.url)
+  if(event.request.url.includes('/admin/')) {
+    if(!event.locals.user) {
+      throw redirect(307, '/auth/login')
+    }
+  }
   
 
   // if(!event.locals.user && event.request.headers.get('host')?.includes('localhost') && enable_test_user) {

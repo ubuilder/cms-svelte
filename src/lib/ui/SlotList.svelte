@@ -1,4 +1,6 @@
 <script lang="ts">
+  import ComponentProp from "./ComponentProp.svelte";
+
   import Sortable from "sortablejs";
   import {
     ButtonList,
@@ -23,7 +25,6 @@
   } from "@ulibs/yesvelte";
   import SlotModal from "./SlotModal.svelte";
   import { onDestroy, onMount } from "svelte";
-  import { components } from ".";
   import { slots as slotsStore } from "$lib/stores/pageSlots";
   import type { Component } from ".";
   import ComponentProp from "./ComponentProp.svelte";
@@ -35,7 +36,9 @@
 
   export let components: Component[] = [];
 
+  export let components: Component[] = []
   export let slotList: any[] = [];
+
   export let id = "";
   export let items: any = {};
 
@@ -223,7 +226,7 @@
 
 <Button color="primary" on:click={onAddSlot}>
   <Icon name="plus" />
-  Add Slot
+  {buttonText}
 </Button>
 
 <style>

@@ -1,6 +1,5 @@
 <script lang="ts">
   import { onMount, tick } from "svelte";
-  import {components} from "$lib/ui"
   import {
     ButtonList,
     modal,
@@ -33,23 +32,23 @@
     slot: [],
   };
 
-  let component: any;
+  // let component: any;
 
-  async function updateType(type: keyof typeof components) {
-    component = components[type];
-  }
+  // async function updateType(type: any) {
+  //   component = components[type];
+  // }
 
   onMount(() => {
     console.log(slot);
     if (mode === "edit") {
-      updateType(slot.type);
+      // updateType(slot.type);
     }
     if (!slot.props) {
       slot.props = {};
     }
   });
 
-  $: if (slot.type) updateType(slot.type);
+  // $: if (slot.type) updateType(slot.type);
 </script>
 
 <BaseModal title={"Choose a type"}>
@@ -71,20 +70,20 @@
                 {item.name}
               </El>
             </El>
-        {/each}
-      </El>
-      </ModalBody>
-      <!-- {:else} -->
+        {/if}
+      {/each}
+    </El>
+  </ModalBody>
+  <!-- {:else} -->
 
-
-    <!-- {#key slot.type}
+  <!-- {#key slot.type}
       {#if component} 
         <svelte:component this={component} edit bind:props={slot.props} />
       {/if}
     {/key} -->
-    <!-- {/if} -->
+  <!-- {/if} -->
 
-    <!-- {#if item}
+  <!-- {#if item}
       {#each item.props as prop}
         <FormField style="position: relative" label={prop.name} bind:value={slot.props[prop.name]}>
           <div class="dynamic-icon"></div>
@@ -96,12 +95,7 @@
   <ModalFooter>
     <ButtonList>
       <Button on:click={() => $modal.close()}>Cancel</Button>
-      <Button
-        on:click={() => $modal.resolve(slot)}
-        color="primary">
-        Add
-        </Button
-      >
+      <Button on:click={() => $modal.resolve(slot)} color="primary">Add</Button>
     </ButtonList>
   </ModalFooter>
 </BaseModal>

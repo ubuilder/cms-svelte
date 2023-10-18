@@ -260,6 +260,7 @@
             </TabPanel>
             <TabPanel>
               <SlotList
+                components={data.components}
                 items={getItems(request.load)}
                 on:move={onMove}
                 bind:slotList={request.slot}
