@@ -14,7 +14,7 @@
     SidebarItem,
   } from "yesvelte";
   import Layout from "$lib/components/core/Layout.svelte";
-  import tabler from "yesvelte/css/tabler.min.css?url";
+  import tabler from "yesvelte/css/tabler.rtl.min.css?url";
   import { goto } from "$app/navigation";
 
   export let data;
@@ -39,15 +39,15 @@
   <link rel="stylesheet" href={tabler} />
 </svelte:head>
 
-<Layout>
+<Layout dir="rtl">
   <svelte:fragment slot="sidebar-items">
-    <SidebarItem title="Dashboard" icon="dashboard" href="/admin" />
-    <SidebarItem title="Content" icon="database" href="/admin/content" />
-    <SidebarItem title="Pages" href="/admin/pages" icon="file" />
-    <SidebarItem title="Assets" href="/admin/assets" icon="photo" />
-    <SidebarItem title="Market" href="/admin/market" icon="building-store" />
-    <SidebarItem title="Test API" href="/admin/test" icon="test" />
-    <SidebarItem title="Settings" href="/admin/settings" icon="settings" />
+    <SidebarItem title="داشبورد" icon="dashboard" href="/admin" />
+    <SidebarItem title="محتوا" icon="database" href="/admin/content" />
+    <SidebarItem title="صفحات" href="/admin/pages" icon="file" />
+    <SidebarItem title="فایل ها" href="/admin/assets" icon="photo" />
+    <SidebarItem title="اپلیکیشن ها" href="/admin/market" icon="building-store" />
+    <SidebarItem title="تست بک اند" href="/admin/test" icon="test" />
+    <SidebarItem title="تنظیمات" href="/admin/settings" icon="settings" />
   </svelte:fragment>
   <svelte:fragment slot="header-end">
     <El>
@@ -61,10 +61,10 @@
             {/if}
           </Avatar>
           <DropdownMenu>
-            <DropdownItem>Profile</DropdownItem>
-            <DropdownItem>Settings</DropdownItem>
+            <DropdownItem>پروفایل</DropdownItem>
+            <DropdownItem>تنظیمات</DropdownItem>
             <DropdownItem divider />
-            <DropdownItem on:click={logout}>Logout</DropdownItem>
+            <DropdownItem on:click={logout}>بیرون شدن</DropdownItem>
           </DropdownMenu>
         </Dropdown>
       {/if}
@@ -81,15 +81,15 @@
         borderColor="warning"
       >
         <El container="lg">
-          You have access to CMS because
+          شما به پروژه دسترسی دارید بخاطری که واریبل
           <El textColor="warning" bgColor="light" bgOpacity="25" tag="code">
             enable_test_user
-          </El> is true in
+          </El> در فایل
           <El textColor="warning" bgColor="light" bgOpacity="25" tag="code">
             src/hooks.server.ts
-          </El> file. This warning will be hidden in production.
+          </El> برابر با true است. این اخطار در پرودکشن غیر فعال خواهد بود.
           <br />
-            if you do not want to see this message please login <El tag = 'a' href = "/auth/login" >here</El>
+            اگر نمیخواهید این پیام را ببینید لطفا از <El tag = 'a' href = "/auth/login" >اینجا</El> لاگین کنید. 
         </El>
       </El>
     {/if}
@@ -97,12 +97,12 @@
   {:else}
     <Card m="3">
       <CardHeader>
-        <CardTitle>No Access</CardTitle>
+        <CardTitle>عدم دسترسی</CardTitle>
         <CardActions>
-          <Button href="/auth/login">Login</Button>
+          <Button href="/auth/login">لاگین</Button>
         </CardActions>
       </CardHeader>
-      <CardBody>You don't have access to this page</CardBody>
+      <CardBody>شما به این صفحه دسترسی ندارید</CardBody>
     </Card>
   {/if}
 </Layout>

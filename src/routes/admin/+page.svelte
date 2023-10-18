@@ -4,8 +4,7 @@
     export let data;
 </script>
 
-<Page title="Dashboard">
-<b>Hello {data.user.name},<br/></b>
-Welcome to UBuilder CMS
-
+<Page title="داشبورد">
+<b>سلام {data.user.name},<br/></b>
+به سیستم مدیریت محتوای یوبیلدر خوش آمدید
 </Page>
