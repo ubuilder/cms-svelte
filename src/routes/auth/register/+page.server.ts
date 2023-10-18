@@ -13,7 +13,7 @@ export const actions = {
 
     const response = await event.locals.api.register({username, password, email, name})
     
-    if(!response.data) {
+    if(response.status !==200) {
       return fail(response.status, {message: response.message});
     }
 
