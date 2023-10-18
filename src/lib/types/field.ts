@@ -3,11 +3,14 @@ export type FieldBase = {
     required: boolean;
     hint: string;
     placeholder: string;
+    default_value: Field['value'];
+}
+
+export type ContentFieldBase = {
     show_in_create: boolean;
     show_in_list: boolean;
     show_in_update: boolean;
     show_in_preview: boolean;
-    default_value: Field['value'];
 }
 export type FieldPlainText = FieldBase & {
     type: 'plain_text',
@@ -90,3 +93,13 @@ export type Field = |
     FieldImage |
     FieldSwitch |
     FieldRelation 
+
+export type FieldSlot = FieldBase & {
+    type: 'slot',
+    buttonText?: string;
+    componentId: string; // if has value, don't show choose component modal;
+    allowedComponents?: string[];
+    disabledComponents?: string[]
+};
+export type ComponentField = FieldSlot | Field
+export type ContentField = ContentFieldBase & Field

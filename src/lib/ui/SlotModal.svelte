@@ -21,7 +21,13 @@
 
   export let mode: "add" | "edit" = "add";
 
-  let items = Object.keys(components);
+
+
+  export let components: any[] = []
+  export let allowedComponents: any[] = [];
+  export let disabledComponents: any[] = [];
+  let items = components.filter(x => !disabledComponents.includes(x.id));
+
   export let slot: any = {
     props: {},
     slot: [],
@@ -47,23 +53,24 @@
 </script>
 
 <BaseModal title={"Choose a type"}>
-    <!-- {#if mode === "add" && !slot.type} -->
-    <ModalBody>
-      <El row g="2">
-        {#each items as item}
-          <El col="3">
-            <El
-              style="cursor: pointer"
-              class="component-item {slot.type === item ? 'active' : ''}"
-              py="3"
-              textAlign="center"
-              borderRoundSize="2"
-              on:dblclick={() => $modal.resolve({...slot, type: item})}
-              on:click={() => (slot.type = item)}
-            >
-              {item}
+  <!-- {#if mode === "add" && !slot.type} -->
+  <ModalBody>
+    <El row g="2">
+      {#each items as item}
+        {#if allowedComponents.length > 0 ? allowedComponents.includes(item.id): true }
+            <El col="3">
+              <El
+                style="cursor: pointer"
+                class="component-item {slot.type === item.name ? 'active' : ''}"
+                py="3"
+                textAlign="center"
+                borderRoundSize="2"
+                on:dblclick={() => $modal.resolve({ ...slot, type: item.name })}
+                on:click={() => (slot.type = item.name)}
+              >
+                {item.name}
+              </El>
             </El>
-          </El>
         {/each}
       </El>
       </ModalBody>

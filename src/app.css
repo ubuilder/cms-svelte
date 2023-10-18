@@ -1,3 +1,5 @@
+@import 'highlight.js/styles/dark.css';
+
 .component-item, .page-item, .table-item {
     background-color: var(--y-bg-surface) !important;
     border-radius: 8px;
@@ -23,3 +25,7 @@
     box-shadow: 0 2px 8px -4px black !important;
 }
 
+.y-code-editor {
+    background-color: var(--y-bg-forms) !important;
+    border: 1px solid var(--border-color);
+}

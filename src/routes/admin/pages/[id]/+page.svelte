@@ -112,6 +112,9 @@
   }
 
   function getItems(load: any): any[] {
+
+    let params = request.slug?.match(/\{\w+\}/g);
+
     let items: any = {
       page: {
         text: "Page",
@@ -121,9 +124,29 @@
             text: "Page's Slug",
             type: "plain_text",
           },
+          params: {
+            type: 'object',
+            text: 'Page\'s URL params',
+            content: params?.reduce((prev, curr) => {
+              const key = curr.substring(1, curr.length -1);
+              return {...prev, [key]: {
+                text: 'Page\'s param (' + key + ')',
+                type: 'plain_text'
+              }}
+            }, {})
+          },
+          title: {
+            text: "Page's Title",
+            type: 'plain_text'
+          },
+          description: {
+            text: "Page's Description",
+            type: 'plain_text'
+          },
         },
       },
     };
+    console.log(items)
 
     console.log("load: ", load);
     for (let item of load) {
@@ -207,6 +230,13 @@
                 input_type="textarea"
                 label="Description"
                 bind:value={request.description}
+              />
+              <DynamicFormField
+                items={getItems(request.load)}
+                type="plain_text"
+                input_type="textarea"
+                label="Head"
+                bind:value={request.head}
               />
 
               <DynamicFormField

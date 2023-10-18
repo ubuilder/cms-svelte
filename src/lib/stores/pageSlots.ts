@@ -1,4 +1,4 @@
 import {writable} from 'svelte/store'
 
 
-export let slots = writable([])
+export let slots = writable<any[]>([])

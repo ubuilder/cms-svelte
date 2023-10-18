@@ -25,6 +25,7 @@ export type Page = {
     title: string;
     description?: string;
     slug: string;
+    head?: string;
     dir: 'ltr' | 'rtl';
     load: PageLoad[];
     slot: PageSlot[]

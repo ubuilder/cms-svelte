@@ -51,7 +51,7 @@
         type: items[item].type,
       });
       if (items[item].type === "object" && items[item].content) {
-        list = getItemsArray(items[item].content, list, item);
+        list = getItemsArray(items[item].content, list, (key ? (key + '.'): '') + item);
         console.log(list);
       }
     });
