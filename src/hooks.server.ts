@@ -122,8 +122,7 @@ export const handle = async ({ event, resolve }) => {
   //   }
   // }
 
-  let siteId = (event.request.headers.get('host')??'').split('.')[0]
-  console.log('siteId: ', siteId)
+  let siteId = (event.request.headers.get('host')??'').split(':')[1]
   // let siteId = '5173'
   event.locals.api = cms_api({
     baseUrl: apiUrl + "/api/" + siteId,

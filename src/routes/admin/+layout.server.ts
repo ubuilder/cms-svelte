@@ -21,7 +21,7 @@ export async function load({request, locals}) {
             slug: "file-manager",
             repo: "ubuilder/file-manager",
             url: "https://cms-app-file-manager.hadiahmadi.dev/assets",
-            // url: "http://localhost:5175",
+            // url: "http://localhost:5174/assets",
             name: "File Manager",
             icon: "folder",
           },

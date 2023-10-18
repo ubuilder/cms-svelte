@@ -16,15 +16,12 @@ export const actions = {
     if(!response.data) {
       return fail(response.status, {message: response.message});
     }
-    //TODO get hashed password
-    const user = response.data.user
 
     event.cookies.set('token', response.data?.token, {
         path: '/',
         maxAge : 60  * 60 * 24 * 15
     })
 
-    redirect(307, "/")
 
     return {
       success: true,

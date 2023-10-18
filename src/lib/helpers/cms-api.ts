@@ -10,7 +10,6 @@ type ApiResponse<T = any> = {
 
 type LoginResponseType = {token: string, user: User}
 
-
 export function cms_api(
   {
     baseUrl,
@@ -22,7 +21,7 @@ export function cms_api(
   }
 ) {
   async function call<T>(route: string, data = {}) {
-    // TODO: {data} vs data
+      // TODO: {data} vs data
 
     const url = baseUrl + route;
     const body = JSON.stringify(data);
