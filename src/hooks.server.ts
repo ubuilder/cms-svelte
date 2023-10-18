@@ -3,6 +3,7 @@ import { writeFile } from "fs/promises";
 import qs from "qs";
 import { cms_api } from "$lib/helpers/cms-api";
 import { API_URL } from "$env/static/private";
+import { redirect } from "@sveltejs/kit";
 
 const enable_test_user = true;
 
@@ -139,6 +140,12 @@ export const handle = async ({ event, resolve }) => {
   }
   // if not user and route starts with admin:
   // redirect to login page
+  console.log(event.request.url)
+  if(event.request.url.includes('/admin/')) {
+    if(!event.locals.user) {
+      throw redirect(307, '/auth/login')
+    }
+  }
   
 
   // if(!event.locals.user && event.request.headers.get('host')?.includes('localhost') && enable_test_user) {

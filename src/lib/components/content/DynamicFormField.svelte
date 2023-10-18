@@ -14,6 +14,7 @@
     FormSwitch,
     Icon,
     FormRadioGroup,
+    FormTextarea,
   } from "@ulibs/yesvelte";
   import FilePicker from "./FilePicker.svelte";
 
@@ -66,7 +67,7 @@
   $: isDynamic = localValue?.includes?.("{{");
 </script>
 
-<FormField colSm={col} {...$$restProps}>
+<FormField colMd={col} {...$$restProps}>
   <Label d="flex" gap="2" for={id} {required} slot="label">
     <span>{label}</span>
     {#if filteredItems.length > 0}
@@ -83,7 +84,11 @@
     {/if}
   </Label>
   {#if type === "plain_text"}
-    <FormInput {...$$restProps} bind:value={localValue} />
+    {#if $$props.input_type === 'textarea'}
+    <FormTextarea rows="5" {...$$restProps} bind:value={localValue} />
+    {:else}
+      <FormInput {...$$restProps} bind:value={localValue} />
+    {/if}
   {:else if type === "rich_text"}
     <FormEditor {...$$restProps} bind:value={localValue} />
   {:else if type === "select"}
@@ -95,7 +100,7 @@
       </FormInput>
     {:else}
       {@const isObject = typeof $$restProps.options?.[0] === "object"}
-      {#if $$props.input_type === "radio_group"}
+      {#if $$props.input_type === "radio_group"} <!-- Support Checkbox group -->
         <FormRadioGroup
           {...$$restProps}
           items={$$restProps.options}

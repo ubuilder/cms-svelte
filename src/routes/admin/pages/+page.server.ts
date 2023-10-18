@@ -1,5 +1,5 @@
 import type { Page } from '$lib/types/index.js';
-import type { Actions } from '@sveltejs/kit';
+import { redirect, type Actions } from '@sveltejs/kit';
 
 export async function load({locals, params}) {
     return {
@@ -12,10 +12,12 @@ export const actions: Actions = {
     async addPage({locals, request}) {
         const body = await request.json();
 
-        await locals.api.createPage({
+        const page = await locals.api.createPage({
             title: body.title,
             slug: body.slug?.startsWith('/') ? body.slug?.substring(1) : body.slug,
         })
+
+        throw redirect(301, '/admin/pages/' + page.data!.id)
 
         return {success: true}
     }

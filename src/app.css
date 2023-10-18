@@ -23,3 +23,10 @@
     box-shadow: 0 2px 8px -4px black !important;
 }
 
+
+@import 'highlight.js/styles/dark.css';
+
+.y-code-editor {
+    background-color: var(--y-bg-forms) !important;
+    border: 1px solid var(--border-color);
+}

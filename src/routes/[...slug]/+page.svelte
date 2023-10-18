@@ -1,7 +1,7 @@
 <script>
-  import { components, Element } from "$lib/ui";
-  import {page} from '$app/stores'
-  import 'yesvelte/css/tabler.min.css'
+  import { components } from "$lib/ui";
+  import { page } from "$app/stores";
+  import "yesvelte/css/tabler.min.css";
   export let data;
 </script>
 
@@ -13,13 +13,11 @@
 {#if false}
   <pre>
     {JSON.stringify(data.page, null, 2)}
-  </pre> 
+  </pre>
 {/if}
 
 {#key $page.url.pathname}
-<div style="height: 100%;" dir={data.page.dir}>
-  {#each data.page.slot as element}
-    <Element {element} items={data.items} {components} mode="view"/>
-  {/each}
-</div>
+  <div style="height: 100%;" dir={data.page.dir}>
+    {@html data.html}
+  </div>
 {/key}

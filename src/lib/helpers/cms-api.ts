@@ -1,6 +1,8 @@
 // import fetch from "node-fetch";
 import type { User } from "../../app";
 import type { DbTable, DbList, Page, Table } from "$lib/types";
+import { goto } from "$app/navigation";
+import type { Component } from "$lib/ui";
 
 type ApiResponse<T = any> = {
   status: number;
@@ -46,6 +48,17 @@ export function cms_api(
       console.log(raw)
       const res: ApiResponse<T> = JSON.parse(raw) 
 
+      if(res.status === 401) {
+        // 
+        await goto('/auth/login');
+
+        return {
+          status: 401,
+          message: res.message,
+          data: null
+        }  
+      }
+      
       console.log(`[${res.status}]: ${res.message}.`);
       
 
@@ -129,6 +142,21 @@ export function cms_api(
     async removeTable(id: string) {
       return call<any>("/content/removeTable", {id}).then(res => res.data)
     },
+    async getComponents(params: any): Promise<Component> {
+      return call<any>('/components/getComponents', params).then(res => res.data)
+    },
+    async createComponent(component: Partial<Component>): Promise<Component> {
+      return call<any>('/components/createComponent', component).then(res => res.data)
+    },
+    async updateComponent(id: string, component: Partial<Component>): Promise<Component> {
+      return call<any>('/components/updateComponent', {id, data: component}).then(res => res.data)
+    },
+    async removeComponent(id: string): Promise<Component> {
+      return call<any>('/components/removeComponent', {id}).then(res => res.data)
+    },
+    async getComponent(id: string): Promise<Component> {
+      return call<any>('/components/getComponents', {where: {id}}).then(res => res.data.data[0])
+    },
     async insertData(params: any) {
       return call<any>("/data/insertData", params).then(res => res.data)
     },
@@ -141,5 +169,41 @@ export function cms_api(
       async getData(params: any) {
       return call<DbList<DbTable>>("/data/getData", params).then(res => res.data!)
     },
+    async getAssets(params: any) {
+      return call<DbList<any>>("/assets/getFiles", params).then(res => res.data);
+    },
+    async removeAsset(id: string) {
+      return call<any>('/assets/removeFile', {id}).then(res => res.data);
+    },
+    async updateAsset(id: string,data: any) {
+      return call<any>('/assets/updateFile', {id, data}).then(res => res.data);
+    },
+    async uploadFile(file: File) {
+      const body = new FormData();
+      body.append('file', file);
+      console.log('start file upload')
+      const res = await fetch(baseUrl + '/assets/uploadFile', {
+        method: 'POST',
+        headers: {
+          'authorization': `bearer ${token}`
+        },
+        body
+      })
+
+      console.log('file upload result: ')
+      console.log(await res.text())
+
+      return {
+        data: []
+      }
+      // return (await res.json()).data;
+    },
+    async downloadFile(id: string) {
+      return fetch(baseUrl + '/files/' + id, {
+        headers: {
+          authorization: 'bearer ' + token
+        }
+      })
+    }
   };
 }
