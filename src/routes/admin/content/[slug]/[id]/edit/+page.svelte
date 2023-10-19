@@ -1,6 +1,7 @@
 <script lang="ts">
     import { goto } from "$app/navigation";
     import FieldInput from "$lib/components/content/FieldInput.svelte";
+	import { t } from "$lib/i18n"
     import { Button, Card, CardBody, El, ButtonList, PageHeader } from "@ulibs/yesvelte";
   
     export let data;
@@ -46,10 +47,10 @@
   
       <El col d="flex" mt="3">
         <ButtonList ms="auto">
-          <Button>Cancel</Button>
+          <Button>{t("buttons.cancel")}</Button>
   
           <Button type="submit" color="primary">
-            Update
+            {t("buttons.update")}
           </Button>
         </ButtonList>
       </El>

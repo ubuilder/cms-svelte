@@ -6,13 +6,19 @@
 
 [dir='rtl'] {
 	font-family: Vazir, sans-serif;
+
+}
+[dir="rtl"] .y-icon {
+	transform: scaleX(-1);
 }
 
 body:has([data-bs-theme='light']),
 [data-bs-theme='light'] {
-	--y-bg-surface: #e1fbff;
-	--y-bg-surface-tertiary: #e1fbff;
-	--y-body-bg: #e1fbff;
+	--border-color: #98b5af;
+    --y-bg-surface: #d6e3e2;
+    --y-bg-forms: #e6f2f0;
+    --y-bg-surface-tertiary: #c2d0d0;
+    --y-body-bg: #bec9c9;
 }
 
 .component-item,

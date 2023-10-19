@@ -1,5 +1,4 @@
 <script lang="ts">
-  import ComponentProp from "./ComponentProp.svelte";
 
   import Sortable from "sortablejs";
   import {
@@ -33,8 +32,6 @@
   export let allowedComponents: string[] = [];
   export let disabledComponents: string[] = [];
   export let componentId: string | undefined = undefined;
-
-  export let components: Component[] = [];
 
   export let components: Component[] = []
   export let slotList: any[] = [];

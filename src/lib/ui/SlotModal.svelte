@@ -17,6 +17,7 @@
     FormField,
     El,
   } from "@ulibs/yesvelte";
+	import { t } from "$lib/i18n"
 
   export let mode: "add" | "edit" = "add";
 
@@ -94,8 +95,8 @@
 
   <ModalFooter>
     <ButtonList>
-      <Button on:click={() => $modal.close()}>Cancel</Button>
-      <Button on:click={() => $modal.resolve(slot)} color="primary">Add</Button>
+      <Button on:click={() => $modal.close()}>{t("buttons.cancel")}</Button>
+      <Button on:click={() => $modal.resolve(slot)} color="primary">{t("buttons.add")}</Button>
     </ButtonList>
   </ModalFooter>
 </BaseModal>

@@ -39,8 +39,8 @@
         </CardBody>
         <CardFooter>
             <ButtonList ms="auto">
-                <Button href="../">Cancel</Button>
-                <Button color="primary" on:click={save}>Save</Button>
+                <Button href="../">{t("buttons.cancel")}</Button>
+                <Button color="primary" on:click={save}>{t("buttons.save")}</Button>
             </ButtonList>
         </CardFooter>
     </Card>

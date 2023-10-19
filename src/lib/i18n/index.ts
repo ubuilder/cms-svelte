@@ -1,9 +1,11 @@
 import fa from './fa'
 import en from './en'
+import ps from './ps'
 
 const translations: any = {
 	en,
 	fa,
+	ps
 }
 
 let lang = 'en'

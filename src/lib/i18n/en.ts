@@ -58,6 +58,7 @@ export default {
 		cancel: 'Cancel',
 		back: 'Back',
 		save: 'Save',
+		create: "Create",
 		add: 'Add',
 		update: 'Update',
 		remove: 'Remove',
@@ -88,6 +89,9 @@ export default {
 		filters: {
 			name: 'Name',
 		},
+	},
+	pages: {
+		title: 'Pages'
 	},
 	assets: {
 		title: 'Assets',
