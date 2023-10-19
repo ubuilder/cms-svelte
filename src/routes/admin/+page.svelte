@@ -1,5 +1,6 @@
 <script>
   import {ButtonList, Page, Button, El, StatusItem} from '@ulibs/yesvelte' 
+  import { t } from '$lib/i18n';
   
   export let data;
 
@@ -12,15 +13,16 @@
   }
 </script>
 
-<Page title="Dashboard">
+<Page title="{t("dashboard")}">
+
   <ButtonList slot="header-buttons">
     <Button color="azure" on:click={() => openImportModal()}>Import</Button>
     <Button color="success" on:click={() => openExportModal()}>Export</Button>
   </ButtonList>
 
   <El my="2" fontSize="3">
-    Hello <b>{data.user.name ?? data.user.username}</b>, Welcome to UBuilder CMS
-
+   <b>سلام {data.user.name},<br/></b>
+به سیستم مدیریت محتوای یوبیلدر خوش آمدید
   </El>
 
   <El row pt="4">

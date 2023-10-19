@@ -22,7 +22,7 @@
 <div style="position: relative; width: 100%; height: calc(100% - 7px);">
   {#if data.app}
   <div style="position: absolute; padding: 2rem;">
-    Please start "{data.app.name}" app in "{data.app.url}" (repo: {data.app
+    TODO: Update this section (show loading ...) ...  Please start "{data.app.name}" app in "{data.app.url}" (repo: {data.app
       .repo})
   </div>
 

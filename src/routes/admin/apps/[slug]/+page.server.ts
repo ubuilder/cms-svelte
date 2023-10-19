@@ -1,25 +1,23 @@
-export async function load({cookies, params, parent}) {
-    const data = await parent()
-    
-    const app = data.apps.find(x => x.slug === params.slug)
+export async function load({ cookies, params, parent }) {
+	const data = await parent()
 
-    if(app) {
-        try {
+	const app = data.apps.find((x) => x.slug === params.slug)
 
-        await fetch(app?.url).then(res => {
-            console.log(res)
-        })
+	if (app) {
+		try {
+			await fetch(app?.url).then((res) => {
+				console.log(res)
+			})
 
-        return {
-            token: cookies.get('token'),
-            fail: false,
-            app
-        }
-    } catch(err) {
-        return {app, fail: true}
-    }
+			return {
+				token: cookies.get('token'),
+				fail: false,
+				app,
+			}
+		} catch (err) {
+			return { app, fail: true }
+		}
+	}
 
-    }
-
-    return {}
+	return {}
 }

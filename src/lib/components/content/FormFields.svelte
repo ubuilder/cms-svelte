@@ -28,6 +28,7 @@
     CardBody,
   } from "@ulibs/yesvelte";
   import FieldInput from "./FieldInput.svelte";
+  import { t } from "$lib/i18n";
 
   export let fields: any[] = [];
   export let tables: any[] = [];
@@ -45,15 +46,15 @@
   };
 
   const selectItems = [
-    { key: "plain_text", text: "Plain Text" },
-    { key: "rich_text", text: "Rich Text" },
-    { key: "number", text: "Number" },
-    { key: "date_time", text: "DateTime" },
-    { key: "image", text: "Image" },
-    { key: "file", text: "File" },
-    { key: "switch", text: "Switch" },
-    { key: "select", text: "Select" },
-    { key: "relation", text: "Relation" },
+    { key: "plain_text", text: t("plain_text") },
+    { key: "rich_text", text: t("rich_text") },
+    { key: "number", text: t("number") },
+    { key: "date_time", text: t("date_time") },
+    { key: "image", text: t("image") },
+    { key: "file", text: t("file") },
+    { key: "switch", text: t("switch") },
+    { key: "select", text: t("select") },
+    { key: "relation", text: t("relation") },
   ];
 
   function removeField(field: Field) {
@@ -85,7 +86,7 @@
   let new_type = "";
 </script>
 
-<FormField label="Fields">
+<FormField label={t("content.forms.fields")}>
   <Accordions>
     {#each fields as field}
       <Accordion mb="2">
@@ -99,31 +100,31 @@
               <Badge
                 on:click!stopPropagation={() =>
                   (field.required = !field.required)}
-                color="danger">Required</Badge
+                color="danger">{t("content.forms.required")}</Badge
               >
             {:else}
               <Badge
                 on:click!stopPropagation={() =>
                   (field.required = !field.required)}
-                color="info">Optional</Badge
+                color="info">{t("content.forms.optional")}</Badge
               >
             {/if}
             {#if ["select", "image", "relation"].includes(field.type)}
-              {#if field.mode === "single"}
+              <!-- {#if field.mode === "single"}
                 <Badge
                   on:click!stopPropagation={() => (field.mode = "multiple")}
                   color="info"
                 >
-                  Single
+                {t('content.forms.single')}
                 </Badge>
               {:else}
                 <Badge
                   on:click!stopPropagation={() => (field.mode = "single")}
                   color="info"
                 >
-                  Multiple
+                {t('content.forms.multiple')}
                 </Badge>
-              {/if}
+              {/if} -->
             {/if}
           </El>
         </AccordionHeader>
@@ -134,15 +135,15 @@
                 <TabList>
                   <TabItem>
                     <Icon name="adjustments" />
-                    General
+                    {t("content.forms.general")}
                   </TabItem>
                   <TabItem>
                     <Icon name="eye" />
-                    Visibility
+                    {t("content.forms.visibility")}
                   </TabItem>
                   <TabItem>
                     <Icon name="settings" />
-                    Advanced
+                    {t("content.forms.advanced")}
                   </TabItem>
                 </TabList>
               </CardHeader>
@@ -153,13 +154,13 @@
                       <FormInput
                         col="12"
                         colSm="6"
-                        label="Name"
+                        label={t("content.forms.name")}
                         bind:value={field.name}
                       />
                       <FormAutocomplete
                         col="12"
                         colSm="6"
-                        label="type"
+                        label={t("content.forms.type")}
                         key="key"
                         items={selectItems}
                         bind:value={field.type}
@@ -178,11 +179,12 @@
 
                       <FormInput
                         col="12"
-                        label="Placeholder"
+                        placeholder={t("content.forms.placeholder_placeholder")}
+                        label={t("content.forms.placeholder")}
                         bind:value={field.placeholder}
                       />
                       <FieldInput
-                        label="Default Value"
+                        label={t("content.forms.default_value")}
                         field={{
                           ...field,
                           name: "default_value",
@@ -194,16 +196,16 @@
                   <TabPanel>
                     <El row>
                       <FormCheckbox col="6" bind:checked={field.show_in_create}>
-                        Show in Create
+                        {t("content.forms.show_in_create")}
                       </FormCheckbox>
                       <FormCheckbox col="6" bind:checked={field.show_in_list}>
-                        Show in List
+                        {t("content.forms.show_in_list")}
                       </FormCheckbox>
                       <FormCheckbox col="6" bind:checked={field.show_in_view}>
-                        Show in View
+                        {t("content.forms.show_in_view")}
                       </FormCheckbox>
                       <FormCheckbox col="6" bind:checked={field.show_in_update}>
-                        Show in Update
+                        {t("content.forms.show_in_update")}
                       </FormCheckbox>
                     </El>
                   </TabPanel>
@@ -214,17 +216,17 @@
                           colMd="6"
                           type="number"
                           bind:value={field.minlength}
-                          label="Min Length"
+                          label={t("content.forms.min_length")}
                         />
                         <FormInput
                           colMd="6"
                           type="number"
                           bind:value={field.maxlength}
-                          label="Max Length"
+                          label={t("content.forms.max_length")}
                         />
                         <FormRadioGroup
                           items={["input", "textarea"]}
-                          label="Input type"
+                          label={t("content.forms.input_type")}
                           bind:value={field.input_type}
                         />
                       {:else if field.type === "number"}
@@ -232,33 +234,49 @@
                           colSm
                           type="number"
                           bind:value={field.min}
-                          label="Min"
+                          label={t("content.forms.min")}
                         />
                         <FormInput
                           colSm
                           type="number"
                           bind:value={field.max}
-                          label="Max"
+                          label={t("content.forms.max")}
                         />
                         <FormSwitch
                           colSm="auto"
-                          label="Allow Negative?"
+                          label={t("content.forms.negative")}
                           bind:value={field.negative}
                         />
                       {:else if field.type === "select"}
-                        <FormInput bind:value={field.options} label="Options" />
+                        <FormInput
+                          bind:value={field.options}
+                          label={t("content.forms.options")}
+                        />
                         <FormRadioGroup
                           inline
-                          items={["single", "multiple"]}
-                          label="Mode"
+                          key="key"
+                          items={[
+                            { key: "single", text: t("content.forms.single") },
+                            {
+                              key: "multiple",
+                              text: t("content.forms.multiple"),
+                            },
+                          ]}
+                          label={t("content.forms.mode")}
                           bind:value={field.mode}
-                        />
+                          let:item
+                        >
+                          {item.text}
+                        </FormRadioGroup>
                       {:else if field.type === "date_time"}
-                        <FormSwitch label="Range?" bind:checked={field.range} />
+                        <FormSwitch
+                          label={t("content.forms.range")}
+                          bind:checked={field.range}
+                        />
                       {:else if field.type === "relation"}
                         <FormAutocomplete
                           col="9"
-                          label="Table"
+                          label={t("content.forms.table")}
                           bind:value={field.table}
                           key="slug"
                           items={tables}
@@ -269,14 +287,14 @@
                         </FormAutocomplete>
                         <FormCheckbox
                           col="3"
-                          label="Multiple"
+                          label={t("content.forms.multiple")}
                           bind:checked={field.multiple}
                         />
                         {#if field.multiple}
                           <FormSelect
                             items={tables.find((x) => x.slug === field.table)
                               ?.fields ?? []}
-                            label="Connect With Field"
+                            label={t("content.forms.field")}
                             bind:value={field.field}
                             key="name"
                             let:item
@@ -288,7 +306,7 @@
                         <FormSelect
                           items={tables.find((x) => x.slug === field.table)
                             ?.fields ?? []}
-                          label="Title"
+                          label={t("content.forms.title")}
                           bind:value={field.title}
                           key="name"
                           let:item
@@ -303,7 +321,7 @@
                           color="danger"
                           on:click={() => removeField(field)}
                         >
-                          Remove
+                          {t("buttons.remove")}
                         </Button>
                       </El>
                     </El>
@@ -322,12 +340,12 @@
       col="12"
       colSm
       bind:value={new_name}
-      placeholder="Name of new field..."
+      placeholder={t("content.forms.new_field_name_placeholder")}
     />
     <FormAutocomplete
       col="12"
       colSm
-      placeholder="Type of new field..."
+      placeholder={t("content.forms.new_field_type_placeholder")}
       key="key"
       items={selectItems}
       bind:value={new_type}
@@ -343,7 +361,7 @@
       <Button
         color="primary"
         disabled={new_name === "" || new_type === ""}
-        type="submit">Add Field</Button
+        type="submit">{t("content.forms.add_field")}</Button
       >
     </El>
   </El>

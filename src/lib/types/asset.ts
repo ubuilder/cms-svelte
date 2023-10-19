@@ -1,5 +1,5 @@
 export type AssetType = {
-    id: string;
-    name: string;
-    type: 'image' | 'file' | 'audio' | 'video'
+	id: string
+	name: string
+	type: 'image' | 'file' | 'audio' | 'video'
 }

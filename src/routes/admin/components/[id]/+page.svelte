@@ -2,6 +2,7 @@
   import { goto } from "$app/navigation";
   import CodeEditor from "$lib/components/CodeEditor.svelte";
   import ComponentFields from "$lib/components/components/ComponentFields.svelte";
+  import { t } from "$lib/i18n/index.js";
   import {
     Button,
     ButtonList,
@@ -36,15 +37,17 @@
     fetch('?/update', {method: 'POST', body: JSON.stringify(data.component)}).then(res => goto('../'))
 
   }
+
+  $: title = t('components.edit_component') + ` "${data.component?.name ?? ''}"`
 </script>
 
-<Page title="Edit Component '{data.component?.name ?? ''}'">
+<Page {title}>
   <Card>
     <Tabs>
       <CardHeader>
         <TabList>
-          <TabItem>Fields</TabItem>
-          <TabItem>Template</TabItem>
+          <TabItem>{t('components.forms.fields')}</TabItem>
+          <TabItem>{t('components.forms.template')}</TabItem>
         </TabList>
       </CardHeader>
       <CardBody>
@@ -55,11 +58,10 @@
             
           </TabPanel>
           <TabPanel>
-            <FormField label="Template">
+            <FormField label={t('components.forms.template')}>
 
             <CodeEditor
               bind:value={data.component.template}
-              
             />
           </FormField>
 
@@ -70,9 +72,9 @@
 
     <CardFooter>
       <ButtonList ms="auto">
-        <Button on:click={remove} color="danger">Remove</Button>
-        <Button href="/admin/components">Cancel</Button>
-        <Button on:click={update} color="primary">Update</Button>
+        <Button on:click={remove} color="danger">{t('buttons.remove')}</Button>
+        <Button href="/admin/components">{t('buttons.cancel')}</Button>
+        <Button on:click={update} color="primary">{t('buttons.update')}</Button>
       </ButtonList>
     </CardFooter>
   </Card>
