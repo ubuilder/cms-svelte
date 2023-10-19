@@ -2,7 +2,7 @@ import { existsSync, mkdirSync } from 'fs'
 import { writeFile } from 'fs/promises'
 import qs from 'qs'
 import { cms_api } from '$lib/helpers/cms-api'
-import { API_URL, SITE_ID } from '$env/static/private'
+import { API_URL } from '$env/static/private'
 import { redirect } from '@sveltejs/kit'
 import { setLang } from '$lib/i18n'
 
@@ -123,7 +123,7 @@ export const handle = async ({ event, resolve }) => {
 	//   }
 	// }
 
-	let siteId = SITE_ID ?? (event.request.headers.get('host') ?? '').split('.')[0]
+	let siteId = import.meta.env.SITE_ID ?? (event.request.headers.get('host') ?? '').split('.')[0]
 	console.log('siteId: ', siteId)
 	// let siteId = '5173'
 	event.locals.api = cms_api({

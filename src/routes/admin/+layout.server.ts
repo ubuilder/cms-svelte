@@ -5,6 +5,7 @@ import { setLang } from '$lib/i18n'
 // import '$lib/helpers';
 
 export const trailingSlash = 'always'
+export const ssr = false
 
 const show_auth_warning = true
 
