@@ -109,7 +109,7 @@
     if (componentId) {
       const component = components.find((x) => x.id === componentId);
       if (component) {
-        slotList = [...slotList, { type: component.name }];
+        slotList = [...slotList, { type: component.name, props: {} }];
       } else {
         console.log("component not found...");
       }

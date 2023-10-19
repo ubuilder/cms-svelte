@@ -2,6 +2,7 @@ import { renderVariable } from '$lib/helpers/index.js'
 import type { ComponentField, DbFilter, DbWith, Items, Table } from '$lib/types/index.js'
 import type { Page } from '$lib/types/page.js'
 import type { Component } from '$lib/ui'
+import { redirect } from '@sveltejs/kit'
 import hbs from 'handlebars'
 
 async function findPageBySlug({
@@ -49,7 +50,11 @@ async function findPageBySlug({
 	return { page: undefined, params: {} }
 }
 
-export async function load({ locals, params }) {
+export async function load({ locals, params, url }) {
+	
+
+	
+	
 	const components = await locals.api.getComponents({ perPage: 500 }).then((res) => res.data)
 	const { page, params: pageParams } = await findPageBySlug({
 		api: locals.api,
@@ -58,6 +63,10 @@ export async function load({ locals, params }) {
 	console.log('page ==', page)
 
 	if (!page) throw new Error('Page not found!')
+
+	if(url.searchParams.has('edit')) {
+		throw redirect(302, '/admin/pages/' + page.id)	
+	}
 
 	const items: Items = {
 		page: {
