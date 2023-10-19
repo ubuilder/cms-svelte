@@ -65,6 +65,8 @@ export async function load({ locals, params }) {
 			params: pageParams,
 		},
 	}
+
+	
 	for (let load of page.load) {
 		if (!load.table) throw new Error('Table not found in page load')
 
@@ -108,12 +110,15 @@ export async function load({ locals, params }) {
 		console.log('after load: ', items)
 	}
 
-	async function render(page: Page) {
+	function render(page: Page) {
+		let style = page.css
+
 		function renderSlot(slot: any) {
 			console.log('renderSlot')
 			const props: any = {}
 			const component: Component | undefined = components.find((x) => x.name === slot.type)
 			if (component) {
+				style += component.css;
 				let fields: ComponentField[] = []
 				if (Array.isArray(component.fields)) {
 					fields = component.fields
@@ -138,29 +143,30 @@ export async function load({ locals, params }) {
 		}
 
 		const html = page.slot
-			.map((slot) => {
-				return renderSlot(slot)
-			})
+			.map((slot) => renderSlot(slot))
 			.join('')
-
-		// page.slot = renderVariable(page.slot, items)
-
-		// console.log(JSON.stringify(page, null, 4))
-		return html
+		return {style, html}
 	}
 
 	page.title = renderVariable(page.title, items)
+	items.page.title = page.title
+
 	if (page.description) {
 		page.description = renderVariable(page.description, items)
+		items.page.description = page.description
 	}
 	if (page.dir) {
 		page.dir = renderVariable(page.dir, items)
+
 	}
 
 	// console.log({items})
+	const {style, html} = render(page)
+	
 	return {
 		page,
-		html: await render(page),
+		html,
+		style,
 		items,
 	}
 }

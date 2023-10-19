@@ -106,6 +106,7 @@ export type Prop = {
 export type Component = {
 	name: string
 	template: string
+	css?: string
 	fields?: ComponentField[] | Record<string, ComponentField[]>
 }
 

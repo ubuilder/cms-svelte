@@ -8,6 +8,8 @@
 <svelte:head>
   <title>{data.page.title}</title>
   <meta name="description" content={data.page.description} />
+  {@html data.page.head}
+  <style>{data.style}</style>
 </svelte:head>
 
 {#if false}
