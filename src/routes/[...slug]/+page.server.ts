@@ -148,6 +148,8 @@ export async function load({ locals, params }) {
 		return {style, html}
 	}
 
+	console.log(page)
+	
 	page.title = renderVariable(page.title, items)
 	items.page.title = page.title
 
@@ -157,11 +159,15 @@ export async function load({ locals, params }) {
 	}
 	if (page.dir) {
 		page.dir = renderVariable(page.dir, items)
-
+	}
+	if (page.head) {
+		page.head = renderVariable(page.head, items)
 	}
 
 	// console.log({items})
 	const {style, html} = render(page)
+
+	page.head += `<style>${style}</style>`
 	
 	return {
 		page,

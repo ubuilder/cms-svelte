@@ -18,6 +18,7 @@
     TabList,
     TabPanel,
     Tabs,
+    Textarea,
     confirmModal,
   } from "@ulibs/yesvelte";
 
@@ -59,8 +60,7 @@
           </TabPanel>
           <TabPanel>
             <FormField label={t('components.forms.template')}>
-
-            <CodeEditor
+            <Textarea style="font-family: monospace;" rows="12"
               bind:value={data.component.template}
             />
           </FormField>
