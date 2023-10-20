@@ -29,7 +29,7 @@
 
     if (res) {
       // fetch remove
-      fetch('?/remove', {method: 'POST'}).then(res => goto('../'))
+      fetch('?/remove', {method: 'POST', body: '{}'}).then(res => goto('../'))
     }
   }
 

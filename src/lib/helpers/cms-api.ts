@@ -7,6 +7,7 @@ import type { Component } from '$lib/ui'
 type ApiResponse<T = any> = {
 	status: number
 	message: string
+	field?: string
 	data?: T
 }
 
@@ -109,6 +110,9 @@ export function cms_api(
 		async getPages(filters = {}) {
 			return call<DbList<Page>>('/pages/getPages', filters)
 		},
+		async getPageCss({page_id}: any = {}){
+			return call<string>('/pages/getPageCss', {page_id})
+		},
 		async getSettings() {
 			return call<any>('/settings/getSettings').then((res) => res.data)
 		},
@@ -165,6 +169,7 @@ export function cms_api(
 			}).then((res) => res.data)
 		},
 		async removeComponent(id: string): Promise<Component> {
+			console.log('removeComponent', id)
 			return call<any>('/components/removeComponent', { id }).then((res) => res.data)
 		},
 		async getComponent(id: string): Promise<Component> {
@@ -173,13 +178,13 @@ export function cms_api(
 			)
 		},
 		async insertData(params: any) {
-			return call<any>('/data/insertData', params).then((res) => res.data)
+			return call<any>('/data/insertData', params)
 		},
 		async updateData(params: any) {
-			return call<any>('/data/insertData', params).then((res) => res.data)
+			return call<any>('/data/insertData', params)
 		},
 		async removeData(params: any) {
-			return call<any>('/data/removeData', params).then((res) => res.data)
+			return call<any>('/data/removeData', params)
 		},
 		async getData(params: any) {
 			return call<DbList<DbTable>>('/data/getData', params).then((res) => res.data!)

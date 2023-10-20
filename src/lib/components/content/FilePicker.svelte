@@ -5,6 +5,7 @@
   export let type: "image" | "video" | "file" = "file";
   export let multiple: boolean = false;
 
+  export let name: any = undefined
   export let value: string | undefined = undefined;
 
   async function openFilePicker() {
@@ -26,6 +27,7 @@
   }
 </script>
 
+<input {name} type="text">
 {#if type === "image"}
   <El border borderRoundSize="2" mb="3" position="relative" style="max-width: 300px; min-height: 200px">
     {#if value} 

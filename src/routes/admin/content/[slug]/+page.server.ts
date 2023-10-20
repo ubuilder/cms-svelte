@@ -1,10 +1,19 @@
+import {error, fail} from '@sveltejs/kit'
 import type { Actions } from './$types'
 
 export const actions: Actions = {
 	async insert({ request, locals, params }) {
 		const body = await request.json()
 
-		await locals.api.insertData({ table: params.slug, data: body })
+		const res = await locals.api.insertData({ table: params.slug, data: body })
+		console.log(res)
+		console.log({res})
+		console.log(res)
+		if(res.status !== 200) {
+			return fail(res.status, {field: res.field, message: res.message})
+
+		}
+
 
 		return { success: true }
 	},

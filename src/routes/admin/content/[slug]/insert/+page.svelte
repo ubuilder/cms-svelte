@@ -1,24 +1,13 @@
 <script lang="ts">
-  import { goto } from "$app/navigation";
+	import { enhance } from "$app/forms"
+  import { goto, invalidateAll } from "$app/navigation";
   import FieldInput from "$lib/components/content/FieldInput.svelte";
 	import { t } from "$lib/i18n"
+	import type { SubmitFunction } from "@sveltejs/kit"
   import { Button, ButtonList, PageHeader, Card, CardBody, El, Icon } from "@ulibs/yesvelte";
 
-  export let data;
-
-  async function onSubmit() {
-    const value2: any = {};
-
-    for (let field of data.table.fields) {
-      value2[field.name] = value[field.name];
-    }
-
-    await fetch("../" + "?/insert", {
-      method: "POST",
-      body: JSON.stringify(value2),
-    }).then((res) => res.json());
-    await goto("../", {invalidateAll: true});
-  }
+  export let data;  
+  export let form;
 
   let value: any = data.table.fields.reduce((prev, curr) => {
     return {...prev, [curr.name]: curr.default_value}
@@ -29,15 +18,18 @@
   <PageHeader title="Insert {data.table.name}">
     <Button href="../">
       <Icon name="chevron-left" />
-      Back
+      {t("buttons.back")}
     </Button>
   </PageHeader>
 
-  <Card mt="4" tag="form" on:submit={onSubmit}>
+  <Card mt="4">
+    <form method="POST" action="?/insert" use:enhance>
     <CardBody row>
       {#each data.table.fields as field}
-        <FieldInput {field} bind:data={value} />
+        {@const errorMessage = form?.field === field.name ? form.message : undefined}
+        <FieldInput {errorMessage} {field} bind:data={value} />
       {/each}
+
 
       <El col d="flex" mt="3">
         <ButtonList ms="auto">
@@ -50,5 +42,7 @@
         </ButtonList>
       </El>
     </CardBody>
-  </Card>
+</form>
+</Card>
+
 </El>

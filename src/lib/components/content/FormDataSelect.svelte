@@ -2,6 +2,7 @@
   import { onMount } from "svelte";
   import { El, FormAutocomplete } from "@ulibs/yesvelte";
   
+  export let name: any = undefined
   export let multiple = false
   export let table: string | undefined = undefined
   export let title: string | undefined = undefined
@@ -24,7 +25,7 @@
 {#if loading}
   <El p="3">Loading...</El>
 {:else}
-  <FormAutocomplete {multiple} {items} key="id" {...$$restProps} bind:value let:item>
+  <FormAutocomplete {name} {multiple} {items} key="id" {...$$restProps} bind:value let:item>
       {item[title ?? 'id']}
   </FormAutocomplete>
 {/if}
