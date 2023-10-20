@@ -57,7 +57,7 @@
   <ModalBody>
     <El row g="2">
       {#each items as item}
-        {#if allowedComponents.length > 0 ? allowedComponents.includes(item.id): true }
+        {#if allowedComponents?.length > 0 ? allowedComponents.includes(item.id): true }
             <El col="3">
               <El
                 style="cursor: pointer"

@@ -109,7 +109,7 @@
     if (componentId) {
       const component = components.find((x) => x.id === componentId);
       if (component) {
-        slotList = [...slotList, { type: component.name, props: {} }];
+        slotList = [...(slotList ?? []), { type: component.name, props: {} }];
       } else {
         console.log("component not found...");
       }
@@ -221,7 +221,7 @@
   </div>
 </Accordions>
 
-<Button color="primary" on:click={onAddSlot}>
+<Button mb="3" color="primary" on:click={onAddSlot}>
   <Icon name="plus" />
   {buttonText}
 </Button>

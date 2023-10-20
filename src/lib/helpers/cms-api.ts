@@ -167,7 +167,7 @@ export function cms_api(
 			return call<any>('/data/insertData', params)
 		},
 		async updateData(params: any) {
-			return call<any>('/data/insertData', params)
+			return call<any>('/data/updateData', params)
 		},
 		async removeData(params: any) {
 			return call<any>('/data/removeData', params)

@@ -114,6 +114,7 @@
                     col="3"
                     label="Field"
                     items={table.fields}
+                    placeholder="Choose Field..."
                     key="name"
                     bind:value={filter.field}
                     let:item
@@ -136,7 +137,7 @@
                   </FormSelect>
                     {#if filterType.type !== 'date_range'}
 
-                      <DynamicFormField col label="value" {items} type={filterType.type} bind:value={filter.value}/>
+                      <DynamicFormField col label="value" options={field.options} {items} type={filterType.type} bind:value={filter.value}/>
                     {:else}
                       <DynamicFormField col label="from" {items} type='date_time' bind:value={filter.from}/>
                       <DynamicFormField col label="to" {items} type='date_time' bind:value={filter.to}/>
@@ -175,7 +176,7 @@
 </Accordions>
 
 <El row>
-  <FormInput colLg="5" bind:value={new_load_name} label="New Load Name" />
+  <FormInput colLg="5" bind:value={new_load_name} placeholder="Name for new load item..." label="New Load Name" />
   <FormSelect
     colLg="5"
     placeholder="Choose a table...."

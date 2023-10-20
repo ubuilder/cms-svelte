@@ -9,7 +9,10 @@
         fetch('?/save', {
             method: 'POST',
             body: JSON.stringify(data.settings)
-        }).then(res => invalidateAll())
+        }).then(res => {
+            location.reload()
+        })
+
     }
 
     let languages = [

@@ -1,4 +1,4 @@
-import { fail } from '@sveltejs/kit'
+import { fail, redirect } from '@sveltejs/kit'
 import type { Actions } from './$types'
 
 export const actions: Actions = {
@@ -21,12 +21,12 @@ export const actions: Actions = {
 		// get id of table
 		const table = await locals.api.getTableBySlug(params.slug)
 
-		const res = await locals.api.insertData({ table: table.id, data })
+		const res = await locals.api.updateData({ table: table.id, data, id: data.id })
 
 		if (res.status !== 200) {
 			return fail(res.status, { field: res.field, message: res.message })
 		}
 
-		return { success: true }
+		throw redirect(301, '../..')
 	},
 }

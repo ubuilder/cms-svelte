@@ -5,14 +5,16 @@
 </script>
 
 
-<El border class="page-item" p="3" my="3">
-    {page.title}
-    <El tag="small">
-      (/{page.slug})
+<El border class="page-item" p="3" my="3" d="flex" justifyContent="between">
+  <El>
+    <El mb="0" tag='h3'>
+      {page.title}
     </El>
-
-    <El mt="3"/>
-    <ButtonList>
+    <El tag="small">
+      slug: (/{page.slug})
+    </El>
+  </El>
+  <ButtonList>
 
     <Button ms="auto" color="primary" href="/admin/pages/{page.id}">Edit</Button>
     <!-- <Button href="/admin/pages/editor/{page.id}">Edit</Button> -->

@@ -27,7 +27,7 @@
   }
 </script>
 
-<input {name} type="text">
+<input {name} type="hidden">
 {#if type === "image"}
   <El border borderRoundSize="2" mb="3" position="relative" style="max-width: 300px; min-height: 200px">
     {#if value} 

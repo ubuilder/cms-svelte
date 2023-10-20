@@ -28,12 +28,11 @@ async function findPageBySlug({
 
 	console.log('slug', slug)
 	for (let route of routes) {
-		const page = pages.find(x => x.slug === route)
+		const page = pages.find((x) => x.slug === route)
 
 		if (route == slug) {
 			return { page, params: {} }
 		} else if (route.indexOf('/{') > -1 && route.startsWith(slug.split('/')[0])) {
-
 			let key = route.split('/')[1]
 			key = key.substring(1, key.length - 1)
 			return {
@@ -49,10 +48,6 @@ async function findPageBySlug({
 }
 
 export async function load({ locals, params, url }) {
-	
-
-	
-	
 	const components = await locals.api.getComponents({ perPage: 500 }).then((res) => res.data)
 	const { page, params: pageParams } = await findPageBySlug({
 		api: locals.api,
@@ -62,12 +57,12 @@ export async function load({ locals, params, url }) {
 
 	if (!page) throw new Error('Page not found!')
 
-	if(url.searchParams.has('edit')) {
-		throw redirect(302, '/admin/pages/' + page.id)	
+	if (url.searchParams.has('edit')) {
+		throw redirect(302, '/admin/pages/' + page.id)
 	}
 
-	const style = await locals.api.getPageCss({page_id: page.id}).then(res => res.data)
-	
+	const style = await locals.api.getPageCss({ page_id: page.id }).then((res) => res.data)
+
 	const items: Items = {
 		page: {
 			slug: params.slug,
@@ -75,7 +70,6 @@ export async function load({ locals, params, url }) {
 		},
 	}
 
-	
 	for (let load of page.load) {
 		if (!load.table) throw new Error('Table not found in page load')
 
@@ -120,9 +114,8 @@ export async function load({ locals, params, url }) {
 	}
 
 	function render(page: Page) {
-
-		function renderSlot(slot: any) {
-			console.log('renderSlot')
+		function renderSlot(slot: any, items = {}) {
+			console.log('renderSlot', slot)
 			const props: any = {}
 			const component: Component | undefined = components.find((x) => x.name === slot.type)
 			if (component) {
@@ -137,7 +130,26 @@ export async function load({ locals, params, url }) {
 
 				for (let field of fields) {
 					if (field.type === 'slot') {
-						props[field.name] = slot.props[field.name].map((slot) => renderSlot(slot)).join('')
+						if (slot.props[field.name].type === '__list__') {
+							const list = slot.props[field.name].props.load.split('.').reduce((prev, curr) => {
+								return prev[curr]
+							}, items)
+
+							console.log('list: ', list)
+							props[field.name] = ''
+							for (let item of list) {
+								console.log(item)
+								props[field.name] += slot.props[field.name].props.slot
+									.map((x) =>
+										renderSlot(x, { ...items, [slot.props[field.name].props.item]: item })
+									)
+									.join('')
+							}
+						} else {
+							props[field.name] = slot.props[field.name]
+								.map((slot) => renderSlot(slot, items))
+								.join('')
+						}
 					} else {
 						props[field.name] = renderVariable(slot.props[field.name], items)
 					}
@@ -146,12 +158,10 @@ export async function load({ locals, params, url }) {
 			}
 		}
 
-		const html = page.slot
-			.map((slot) => renderSlot(slot))
-			.join('')
-		return {html}
+		const html = page.slot.map((slot) => renderSlot(slot, items)).join('')
+		return { html }
 	}
-	
+
 	page.title = renderVariable(page.title, items)
 	items.page.title = page.title
 
@@ -167,10 +177,10 @@ export async function load({ locals, params, url }) {
 	}
 
 	// console.log({items})
-	const {html} = render(page)
+	const { html } = render(page)
 
 	page.head += `<style>${style}</style>`
-	
+
 	return {
 		page,
 		html,

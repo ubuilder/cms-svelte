@@ -36,7 +36,7 @@
 	// 		(res) => res.json()
 	// 	)
 	// 	await goto('../..', { invalidateAll: true })
-	}
+	// }
 
 	let value: any = data.value
 </script>
@@ -44,6 +44,7 @@
 <Page title="Update {data.table.name} ({data.value.id})" back>
 	<Card>
 		<form method="POST" action="?/update" use:enhance>
+			<input type="hidden" value={data.value.id} name="id"/>
 			<CardBody row>
 				{#each data.table.fields as field}
 					{@const errorMessage = form?.field === field.name ? form.message : undefined}
