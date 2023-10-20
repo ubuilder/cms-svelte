@@ -18,16 +18,11 @@
 
   export let form;
   let loading = false;
-  import tabler from "yesvelte/css/tabler.min.css?url";
 
   $: if (browser && form?.success) {
     goto("/admin");
   }
 </script>
-
-<svelte:head>
-  <link rel="stylesheet" href={tabler} />
-</svelte:head>
 
 <Layout theme="dark" sidebar={false} header={false}>
   <Page title="" roles="">

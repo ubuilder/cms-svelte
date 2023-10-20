@@ -278,7 +278,7 @@
                           col="9"
                           label={t("content.forms.table")}
                           bind:value={field.table}
-                          key="slug"
+                          key="id"
                           items={tables}
                           let:item
                         >
@@ -292,7 +292,7 @@
                         />
                         {#if field.multiple}
                           <FormSelect
-                            items={tables.find((x) => x.slug === field.table)
+                            items={tables.find((x) => x.id === field.table)
                               ?.fields ?? []}
                             label={t("content.forms.field")}
                             bind:value={field.field}
@@ -304,7 +304,7 @@
                         {/if}
 
                         <FormSelect
-                          items={tables.find((x) => x.slug === field.table)
+                          items={tables.find((x) => x.id === field.table)
                             ?.fields ?? []}
                           label={t("content.forms.title")}
                           bind:value={field.title}

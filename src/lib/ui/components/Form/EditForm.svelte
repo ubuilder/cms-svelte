@@ -30,7 +30,7 @@
   
   
     $: if (props.table && edit) {
-      table = tables.find((x) => x.slug == props.table);
+      table = tables.find((x) => x.id == props.table);
     }
   
     $: if (!props.data) {
@@ -79,7 +79,7 @@
   
             <FormSelect
               label="Table"
-              key="slug"
+              key="id"
               bind:value={props.table}
               items={tables}
               let:item

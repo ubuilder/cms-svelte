@@ -18,7 +18,7 @@
   import type { Field, PageLoad, Table } from "$lib/types";
   import DynamicFormField from "$lib/components/content/DynamicFormField.svelte";
 
-  export let load: PageLoad[];
+  export let load: PageLoad[] = [];
   export let tables: Table[];
 
   function getFilterType(type: Field['type']) {
@@ -96,7 +96,7 @@
             placeholder="Choose a table...."
             label="Table Name"
             items={tables}
-            key="slug"
+            key="id"
             bind:value={loadItem.table}
             let:item
           >
@@ -105,7 +105,7 @@
           <FormCheckbox label="Multiple" bind:checked={loadItem.multiple} />
           <FormField label="Filters">
             {#each loadItem.filters as filter}
-              {@const table = tables.find((x) => x.slug === loadItem.table)}
+              {@const table = tables.find((x) => x.id === loadItem.table)}
               {@const field = table.fields.find(x => x.name === filter.field)}
 
               {#if table}
@@ -181,7 +181,7 @@
     placeholder="Choose a table...."
     label="Table Name"
     items={tables}
-    key="slug"
+    key="id"
     bind:value={new_load_table}
     let:item
   >

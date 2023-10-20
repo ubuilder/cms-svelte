@@ -90,7 +90,7 @@ export async function load({ locals, params, url }) {
 			}
 		}
 
-		const table = await locals.api.getTableBySlug(load.table)
+		const table = await locals.api.getTable(load.table)
 
 		for (let field of table.fields) {
 			if (field.type === 'relation') {

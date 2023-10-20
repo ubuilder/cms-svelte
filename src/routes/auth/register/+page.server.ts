@@ -27,10 +27,11 @@ export const actions = {
 			maxAge: 60 * 60 * 24 * 15,
 		})
 
-		return {
-			success: true,
-			code: 201,
-			message: 'user successfully created',
-		}
+		throw redirect(301, '/admin')
+		// return {
+		// 	success: true,
+		// 	code: 201,
+		// 	message: 'user successfully created',
+		// }
 	},
 }

@@ -150,7 +150,7 @@
 
 		console.log('load: ', load)
 		for (let item of load) {
-			const table = data.tables.find((x) => x.slug === item.table)
+			const table = data.tables.find((x) => x.id === item.table)
 			if (!table) continue
 
 			const fields: any = {}
@@ -161,7 +161,7 @@
 				}
 
 				if (field.type === 'relation') {
-					const otherTable = data.tables.find((x) => x.slug === (field as FieldRelation).table)
+					const otherTable = data.tables.find((x) => x.id === (field as FieldRelation).table)
 					const otherFields: any = {}
 					for (let otherField of otherTable.fields) {
 						otherFields[otherField.name] = {

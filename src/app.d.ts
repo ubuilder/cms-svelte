@@ -13,7 +13,8 @@ export type User = {
 	profile: string
 }
 
-type Api = ReturnType<typeof cms_api>
+type Api = ReturnType<typeof cms
+_api>
 
 declare global {
 	namespace App {

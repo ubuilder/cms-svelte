@@ -1,14 +1,13 @@
 import type { DbTable, Table } from '$lib/types'
-import type { ServerLoad } from '@sveltejs/kit'
+import type { ServerLoad } from './$types';
 
 export const load: ServerLoad = async ({ params, locals }) => {
-	const table = await locals.api
-		.getTables({ where: { slug: params.slug! } })
-		.then((res) => res.data!.data[0])
+	const table = await locals.api.getTableBySlug(params.slug)
+		
 
 	const rows = await locals.api.getData({
 		where: locals.filters,
-		table: params.slug,
+		table: table.id,
 	})
 
 	return {

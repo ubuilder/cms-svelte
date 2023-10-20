@@ -5,7 +5,7 @@ export async function load({ locals }) {
 
 	let total_rows = 0
 	for (let table of tables.data!.data) {
-		let res = await locals.api.getData({ table: table.slug, perPage: 10000 })
+		let res = await locals.api.getData({ table: table.id, perPage: 10000 })
 		total_rows += res.total
 	}
 

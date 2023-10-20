@@ -16,14 +16,14 @@ type LoginResponseType = { token: string; user: User }
 export function cms_api(
 	{
 		baseUrl,
-		// fetch,
+		fetch,
 		token,
 	}: { baseUrl?: string; fetch?: any; token?: string } = {
 		token: '',
 		baseUrl: 'http://localhost:5173/api',
 	}
 ) {
-	async function call<T>(route: string, data = {}) {
+	async function call<T>(route: string, data: any = {}): Promise<ApiResponse<T>> {
 		// TODO: {data} vs data
 
 		const url = baseUrl + route
@@ -39,15 +39,7 @@ export function cms_api(
 		console.log('calling fetch ', url, 'body: ', body, 'headers: ', headers)
 
 		try {
-			const raw = (await fetch(url, {
-				method: 'POST',
-				body,
-				headers,
-			}).then((res) => res.text())) as string
-
-			console.log('raw response: ')
-			console.log(raw)
-			const res: ApiResponse<T> = JSON.parse(raw)
+			const res: ApiResponse<T> = await fetch(url,{method: 'POST', body,headers}).then(x => x.json())
 
 			if (res.status === 401) {
 				//
@@ -55,21 +47,20 @@ export function cms_api(
 
 				return {
 					status: 401,
+					field: res.field,
 					message: res.message,
-					data: null,
 				}
 			}
 
 			console.log(`[${res.status}]: ${res.message}.`)
 
-			return res ?? {}
+			return res
 		} catch (err: any) {
 			console.log(err.message)
 			console.log(err)
 			return {
 				status: 500,
 				message: err.message,
-				data: null,
 			}
 		}
 	}
@@ -87,13 +78,8 @@ export function cms_api(
 		},
 		async register({ username, password, name, email }: any) {
 			await call('/auth/register', { username, password, name, email })
-			const result = await call<LoginResponseType>('/auth/login', {
-				username,
-				password,
-			})
-
-			token = result.data?.token
-			return result
+			
+			return this.login({username, password})
 		},
 		async logout() {
 			const result = await call('/auth/logout')

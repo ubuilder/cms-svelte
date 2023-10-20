@@ -40,7 +40,7 @@
 
     <El row>
         {#each data.components as component}
-            <El col colMd="4" colLg="3">
+            <El mb="2" col colMd="4" colLg="3">
                 <Card tag="a" href="./{component.id}" p="3">
                     {component.name}
                 </Card>
