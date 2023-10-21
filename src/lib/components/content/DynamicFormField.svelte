@@ -82,7 +82,7 @@
 	$: isDynamic = value?.includes?.('{{')
 </script>
 
-<FormField colMd={col} {...$$restProps}>
+<FormField colMd={col}>
 	<Label d="flex" gap="2" for={id} {required} slot="label">
 		<span>{label}</span>
 		{#if filteredItems.length > 0}

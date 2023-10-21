@@ -1,4 +1,5 @@
 <script>
+	import { t } from "$lib/i18n"
   import RelationItem from "./RelationItem.svelte";
 
   import {
@@ -25,7 +26,7 @@
     <Button  color="info" href="./edit">Edit</Button>
     <Button  color="primary" href="./history">
       <Icon name="history"/>
-      History
+      {t('content.history')}
     </Button>
   </PageHeader>
   <El my="4" />

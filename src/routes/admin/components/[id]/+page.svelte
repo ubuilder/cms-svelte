@@ -60,7 +60,7 @@
           </TabPanel>
           <TabPanel>
             <FormField label={t('components.forms.template')}>
-            <Textarea style="font-family: monospace;" rows="12"
+            <Textarea dir="ltr" style="font-family: monospace;" rows="12"
               bind:value={data.component.template}
             />
           </FormField>

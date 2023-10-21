@@ -78,7 +78,7 @@
     {:else if asset.type === "video"}
       VIDEO
     {:else}
-      PREVIEW NOT SUPPORTED
+      <El>SBC</El>
     {/if}
   </El>
 </El>

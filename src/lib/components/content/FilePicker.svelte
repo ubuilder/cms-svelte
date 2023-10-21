@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Button, El, Icon, modal, ButtonList } from "@ulibs/yesvelte";
+  import { Button, El, Icon, Status, modal, ButtonList } from "@ulibs/yesvelte";
   import FilePickerModal from "./FilePickerModal.svelte";
 
   export let type: "image" | "video" | "file" = "file";
@@ -12,7 +12,7 @@
     const file_id = await modal.open(
       FilePickerModal,
       {
-        type,
+        type: type ?? 'file',
         multiple,
       },
       {
@@ -81,7 +81,24 @@
     </El>
   </El>
 {:else}
-  Type
+  <El border p="3" bgColor="secondary" bgOpacity="25">
+
+    {#if value}
+    <El mb="3">
+      <Status color="light">
+        {value}
+      </Status>
+    </El>
+    <Button on:click={() => openFilePicker()} color="primary">Replace</Button>
+    <Button on:click={() => openFilePicker()} color="danger">Remove</Button>
+
+    {:else}
+    <Button on:click={() => openFilePicker()} color="primary">Upload File</Button>
+
+    {/if}
+
+  </El>
+
 {/if}
 
 <style>

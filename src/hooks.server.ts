@@ -94,7 +94,6 @@ export const handle = async ({ event, resolve }) => {
 	// }
 
 	let siteId = import.meta.env.PUBLIC_SITE_ID ?? (event.request.headers.get('host') ?? '').split('.')[0]
-	console.log('siteId: ', siteId)
 	// let siteId = '5173'
 	event.locals.api = cms_api({
 		baseUrl: apiUrl + '/api/' + siteId,
@@ -102,17 +101,17 @@ export const handle = async ({ event, resolve }) => {
 		token: event.cookies.get('token') ?? '',
 	})
 
-	if (event.cookies.get('token')) {
-		const user = await event.locals.api.getUser().then((res) => res.data)
-
-		if (user) {
-			event.locals.user = user
-		}
-	}
 	// if not user and route starts with admin:
 	// redirect to login page
-	console.log(event.request.url)
 	if (event.request.url.includes('/admin/')) {
+		if (event.cookies.get('token')) {
+			const user = await event.locals.api.getUser().then((res) => res.data)
+	
+			if (user) {
+				event.locals.user = user
+			}
+		}
+	
 		event.locals.settings = (await event.locals.api.getSettings()) ?? {}
 		// setLang('fa')
 		if (!event.locals.user) {
