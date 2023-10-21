@@ -14,6 +14,7 @@
         })
 
     }
+    let pages = data.pages;
 
     let languages = [
         {key: 'fa', text: 'فارسی'},
@@ -37,6 +38,14 @@
                 {item.text}
             </FormRadioGroup>
 
+            <FormSelect items={pages} key="id" placeholder={t('settings.page_home_placeholder')} bind:value={data.settings.page_home} label={t("settings.page_home")} let:item>
+                {item.title}
+            </FormSelect>
+
+            <FormSelect items={pages} key="id" placeholder={t('settings.page_404_placeholder')} bind:value={data.settings.page_404} label={t("settings.page_404")} let:item>
+                {item.title}
+            </FormSelect>
+            
 
 
         </CardBody>

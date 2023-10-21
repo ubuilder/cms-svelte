@@ -57,14 +57,14 @@
 <SidebarItem title="تنظیمات" href="/admin/settings" icon="settings" /> -->
 <Layout title="UBuilder" theme={data.theme} dir={data.dir}>
   <svelte:fragment slot="sidebar-items">
-    <SidebarItem title="{t('dashboard')}" icon="dashboard" href="/admin" />
-    <SidebarItem title="{t('content.title')}" icon="database" href="/admin/content" />
-    <SidebarItem title="{t('pages.title')}" href="/admin/pages" icon="file" />
-    <SidebarItem title="{t('components.title')}" href="/admin/components" icon="box" />
+    <SidebarItem title="{t('dashboard')}" icon="dashboard" href="/admin/" />
+    <SidebarItem title="{t('content.title')}" icon="database" href="/admin/content/" />
+    <SidebarItem title="{t('pages.title')}" href="/admin/pages/" icon="file" />
+    <SidebarItem title="{t('components.title')}" href="/admin/components/" icon="box" />
 
-    <SidebarItem title="{t('assets.title')}" href="/admin/assets" icon="photo" />
-    <SidebarItem title="{t('apps.title')}" href="/admin/apps" icon="building-store" />
-    <SidebarItem title="{t('settings.title')}" href="/admin/settings" icon="settings" />
+    <SidebarItem title="{t('assets.title')}" href="/admin/assets/" icon="photo" />
+    <SidebarItem title="{t('apps.title')}" href="/admin/apps/" icon="building-store" />
+    <SidebarItem title="{t('settings.title')}" href="/admin/settings/" icon="settings" />
   
     {#each data.apps as app}
       <SidebarItem

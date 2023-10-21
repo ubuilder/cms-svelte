@@ -118,5 +118,10 @@ export default {
 		theme: 'Theme',
 		language: 'Language',
 		choose_language: 'Choose Language',
+		page_home: 'Home Page',
+		page_404: '404 Page',
+		page_home_placeholer: 'Choose Home Page...',
+		page_404_placeholder: 'Choose 404 Page...'
+
 	},
 }

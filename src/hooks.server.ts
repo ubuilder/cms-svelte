@@ -11,36 +11,6 @@ const enable_test_user = true
 const apiUrl = API_URL ?? 'http://localhost:3000'
 
 export const handle = async ({ event, resolve }) => {
-	// if(!existsSync('./data')) {
-	//   mkdirSync('./data');
-	//   await writeFile('data/db.json', "{}");
-	// }
-
-	// const sites = await sitesDb.getModel("sites").query();
-	// const sites = []
-
-	// let siteId;
-
-	// for (let site of sites) {
-	//   if (
-	//     event.request.headers.get("host") &&
-	//     site.domains.includes(event.request.headers.get("host"))
-	//   ) {
-	//     siteId = site.id;
-	//   }
-	// }
-
-	// if (!siteId && event.request.headers.get("host")?.includes("localhost")) {
-	//   siteId = event.url.port;
-	// }
-	// if (!siteId) throw new Error("Site not found");
-
-	// if(!existsSync("data/" + siteId)) {
-	//   mkdirSync("data/" + siteId)
-	//   mkdirSync("data/" + siteId + '/assets')
-	// }
-
-	// // get model based on domain
 	// const { getModel } = connect({ filename: "data/" + siteId + "/db.json" }); // based on url
 	//   event.locals.db = (table: string) => {
 	//   const db = getModel(table);
@@ -123,7 +93,7 @@ export const handle = async ({ event, resolve }) => {
 	//   }
 	// }
 
-	let siteId = import.meta.env.SITE_ID ?? (event.request.headers.get('host') ?? '').split('.')[0]
+	let siteId = import.meta.env.PUBLIC_SITE_ID ?? (event.request.headers.get('host') ?? '').split('.')[0]
 	console.log('siteId: ', siteId)
 	// let siteId = '5173'
 	event.locals.api = cms_api({

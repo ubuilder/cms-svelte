@@ -14,11 +14,7 @@ type ApiResponse<T = any> = {
 type LoginResponseType = { token: string; user: User }
 
 export function cms_api(
-	{
-		baseUrl,
-		fetch,
-		token,
-	}: { baseUrl?: string; fetch?: any; token?: string } = {
+	{ baseUrl, fetch, token }: { baseUrl?: string; fetch?: any; token?: string } = {
 		token: '',
 		baseUrl: 'http://localhost:5173/api',
 	}
@@ -36,10 +32,14 @@ export function cms_api(
 			headers['Authorization'] = `bearer ${token}`
 		}
 
-		console.log('calling fetch ', url, 'body: ', body, 'headers: ', headers)
+		console.log('[fetch]: ', url)
+		console.log(body)
+		console.log({ headers })
 
 		try {
-			const res: ApiResponse<T> = await fetch(url,{method: 'POST', body,headers}).then(x => x.json())
+			const res: ApiResponse<T> = await fetch(url, { method: 'POST', body, headers }).then((x) =>
+				x.json()
+			)
 
 			if (res.status === 401) {
 				//
@@ -53,6 +53,7 @@ export function cms_api(
 			}
 
 			console.log(`[${res.status}]: ${res.message}.`)
+			console.log(res.data)
 
 			return res
 		} catch (err: any) {
@@ -78,8 +79,8 @@ export function cms_api(
 		},
 		async register({ username, password, name, email }: any) {
 			await call('/auth/register', { username, password, name, email })
-			
-			return this.login({username, password})
+
+			return this.login({ username, password })
 		},
 		async logout() {
 			const result = await call('/auth/logout')
@@ -96,8 +97,8 @@ export function cms_api(
 		async getPages(filters = {}) {
 			return call<DbList<Page>>('/pages/getPages', filters)
 		},
-		async getPageCss({page_id}: any = {}){
-			return call<string>('/pages/getPageCss', {page_id})
+		async getPageCss({ page_id }: any = {}) {
+			return call<string>('/pages/getPageCss', { page_id })
 		},
 		async getSettings() {
 			return call<any>('/settings/getSettings').then((res) => res.data)
@@ -174,6 +175,12 @@ export function cms_api(
 		},
 		async getData(params: any) {
 			return call<DbList<DbTable>>('/data/getData', params).then((res) => res.data!)
+		},
+		async recoverData(table: string, history_id: string) {
+			return call<boolean>('/data/recoverData', { table, history_id })
+		},
+		async getDataHistory(params: any) {
+			return call('/data/getDataHistory', params)
 		},
 		async getAssets(params: any) {
 			return call<DbList<any>>('/assets/getFiles', params).then((res) => res.data)

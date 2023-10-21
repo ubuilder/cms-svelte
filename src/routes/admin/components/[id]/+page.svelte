@@ -73,7 +73,7 @@
     <CardFooter>
       <ButtonList ms="auto">
         <Button on:click={remove} color="danger">{t('buttons.remove')}</Button>
-        <Button href="/admin/components">{t('buttons.cancel')}</Button>
+        <Button href="/admin/components/">{t('buttons.cancel')}</Button>
         <Button on:click={update} color="primary">{t('buttons.update')}</Button>
       </ButtonList>
     </CardFooter>
