@@ -14,6 +14,7 @@
 		Button,
 		Card,
 		CardBody,
+
 		El,
 		Icon,
 		Status,
@@ -39,6 +40,7 @@
 			await fetch('?/insert', {
 				method: 'POST',
 				body: JSON.stringify(item),
+
 			}).then((res) => res.json())
 
 			await invalidateAll()
@@ -86,6 +88,7 @@
 <Page title={data.table.name}>
 	<svelte:fragment slot="title">
 		<Icon mb="1" size="xl" name={data.table.icon} me="1" />
+
 		{data.table.name}
 		<Button ghost color="secondary" href="./edit">
 			<Icon name="settings" />
@@ -151,6 +154,7 @@
 			</ListItem>
 		{/each}
 		<ListItem style="width: 0" name="Actions">
+
 			<El d="flex" gap="2">
 				<Button size="sm" href="../{data.table.slug}/{item.id}">
 					<Icon name="eye" />
@@ -161,6 +165,7 @@
 				<Button color="cyan" size="sm" href="../{data.table.slug}/{item.id}/history">
 					<Icon name="history" />
 				</Button>
+
 				<Button color="danger" size="sm" on:click={() => removeItem(item)}>
 					<Icon name="trash" />
 				</Button>

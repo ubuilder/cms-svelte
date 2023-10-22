@@ -1,5 +1,20 @@
 import { fail, redirect } from '@sveltejs/kit'
 
+export async function load({url, locals}) {
+	let data: any = {}
+	if(url.searchParams.get('fromLogin')) {
+		data.fromLogin = true
+	}
+	if(url.searchParams.get('fromAdmin')) {
+		data.fromAdmin = true
+	}
+	
+	data.theme = 'dark'
+
+	console.log(data, url.searchParams)
+	return data;
+}
+
 export const actions = {
 	async default(event) {
 		const formData = await event.request.formData()
@@ -27,7 +42,7 @@ export const actions = {
 			maxAge: 60 * 60 * 24 * 15,
 		})
 
-		throw redirect(301, '/admin')
+		throw redirect(301, '/admin/')
 		// return {
 		// 	success: true,
 		// 	code: 201,

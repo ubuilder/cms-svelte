@@ -11,6 +11,8 @@
     CardFooter,
     CardHeader,
     FormField,
+    FormInput,
+    FormSwitch,
     FormTextarea,
     Page,
     TabContent,
@@ -29,17 +31,17 @@
 
     if (res) {
       // fetch remove
-      fetch('?/remove', {method: 'POST', body: '{}'}).then(res => goto('../'))
+      fetch('?/remove', {method: 'POST', body: '{}'}).then(res => goto('../', {invalidateAll: true}))
     }
   }
 
   function update() {
     // updateComponent....
-    fetch('?/update', {method: 'POST', body: JSON.stringify(data.component)}).then(res => goto('../'))
+    fetch('?/update', {method: 'POST', body: JSON.stringify(data.component)}).then(res => goto('../', {invalidateAll: true}))
 
   }
 
-  $: title = t('components.edit_component') + ` "${data.component?.name ?? ''}"`
+  let title = t('components.edit_component') + ` "${data.component?.name ?? ''}"`
 </script>
 
 <Page {title}>
@@ -47,20 +49,25 @@
     <Tabs>
       <CardHeader>
         <TabList>
-          <TabItem>{t('components.forms.fields')}</TabItem>
+          <TabItem>{t('components.forms.general')}</TabItem>
           <TabItem>{t('components.forms.template')}</TabItem>
         </TabList>
       </CardHeader>
       <CardBody>
         <TabContent>
           <TabPanel>
+            <FormInput bind:value={data.component.name} label={t('components.forms.name')}/>
+            <FormSwitch  bind:checked={data.component.hidden} description="Useful when you want to use it only as child component.">
+              Hide from components list
+              </FormSwitch>
+
             <!-- after create redirect to edit page in server side -->
             <ComponentFields components={data.components} bind:fields={data.component.fields} />
             
           </TabPanel>
           <TabPanel>
             <FormField label={t('components.forms.template')}>
-            <Textarea style="font-family: monospace;" rows="12"
+            <Textarea dir="ltr" style="font-family: monospace;" rows="12"
               bind:value={data.component.template}
             />
           </FormField>

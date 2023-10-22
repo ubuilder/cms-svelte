@@ -2,7 +2,7 @@ import type { ServerLoadEvent } from '@sveltejs/kit'
 
 export async function load({ locals }: ServerLoadEvent) {
 	return {
-		pages: await locals.api.getPages().then(res => res.data),
+		pages: await locals.api.getPages().then(res => res.data.data),
 		settings: locals.settings,
 	}
 }

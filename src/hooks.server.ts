@@ -11,90 +11,8 @@ const enable_test_user = true
 const apiUrl = API_URL ?? 'http://localhost:3000'
 
 export const handle = async ({ event, resolve }) => {
-	// const { getModel } = connect({ filename: "data/" + siteId + "/db.json" }); // based on url
-	//   event.locals.db = (table: string) => {
-	//   const db = getModel(table);
-	//   const historyDb = getModel(table + '_history');
-
-	//   async function insert(data: any) {
-	//     const res = await db.insert(data)
-	//     await historyDb.insert({...res, _is_deleted: false})
-	//     return res;
-	//     // const [id] = await db.insert({...data,
-	//     //   _is_deleted: false,
-	//     //   _published: true
-	//     // })
-	//     // await db.update(id, {
-	//     //   _id: id
-	//     // })
-
-	//     // return [id]
-	//   }
-
-	//   async function update(id: string, data: any) {
-	//     await historyDb.insert(data);
-	//     // Audit table
-	//     return db.update(id, data)
-	//     // return db.insert({
-	//     //   _id: id,
-	//     //   data,
-	//     //   _is_deleted: false,
-	//     //   _published: false,
-	//     // })
-	//   }
-
-	//   // async function query({where, with: with_}: any) {
-	//     // return db.query({
-	//     //   where: {...where, _is_deleted: false, _published: true},
-	//     //   with: with_
-	//     // })
-	//   // }
-
-	//   // async function get({where, with: with_}: any) {
-	//   //   if(where['id']) {
-	//   //     where['_id'] = where['id']
-	//   //     delete where['id']
-	//   //   }
-
-	//   //   return db.get({
-	//   //     where: {...where, _is_deleted: false, _published: true},
-	//   //     with: with_
-	//   //   })
-	//   // }
-	//   async function remove(id: string) {
-	//     await historyDb.insert({id, _is_deleted: true});
-	//     return db.remove(id)
-	//     // const data = await db.get({where: {_id: id}})
-	//     // return db.update(data.id, {
-	//     //   _is_deleted: true
-	//     // })
-	//   }
-
-	//   return {
-	//     insert,
-	//     update,
-	//     remove,
-	//     get: db.get,
-	//     query: db.query,
-	//     history: historyDb.query,
-	//     rollback: (id: string, item: any) => {
-	//       return db.update(id, item);
-	//     }
-	//     // async publish(new_id: string) {
-	//     //   const data = await db.get({where: {id: new_id}});
-
-	//     //   await db.update(data.id, {
-	//     //     is_published: false
-	//     //   })
-	//     //   await db.update(new_id, {
-	//     //     is_published: true
-	//     //   })
-	//     // }
-	//   }
-	// }
 
 	let siteId = import.meta.env.PUBLIC_SITE_ID ?? (event.request.headers.get('host') ?? '').split('.')[0]
-	console.log('siteId: ', siteId)
 	// let siteId = '5173'
 	event.locals.api = cms_api({
 		baseUrl: apiUrl + '/api/' + siteId,
@@ -102,42 +20,56 @@ export const handle = async ({ event, resolve }) => {
 		token: event.cookies.get('token') ?? '',
 	})
 
-	if (event.cookies.get('token')) {
-		const user = await event.locals.api.getUser().then((res) => res.data)
-
-		if (user) {
-			event.locals.user = user
-		}
-	}
-	// if not user and route starts with admin:
-	// redirect to login page
-	console.log(event.request.url)
-	if (event.request.url.includes('/admin/')) {
+	// /admin
+	if (event.url.pathname.startsWith('/admin/')) {
+		// settings
 		event.locals.settings = (await event.locals.api.getSettings()) ?? {}
-		// setLang('fa')
+
+		// auth
+		if (event.cookies.get('token')) {
+			const user = await event.locals.api.getUser().then((res) => res.data)
+	
+			if (user) {
+				event.locals.user = user
+			}
+		}
+	
 		if (!event.locals.user) {
-			throw redirect(307, '/auth/login')
+			const hasUser = await event.locals.api.hasUser().then(res => res.data)
+			if(hasUser) {
+				throw redirect(307, '/auth/login?fromAdmin=true')
+			} else {
+				throw redirect(307, '/auth/register?fromAdmin=true')
+			}			
+		}
+
+
+		// filters
+		if (event.request.method === 'GET') {
+			const obj = qs.parse(event.url.search.substring(1))
+	
+			event.locals.filters = obj.filters
 		}
 	}
 
-	// if(!event.locals.user && event.request.headers.get('host')?.includes('localhost') && enable_test_user) {
-	//   event.locals.user = {
-	//     id: '123',
-	//     name: 'Default',
-	//     email: 'default@gmail.com',
-	//     username: 'default',
-	//     profile: '',
-	//     password: '123_hashed'
-	//   }
-	// }
+	// /auth
+	if(event.url.pathname.startsWith('/auth/')) {
+		const hasUser = await event.locals.api.hasUser().then(res => res.data)
+
+		console.log('hasUser: ', hasUser)
+
+		if(hasUser) {
+			if(event.url.pathname !== '/auth/login') {
+				throw redirect(307, '/auth/login?fromRegister=true')
+			}
+		} else {
+			if(event.url.pathname !== '/auth/register') {
+				throw redirect(307, '/auth/register?fromLogin=true')
+			}
+		}			
+	}
 
 	event.locals.siteId = siteId
-
-	if (event.request.method === 'GET') {
-		const obj = qs.parse(event.url.search.substring(1))
-
-		event.locals.filters = obj.filters
-	}
 
 	return resolve(event)
 }

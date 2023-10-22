@@ -33,8 +33,8 @@ export function cms_api(
 		}
 
 		console.log('[fetch]: ', url)
-		console.log(body)
-		console.log({ headers })
+		// console.log(body)
+		// console.log({ headers })
 
 		try {
 			const res: ApiResponse<T> = await fetch(url, { method: 'POST', body, headers }).then((x) =>
@@ -53,7 +53,7 @@ export function cms_api(
 			}
 
 			console.log(`[${res.status}]: ${res.message}.`)
-			console.log(res.data)
+			// console.log(res.data)
 
 			return res
 		} catch (err: any) {
@@ -91,7 +91,14 @@ export function cms_api(
 
 		async getUser() {
 			const res = await call<User>('/auth/getUser')
-			console.log('after get User', res)
+			return res
+		},
+		async updateProfile(params: any) {
+			const res = await call<any>('/auth/updateProfile', params)
+			return res
+		},
+		async hasUser() {
+			const res = await call<boolean>('/auth/hasUser')
 			return res
 		},
 		async getPages(filters = {}) {
@@ -182,6 +189,17 @@ export function cms_api(
 		async getDataHistory(params: any) {
 			return call('/data/getDataHistory', params)
 		},
+		async getForms(page: string) {
+			return call('/form/getForms', {page})
+		},
+		async submitForm(page: string, pathname: string,  data: any) {
+			return call('/form/submitForm', {page, pathname, data})
+		},
+
+
+
+
+
 		async getAssets(params: any) {
 			return call<DbList<any>>('/assets/getFiles', params).then((res) => res.data)
 		},
@@ -194,7 +212,6 @@ export function cms_api(
 		async uploadFile(file: File) {
 			const body = new FormData()
 			body.append('file', file)
-			console.log('start file upload')
 			const res = await fetch(baseUrl + '/assets/uploadFile', {
 				method: 'POST',
 				headers: {
@@ -202,9 +219,6 @@ export function cms_api(
 				},
 				body,
 			})
-
-			console.log('file upload result: ')
-			console.log(await res.text())
 
 			return {
 				data: [],

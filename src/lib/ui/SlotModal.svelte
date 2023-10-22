@@ -16,6 +16,7 @@
     Input,
     FormField,
     El,
+	Icon,
   } from "@ulibs/yesvelte";
 	import { t } from "$lib/i18n"
 
@@ -26,7 +27,7 @@
   export let components: any[] = []
   export let allowedComponents: any[] = [];
   export let disabledComponents: any[] = [];
-  let items = components.filter(x => !disabledComponents.includes(x.id));
+  let items = components.filter(x => !disabledComponents.includes(x.id)).filter(x => !x.hidden );
 
   export let slot: any = {
     props: {},
@@ -52,8 +53,7 @@
   // $: if (slot.type) updateType(slot.type);
 </script>
 
-<BaseModal title={"Choose a type"}>
-  <!-- {#if mode === "add" && !slot.type} -->
+<BaseModal title={"Choose a component"}>
   <ModalBody>
     <El row g="2">
       {#each items as item}
@@ -61,12 +61,12 @@
             <El col="3">
               <El
                 style="cursor: pointer"
-                class="component-item {slot.type === item.name ? 'active' : ''}"
+                class="component-item {slot.type === item.id ? 'active' : ''}"
                 py="3"
                 textAlign="center"
                 borderRoundSize="2"
-                on:dblclick={() => $modal.resolve({ ...slot, type: item.name })}
-                on:click={() => (slot.type = item.name)}
+                on:dblclick={() => $modal.resolve({ ...slot, type: item.id })}
+                on:click={() => (slot.type = item.id)}
               >
                 {item.name}
               </El>
@@ -95,8 +95,12 @@
 
   <ModalFooter>
     <ButtonList>
+      <Button target="_blank" color={items.length === 0 ? "primary": undefined} href="/admin/components/">
+        <Icon name="plus"/>
+        Create New Component
+      </Button>  
       <Button on:click={() => $modal.close()}>{t("buttons.cancel")}</Button>
-      <Button on:click={() => $modal.resolve(slot)} color="primary">{t("buttons.add")}</Button>
+      <Button on:click={() => $modal.resolve(slot.type ? slot : undefined)} color="primary">{t("buttons.add")}</Button>
     </ButtonList>
   </ModalFooter>
 </BaseModal>

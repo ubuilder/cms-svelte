@@ -22,7 +22,6 @@
 		FormRadioGroup,
 		ButtonList,
 		confirmModal,
-		alert,
 	} from '@ulibs/yesvelte'
 	import SlotList from '$lib/ui/SlotList.svelte'
 	import PreviewModal from './PreviewModal.svelte'
@@ -31,6 +30,7 @@
 	import { slots } from '$lib/stores/pageSlots'
 	import DynamicFormField from '$lib/components/content/DynamicFormField.svelte'
 	import { t } from '$lib/i18n'
+	import FormViewer from './FormViewer.svelte'
 
 	export let data
 	let request: Partial<PageType> = data.page
@@ -217,6 +217,7 @@
 						<TabItem>General</TabItem>
 						<TabItem>Load</TabItem>
 						<TabItem>Content</TabItem>
+						<TabItem>Forms</TabItem>
 					</TabList>
 				</CardHeader>
 
@@ -237,6 +238,7 @@
 								label="Description"
 								bind:value={request.description} />
 							<DynamicFormField
+								dir="ltr"
 								items={getItems(request.load)}
 								type="plain_text"
 								input_type="textarea"
@@ -266,6 +268,24 @@
 								items={getItems(request.load)}
 								on:move={onMove}
 								bind:slotList={request.slot} />
+						</TabPanel>
+						<TabPanel>
+							{#if data.forms.data.length}
+							<ListBox items={data.forms.data} let:item>
+								<!-- <ListItem name="Form">{item.}</ListItem> -->
+								<ListItem name="URL">{item.pathname}</ListItem>
+								<ListItem name="Content (JSON)">{JSON.stringify(item.data).slice(0, 50) + '...'}</ListItem>
+								<ListItem name="Created At">{item.created_at}</ListItem>
+								
+								<ListItem name="Actions">
+									<Button on:click={() => modal.open(FormViewer, {data: item.data})} color="primary" size="sm">View</Button>
+								</ListItem>
+							</ListBox>
+							{:else}
+							<El style="height: 300px" d="flex" alignItems="center" justifyContent="center">
+								There is no form submitted from this page!
+							</El>
+							{/if}
 						</TabPanel>
 					</CardBody>
 					<CardFooter>

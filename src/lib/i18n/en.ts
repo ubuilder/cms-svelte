@@ -1,10 +1,37 @@
 export default {
-	dashboard: 'Dashboard',
+	dashboard: {
+		title: 'Dashboard',
+		hello: 'Hello',
+		// welcome_message: 'به سیستم مدیریت محتوای یوبیلدر خوش آمدید'
+		welcome_message: 'Welcome to UBuilder Content Management System!',
+		page_count: 'Page count',		
+		table_count: 'Table count',
+		file_count: 'Files count',
+		rows_count: 'Total Rows',
+	},
+	layout: {
+		logout: 'Logout',
+		profile: 'Profile'
+	},
+	profile: {
+		title: 'Profile',
+		username: 'Username',
+		email: 'Email',
+		name: 'Name',
+		profile_image: 'Profile Image'
+	},
 	content: {
+		actions: 'Actions',
 		title: 'Content',
 		create_table: 'Create Table',
+		created_by: 'Created By',
+		created_at: 'Created At',
+		history: 'History',
+		rollback: 'Rollback',
 		filters: {
 			name: 'Name',
+			true: 'True',
+			false: 'False'
 		},
 		forms: {
 			name: 'Name',
@@ -53,15 +80,23 @@ export default {
 			select: 'Select',
 			relation: 'Relation',
 		},
+		messages: {
+			remove_row: "Are you sure to remove this Row?"
+
+		}
 	},
 	buttons: {
 		cancel: 'Cancel',
 		back: 'Back',
 		save: 'Save',
+		done: 'Done',
 		create: "Create",
 		add: 'Add',
+		insert: "Insert",
 		update: 'Update',
 		remove: 'Remove',
+		import: 'Import',
+		export: 'Export'
 	},
 	components: {
 		title: 'Components',
@@ -72,6 +107,7 @@ export default {
 		edit_component: 'Edit Component',
 		forms: {
 			name: 'Name',
+			general: 'General',
 			fields: 'Fields',
 			template: 'Template',
 		},
@@ -91,7 +127,12 @@ export default {
 		},
 	},
 	pages: {
-		title: 'Pages'
+		title: 'Pages',
+		add_page: 'Add Page',
+		forms: {
+			title: 'Page Title',
+			slug: 'URL Slug'
+		}
 	},
 	assets: {
 		title: 'Assets',
@@ -120,7 +161,7 @@ export default {
 		choose_language: 'Choose Language',
 		page_home: 'Home Page',
 		page_404: '404 Page',
-		page_home_placeholer: 'Choose Home Page...',
+		page_home_placeholder: 'Choose Home Page...',
 		page_404_placeholder: 'Choose 404 Page...'
 
 	},

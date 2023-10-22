@@ -7,10 +7,15 @@ export async function load({ locals, params }) {
 		.then((res) => res.data!.data)
 	const components = await locals.api.getComponents({ perPage: 500 }).then((res) => res.data)
 
+
+	const forms = await locals.api.getForms(params.id).then(res => res.data)
+
+	console.log({forms})
 	return {
 		tables,
 		components,
 		page: await locals.api.getPage(params.id),
+		forms,
 	}
 }
 

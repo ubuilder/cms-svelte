@@ -51,5 +51,6 @@ export async function load({ request, locals }) {
 		theme: locals.settings.theme ?? 'dark',
 		siteId: locals.siteId,
 		apps,
+		menu: locals.settings.menu ?? []
 	}
 }

@@ -6,7 +6,6 @@ export function renderVariable<T extends string | Record<string, any>>(
 	template: T,
 	items: Items
 ): T {
-	console.log('render varible', template)
 
 	// if(Array.isArray(template)) {
 	//   return template.map(x => renderVariable(x, items))

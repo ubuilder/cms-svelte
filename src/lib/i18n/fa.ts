@@ -1,5 +1,14 @@
 export default {
-	dashboard: 'پیشخوان',
+
+	dashboard: {
+		title: 'داشبورد',
+		hello: 'سلام',
+		welcome_message: 'به سیستم مدیریت محتوای یوبیلدر خوش آمدید',
+		page_count: 'تعداد صفحات',		
+		table_count: 'تعداد جدول ها',
+		file_count: 'تعداد فایل ها',
+		rows_count: 'مجموع محتوا',
+	},
 	content: {
 		title: 'محتوا',
 		create_table: 'ایجاد جدول',
@@ -62,6 +71,13 @@ export default {
 		add: 'افزودن',
 		update: 'به‌روزرسانی',
 		remove: 'حذف',
+		import: 'وارد کردن',
+		export: 'خروجی گرفتن'
+	},
+
+	layout: {
+		logout: 'بیرون شدن',
+		profile: 'پروفایل'
 	},
 	components: {
 		title: 'اجزا',
@@ -119,6 +135,11 @@ export default {
 		theme: 'پوسته',
 		language: 'زبان',
 		choose_language: 'انتخاب زبان',
+		page_404: 'صفحه ۴۰۴',
+		page_404_placeholder: "صفحه ۴۰۴ را انتخاب کنید",
+		page_home: 'صفحه اصلی',
+		page_home_placeholder: "صفحه اصلی را انتخاب کنید",
+		
 	},
 }
 
