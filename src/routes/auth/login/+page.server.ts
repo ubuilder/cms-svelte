@@ -11,7 +11,7 @@ export async function load({url}) {
 	
 
 	data.theme = 'dark'
-	
+
 	console.log(data, url.searchParams)
 	return data;
 }
@@ -37,8 +37,5 @@ export const actions = {
 
 		throw redirect(302, '/admin/')
 
-		return {
-			success: true,
-		}
 	},
 }

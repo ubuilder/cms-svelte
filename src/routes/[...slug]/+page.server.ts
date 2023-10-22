@@ -189,7 +189,9 @@ export async function load({ locals, params, url }) {
 
 	const { html } = render(page)
 
-	page.head += `<style>${style}</style>`
+	if(style) {
+		page.head += `<style>${style}</style>`
+	}
 
 	return {
 		page,

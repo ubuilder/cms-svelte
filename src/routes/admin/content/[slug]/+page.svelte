@@ -92,7 +92,7 @@
 				{#if field.type === 'switch'}
 					<Switch disabled checked={item[field.name]} />
 				{:else if field.type === 'select'}
-					<Status color="light">{item[field.name]}</Status>
+					<Status border color="light">{item[field.name]}</Status>
 				{:else if field.type === 'image'}
 					<El tag="img" width="64px" src="/files/{item[field.name]}" />
 				{:else if field.type === 'relation'}
@@ -114,14 +114,14 @@
 
 		<ListItem name={t('content.created_by')}>
 			{#if item.created_by}
-				<Status color="light" ps="1" d="flex">
+				<Status border color="light" ps="1">
 					<Avatar style="width: 1.25rem; height: 1.25rem" shape="circle">
 						<img alt="user" src="/files/{item.created_by.profile}" />
 					</Avatar>
 					<El tag="strong">{item.created_by.username}</El>
 				</Status>
 			{:else}
-				<Status color="light">Unknown</Status>
+				<Status border color="light">Unknown</Status>
 			{/if}
 		</ListItem>
 		<ListItem style="width: 0" name={t('content.actions')}>

@@ -74,7 +74,7 @@
 </script>
 
 <BaseModal>
-  <ModalHeader>
+  <ModalHeader pe="4">
     <ModalTitle>{title}</ModalTitle>
     <Button on:click={() => uploadInput.click()} color="primary">
       <Icon name="upload" />

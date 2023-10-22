@@ -42,7 +42,7 @@ export const actions = {
 			maxAge: 60 * 60 * 24 * 15,
 		})
 
-		throw redirect(301, '/admin')
+		throw redirect(301, '/admin/')
 		// return {
 		// 	success: true,
 		// 	code: 201,

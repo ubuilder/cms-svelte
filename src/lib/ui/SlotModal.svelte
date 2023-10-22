@@ -16,6 +16,7 @@
     Input,
     FormField,
     El,
+	Icon,
   } from "@ulibs/yesvelte";
 	import { t } from "$lib/i18n"
 
@@ -52,7 +53,7 @@
   // $: if (slot.type) updateType(slot.type);
 </script>
 
-<BaseModal title={"Choose a type"}>
+<BaseModal title={"Choose a component"}>
   <ModalBody>
     <El row g="2">
       {#each items as item}
@@ -94,6 +95,10 @@
 
   <ModalFooter>
     <ButtonList>
+      <Button target="_blank" color={items.length === 0 ? "primary": undefined} href="/admin/components/">
+        <Icon name="plus"/>
+        Create New Component
+      </Button>  
       <Button on:click={() => $modal.close()}>{t("buttons.cancel")}</Button>
       <Button on:click={() => $modal.resolve(slot.type ? slot : undefined)} color="primary">{t("buttons.add")}</Button>
     </ButtonList>

@@ -12,6 +12,10 @@
 	transform: scaleX(-1);
 }
 
+.y-card {
+	overflow: unset;
+}
+
 body:has([data-bs-theme='light']),
 [data-bs-theme='light'] {
 	--border-color: #98b5af;
@@ -31,13 +35,13 @@ body:has([data-bs-theme='light']),
 }
 .component-item {
 	box-shadow: 0 2px 4px -4px black !important;
-	background-color: #505660 !important;
+	background-color: #ffffff20 !important;
 }
 
 .component-item.active {
 	box-shadow: 0 4px 16px -8px black !important;
 	border-color: var(--y-bg-forms) !important;
-	background-color: #485871 !important;
+	background-color: #ffffff30 !important;
 }
 
 .component-item,

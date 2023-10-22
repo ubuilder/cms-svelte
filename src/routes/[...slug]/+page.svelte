@@ -3,9 +3,9 @@
 </script>
 
 <svelte:head>
+	{@html data.page.head ?? ''}
 	<title>{data.page.title}</title>
 	<meta name="description" content={data.page.description} />
-	{@html data.page.head}
 </svelte:head>
 
 {#if false}

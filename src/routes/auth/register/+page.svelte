@@ -47,7 +47,7 @@
         colXl="4">
         <form
           method="POST"
-          action="?/login"
+          
           use:enhance>
           <Card>
             <CardHeader
