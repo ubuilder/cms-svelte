@@ -69,6 +69,22 @@
             {/if}
             <CardBody>
               <FormInput
+                name="name"
+                value=""
+                label="Name"
+                required
+                col="12"
+                state={form?.field === "name" ? "invalid" : undefined}
+                hint={form?.field === "name" ? form?.message : ""} />
+                <FormInput
+                name="email"
+                value=""
+                label="Email"
+                required
+                col="12"
+                state={form?.field === "email" ? "invalid" : undefined}
+                hint={form?.field === "email" ? form?.message : ""} />
+              <FormInput
                 name="username"
                 value=""
                 label="Username"
