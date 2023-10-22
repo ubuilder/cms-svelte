@@ -12,14 +12,18 @@
     DropdownMenu,
     El,
     SidebarItem,
+
     Layout
   } from "@ulibs/yesvelte";
   import '@ulibs/yesvelte/styles.css';
   import '../../app.css';
 
   import { goto } from "$app/navigation";
+  import { setLang, t } from "$lib/i18n";
 
   export let data;
+
+  setLang(data.lang)
 
   const show_auth_warning = true;
 
@@ -37,29 +41,44 @@
   }
 </script>
 
+<svelte:head>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=family=Vazirmatn:wght@400;700&display=swap" rel="stylesheet">
+
+</svelte:head>
+<!-- <SidebarItem title="داشبورد" icon="dashboard" href="/admin" />
+<SidebarItem title="محتوا" icon="database" href="/admin/content" />
+<SidebarItem title="صفحات" href="/admin/pages" icon="file" />
+<SidebarItem title="فایل ها" href="/admin/assets" icon="photo" />
+<SidebarItem title="اپلیکیشن ها" href="/admin/market" icon="building-store" />
+<SidebarItem title="تست بک اند" href="/admin/test" icon="test" />
+<SidebarItem title="تنظیمات" href="/admin/settings" icon="settings" /> -->
 <Layout title="UBuilder" theme={data.theme} dir={data.dir}>
   <svelte:fragment slot="sidebar-items">
-    <SidebarItem title="Dashboard" icon="dashboard" href="/admin" />
-    <SidebarItem title="Content" icon="database" href="/admin/content" />
-    <SidebarItem title="Pages" href="/admin/pages" icon="file" />
-    <SidebarItem title="Components" href="/admin/components" icon="box" />
+    <SidebarItem title="{t('dashboard.title')}" icon="dashboard" href="/admin/" />
+    <SidebarItem title="{t('content.title')}" icon="database" href="/admin/content/" />
+    <SidebarItem title="{t('pages.title')}" href="/admin/pages/" icon="file" />
+    <SidebarItem title="{t('components.title')}" href="/admin/components/" icon="box" />
 
-    <SidebarItem title="Assets" href="/admin/assets" icon="photo" />
-    <SidebarItem title="Apps" href="/admin/apps" icon="building-store" />
-    <SidebarItem title="Settings" href="/admin/settings" icon="settings" />
+    <SidebarItem title="{t('assets.title')}" href="/admin/assets/" icon="photo" />
+    <SidebarItem title="{t('apps.title')}" href="/admin/apps/" icon="building-store" />
+    <SidebarItem title="{t('settings.title')}" href="/admin/settings/" icon="settings" />
   
-    {#each data.apps as app}
+    <El my="2" />
+    {#each data.menu as menu}
       <SidebarItem
-        title={app.name}
-        href="/admin/apps/{app.slug}"
-        icon={app.icon}
+        title={menu.title}
+        href="{menu.href}"
+        icon={menu.icon}
       />
     {/each}
   </svelte:fragment>
   <svelte:fragment slot="header-end">
     <El>
       {#if data.user}
-        <Dropdown arrow={false} placement="bottom-end">
+        <Dropdown autoClose arrow={false} placement="bottom-end">
           <Avatar slot="target" shape="circle" color="primary">
             {#if data.user.profile}
               <img alt="profile" src="/files/{data.user.profile}" />
@@ -67,52 +86,27 @@
               <img alt="profile" src="/images/avatar.png" />
             {/if}
           </Avatar>
-          <DropdownMenu>
-            <DropdownItem>Profile</DropdownItem>
-            <DropdownItem>Settings</DropdownItem>
+          <DropdownMenu >
+            <DropdownItem href="/admin/profile">{t('profile.title')}</DropdownItem>
+            <DropdownItem href="/admin/settings">{t('settings.title')}</DropdownItem>
             <DropdownItem divider />
-            <DropdownItem on:click={logout}>Logout</DropdownItem>
+            <DropdownItem href="/admin/logout">{t('layout.logout')}</DropdownItem>
           </DropdownMenu>
         </Dropdown>
       {/if}
     </El>
   </svelte:fragment>
   {#if hasAccess()}
-    {#if data.show_auth_warning && data.user.username === "default"}
-      <El
-        py="2"
-        textColor="warning"
-        bgColor="warning"
-        bgOpacity="25"
-        borderBottom
-        borderColor="warning"
-      >
-        <El container="lg">
-          You have access to CMS because
-          <El textColor="warning" bgColor="light" bgOpacity="25" tag="code">
-            enable_test_user
-          </El> is true in
-          <El textColor="warning" bgColor="light" bgOpacity="25" tag="code">
-            src/hooks.server.ts
-          </El> file. This warning will be hidden in production.
-          <br />
-          if you do not want to see this message please login <El
-            tag="a"
-            href="/auth/login">here</El
-          >
-        </El>
-      </El>
-    {/if}
-    <slot />
+      <slot />
   {:else}
     <Card m="3">
       <CardHeader>
-        <CardTitle>No Access</CardTitle>
+        <CardTitle>عدم دسترسی</CardTitle>
         <CardActions>
-          <Button href="/auth/login">Login</Button>
+          <Button href="/auth/login">لاگین</Button>
         </CardActions>
       </CardHeader>
-      <CardBody>You don't have access to this page</CardBody>
+      <CardBody>شما به این صفحه دسترسی ندارید</CardBody>
     </Card>
   {/if}
 </Layout>

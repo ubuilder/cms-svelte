@@ -1,16 +1,17 @@
 <script lang="ts">
+  import { t } from "$lib/i18n";
   import { Page, FilterList, TextFilter, Button, Card, CardBody, El, Icon } from "@ulibs/yesvelte";
   export let data;
 </script>
 
-<Page title="Content">
+<Page title={t('content.title')}>
   <Button href="./create" slot="header-buttons" color="primary">
     <Icon name="plus" />
-    Create Table
+    {t('content.create_table')}
   </Button>
 
   <FilterList>
-    <TextFilter key="name" text="Name" />
+    <TextFilter key="name" text={t('content.filters.name')} />
   </FilterList>
 
   <El row>

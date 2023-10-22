@@ -63,10 +63,10 @@
   $: title = multiple ? title + "s" : title;
 
   const filters = writable({
-    type: {
-      operator: "=",
-      value: type,
-    },
+    // type: {
+    //   operator: "=",
+    //   value: type ?? 'file',
+    // },
   });
   setContext("FILTERS", filters);
 
@@ -74,7 +74,7 @@
 </script>
 
 <BaseModal>
-  <ModalHeader>
+  <ModalHeader pe="4">
     <ModalTitle>{title}</ModalTitle>
     <Button on:click={() => uploadInput.click()} color="primary">
       <Icon name="upload" />
@@ -93,7 +93,7 @@
 
   <ModalBody>
     <FilterList>
-      Filters
+      
       <SelectFilter
         key="type"
         items={[
@@ -111,8 +111,15 @@
         {#if asset.type === "image"}
           <ModalAssetItem on:select={() => $modal.resolve(asset.id)} {asset} />
         {:else}
-          {JSON.stringify(asset)}
-          <br />
+            <El on:click={() => $modal.resolve(asset.id)} col="6" colMd="4" colLg="3"  border
+            borderRoundSize="3"
+       d="flex" style="flex-direction: column;" bgColor="secondary" bgOpacity="10" p="3">
+              <Icon mx="auto" mb="3" size="3x" name="file"/>
+              <El>
+                {asset.name}
+
+              </El>
+            </El>
         {/if}
       {/each}
     </El>

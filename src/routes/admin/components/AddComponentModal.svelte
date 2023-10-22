@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { t } from "$lib/i18n";
   import { BaseModal, Button, ButtonList, FormInput, ModalBody, ModalFooter, modal } from "@ulibs/yesvelte";
 
 
@@ -6,13 +7,13 @@
 </script>
 <BaseModal>
     <ModalBody>
-        <FormInput label="Name" bind:value={data.name}/>
+        <FormInput label={t("components.forms.name")} bind:value={data.name}/>
     </ModalBody>
     
     <ModalFooter>
         <ButtonList>
-            <Button on:click={() => $modal.close()}>Cancel</Button>
-            <Button on:click={() => $modal.resolve(data)} color="primary">Add</Button>
+            <Button on:click={() => $modal.close()}>{t("buttons.cancel")}</Button>
+            <Button on:click={() => $modal.resolve(data)} color="primary">{t("buttons.add")}</Button>
             </ButtonList>
     </ModalFooter>
 </BaseModal>

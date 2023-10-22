@@ -1,10 +1,11 @@
-import { redirect } from '@sveltejs/kit';
+import { redirect } from '@sveltejs/kit'
 
-export async function load({locals}) {
+export async function load({ locals }) {
+	const components = await locals.api
+		.getComponents({ where: locals.filters, perPage: 50 })
+		.then((res) => res.data)
 
-    const components = await locals.api.getComponents({where: locals.filters, perPage: 50}).then(res => res.data);
-
-    return {
-        components
-    }
+	return {
+		components,
+	}
 }

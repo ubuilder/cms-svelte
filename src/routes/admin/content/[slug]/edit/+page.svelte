@@ -4,6 +4,7 @@
   import type { Table } from "$lib/types";
   import { Button, El,PageHeader, modal, confirmModal } from "@ulibs/yesvelte";
   import TableEditCard from "../../TableEditCard.svelte";
+	import { t } from "$lib/i18n"
 
   export let data;
 
@@ -34,14 +35,14 @@
   <PageHeader title="Update Table" back />
   <TableEditCard bind:table tables={data.tables}>
     <svelte:fragment slot="footer">
-      <Button on:click={() => history.back()}>Cancel</Button>
-      <Button color="danger" on:click={() => removeTable()}>Remove</Button>
+      <Button on:click={() => history.back()}>{t("buttons.cancel")}</Button>
+      <Button color="danger" on:click={() => removeTable()}>{t("buttons.remove")}</Button>
       <Button
         disabled={!table.name}
         color="primary"
         on:click={() => editTable()}
       >
-        Update
+      {t("buttons.update")}
       </Button>
     </svelte:fragment>
   </TableEditCard>

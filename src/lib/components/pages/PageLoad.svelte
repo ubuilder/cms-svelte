@@ -18,7 +18,7 @@
   import type { Field, PageLoad, Table } from "$lib/types";
   import DynamicFormField from "$lib/components/content/DynamicFormField.svelte";
 
-  export let load: PageLoad[];
+  export let load: PageLoad[] = [];
   export let tables: Table[];
 
   function getFilterType(type: Field['type']) {
@@ -96,7 +96,7 @@
             placeholder="Choose a table...."
             label="Table Name"
             items={tables}
-            key="slug"
+            key="id"
             bind:value={loadItem.table}
             let:item
           >
@@ -105,7 +105,7 @@
           <FormCheckbox label="Multiple" bind:checked={loadItem.multiple} />
           <FormField label="Filters">
             {#each loadItem.filters as filter}
-              {@const table = tables.find((x) => x.slug === loadItem.table)}
+              {@const table = tables.find((x) => x.id === loadItem.table)}
               {@const field = table.fields.find(x => x.name === filter.field)}
 
               {#if table}
@@ -114,6 +114,7 @@
                     col="3"
                     label="Field"
                     items={table.fields}
+                    placeholder="Choose Field..."
                     key="name"
                     bind:value={filter.field}
                     let:item
@@ -136,7 +137,7 @@
                   </FormSelect>
                     {#if filterType.type !== 'date_range'}
 
-                      <DynamicFormField col label="value" {items} type={filterType.type} bind:value={filter.value}/>
+                      <DynamicFormField col label="value" options={field.options} {items} type={filterType.type} bind:value={filter.value}/>
                     {:else}
                       <DynamicFormField col label="from" {items} type='date_time' bind:value={filter.from}/>
                       <DynamicFormField col label="to" {items} type='date_time' bind:value={filter.to}/>
@@ -175,13 +176,13 @@
 </Accordions>
 
 <El row>
-  <FormInput colLg="5" bind:value={new_load_name} label="New Load Name" />
+  <FormInput colLg="5" bind:value={new_load_name} placeholder="Name for new load item..." label="New Load Name" />
   <FormSelect
     colLg="5"
     placeholder="Choose a table...."
     label="Table Name"
     items={tables}
-    key="slug"
+    key="id"
     bind:value={new_load_table}
     let:item
   >

@@ -2,6 +2,7 @@
   import { Page, FilterList, TextFilter, SelectFilter, Button, El, Icon } from "@ulibs/yesvelte";
   import Asset from "./Asset.svelte";
   import { invalidateAll } from "$app/navigation";
+  import { t } from "$lib/i18n";
 
   export let data;
 
@@ -23,27 +24,27 @@
   }
 </script>
 
-<Page title="Assets">
+<Page title={t('assets.title')}>
   <Button
     on:click={() => uploadInput.click()}
     color="primary"
     slot="header-buttons"
   >
     <Icon name="upload" />
-    Upload
+    {t('assets.upload')}
   </Button>
 
   <FilterList>
     <SelectFilter
       key="type"
       items={[
-        { text: "Image", key: "image" },
-        { text: "Audio", key: "audio" },
-        { text: "Video", key: "video" },
+        { text: t("assets.image"), key: "image" },
+        { text: t("assets.audio"), key: "audio" },
+        { text: t("assets.video"), key: "video" },
       ]}
       text="Type"
     />
-    <TextFilter key="name" text="Name" />
+    <TextFilter key="name" text={t('assets.filters.name')} />
   </FilterList>
 
   <!-- Upload file form -->

@@ -5,7 +5,7 @@
 	"scripts": {
 		"dev": "vite dev",
 		"start": "node index.js",
-		"build": "ORIGIN=https://cms.hadiahmadi.dev vite build",
+		"build": "vite build",
 		"preview": "vite preview",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch"
@@ -35,6 +35,7 @@
 		"interactjs": "^1.10.18",
 		"node-fetch": "^3.3.2",
 		"pg": "^8.11.1",
+		"prettier-plugin-svelte": "^3.0.3",
 		"sortablejs": "^1.15.0",
 		"yesvelte": "^0.0.2-next.201"
 	}

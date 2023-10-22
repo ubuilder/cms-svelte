@@ -4,16 +4,15 @@
   import { invalidateAll } from "$app/navigation";
   import AssetUpdateModal from "./AssetUpdateModal.svelte";
   import type { AssetType } from "$lib/types/asset";
+  import { t } from "$lib/i18n";
 
   export let asset: AssetType;
 
   async function onRemove() {
     const choice = await confirmModal.open({
       status: "danger",
-      title: "Are you sure to remove this Asset?",
+      title: t("assets.messages.confirm_remove"),
     });
-
-    console.log(choice);
 
     if (choice) {
       await fetch("?/remove", {
@@ -79,7 +78,7 @@
     {:else if asset.type === "video"}
       VIDEO
     {:else}
-      PREVIEW NOT SUPPORTED
+      <El>SBC</El>
     {/if}
   </El>
 </El>

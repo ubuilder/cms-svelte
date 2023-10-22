@@ -1,5 +1,6 @@
 <script lang="ts">
   import FormFields from "$lib/components/content/FormFields.svelte";
+  import { t } from "$lib/i18n";
   import type { Table } from "$lib/types";
   import {
     Button,
@@ -27,20 +28,20 @@
 <Card mt="3" mb="5">
   <CardBody class="table-edit" row>
     <El col="auto">
-      <FormField label="Icon">
-        <Button outline>
+      <FormField label={t('content.forms.icon')}>
+        <Button style="background-color: var(--y-bg-forms);" outline>
           <Icon name={table.icon} />
         </Button>
       </FormField>
 
       <Popover trigger="click">
         <PopoverBody>
-          <FormInput label="Icon" bind:value={table.icon} />
+          <FormInput label={t('content.forms.icon')} bind:value={table.icon} />
         </PopoverBody>
       </Popover>
     </El>
     <El col>
-      <FormInput required label="Name" bind:value={table.name} />
+      <FormInput required label={t('content.forms.name')} bind:value={table.name} />
     </El>
     <El col="12">
       <FormFields {tables} bind:fields={table.fields} />

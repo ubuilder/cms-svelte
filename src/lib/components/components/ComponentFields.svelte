@@ -23,6 +23,7 @@
     CardBody,
   } from "@ulibs/yesvelte";
   import DynamicFormField from "../content/DynamicFormField.svelte";
+	import { t } from "$lib/i18n"
 
   export let components: any[] = [];
   export let fields: any[] = [];
@@ -219,7 +220,7 @@
                     color="danger"
                     on:click={() => removeField(field)}
                   >
-                    Remove
+                    {t("buttons.remove")}
                   </Button>
                 </El>
               </El>

@@ -1,7 +1,5 @@
 <script lang="ts">
-  import { browser } from "$app/environment";
   import { enhance } from "$app/forms";
-  import { goto } from "$app/navigation";
   import {
     ButtonList,
     Layout,
@@ -14,68 +12,37 @@
     FormInput,
     El,
     CardHeader,
+	Alert,
   } from "@ulibs/yesvelte";
   // import { Identity, routeTo } from '@services'
   // import { news, user } from '@stores'
   // import Logo from '@components/layout/Logo.svelte'
 
   export let form;
+  export let data;
+
 
   let loading = false;
-  let request = {
-    userName: "",
-    password: "",
-  };
 
-  let login = async () => {
-    // loading = true
-    // try {
-    // 	await $user.login(request)
-    // 	if ($user.isInRole('INVESTOR')) {
-    // 		news.load()
-    // 		await routeTo('')
-    // 	} else if ($user.isInRole('MARKETER')) {
-    // 		news.load()
-    // 		await routeTo('marketer')
-    // 	} else {
-    // 		await routeTo('admin')
-    // 	}
-    // } catch (err) {
-    // 	console.error(err)
-    // } finally {
-    // 	loading = false
-    // }
-  };
-  import tabler from "yesvelte/css/tabler.min.css?url";
-
-  $: if (browser && form?.success) {
-    goto("/admin");
-  }
 </script>
 
-<svelte:head>
-  <link
-    rel="stylesheet"
-    href={tabler} />
-</svelte:head>
-
 <Layout
-theme="dark"
+  theme={data.theme}
   sidebar={false}
   header={false}>
-  <Page
-    title=""
-    roles="">
+  <Page title="" htmlTitle="Login">
     <El
       mt="5"
       pt="5"
       row>
       <El
+        colSm="2"
         colMd="3"
         colXl="4"
         d="none"
-        dMd="block" />
+        dSm="block" />
       <El
+        colSm="8"
         colMd="6"
         colXl="4">
         <form
@@ -86,10 +53,23 @@ theme="dark"
             <CardHeader
               py="3"
               px="4">
-              <El tag="h1">UBuilder</El>
+              <El mb="0" tag="h1">Login to UBuilder</El>
             </CardHeader>
+            {#if data.fromRegister || data.fromAdmin}
+
             <CardBody>
-              <El tag="h1">Login From</El>
+              <El>
+                <Alert color="warning">
+                  {#if data.fromRegister}
+                    You have an account, please login! 
+                  {:else if data.fromAdmin}
+                    You are not logged in. please login now!
+                  {/if}
+                </Alert>
+              </El>
+            </CardBody>
+            {/if}
+            <CardBody>
               <FormInput
                 name="username"
                 value=""
@@ -112,16 +92,15 @@ theme="dark"
             <CardFooter>
               <CardActions>
                 <ButtonList>
-                  <Button
+                
+                  
+                  <!-- <Button
+                  ghost 
+                  color="secondary"
                     type="button"
-                    href="/auth/register">
-                    Do not have an account
-                  </Button>
-                  <Button
-                    type="button"
-                    on:click={async () => await routeTo("account/forgot-password")}>
-                    Forgot Password
-                  </Button>
+                    on:click={async () => await goto("/auth/forgot-password")}>
+                    Forgot Password?
+                  </Button> -->
                   <Button
                     type="submit"
                     color="primary"
@@ -133,10 +112,11 @@ theme="dark"
         </form>
       </El>
       <El
+        colSm="2"
         colMd="3"
         colXl="4"
         d="none"
-        dMd="block" />
+        dSm="block" />
     </El>
   </Page>
 </Layout>
