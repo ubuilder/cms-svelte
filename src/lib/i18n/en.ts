@@ -110,6 +110,7 @@ export default {
 			general: 'General',
 			fields: 'Fields',
 			template: 'Template',
+			content: 'Content'
 		},
 	},
 	filters: {

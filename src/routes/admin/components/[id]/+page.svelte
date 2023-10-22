@@ -3,6 +3,7 @@
   import CodeEditor from "$lib/components/CodeEditor.svelte";
   import ComponentFields from "$lib/components/components/ComponentFields.svelte";
   import { t } from "$lib/i18n/index.js";
+	import SlotList from "$lib/ui/SlotList.svelte"
   import {
     Button,
     ButtonList,
@@ -35,6 +36,20 @@
     }
   }
 
+  function getItems(fields: any[]) {
+    const res : any = {}
+
+    for(let field of fields) {
+      res[field.name] = {
+        type: field.type,
+        text: field.name
+      }
+    }
+
+
+    return res
+  }
+
   function update() {
     // updateComponent....
     fetch('?/update', {method: 'POST', body: JSON.stringify(data.component)}).then(res => goto('../', {invalidateAll: true}))
@@ -50,7 +65,7 @@
       <CardHeader>
         <TabList>
           <TabItem>{t('components.forms.general')}</TabItem>
-          <TabItem>{t('components.forms.template')}</TabItem>
+          <TabItem>{t('components.forms.content')}</TabItem>
         </TabList>
       </CardHeader>
       <CardBody>
@@ -66,11 +81,26 @@
             
           </TabPanel>
           <TabPanel>
+            <FormSwitch  bind:checked={data.component.raw}>
+              Write raw HTML
+              </FormSwitch>
+              {#if data.component.raw}
             <FormField label={t('components.forms.template')}>
             <Textarea dir="ltr" style="font-family: monospace;" rows="12"
               bind:value={data.component.template}
             />
+        
           </FormField>
+          {:else}
+          <FormField label={t('components.forms.content')}>
+            
+          <SlotList
+								components={data.components}
+								items={getItems(data.component.fields)}
+								bind:slotList={data.component.slot} />
+            </FormField>
+
+          {/if}
 
           </TabPanel>
         </TabContent>

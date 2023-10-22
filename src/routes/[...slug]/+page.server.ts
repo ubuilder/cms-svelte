@@ -141,6 +141,7 @@ export async function load({ locals, params, url }) {
 					})
 				}
 
+
 				for (let field of fields) {
 					if (field.type === 'slot') {
 						if (slot.props[field.name].type === '__list__') {
@@ -165,7 +166,13 @@ export async function load({ locals, params, url }) {
 						props[field.name] = renderVariable(slot.props[field.name], items)
 					}
 				}
-				return hbs.compile(component.template)(props)
+
+				if(component.raw !== false) {
+					return hbs.compile(component.template)(props)
+				} else {
+					return component.slot.map(x => renderSlot(x, props)).join('')	
+				}
+
 			}
 		}
 

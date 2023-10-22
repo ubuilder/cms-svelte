@@ -10,7 +10,11 @@
 		NumberFilter,
 		ListItem,
 		confirmModal,
+		modal,
 		Button,
+		Card,
+		CardBody,
+
 		El,
 		Icon,
 		Status,
@@ -70,10 +74,10 @@
 					key={field.name} />
 			{:else if field.type === 'switch'}
 				<SelectFilter
-					items={[
-						{ key: true, text: t('content.filters.true') },
-						{ key: false, text: t('content.filters.false') },
-					]}
+				items={[
+					{ key: true, text: t('content.filters.true') },
+					{ key: false, text: t('content.filters.false') },
+				]}
 					text={field.name}
 					key={field.name} />
 			{:else if field.type === 'date_time'}
@@ -92,7 +96,9 @@
 				{#if field.type === 'switch'}
 					<Switch disabled checked={item[field.name]} />
 				{:else if field.type === 'select'}
-					<Status border color="light">{item[field.name]}</Status>
+					{#if item[field.name]}
+						<Status color="light">{item[field.name]}</Status>
+					{/if}
 				{:else if field.type === 'image'}
 					<El tag="img" width="64px" src="/files/{item[field.name]}" />
 				{:else if field.type === 'relation'}
@@ -132,11 +138,15 @@
 				<Button color="primary" size="sm" href="../{data.table.slug}/{item.id}/edit">
 					<Icon name="pencil" />
 				</Button>
+				<Button color="cyan" size="sm" href="../{data.table.slug}/{item.id}/history">
+					<Icon name="history" />
+				</Button>
+
 				<Button color="danger" size="sm" on:click={() => removeItem(item)}>
 					<Icon name="trash" />
 				</Button>
 			</El>
 		</ListItem>
-		<El gap="2" d="flex" justifyContent="end" px="3" py="2" slot="end">Pagination...</El>
+		<El gap="2" d="flex" justifyContent="end" px="3" py="2" slot="end">HELLO</El>
 	</ListBox>
 </Page>

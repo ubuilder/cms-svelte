@@ -22,8 +22,6 @@
 		FormRadioGroup,
 		ButtonList,
 		confirmModal,
-		ListBox,
-		ListItem,
 	} from '@ulibs/yesvelte'
 	import SlotList from '$lib/ui/SlotList.svelte'
 	import PreviewModal from './PreviewModal.svelte'
@@ -79,7 +77,11 @@
 		fetch('?/updatePage', {
 			method: 'POST',
 			body: JSON.stringify(request),
-		}).then((res) => invalidateAll())
+		}).then((res) =>{
+			// invalidateAll()
+			console.log("done")
+			// alert.success("page updated!")
+		})
 	}
 	async function openPreviewModal() {
 		await modal.open(
@@ -109,7 +111,11 @@
 		fetch('?/updatePage', {
 			method: 'POST',
 			body: JSON.stringify(request),
-		}).then((res) => invalidateAll())
+		}).then((res) => {
+			
+			invalidateAll()
+			alert.success('page updated!')
+		})
 	}
 
 	function getItems(load: any): any[] {
