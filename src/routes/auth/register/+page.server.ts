@@ -23,6 +23,7 @@ export const actions = {
     })
 
 
+    throw redirect(301, '/admin')
     return {
       success: true,
       code: 201,

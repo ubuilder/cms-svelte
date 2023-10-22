@@ -1,4 +1,4 @@
-import { fail } from "@sveltejs/kit";
+import { fail, redirect } from "@sveltejs/kit";
 export const actions = {
   async login(event) {
     const formData = await event.request.formData();
@@ -19,6 +19,8 @@ export const actions = {
         path: '/',
         maxAge: 60 * 60 * 24 *15
     })
+    throw redirect(301, '/admin')
+
     
     return {
       success: true,
