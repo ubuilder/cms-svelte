@@ -15,7 +15,7 @@
       body: JSON.stringify(table),
     }).then((res) => res.json());
 
-    goto("..", { invalidateAll: true });
+    goto("../..", { invalidateAll: true });
   }
 
   async function removeTable() {
