@@ -5,10 +5,11 @@ export const load: ServerLoad = async ({ params, locals }) => {
 
 	const table = await locals.api.getTableBySlug(params.slug)
 
-	const rows = await locals.api.getDataHistory({table: table.id, perPage: 100})
+	const rows = await locals.api.getDataHistory({table: table.id, perPage: 100, where: {data: {id: params.id}}})
 	console.log(rows)
 
 	return {
+		id: params.id,
 		table,
 		rows,
 	}
