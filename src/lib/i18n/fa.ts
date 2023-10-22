@@ -74,6 +74,11 @@ export default {
 		import: 'وارد کردن',
 		export: 'خروجی گرفتن'
 	},
+
+	layout: {
+		logout: 'بیرون شدن',
+		profile: 'پروفایل'
+	},
 	components: {
 		title: 'اجزا',
 		add_component: 'افزودن جزء',
