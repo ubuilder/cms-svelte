@@ -52,8 +52,6 @@ export async function load({ locals, params, url }) {
 		slug: params.slug,
 	})
 
-
-
 	if (!page) {
 		const settings = await locals.api.getSettings() 
 		if(url.pathname === '/') {
@@ -66,7 +64,12 @@ export async function load({ locals, params, url }) {
 			}
 		}
 
-		if(!page) throw new Error('404: Page not found')
+		if(!page)  {
+			return {
+				page: {},
+				html: '404: page not found!'
+			}
+		}
 	}
 
 	if (url.searchParams.has('edit')) {
@@ -127,7 +130,7 @@ export async function load({ locals, params, url }) {
 	function render(page: Page) {
 		function renderSlot(slot: any, items = {}) {
 			const props: any = {}
-			const component: Component | undefined = components.find((x) => x.name === slot.type)
+			const component: Component | undefined = components.find((x) => x.id === slot.type)
 			if (component) {
 				let fields: ComponentField[] = []
 				if (Array.isArray(component.fields)) {
@@ -191,8 +194,6 @@ export async function load({ locals, params, url }) {
 	return {
 		page,
 		html,
-		style,
-		items,
 	}
 }
 

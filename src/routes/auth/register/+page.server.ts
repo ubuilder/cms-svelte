@@ -1,5 +1,20 @@
 import { fail, redirect } from '@sveltejs/kit'
 
+export async function load({url, locals}) {
+	let data: any = {}
+	if(url.searchParams.get('fromLogin')) {
+		data.fromLogin = true
+	}
+	if(url.searchParams.get('fromAdmin')) {
+		data.fromAdmin = true
+	}
+	
+	data.theme = 'dark'
+
+	console.log(data, url.searchParams)
+	return data;
+}
+
 export const actions = {
 	async default(event) {
 		const formData = await event.request.formData()

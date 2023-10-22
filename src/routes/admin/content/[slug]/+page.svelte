@@ -15,6 +15,7 @@
 		Icon,
 		Status,
 		Switch,
+		Avatar,
 	} from '@ulibs/yesvelte'
 	import { invalidateAll } from '$app/navigation'
 
@@ -42,7 +43,7 @@
 
 <Page title={data.table.name}>
 	<svelte:fragment slot="title">
-		<Icon mb="1" size="xl" name={data.table.icon} me="1" />
+		<Icon mb="2" size="xl" name={data.table.icon} me="1" />
 		{data.table.name}
 		<Button ghost color="secondary" href="./edit">
 			<Icon name="settings" />
@@ -91,7 +92,7 @@
 				{#if field.type === 'switch'}
 					<Switch disabled checked={item[field.name]} />
 				{:else if field.type === 'select'}
-					<Status color="secondary">{item[field.name]}</Status>
+					<Status color="light">{item[field.name]}</Status>
 				{:else if field.type === 'image'}
 					<El tag="img" width="64px" src="/files/{item[field.name]}" />
 				{:else if field.type === 'relation'}
@@ -103,10 +104,26 @@
 						<RelationItem value={item[field.name]} table={field.table} title={field.title} />
 					{/if}
 				{:else}
-					{item[field.name]}
+					{item[field.name].substring(0, 100) + (item[field.name].length > 100 ? '...' : '')}
 				{/if}
 			</ListItem>
 		{/each}
+		<ListItem name={t('content.created_at')} style="white-space: nowrap;">
+			{new Date(item.created_at).toDateString()}
+		</ListItem>
+
+		<ListItem name={t('content.created_by')}>
+			{#if item.created_by}
+				<Status color="light" ps="1" d="flex">
+					<Avatar style="width: 1.25rem; height: 1.25rem" shape="circle">
+						<img alt="user" src="/files/{item.created_by.profile}" />
+					</Avatar>
+					<El tag="strong">{item.created_by.username}</El>
+				</Status>
+			{:else}
+				<Status color="light">Unknown</Status>
+			{/if}
+		</ListItem>
 		<ListItem style="width: 0" name={t('content.actions')}>
 			<El d="flex" gap="2">
 				<Button size="sm" href="../{data.table.slug}/{item.id}">

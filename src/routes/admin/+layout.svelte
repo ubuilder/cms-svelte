@@ -66,18 +66,19 @@
     <SidebarItem title="{t('apps.title')}" href="/admin/apps/" icon="building-store" />
     <SidebarItem title="{t('settings.title')}" href="/admin/settings/" icon="settings" />
   
-    {#each data.apps as app}
+    <El my="2" />
+    {#each data.menu as menu}
       <SidebarItem
-        title={app.name}
-        href="/admin/apps/{app.slug}"
-        icon={app.icon}
+        title={menu.title}
+        href="{menu.href}"
+        icon={menu.icon}
       />
     {/each}
   </svelte:fragment>
   <svelte:fragment slot="header-end">
     <El>
       {#if data.user}
-        <Dropdown arrow={false} placement="bottom-end">
+        <Dropdown autoClose arrow={false} placement="bottom-end">
           <Avatar slot="target" shape="circle" color="primary">
             {#if data.user.profile}
               <img alt="profile" src="/files/{data.user.profile}" />
@@ -85,40 +86,18 @@
               <img alt="profile" src="/images/avatar.png" />
             {/if}
           </Avatar>
-          <DropdownMenu>
-            <DropdownItem>پروفایل</DropdownItem>
-            <DropdownItem>تنظیمات</DropdownItem>
+          <DropdownMenu >
+            <DropdownItem href="/admin/profile">{t('profile.title')}</DropdownItem>
+            <DropdownItem href="/admin/settings">{t('settings.title')}</DropdownItem>
             <DropdownItem divider />
-            <DropdownItem on:click={logout}>بیرون شدن</DropdownItem>
+            <DropdownItem href="/admin/logout">{t('layout.logout')}</DropdownItem>
           </DropdownMenu>
         </Dropdown>
       {/if}
     </El>
   </svelte:fragment>
   {#if hasAccess()}
-    {#if data.show_auth_warning && data.user.username === "default"}
-      <El
-        py="2"
-        textColor="warning"
-        bgColor="warning"
-        bgOpacity="25"
-        borderBottom
-        borderColor="warning"
-      >
-        <El container="lg">
-          شما به پروژه دسترسی دارید بخاطری که واریبل
-          <El textColor="warning" bgColor="light" bgOpacity="25" tag="code">
-            enable_test_user
-          </El> در فایل
-          <El textColor="warning" bgColor="light" bgOpacity="25" tag="code">
-            src/hooks.server.ts
-          </El> برابر با true است. این اخطار در پرودکشن غیر فعال خواهد بود.
-          <br />
-            اگر نمیخواهید این پیام را ببینید لطفا از <El tag = 'a' href = "/auth/login" >اینجا</El> لاگین کنید. 
-        </El>
-      </El>
-    {/if}
-    <slot />
+      <slot />
   {:else}
     <Card m="3">
       <CardHeader>

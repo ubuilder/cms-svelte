@@ -9,6 +9,17 @@ export default {
 		file_count: 'Files count',
 		rows_count: 'Total Rows',
 	},
+	layout: {
+		logout: 'Logout',
+		profile: 'Profile'
+	},
+	profile: {
+		title: 'Profile',
+		username: 'Username',
+		email: 'Email',
+		name: 'Name',
+		profile_image: 'Profile Image'
+	},
 	content: {
 		actions: 'Actions',
 		title: 'Content',
@@ -96,6 +107,7 @@ export default {
 		edit_component: 'Edit Component',
 		forms: {
 			name: 'Name',
+			general: 'General',
 			fields: 'Fields',
 			template: 'Template',
 		},

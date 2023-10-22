@@ -27,6 +27,7 @@
   import { slots as slotsStore } from "$lib/stores/pageSlots";
   import type { Component } from ".";
   import ComponentProp from "./ComponentProp.svelte";
+	import { goto } from "$app/navigation"
 
   export let buttonText: string = "Add Slot";
   export let allowedComponents: string[] = [];
@@ -78,6 +79,18 @@
     to.splice(obj.toIndex, 0, JSON.parse(temp));
     $slotsStore = $slotsStore;
   }
+  function gotoEditComponent(component: any) {
+    // const choice = confirmModal.open({
+    //   description: "Do you want to save changes before going to edit component?"
+    // })
+
+    // if(choice) {
+      
+    // }
+
+    goto('/admin/components/' + component.id)
+  }
+  
 
   onMount(() => {
     instance = new Sortable(element, {
@@ -109,7 +122,7 @@
     if (componentId) {
       const component = components.find((x) => x.id === componentId);
       if (component) {
-        slotList = [...(slotList ?? []), { type: component.name, props: {} }];
+        slotList = [...(slotList ?? []), { type: component.id, props: {} }];
       } else {
         console.log("component not found...");
       }
@@ -134,7 +147,7 @@
 <Accordions id={id + "_"}>
   <div style="padding: 8px 0px" bind:this={element}>
     {#each slotList ?? [] as slot, index}
-      {@const component = components.find(x => x.name === slot.type)}
+      {@const component = components.find(x => x.id === slot.type)}
       <Card
         style="border: none;"
         id={id + "_" + index}
@@ -145,14 +158,10 @@
           <AccordionHeader p="0">
             <El w="100" d="flex" alignItems="center" justifyContent="between">
               <AccordionTitle px="3" style="flex: 1; color: #aaa">
-                {slot.type}
+                {component?.name}
               </AccordionTitle>
               <ButtonList on:click>
-                <!-- <Button
-                  on:click!stopPropagation={() => onEditSlot(slot, index)}
-                >
-                  <Icon name="pencil" />
-                </Button> -->
+              
                 <Button
                   ghost
                   color="danger"

@@ -93,6 +93,14 @@ export function cms_api(
 			const res = await call<User>('/auth/getUser')
 			return res
 		},
+		async updateProfile(params: any) {
+			const res = await call<any>('/auth/updateProfile', params)
+			return res
+		},
+		async hasUser() {
+			const res = await call<boolean>('/auth/hasUser')
+			return res
+		},
 		async getPages(filters = {}) {
 			return call<DbList<Page>>('/pages/getPages', filters)
 		},
