@@ -142,12 +142,16 @@ export async function load({ locals, params, url }) {
 				for (let field of fields) {
 					if (field.type === 'slot') {
 						if (slot.props[field.name]) {
-							console.log('aaa')
+							console.log('aaa', slot, slot.props)
 							if (slot.props[field.name].type === '__list__') {
 								const list = slot.props[field.name].props.load.split('.').reduce((prev, curr) => {
 									return prev[curr]
 								}, items)
 
+								console.log('list: ', list)
+								if(typeof list === 'string') {
+									props[field.name] = list
+								}else {
 								props[field.name] = ''
 								for (let item of list) {
 									props[field.name] += slot.props[field.name].props.slot
@@ -156,6 +160,7 @@ export async function load({ locals, params, url }) {
 										)
 										.join('')
 								}
+							}
 							} else {
 								if (slot.props[field.name]) {
 									props[field.name] = slot.props[field.name]
