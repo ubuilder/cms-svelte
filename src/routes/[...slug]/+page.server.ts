@@ -153,7 +153,7 @@ export async function load({ locals, params, url }) {
 									props[field.name] = list
 								}else {
 								props[field.name] = ''
-								for (let item of list) {
+								for (let item of list ?? []) {
 									props[field.name] += slot.props[field.name].props.slot
 										.map((x) =>
 											renderSlot(x, { ...items, [slot.props[field.name].props.item]: item })
