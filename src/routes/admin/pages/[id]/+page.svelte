@@ -14,6 +14,7 @@
 		TabContent,
 		TabPanel,
 		FormTextarea,
+		alert,
 		Card,
 		CardBody,
 		CardFooter,
@@ -22,6 +23,12 @@
 		FormRadioGroup,
 		ButtonList,
 		confirmModal,
+		Accordions,
+		Accordion,
+		AccordionHeader,
+		AccordionBody,
+		ListBox,
+		ListItem,
 	} from '@ulibs/yesvelte'
 	import SlotList from '$lib/ui/SlotList.svelte'
 	import PreviewModal from './PreviewModal.svelte'
@@ -77,9 +84,9 @@
 		fetch('?/updatePage', {
 			method: 'POST',
 			body: JSON.stringify(request),
-		}).then((res) =>{
+		}).then((res) => {
 			// invalidateAll()
-			console.log("done")
+			console.log('done')
 			// alert.success("page updated!")
 		})
 	}
@@ -112,7 +119,6 @@
 			method: 'POST',
 			body: JSON.stringify(request),
 		}).then((res) => {
-			
 			invalidateAll()
 			alert.success('page updated!')
 		})
@@ -163,6 +169,10 @@
 			if (!table) continue
 
 			const fields: any = {}
+			fields.id = {
+				text: 'ID',
+				type: 'plain_text'
+			}
 			for (let field of table.fields) {
 				fields[field.name] = {
 					text: `${item.name}'s ${field.name}`,
@@ -217,6 +227,7 @@
 						<TabItem>General</TabItem>
 						<TabItem>Load</TabItem>
 						<TabItem>Content</TabItem>
+						<TabItem>Actions</TabItem>
 						<TabItem>Forms</TabItem>
 					</TabList>
 				</CardHeader>
@@ -270,21 +281,66 @@
 								bind:slotList={request.slot} />
 						</TabPanel>
 						<TabPanel>
+							<FormField label="Actions">
+								<Accordions>
+									{#each request.actions as action}
+										<Accordion>
+											<AccordionHeader>
+												{action.name}
+											</AccordionHeader>
+											<AccordionBody>
+												<El row>
+													<FormInput colMd="6" label="Name" bind:value={action.name} />
+													<FormInput colMd="6" label="Slug" bind:value={action.slug} />
+
+													<FormInput label="Url" bind:value={action.url} />
+													<FormTextarea rows="8" label="Body (JSON)" bind:value={action.body} />
+
+													<El col d="flex">
+
+													<ButtonList ms="auto">
+													<Button
+														on:click={() =>
+															(request.actions = request.actions.filter((x) => x !== action))}
+														color="danger">Remove</Button>
+													</ButtonList>
+												</El>
+
+												</El>
+											</AccordionBody>
+										</Accordion>
+									{/each}
+								</Accordions>
+							</FormField>
+
+							<Button
+								color="primary"
+								mt="2"
+								on:click={() => (request.actions = [...(request.actions ?? []), {}])}>
+								<Icon name="plus" />
+								Add Action
+							</Button>
+						</TabPanel>
+						<TabPanel>
 							{#if data.forms.data.length}
-							<ListBox items={data.forms.data} let:item>
-								<!-- <ListItem name="Form">{item.}</ListItem> -->
-								<ListItem name="URL">{item.pathname}</ListItem>
-								<ListItem name="Content (JSON)">{JSON.stringify(item.data).slice(0, 50) + '...'}</ListItem>
-								<ListItem name="Created At">{item.created_at}</ListItem>
-								
-								<ListItem name="Actions">
-									<Button on:click={() => modal.open(FormViewer, {data: item.data})} color="primary" size="sm">View</Button>
-								</ListItem>
-							</ListBox>
+								<ListBox items={data.forms.data} let:item>
+									<!-- <ListItem name="Form">{item.}</ListItem> -->
+									<ListItem name="URL">{item.pathname}</ListItem>
+									<ListItem name="Content (JSON)"
+										>{JSON.stringify(item.data).slice(0, 50) + '...'}</ListItem>
+									<ListItem name="Created At">{item.created_at}</ListItem>
+
+									<ListItem name="Actions">
+										<Button
+											on:click={() => modal.open(FormViewer, { data: item.data })}
+											color="primary"
+											size="sm">View</Button>
+									</ListItem>
+								</ListBox>
 							{:else}
-							<El style="height: 300px" d="flex" alignItems="center" justifyContent="center">
-								There is no form submitted from this page!
-							</El>
+								<El style="height: 300px" d="flex" alignItems="center" justifyContent="center">
+									There is no form submitted from this page!
+								</El>
 							{/if}
 						</TabPanel>
 					</CardBody>

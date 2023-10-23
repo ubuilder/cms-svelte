@@ -8,6 +8,10 @@ export async function load({url}) {
 	if(url.searchParams.get('fromAdmin')) {
 		data.fromAdmin = true
 	}
+	const redirectTo = url.searchParams.get('redirect')
+	if(redirectTo && redirectTo !== '/admin/logout') {
+		data.redirect = redirectTo
+	}
 	
 
 	data.theme = 'dark'
@@ -22,6 +26,9 @@ export const actions = {
 		const username = formData.get('username')
 		const password = formData.get('password')
 
+		const redirectTo = event.url.searchParams.get('redirect')		
+		console.log(redirectTo, event.url)
+
 		const response = await event.locals.api.login({ username, password })
 		if (response.status !== 200) {
 			return fail(response.status, {
@@ -35,7 +42,7 @@ export const actions = {
 			maxAge: 60 * 60 * 24 * 15,
 		})
 
-		throw redirect(302, '/admin/')
+		throw redirect(302, redirectTo ?? '/admin/')
 
 	},
 }

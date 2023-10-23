@@ -1,3 +1,4 @@
+import { goto } from '$app/navigation'
 import { renderVariable } from '$lib/helpers/index.js'
 import type { ComponentField, DbFilter, DbWith, Items, Table } from '$lib/types/index.js'
 import type { Page } from '$lib/types/page.js'
@@ -162,7 +163,7 @@ export async function load({ locals, params, url }) {
 										.join('')
 								}
 							}
-						} 
+						}
 					} else {
 						props[field.name] = renderVariable(slot.props[field.name], items)
 					}
@@ -209,8 +210,10 @@ export async function load({ locals, params, url }) {
 }
 
 export const actions = {
-	async default({ request, locals, params }) {
+	async default({ request, url, locals, fetch, params }) {
 		const data = await request.formData()
+
+		const name = url.searchParams.get('name')
 
 		const obj: any = {}
 		data.forEach((value, key) => {
@@ -234,6 +237,32 @@ export const actions = {
 
 		if (page) {
 			await locals.api.submitForm(page.id, new URL(request.url).pathname, obj)
+
+			// call api
+			const action = page.actions.find((x) => x.slug === name)
+
+			if (action) {
+				try {
+					const body = renderVariable(action.body, { form: obj })
+
+					console.log('action: ', action.url, body)
+					const res = await fetch(action.url, {
+						method: 'POST', // from action
+						headers: {
+							'content-Type': 'application/json',
+							'authorization': 'bearer ' + locals.token
+						},
+						body,
+					}).then(async (res) => {
+						console.log('response: ', await res.text())
+
+						throw redirect(300, url.pathname)
+					})
+				} catch (err) {
+					console.log(err)
+				}
+			}
+			// fetch()
 		}
 
 		return { success: true }

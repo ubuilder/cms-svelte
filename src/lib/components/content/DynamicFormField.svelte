@@ -39,7 +39,6 @@
 		}
 
     dispatch('change')
-    console.log(value)
 	}
 
 	export let items: any = {}
