@@ -63,17 +63,17 @@
 			</FormRadioGroup>
 
 			<FormSelect
-				items={pages}
+				items={pages.filter(x => !x.slug.includes('/{'))}
 				key="id"
 				placeholder={t('settings.page_home_placeholder')}
 				bind:value={data.settings.page_home}
 				label={t('settings.page_home')}
 				let:item>
-				{item.title}
+				{item.title} ({item.slug})
 			</FormSelect>
 
 			<FormSelect
-				items={pages}
+				items={pages.filter(x => !x.slug.includes('/{'))}
 				key="id"
 				placeholder={t('settings.page_404_placeholder')}
 				bind:value={data.settings.page_404}

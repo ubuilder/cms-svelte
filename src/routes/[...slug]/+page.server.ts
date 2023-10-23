@@ -29,9 +29,10 @@ async function findPageBySlug({
 	for (let route of routes) {
 		const page = pages.find((x) => x.slug === route)
 
+		console.log(route.indexOf('/{'), route, slug.split('/'))
 		if (route == slug) {
 			return { page, params: {} }
-		} else if (route.indexOf('/{') > -1 && route.startsWith(slug.split('/')[0])) {
+		} else if (route.indexOf('/{') > -1 && route.startsWith(slug.split('/')[0]) && slug !== '') {
 			let key = route.split('/')[1]
 			key = key.substring(1, key.length - 1)
 			return {
