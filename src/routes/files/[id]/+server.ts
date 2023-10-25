@@ -93,7 +93,9 @@ export async function GET(event) {
   const response = await fetch(event.locals.baseUrl + '/files/' + event.params.id, {headers: {authorization: 'bearer ' + event.locals.token}})
   console.log(response)
 
-  return response
+  return new Response(await response.blob(), {
+    status: 200
+  })
 	// return response
 	// const reader = response.body.pipeThrough(new TextDecoderStream()).getReader();
 	// while (true) {
