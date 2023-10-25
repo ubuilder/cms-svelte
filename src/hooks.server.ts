@@ -4,16 +4,13 @@ import qs from 'qs'
 import { cms_api } from '$lib/helpers/cms-api'
 import { API_URL } from '$env/static/private'
 import { redirect } from '@sveltejs/kit'
-import { setLang } from '$lib/i18n'
-
-const enable_test_user = true
 
 const apiUrl = API_URL ?? 'http://localhost:3000'
 
 export const handle = async ({ event, resolve }) => {
 
-	let siteId = import.meta.env.PUBLIC_SITE_ID ?? (event.url.host ?? 'default').split('.')[0]
-	// let siteId = '5173'
+	let siteId = (event.url.host ?? 'default').split('.')[0]
+	// let siteId = 'test'
 	const baseUrl = apiUrl + '/api/' + siteId
 	const token = event.cookies.get('token') ?? ''
 	
