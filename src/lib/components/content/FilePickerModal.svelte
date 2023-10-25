@@ -30,11 +30,13 @@
 
     formData.append("file", event.target.files[0]);
 
+    console.log('uploading....')
     const result = await fetch("/admin/assets?/upload", {
       method: "POST",
       body: formData,
     }).then((res) => res.json());
 
+    console.log('uploaded')
     // await invalidateAll();
     await loadAssets(filters);
   }

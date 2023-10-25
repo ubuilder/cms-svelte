@@ -25,17 +25,6 @@
 
   setLang(data.lang)
 
-  const show_auth_warning = true;
-
-  async function logout() {
-    const result = await fetch("/auth?/logout", {
-      method: "POST",
-      body: JSON.stringify({}),
-    }).then((res) => res.json());
-
-    goto("/auth/login");
-  }
-
   function hasAccess() {
     return !!data.user;
   }

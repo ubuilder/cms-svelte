@@ -31,7 +31,7 @@ export const actions = {
 		const redirectTo = event.url.searchParams.get('redirect')
 		
 
-		if (!username) return fail(400, { field: 'username', message: 'UserName is required' })
+		if (!username) return fail(400, { field: 'username', message: 'Username is required' })
 		if (!password) return fail(400, { field: 'password', message: 'Password is required' })
 
 		const response = await event.locals.api.register({
