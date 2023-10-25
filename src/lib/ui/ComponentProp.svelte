@@ -155,7 +155,7 @@
 
 {#if field.type === 'slot'}
 {@const itemsArray = getItemsArray(items).filter((x) => x.type === 'array' || x.type === 'slot')}
-{@const isSlot = itemsArray.find(x => x.key === value.props?.load)?.type === 'slot'}
+{@const isSlot = itemsArray.find(x => x.key === value?.props?.load)?.type === 'slot'}
 <FormField colMd={field.col}>
 		<El d="flex" justifyContent="between" slot="label">
 			<Label>{field.name}</Label>
