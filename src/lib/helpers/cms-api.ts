@@ -15,7 +15,7 @@ type ApiResponse<T = any> = {
 type LoginResponseType = { token: string; user: User }
 
 export function cms_api(
-	{ baseUrl, fetch, token }: { baseUrl?: string; fetch?: any; token?: string } = {
+	{ baseUrl, token }: { baseUrl?: string; fetch?: any; token?: string } = {
 		token: '',
 		baseUrl: 'http://localhost:5173/api',
 	}
