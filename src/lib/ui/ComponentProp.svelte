@@ -166,6 +166,7 @@
 		{#if dynamic}
 
 			<El row>
+				{#if value.props}
 				<FormSelect
 					col={isSlot ? "12" : "6"}
 					key="key"
@@ -179,6 +180,7 @@
 					bind:value={value.props.item}
 					label="Name"
 					placeholder="Name of iterator variable" />
+					{/if}
 					{/if}
 			</El>
 		{/if}
