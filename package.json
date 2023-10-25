@@ -29,6 +29,7 @@
 		"@ulibs/ui": "^0.0.2-next.141",
 		"@ulibs/yesvelte": "^0.0.2-next.8",
 		"apexcharts": "^3.43.2-0",
+		"axios": "^1.5.1",
 		"codejar": "^4.2.0",
 		"handlebars": "^4.7.8",
 		"highlight.js": "^11.9.0",

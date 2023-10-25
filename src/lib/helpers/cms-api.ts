@@ -3,6 +3,7 @@ import type { User } from '../../app'
 import type { DbTable, DbList, Page, Table } from '$lib/types'
 import { goto } from '$app/navigation'
 import type { Component } from '$lib/ui'
+import axios from 'axios'
 
 type ApiResponse<T = any> = {
 	status: number
@@ -23,7 +24,7 @@ export function cms_api(
 		// TODO: {data} vs data
 
 		const url = baseUrl + route
-		const body = JSON.stringify(data)
+		const body = data
 		const headers: Record<string, any> = {
 			'content-type': 'application/json',
 		}
@@ -37,10 +38,11 @@ export function cms_api(
 		// console.log({ headers })
 
 		try {
-			const res: ApiResponse<T> = await fetch(url, { method: 'POST', body, headers }).then((x) =>
-				x.json()
-			)
+			// const res: ApiResponse<T> = await fetch(url, { method: 'POST', body, headers }).then((x) =>
+			// 	x.json()
+			// )
 
+			const res = await axios.post<ApiResponse<T>>(url, body, {headers}).then(x => x.data)
 			if (res.status === 401) {
 				//
 				await goto('/auth/login')
