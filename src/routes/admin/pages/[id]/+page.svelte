@@ -217,6 +217,7 @@
 			Back
 		</Button>
 		<Button on:click={openPreviewModal} color="primary">Preview</Button>
+		<Button href="/editor/{data.page.id}" color="success">Edit</Button>
 	</ButtonList>
 
 	<El row>
