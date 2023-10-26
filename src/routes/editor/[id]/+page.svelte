@@ -521,6 +521,7 @@
 	}
 
 	.content {
+        color: black;
 		width: 100%;
 		transition: all 0.3s ease-in-out;
 		height: 100%;
