@@ -1,7 +1,6 @@
 import { slugify } from '$lib/helpers/index.js'
 import type { Table } from '$lib/types/table.js'
 import type { Actions } from './$types'
-import { readFile, writeFile } from 'fs/promises'
 
 export const actions: Actions = {
 	async create(event) {
