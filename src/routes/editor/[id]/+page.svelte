@@ -53,7 +53,7 @@
 
 				if (field.type === 'slot') {
 					let content = ''
-					for (let x of slot.props[field.name] ?? []) {
+					for (let x of slot.props?.[field.name] ?? []) {
 						const res = renderSlot(x)
 						content += res
 					}
@@ -242,8 +242,7 @@
 
 			setTimeout(() => {
 				const rects = document
-					.querySelector('#component-' + id)!
-					.firstElementChild?.getBoundingClientRect()
+					.querySelector('#component-' + id)?.firstElementChild?.getBoundingClientRect()
 
 				if (rects) {
 					borderPosition.x = rects.left
