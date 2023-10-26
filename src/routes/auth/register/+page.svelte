@@ -47,7 +47,7 @@
         colXl="4">
         <form
           method="POST"
-          
+          action="?/register&redirect={data.redirect}"
           use:enhance>
           <Card>
             <CardHeader

@@ -1,3 +1,4 @@
+import { goto } from '$app/navigation'
 import { renderVariable } from '$lib/helpers/index.js'
 import type { ComponentField, DbFilter, DbWith, Items, Table } from '$lib/types/index.js'
 import type { Page } from '$lib/types/page.js'
@@ -28,9 +29,10 @@ async function findPageBySlug({
 	for (let route of routes) {
 		const page = pages.find((x) => x.slug === route)
 
+		console.log(route.indexOf('/{'), route, slug.split('/'))
 		if (route == slug) {
 			return { page, params: {} }
-		} else if (route.indexOf('/{') > -1 && route.startsWith(slug.split('/')[0])) {
+		} else if (route.indexOf('/{') > -1 && route.startsWith(slug.split('/')[0]) && slug !== '') {
 			let key = route.split('/')[1]
 			key = key.substring(1, key.length - 1)
 			return {
@@ -53,27 +55,26 @@ export async function load({ locals, params, url }) {
 	})
 
 	if (!page) {
-		const settings = await locals.api.getSettings() 
-		if(url.pathname === '/') {
-			if(settings.page_home) {
+		const settings = await locals.api.getSettings()
+		if (url.pathname === '/') {
+			if (settings.page_home) {
 				page = await locals.api.getPage(settings.page_home)
 			}
 		} else {
-			if(settings.page_404) {
+			if (settings.page_404) {
 				page = await locals.api.getPage(settings.page_404)
 			}
 		}
 
-		if(!page)  {
+		if (!page) {
 			return {
 				page: {},
-				html: '404: page not found!'
+				html: '404: page not found!',
 			}
 		}
 	}
 
 	if (url.searchParams.has('edit')) {
-		
 		throw redirect(302, '/admin/pages/' + page.id)
 	}
 
@@ -114,7 +115,6 @@ export async function load({ locals, params, url }) {
 			}
 		}
 
-
 		if (load.multiple) {
 			items[load.name] = await locals.api
 				.getData({ table: load.table, where, with: with_ })
@@ -124,7 +124,6 @@ export async function load({ locals, params, url }) {
 				.getData({ table: load.table, where, with: with_ })
 				.then((res) => res.data[0]!)
 		}
-
 	}
 
 	function render(page: Page) {
@@ -141,38 +140,48 @@ export async function load({ locals, params, url }) {
 					})
 				}
 
-
 				for (let field of fields) {
 					if (field.type === 'slot') {
-						if (slot.props[field.name].type === '__list__') {
-							const list = slot.props[field.name].props.load.split('.').reduce((prev, curr) => {
-								return prev[curr]
-							}, items)
+						if (slot.props[field.name]) {
+							console.log('aaa', slot, slot.props)
+							if (slot.props[field.name].type === '__list__') {
+								const list = slot.props[field.name].props.load.split('.').reduce((prev, curr) => {
+									return prev[curr]
+								}, items)
 
-							props[field.name] = ''
-							for (let item of list) {
-								props[field.name] += slot.props[field.name].props.slot
-									.map((x) =>
-										renderSlot(x, { ...items, [slot.props[field.name].props.item]: item })
-									)
-									.join('')
+								console.log('list: ', list)
+								if(typeof list === 'string') {
+									props[field.name] = list
+								}else {
+								props[field.name] = ''
+								for (let item of list ?? []) {
+									props[field.name] += slot.props[field.name].props.slot
+										.map((x) =>
+											renderSlot(x, { ...items, [slot.props[field.name].props.item]: item })
+										)
+										.join('')
+								}
 							}
-						} else {
-							props[field.name] = slot.props[field.name]
-								.map((slot) => renderSlot(slot, items))
-								.join('')
+							} else {
+								if (slot.props[field.name]) {
+									props[field.name] = slot.props[field.name]
+										.map((slot) => renderSlot(slot, items))
+										.join('')
+								}
+							}
 						}
 					} else {
 						props[field.name] = renderVariable(slot.props[field.name], items)
 					}
 				}
 
-				if(component.raw !== false) {
+				console.log(props, fields, slot)
+
+				if (component.raw !== false) {
 					return hbs.compile(component.template)(props)
 				} else {
-					return component.slot.map(x => renderSlot(x, props)).join('')	
+					return component.slot.map((x) => renderSlot(x, props)).join('')
 				}
-
 			}
 		}
 
@@ -196,7 +205,7 @@ export async function load({ locals, params, url }) {
 
 	const { html } = render(page)
 
-	if(style) {
+	if (style) {
 		page.head += `<style>${style}</style>`
 	}
 
@@ -207,33 +216,61 @@ export async function load({ locals, params, url }) {
 }
 
 export const actions = {
-	async default({request, locals, params}) {
-		const data = await request.formData();
+	async default({ request, url, locals, fetch, params }) {
+		const data = await request.formData()
+
+		const name = url.searchParams.get('name')
 
 		const obj: any = {}
 		data.forEach((value, key) => {
 			obj[key] = value
 		})
 
-		let {page} = await findPageBySlug({api: locals.api, slug: params.slug});
+		let { page } = await findPageBySlug({ api: locals.api, slug: params.slug })
 
 		if (!page) {
-			const settings = await locals.api.getSettings() 
-			if(url.pathname === '/') {
-				if(settings.page_home) {
+			const settings = await locals.api.getSettings()
+			if (url.pathname === '/') {
+				if (settings.page_home) {
 					page = await locals.api.getPage(settings.page_home)
 				}
 			} else {
-				if(settings.page_404) {
+				if (settings.page_404) {
 					page = await locals.api.getPage(settings.page_404)
 				}
 			}
 		}
-	
-		if(page) {
+
+		if (page) {
 			await locals.api.submitForm(page.id, new URL(request.url).pathname, obj)
+
+			// call api
+			const action = page.actions.find((x) => x.slug === name)
+
+			if (action) {
+				try {
+					const body = renderVariable(action.body, { form: obj })
+
+					console.log('action: ', action.url, body)
+					const res = await fetch(action.url, {
+						method: 'POST', // from action
+						headers: {
+							'content-Type': 'application/json',
+							'authorization': 'bearer ' + locals.token
+						},
+						body,
+					}).then(async (res) => {
+						console.log('response: ', await res.text())
+
+						throw redirect(300, url.pathname)
+					})
+				} catch (err) {
+					console.log(err)
+				}
+			}
+			// fetch()
 		}
 
-		return {success: true}
-	}
+		return { success: true }
+	},
 }

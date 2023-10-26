@@ -22,7 +22,6 @@
     });
 
     instance.onUpdate((code) => {
-      console.log("calling on update", code);
       value = code;
       thisValue = code;
       // this.$data.value = code

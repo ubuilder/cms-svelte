@@ -88,8 +88,15 @@ event:  {
 export async function GET(event) {
 	// console.log('event: ', event)
 
-	const response = await event.locals.api.downloadFile(event.params.id)
-	return response
+	// const response = await event.locals.api.downloadFile(event.params.id)
+
+  const response = await fetch(event.locals.baseUrl + '/files/' + event.params.id, {headers: {authorization: 'bearer ' + event.locals.token}})
+  console.log(response)
+
+  return new Response(await response.blob(), {
+    status: 200
+  })
+	// return response
 	// const reader = response.body.pipeThrough(new TextDecoderStream()).getReader();
 	// while (true) {
 	//   const { value, done } = await reader.read();

@@ -54,6 +54,9 @@
   if(field.type === 'rich_text') {
     accept=['number', 'select', 'plain_text', 'date_time']
   }
+  if(field.type === 'slot') {
+    accept=['slot']
+  }
 
 
 	function getItemsArray(items: any, array: any[] = [], key = '') {
@@ -151,7 +154,9 @@
 
 
 {#if field.type === 'slot'}
-	<FormField colMd={field.col}>
+{@const itemsArray = getItemsArray(items).filter((x) => x.type === 'array' || x.type === 'slot')}
+{@const isSlot = itemsArray.find(x => x.key === value?.props?.load)?.type === 'slot'}
+<FormField colMd={field.col}>
 		<El d="flex" justifyContent="between" slot="label">
 			<Label>{field.name}</Label>
 
@@ -159,23 +164,28 @@
 		</El>
 
 		{#if dynamic}
+
 			<El row>
+				{#if value.props}
 				<FormSelect
-					col="6"
+					col={isSlot ? "12" : "6"}
 					key="key"
 					label="List"
-					items={getItemsArray(items).filter((x) => x.type === 'array')}
+					items={itemsArray}
 					bind:value={value.props.load}
 					let:item>{item.text}</FormSelect>
+					{#if !isSlot} 
 				<FormInput
 					col="6"
 					bind:value={value.props.item}
 					label="Name"
 					placeholder="Name of iterator variable" />
+					{/if}
+					{/if}
 			</El>
 		{/if}
 
-		{#if dynamic}
+		{#if dynamic && !isSlot}
 			<SlotList
 				buttonText={field.buttonText}
 				componentId={field.componentId}
@@ -184,7 +194,7 @@
 				{components}
 				items={getItems(items, value.props.load, value.props.item)}
 				bind:slotList={value.props.slot} />
-		{:else}
+		{:else if !isSlot}
     
 			<SlotList
 				 buttonText={field.buttonText}

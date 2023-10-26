@@ -24,6 +24,8 @@ declare global {
 			siteId: string
 			filters: DbFilter
 			user: User
+			baseUrl: string
+			token: string
 			api: Api
 			settings: any
 		}

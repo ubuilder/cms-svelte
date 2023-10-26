@@ -69,7 +69,7 @@
 		{#each data.table.fields.filter((x) => x.show_in_list !== false) as field}
 			{#if field.type === 'select'}
 				<SelectFilter
-					items={field.options.split(',').map((x) => x.trim()) ?? []}
+					items={(field.options ?? '').split(',').map((x) => x.trim()) ?? []}
 					text={field.name}
 					key={field.name} />
 			{:else if field.type === 'switch'}

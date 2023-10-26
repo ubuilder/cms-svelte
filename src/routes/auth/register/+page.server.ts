@@ -8,6 +8,10 @@ export async function load({url, locals}) {
 	if(url.searchParams.get('fromAdmin')) {
 		data.fromAdmin = true
 	}
+	if(url.searchParams.get('redirect')) {
+		data.redirect = url.searchParams.get('redirect')
+	}
+
 	
 	data.theme = 'dark'
 
@@ -16,14 +20,18 @@ export async function load({url, locals}) {
 }
 
 export const actions = {
-	async default(event) {
+	async register(event) {
 		const formData = await event.request.formData()
 		const username = formData.get('username')
 		const password = formData.get('password')
 		const name = formData.get('name')
 		const email = formData.get('email')
 
-		if (!username) return fail(400, { field: 'username', message: 'UserName is required' })
+
+		const redirectTo = event.url.searchParams.get('redirect')
+		
+
+		if (!username) return fail(400, { field: 'username', message: 'Username is required' })
 		if (!password) return fail(400, { field: 'password', message: 'Password is required' })
 
 		const response = await event.locals.api.register({
@@ -42,7 +50,7 @@ export const actions = {
 			maxAge: 60 * 60 * 24 * 15,
 		})
 
-		throw redirect(301, '/admin/')
+		throw redirect(301, redirectTo ?? '/admin/')
 		// return {
 		// 	success: true,
 		// 	code: 201,

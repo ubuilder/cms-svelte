@@ -4,21 +4,26 @@ import qs from 'qs'
 import { cms_api } from '$lib/helpers/cms-api'
 import { API_URL } from '$env/static/private'
 import { redirect } from '@sveltejs/kit'
-import { setLang } from '$lib/i18n'
-
-const enable_test_user = true
 
 const apiUrl = API_URL ?? 'http://localhost:3000'
 
 export const handle = async ({ event, resolve }) => {
 
-	let siteId = import.meta.env.PUBLIC_SITE_ID ?? (event.request.headers.get('host') ?? '').split('.')[0]
-	// let siteId = '5173'
+	let siteId = (event.url.host ?? 'default').split('.')[0]
+	// let siteId = 'test'
+	const baseUrl = apiUrl + '/api/' + siteId
+	const token = event.cookies.get('token') ?? ''
+	
 	event.locals.api = cms_api({
-		baseUrl: apiUrl + '/api/' + siteId,
+		baseUrl,
 		fetch: event.fetch,
-		token: event.cookies.get('token') ?? '',
+		token,
 	})
+
+	event.locals.baseUrl = baseUrl
+	event.locals.token = token
+
+	
 
 	// /admin
 	if (event.url.pathname.startsWith('/admin/')) {
@@ -37,9 +42,9 @@ export const handle = async ({ event, resolve }) => {
 		if (!event.locals.user) {
 			const hasUser = await event.locals.api.hasUser().then(res => res.data)
 			if(hasUser) {
-				throw redirect(307, '/auth/login?fromAdmin=true')
+				throw redirect(307, '/auth/login?fromAdmin=true&redirect=' + event.url.pathname)
 			} else {
-				throw redirect(307, '/auth/register?fromAdmin=true')
+				throw redirect(307, '/auth/register?fromAdmin=true&redirect=' + event.url.pathname)
 			}			
 		}
 
@@ -55,8 +60,6 @@ export const handle = async ({ event, resolve }) => {
 	// /auth
 	if(event.url.pathname.startsWith('/auth/')) {
 		const hasUser = await event.locals.api.hasUser().then(res => res.data)
-
-		console.log('hasUser: ', hasUser)
 
 		if(hasUser) {
 			if(event.url.pathname !== '/auth/login') {

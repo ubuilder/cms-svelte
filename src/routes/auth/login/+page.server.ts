@@ -1,9 +1,33 @@
-import { fail } from "@sveltejs/kit";
+import { fail, redirect } from '@sveltejs/kit'
+
+export async function load({url}) {
+	let data: any = {}
+	if(url.searchParams.get('fromRegister')) {
+		data.fromRegister = true
+	}
+	if(url.searchParams.get('fromAdmin')) {
+		data.fromAdmin = true
+	}
+	const redirectTo = url.searchParams.get('redirect')
+	if(redirectTo && redirectTo !== '/admin/logout') {
+		data.redirect = redirectTo
+	}
+	
+
+	data.theme = 'dark'
+
+	console.log(data, url.searchParams)
+	return data;
+}
+
 export const actions = {
 	async login(event) {
 		const formData = await event.request.formData()
 		const username = formData.get('username')
 		const password = formData.get('password')
+
+		const redirectTo = event.url.searchParams.get('redirect')		
+		console.log(redirectTo, event.url)
 
 		const response = await event.locals.api.login({ username, password })
 		if (response.status !== 200) {
@@ -13,13 +37,12 @@ export const actions = {
 			})
 		}
 
-    event.cookies.set('token', response.data.token, {
-        path: '/',
-        maxAge: 60 * 60 * 24 *15
-    })
-    
-    return {
-      success: true,
-    };
-  },
-};
+		event.cookies.set('token', response.data.token, {
+			path: '/',
+			maxAge: 60 * 60 * 24 * 15,
+		})
+
+		throw redirect(302, redirectTo ?? '/admin/')
+
+	},
+}

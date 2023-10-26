@@ -14,7 +14,9 @@ export const actions: Actions = {
 	upload: async ({ request, locals }) => {
 		const formData = Object.fromEntries(await request.formData())
 
+		console.log('checking file....')
 		if (!(formData.file as File).name || (formData.file as File).name === 'undefined') {
+			console.log('failed')
 			return fail(400, {
 				error: true,
 				message: 'You must provide a file to upload',
@@ -23,6 +25,7 @@ export const actions: Actions = {
 
 		const { file } = formData as { file: File }
 
+		console.log('uploading....')
 		const res = await locals.api.uploadFile(file)
 
 		// const [fileId] = locals.api.uploadFile({
