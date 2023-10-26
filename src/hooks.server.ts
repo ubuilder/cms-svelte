@@ -10,7 +10,7 @@ const apiUrl = API_URL ?? 'http://localhost:3000'
 export const handle = async ({ event, resolve }) => {
 
 	let siteId = (event.url.host ?? 'default').split('.')[0]
-	// let siteId = 'test'
+	// let siteId = 'localhost:5173'
 	const baseUrl = apiUrl + '/api/' + siteId
 	const token = event.cookies.get('token') ?? ''
 	

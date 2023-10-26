@@ -113,6 +113,22 @@ export default {
 			content: 'Content'
 		},
 	},
+	charts: {
+		title: 'Charts',
+		add_chart: 'Add Chart',
+		filters: {
+			name: 'Name',
+		},
+		edit_chart: 'Edit Chart',
+		forms: {
+			name: 'Name',
+			name_placeholder: 'Sales, Page Visits, Registered Users, .....',
+			general: 'General',
+			fields: 'Fields',
+			template: 'Template',
+			content: 'Content'
+		},
+	},
 	filters: {
 		all: 'All',
 	},

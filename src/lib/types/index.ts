@@ -55,3 +55,13 @@ export type DbTable = {
 	id: string
 	[x: string]: any
 }
+
+
+export type Chart = {
+	id?: string,
+	name: string,
+	table: string,
+	type: string;
+	filters: any,
+	col: string
+}

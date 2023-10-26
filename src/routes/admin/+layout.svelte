@@ -50,6 +50,8 @@
     <SidebarItem title="{t('content.title')}" icon="database" href="/admin/content/" />
     <SidebarItem title="{t('pages.title')}" href="/admin/pages/" icon="file" />
     <SidebarItem title="{t('components.title')}" href="/admin/components/" icon="box" />
+    <SidebarItem title="{t('charts.title')}" href="/admin/charts/" icon="chart-bar" />
+
 
     <SidebarItem title="{t('assets.title')}" href="/admin/assets/" icon="photo" />
     <SidebarItem title="{t('apps.title')}" href="/admin/apps/" icon="building-store" />

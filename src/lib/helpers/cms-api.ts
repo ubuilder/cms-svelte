@@ -1,6 +1,6 @@
 // import fetch from "node-fetch";
 import type { User } from '../../app'
-import type { DbTable, DbList, Page, Table } from '$lib/types'
+import type { DbTable, DbList, Page, Chart, Table } from '$lib/types'
 import { goto } from '$app/navigation'
 import type { Component } from '$lib/ui'
 import axios from 'axios'
@@ -152,6 +152,27 @@ export function cms_api(
 		async removeTable(id: string) {
 			return call<any>('/content/removeTable', { id }).then((res) => res.data)
 		},
+		async getCharts(params: any): Promise<Chart> {
+			return call<any>('/components/getCharts', params).then((res) => res.data)
+		},
+		async createChart(component: Partial<Chart>): Promise<Chart> {
+			return call<any>('/components/createChart', component).then((res) => res.data)
+		},
+		async updateChart(id: string, component: Partial<Chart>): Promise<Chart> {
+			return call<any>('/components/updateChart', {
+				id,
+				data: component,
+			}).then((res) => res.data)
+		},
+		async removeChart(id: string): Promise<Chart> {
+			console.log('removeChart', id)
+			return call<any>('/components/removeChart', { id }).then((res) => res.data)
+		},
+		async getChart(id: string): Promise<Chart> {
+			return call<any>('/components/getCharts', { where: { id } }).then(
+				(res) => res.data.data[0]
+			)
+		},
 		async getComponents(params: any): Promise<Component> {
 			return call<any>('/components/getComponents', params).then((res) => res.data)
 		},
@@ -173,6 +194,7 @@ export function cms_api(
 				(res) => res.data.data[0]
 			)
 		},
+		
 		async insertData(params: any) {
 			return call<any>('/data/insertData', params)
 		},
