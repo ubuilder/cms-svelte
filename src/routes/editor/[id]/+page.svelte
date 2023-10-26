@@ -1,6 +1,6 @@
 <script lang="ts">
 	import ComponentProp from '$lib/ui/ComponentProp.svelte'
-	import { id as getId } from '@ulibs/db'
+	import { nanoid as getId } from 'nanoid'
 	import hbs from 'handlebars'
 	import '@ulibs/yesvelte/styles.css'
 	import { onMount, tick } from 'svelte'
