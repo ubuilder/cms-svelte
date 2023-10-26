@@ -126,9 +126,9 @@
 
 		forEachSlot(result.slot, (slot) => {
 			delete slot['id']
-            delete slot['parent_id']
-            delete slot['parent_field']
-            delete slot['parent_index']
+			delete slot['parent_id']
+			delete slot['parent_field']
+			delete slot['parent_index']
 		})
 
 		fetch(`/admin/pages/${result.id}?/updatePage`, {
@@ -146,13 +146,15 @@
 			const component = getComponent(slot.type)
 			for (let field of component.fields) {
 				if (field.type === 'slot') {
-					slot.props[field.name] = (slot.props[field.name]??[]).filter((x) => x.id !== activeSlot.id)
+					slot.props[field.name] = (slot.props[field.name] ?? []).filter(
+						(x) => x.id !== activeSlot.id
+					)
 				}
 			}
 		})
-        render()
+		render()
 
-        mode = 'add';
+		mode = 'add'
 		activeSlot = null
 		activeComponent = null
 		borderPosition = {}
@@ -161,18 +163,18 @@
 	function onSelectParent() {
 		const slot = data.page.slot.find((x) => x.id === activeSlot.id)
 		if (slot) {
-            mode = 'add';
+			mode = 'add'
 			activeSlot = null
 			activeComponent = null
 			borderPosition = {}
-            return;
+			return
 		}
 
 		forEachSlot(data.page.slot, (slot) => {
 			const component = getComponent(slot.type)
 			for (let field of component.fields) {
 				if (field.type === 'slot') {
-					const x = (slot.props[field.name]??[]).find((x) => x.id === activeSlot.id)
+					const x = (slot.props[field.name] ?? []).find((x) => x.id === activeSlot.id)
 					if (x) selectSlot(slot.id)
 				}
 			}
@@ -224,8 +226,8 @@
 		mode = 'options'
 
 		if (!id) {
-            mode = 'add';
-		
+			mode = 'add'
+
 			activeSlot = null
 			activeComponent = null
 			borderPosition = {}
@@ -242,7 +244,8 @@
 
 			setTimeout(() => {
 				const rects = document
-					.querySelector('#component-' + id)?.firstElementChild?.getBoundingClientRect()
+					.querySelector('#component-' + id)
+					?.firstElementChild?.getBoundingClientRect()
 
 				if (rects) {
 					borderPosition.x = rects.left
@@ -266,22 +269,20 @@
 	function addComponent(component: any) {
 		mode = 'options'
 
-        const id = getId()
+		const id = getId()
 
-					
+		let newSlot = {
+			id,
+			type: component.id,
+			props: {}, // default value
+		}
 
-					let newSlot = {
-						id,
-						type: component.id,
-						props: {}, // default value
-					}
-
-        if(!newComponentPosition) {
-            data.page.slot.push(newSlot)
-            setTimeout(() => {
-                selectSlot(id)
-            }, 1)
-        }
+		if (!newComponentPosition) {
+			data.page.slot.push(newSlot)
+			setTimeout(() => {
+				selectSlot(id)
+			}, 1)
+		}
 
 		function findAndInsert(slot) {
 			const component_ = getComponent(slot.type)
@@ -291,10 +292,9 @@
 					console.log('found....')
 					slot.props[field.name] ??= []
 					// insert at index
-					
 
 					console.log('find and insert', { newComponentPositionIndex })
-                    slot.props[field.name] ??= []
+					slot.props[field.name] ??= []
 
 					if (newComponentPositionIndex === 0) {
 						slot.props[field.name].push(newSlot)
@@ -305,7 +305,7 @@
 							...slot.props[field.name].slice(newComponentPositionIndex),
 						]
 					}
-                    setTimeout(() => {
+					setTimeout(() => {
 						selectSlot(id)
 					}, 1)
 				} else if (field.type === 'slot') {
@@ -321,7 +321,7 @@
 			findAndInsert(slot)
 		}
 
-        newComponentPosition = null;
+		newComponentPosition = null
 
 		render()
 	}
@@ -384,23 +384,29 @@
 <div class="page" data-bs-theme="dark">
 	<div class="header" class:sidebar-open={sidebarOpen}>
 		<div style="display: flex; align-items: center; gap: 1rem;">
-            <div class="font-bold" style="display: flex; align-items: center; color: #a0d0ff">
-                <Icon on:click={() => goto(`/admin/pages/${data.page.id}`)} name="chevron-left"/>
-            </div>
+			<div class="font-bold" style="display: flex; align-items: center; color: #a0d0ff">
+				<Icon on:click={() => goto(`/admin/pages/${data.page.id}`)} name="chevron-left" />
+			</div>
 
-            <div class="font-bold" style="color: #a0d0ff">UI Builder</div>
-
-        </div>
+			<div class="font-bold" style="color: #a0d0ff">UI Builder</div>
+		</div>
 
 		<div style="display: flex; gap: 4px">
-            <a href="/{data.page.slug}" style="display: flex; align-items: center; gap: 8px; border: 1px solid #405060; background-color: #252525; padding: 2px 8px;">
-                <Icon size="sm" name="eye"/>
-                <span>/{data.page.slug}</span>
-            </a>
+			<a
+				href="/{data.page.slug}"
+				style="display: flex; align-items: center; gap: 8px; border: 1px solid #405060; background-color: #252525; padding: 2px 8px;">
+				<Icon size="sm" name="eye" />
+				<span>/{data.page.slug}</span>
+			</a>
 
-            <Button on:click={onSave} class="bg-blue-500" color="primary" size="sm">Save</Button>
+			<Button on:click={onSave} class="bg-blue-500" color="primary" size="sm">Save</Button>
 
-			<div on:click={() => {sidebarOpen = !sidebarOpen; mode = 'add'}} class="toggle">
+			<div
+				on:click={() => {
+					sidebarOpen = !sidebarOpen
+					mode = 'add'
+				}}
+				class="toggle">
 				{#if sidebarOpen}
 					<Icon name="x" />
 				{:else}
@@ -537,7 +543,7 @@
 
 	.header {
 		transition: all 0.3s ease-in-out;
-        padding: 4px 4px 4px 1rem;
+		padding: 4px 4px 4px 1rem;
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
