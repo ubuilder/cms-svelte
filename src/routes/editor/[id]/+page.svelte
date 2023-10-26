@@ -94,7 +94,7 @@
 							onMouseLeave(e)
 						})
 					}
-				}, 2)
+				}, 1)
 				slot.id = id
 				return `<div class="component-wrapper" id="component-${id}">${hbsTemplates[slot.type](
 					props
@@ -250,7 +250,7 @@
 					borderPosition.w = rects.width
 					borderPosition.h = rects.height
 				}
-			}, 100)
+			}, 1)
 		}
 	}
 	let content
@@ -280,7 +280,7 @@
             data.page.slot.push(newSlot)
             setTimeout(() => {
                 selectSlot(id)
-            }, 10)
+            }, 1)
         }
 
 		function findAndInsert(slot) {
@@ -307,7 +307,7 @@
 					}
                     setTimeout(() => {
 						selectSlot(id)
-					}, 10)
+					}, 1)
 				} else if (field.type === 'slot') {
 					for (let subSlot of slot.props[field.name] ?? []) {
 						console.log('find sub slot')
