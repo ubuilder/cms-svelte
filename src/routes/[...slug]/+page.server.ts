@@ -173,6 +173,8 @@ export async function load({ locals, params, url }) {
 					} else {
 						props[field.name] = renderVariable(slot.props[field.name], items)
 					}
+					props['Class'] = slot.props['Class']
+
 				}
 
 				console.log(props, fields, slot)

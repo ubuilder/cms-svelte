@@ -1,6 +1,6 @@
 <script lang="ts">
 	import ComponentProp from '$lib/ui/ComponentProp.svelte'
-	import { nanoid as getId } from 'nanoid'
+	import { customAlphabet } from 'nanoid'
 	import hbs from 'handlebars'
 	import '@ulibs/yesvelte/styles.css'
 	import { onMount, tick } from 'svelte'
@@ -8,6 +8,7 @@
 		Button,
 		Card,
 		El,
+		FormInput,
 		Icon,
 		ModalProvider,
 		TabContent,
@@ -15,9 +16,11 @@
 		TabList,
 		TabPanel,
 		Tabs,
+		modal,
 	} from '@ulibs/yesvelte'
 	import { goto, invalidate, invalidateAll } from '$app/navigation'
 	import AddComponentModal from '../../admin/components/AddComponentModal.svelte'
+	import interact from 'interactjs'
 	export let data
 
 	let activeComponent: any = null
@@ -32,41 +35,209 @@
 	let borderPosition: any = {}
 	let hoverBorderPosition: any = {}
 
+	let dragging = false
+
 	let props = {}
 
+	function nanoid() {
+		return customAlphabet('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', 8)
+	}
+
+	function getId() {
+		return nanoid()()
+	}
+
 	const hbsTemplates: any = {}
+
+	const placeholder = (parent: string, field: string = '', index: number = 0, className = '') =>
+		`<span class="placeholder ${className}" data-parent="${parent}" data-index="${index}" data-field="${field}"></span>`
 
 	let html = ''
 
 	function render() {
-		html = data.page.slot.map((x) => renderSlot(x)).join('')
+		console.log('render')
+		html =
+			data.page.slot.map((x, i) => renderSlot(x, '', '', i)).join('') +
+			placeholder('', '', data.page.slot.length)
 	}
 
-	function renderSlot(slot: any) {
+	function renderSlot(slot: any, parent_id: string = '', parent_field = '', parent_index = 0) {
+		console.log('renderSlot', slot)
 		let props: any = {}
+
+		if (slot === '__list__') return '__list__'
+
 		const component = getComponent(slot.type)
 		const id = slot.id ?? getId()
 
-		if (component.raw) {
+		if (component?.raw) {
 			for (let index in component.fields) {
 				const field = component.fields[index]
 
 				if (field.type === 'slot') {
 					let content = ''
-					for (let x of slot.props?.[field.name] ?? []) {
-						const res = renderSlot(x)
-						content += res
+					for (let index in slot.props?.[field.name] ?? []) {
+						const x = slot.props[field.name][index]
+						const res = renderSlot(x, id, field.name, +index)
+						content += res + placeholder(id, field.name, +index + 1)
 					}
-					props[field.name] = `<div data-parent="${id}" data-index="${index}" data-field="${
-						field.name
-					}" class="slot${!content ? ' empty' : ''}">${content}</div>`
+
+					if (content) {
+						props[field.name] = `<div class="slot${
+							!content ? ' placeholder' : ''
+						}" data-parent="${id}" data-index="0">${content}</div>`
+					} else {
+						props[field.name] = placeholder(id, field.name, 0, 'empty')
+					}
 				} else {
 					props[field.name] = slot.props[field.name]
 				}
 			}
 
+			props['Class'] = slot.props['Class'] ?? ''
+
 			if (hbsTemplates[slot.type]) {
 				setTimeout(() => {
+					const isDraggable = interact('.component-item').draggable()
+
+					function dragMoveListener(event) {
+						dragging = true;
+						var target = event.target
+						// keep the dragged position in the data-x/data-y attributes
+						var x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx
+						var y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy
+
+						// translate the element
+						target.style.transform = 'translate(' + x + 'px, ' + y + 'px)'
+
+						target.style.opacity = '0.5';
+						// update the posiion attributes
+						target.setAttribute('data-x', x)
+						target.setAttribute('data-y', y)
+					}
+					if (!isDraggable.enabled) {
+						interact.dynamicDrop(true)
+						interact('.component-item').draggable({
+							// hold: 1000,
+
+							onstart() {
+								dragging = true
+							},
+							onmove: dragMoveListener,
+							onend: (e) => {
+								dragging = false
+
+								console.log(e)
+								const target = e.relatedTarget
+								const source = e.currentTarget.id.split('-')[1]
+
+								console.log({ target, source })
+
+								if (target) {
+									const parent = target.getAttribute('data-parent')
+									const field = target.getAttribute('data-field')
+									const index = +target.getAttribute('data-index')
+
+									// let result = JSON.parse(JSON.stringify(data.page.slot));
+
+									console.log('insertComponent', source, parent, field, index)
+									insertComponent(source, parent, field, index)
+								}
+							},
+							// restrict: {
+							// restriction: "parent",
+							// endOnly: true,
+							// elementRect: { top: 0, left: 0, bottom: 1, right: 1 }
+							// },
+							autoScroll: {container: document.querySelector('.content')},
+						})
+
+						interact('.component-wrapper > *').draggable({
+							// hold: 1000,
+							// allowFrom: '.handle',
+							onstart() {
+								dragging = true
+							},
+
+							onmove: dragMoveListener,
+							onend: (e) => {
+								dragging = false
+
+								console.log(e)
+								const target = e.relatedTarget
+								const source = e.currentTarget.parentElement.id.split('-')[1]
+
+								console.log({ target, source })
+								if (target) {
+									const parent = target.getAttribute('data-parent')
+									const field = target.getAttribute('data-field')
+									const index = target.getAttribute('data-index')
+
+									console.log('moveComponent', source, parent, field, index)
+									moveComponent(source, parent, field, index)
+								}
+							},
+
+							// restrict: {
+							// restriction: "parent",
+							// endOnly: true,
+							// elementRect: { top: 0, left: 0, bottom: 1, right: 1 }
+							// },
+							autoScroll: {container: document.querySelector('.content')},
+							listeners: {},
+						})
+						interact('.placeholder').dropzone({
+							//
+							accept({ dropzone, draggableElement }) {
+								console.log('accept')
+								// allowedComponents of slot...
+								return true
+							},
+						})
+
+						var currentDraggable: any=null;
+var beforeY=0,beforeX=0;
+var afterY=0,afterX=0;
+
+
+  
+  interact(document.querySelector('.content')).on('scroll', function () {
+	if (!currentDraggable) { return; }
+	
+	beforeY=afterY;
+	beforeX=afterX;
+	
+	if(afterY==0 && beforeY==0)
+		beforeY=this.scrollTop;
+	if(afterX==0 && beforeX==0)
+		beforeX=this.scrollLeft;
+	
+	afterY=this.scrollTop;
+	afterX=this.scrollLeft;
+
+    var y = (parseInt(currentDraggable.getAttribute('data-y')) || 0) + (afterY-beforeY);
+    var x = (parseInt(currentDraggable.getAttribute('data-x')) || 0) + (afterX-beforeX);
+
+    // translate the element
+    currentDraggable.style.webkitTransform = currentDraggable.style.transform ='translate(' + x + 'px, ' + y + 'px)';
+
+    // update the position attributes
+    currentDraggable.setAttribute('data-x', x);
+    currentDraggable.setAttribute('data-y', y);
+
+});
+
+					}
+
+					// interact('.slot.empty').dropzone({
+					// 	//
+					// 	accept({ dropzone, draggableElement }) {
+					// 		console.log({ dropzone, draggableElement })
+					// 		// allowedComponents of slot...
+					// 		return true
+					// 	},
+					// }),
+
 					document.querySelector(`[data-parent="${id}"]`)?.addEventListener('click', (e) => {
 						e.stopPropagation()
 						sidebarOpen = true
@@ -74,6 +245,7 @@
 						newComponentPositionField = e.target.getAttribute('data-field')
 						newComponentPositionIndex = +e.target.getAttribute('data-index')
 
+						selectSlot(id)
 						mode = 'add'
 					})
 
@@ -96,25 +268,27 @@
 					}
 				}, 1)
 				slot.id = id
-				return `<div class="component-wrapper" id="component-${id}">${hbsTemplates[slot.type](
+				return `${placeholder(
+					parent_id,
+					parent_field,
+					parent_index
+				)}<div class="component-wrapper" id="component-${id}">${hbsTemplates[slot.type](
 					props
 				)}</div>`
 			}
 		}
+		if (!component) return 'todo'
 
-		return 'undefined..'
+		return component.slot.map((x) => renderSlot(x)).join('')
 	}
 
 	function forEachSlot(slots, cb, parent = null) {
-		console.log('forEachSlot', { slots, cb, parent })
 		for (let slot of slots) {
 			const component = getComponent(slot.type)
-
-			console.log('cb', { slot, parent, slots })
 			cb(slot, parent, slots)
+
 			for (let field of component.fields) {
 				if (field.type === 'slot') {
-					console.log('slot of: ', slot)
 					forEachSlot(slot.props[field.name] ?? [], cb, slot)
 				}
 			}
@@ -139,16 +313,14 @@
 		})
 	}
 
-	function onRemoveSlot() {
-		data.page.slot = data.page.slot.filter((x) => x.id !== activeSlot.id)
+	function onRemoveSlot(id: string) {
+		data.page.slot = data.page.slot.filter((x) => x.id !== id)
 
 		forEachSlot(data.page.slot, (slot) => {
 			const component = getComponent(slot.type)
 			for (let field of component.fields) {
 				if (field.type === 'slot') {
-					slot.props[field.name] = (slot.props[field.name] ?? []).filter(
-						(x) => x.id !== activeSlot.id
-					)
+					slot.props[field.name] = (slot.props[field.name] ?? []).filter((x) => x.id !== id)
 				}
 			}
 		})
@@ -201,7 +373,6 @@
 			const component = getComponent(slot.type)
 			// const index = data.components.findIndex((x) => x.id === slot.type)
 
-			console.log(slot, slots)
 			if (slot.id === id) {
 				slot.parent_id = parent?.id ?? null
 				slot.parent_field = field
@@ -213,7 +384,6 @@
 				if (field.type === 'slot') {
 					const res = findSlot(id, slot.props[field.name] ?? [], field.name, slot)
 
-					console.log('res: ', res)
 					if (res) return res
 				}
 			}
@@ -222,7 +392,6 @@
 	}
 
 	function selectSlot(id) {
-		console.log('selectSlot: ', { id })
 		mode = 'options'
 
 		if (!id) {
@@ -233,8 +402,6 @@
 			borderPosition = {}
 		}
 		let slotItem = findSlot(id, data.page.slot)
-
-		console.log(slotItem)
 
 		if (slotItem) {
 			sidebarOpen = true
@@ -260,25 +427,42 @@
 
 	$: {
 		if (activeSlot) {
-			console.log('activeSlot: ', 'render')
 			render()
 			updateActiveBorder()
 		}
 	}
 
-	function addComponent(component: any) {
+	function moveComponent(
+		slot_id: string,
+		parent_id: string = '',
+		field_name: string = '',
+		index: number = 0
+	) {
+		const slot = findSlot(slot_id, data.page.slot)
+
+		insertComponent(slot.type, parent_id, field_name, index, slot.props)
+		onRemoveSlot(slot.id)
+	}
+	function insertComponent(
+		component_id: string,
+		parent_id: string = '',
+		field_name: string = '',
+		index: number = 0,
+		props = {}
+	) {
 		mode = 'options'
 
 		const id = getId()
 
 		let newSlot = {
 			id,
-			type: component.id,
-			props: {}, // default value
+			type: component_id,
+			props, // default value
 		}
 
-		if (!newComponentPosition) {
-			data.page.slot.push(newSlot)
+		if (!parent_id) {
+			// data.page.slot.push(newSlot)
+			data.page.slot = [...data.page.slot.slice(0, index), newSlot, ...data.page.slot.slice(index)]
 			setTimeout(() => {
 				selectSlot(id)
 			}, 1)
@@ -286,23 +470,21 @@
 
 		function findAndInsert(slot) {
 			const component_ = getComponent(slot.type)
-			console.log('found slot')
+
 			for (let field of component_.fields) {
-				if (slot.id === newComponentPosition && field.name === newComponentPositionField) {
-					console.log('found....')
+				if (slot.id === parent_id && field.name === field_name) {
 					slot.props[field.name] ??= []
 					// insert at index
 
-					console.log('find and insert', { newComponentPositionIndex })
 					slot.props[field.name] ??= []
 
-					if (newComponentPositionIndex === 0) {
+					if (index === 0) {
 						slot.props[field.name].push(newSlot)
 					} else {
 						slot.props[field.name] = [
-							...slot.props[field.name].slice(0, newComponentPositionIndex),
+							...slot.props[field.name].slice(0, index),
 							newSlot,
-							...slot.props[field.name].slice(newComponentPositionIndex),
+							...slot.props[field.name].slice(index),
 						]
 					}
 					setTimeout(() => {
@@ -310,7 +492,6 @@
 					}, 1)
 				} else if (field.type === 'slot') {
 					for (let subSlot of slot.props[field.name] ?? []) {
-						console.log('find sub slot')
 						findAndInsert(subSlot)
 					}
 				}
@@ -321,9 +502,37 @@
 			findAndInsert(slot)
 		}
 
-		newComponentPosition = null
-
 		render()
+	}
+
+	async function onExtractComponent() {
+		// activeSlot.props
+
+		const value = await modal.open(AddComponentModal, {
+			//
+		})
+
+		if (value?.name) {
+			if (data.components.map((x) => x.name).includes(value.name)) {
+				return
+			}
+
+			console.log(activeSlot)
+			// const slot = activeSlot.
+
+			const newComponent = {
+				name: value.name,
+				fields: [],
+				slot: [{ type: activeSlot.type, props: activeSlot.props }],
+			}
+
+			fetch('/admin/components/?/createComponent', {
+				method: 'POST',
+				body: JSON.stringify(newComponent),
+			}).then((res) => {
+				goto('/editor/' + data.page.id)
+			})
+		}
 	}
 
 	function updateActiveBorder() {
@@ -380,6 +589,7 @@
 
 <svelte:head>
 	{@html data.head}
+	<script src="https://cdn.tailwindcss.com"></script>
 </svelte:head>
 <div class="page" data-bs-theme="dark">
 	<div class="header" class:sidebar-open={sidebarOpen}>
@@ -401,10 +611,16 @@
 
 			<Button on:click={onSave} class="bg-blue-500" color="primary" size="sm">Save</Button>
 
+			<!-- svelte-ignore a11y-click-events-have-key-events -->
+			<!-- svelte-ignore a11y-no-static-element-interactions -->
 			<div
 				on:click={() => {
-					sidebarOpen = !sidebarOpen
-					mode = 'add'
+					if (sidebarOpen && mode === 'options') {
+						mode = 'add'
+					} else {
+						sidebarOpen = !sidebarOpen
+						mode = 'add'
+					}
 				}}
 				class="toggle">
 				{#if sidebarOpen}
@@ -417,15 +633,37 @@
 	</div>
 
 	<div class="sidebar" class:open={sidebarOpen}>
-		{#if mode === 'add'}
-			{#each data.components as component}
-				<div class="component-item" on:click={() => addComponent(component)}>{component.name}</div>
-			{/each}
-		{:else if activeSlot}
-			<div class="sidebar-body">
+		<div class="sidebar-body">
+			{#if activeSlot}
+				<El px="2" m="2" py="1">{getComponent(activeSlot.type).name}</El>
+			{/if}
+
+			{#if mode === 'add'}
+				{#if activeSlot}
+					<Button on:click={() => (mode = 'options')} bgColor="primary">Options</Button>
+				{/if}
+				{#each data.components as component}
+					<!-- svelte-ignore a11y-click-events-have-key-events -->
+					<!-- svelte-ignore a11y-no-static-element-interactions -->
+					<div
+						class="component-item"
+						id="component-{component.id}"
+						on:mousedown={() => (dragging = true)}
+						on:click={() =>
+							insertComponent(
+								component.id,
+								newComponentPosition,
+								newComponentPositionField,
+								newComponentPositionIndex
+							)}>
+						{component.name}
+					</div>
+				{/each}
+			{:else if activeSlot}
 				<Tabs>
 					<TabList>
 						<TabItem>Props</TabItem>
+						<TabItem>Style</TabItem>
 					</TabList>
 					<TabContent>
 						<TabPanel p="2">
@@ -441,7 +679,7 @@
 
 							<El row>
 								<El col>
-									<Button
+									<!-- <Button
 										on:click={() => {
 											console.log(activeSlot)
 											newComponentPosition = activeSlot.parent_id
@@ -457,22 +695,50 @@
 											newComponentPositionIndex = +activeSlot.parent_index + 1
 											sidebarOpen = true
 											mode = 'add'
-										}}>Insert After</Button>
+										}}>Insert After</Button> -->
+								</El>
+							</El>
+						</TabPanel>
+						<TabPanel p="2">
+							<El row>
+								<El col>
+									<FormInput label="Class" bind:value={activeSlot.props.Class} />
+									<!-- <Button
+										on:click={() => {
+											console.log(activeSlot)
+											newComponentPosition = activeSlot.parent_id
+											newComponentPositionField = activeSlot.parent_field
+											newComponentPositionIndex = +activeSlot.parent_index
+											sidebarOpen = true
+											mode = 'add'
+										}}>Insert Before</Button>
+									<Button
+										on:click={() => {
+											newComponentPosition = activeSlot.parent_id
+											newComponentPositionField = activeSlot.parent_field
+											newComponentPositionIndex = +activeSlot.parent_index + 1
+											sidebarOpen = true
+											mode = 'add'
+										}}>Insert After</Button> -->
 								</El>
 							</El>
 						</TabPanel>
 					</TabContent>
 				</Tabs>
-			</div>
-		{/if}
+			{/if}
+		</div>
 	</div>
 	<div
 		on:click={() => selectSlot()}
 		bind:this={content}
 		class="content"
+		class:dragging
 		class:sidebar-open={sidebarOpen}>
 		<!-- {JSON.stringify(data.page)} -->
-		{@html html}
+		<!-- <pre>{JSON.stringify(data.page.slot, null, 2)}</pre> -->
+		<div class="slot" data-parent="" data-index="">
+			{@html html}
+		</div>
 	</div>
 
 	<div
@@ -489,14 +755,15 @@
 			: 'none'}; width: {borderPosition.w}px; height: {borderPosition.h}px; left: {borderPosition.x}px; top: {borderPosition.y}px">
 		<div class="buttons-container">
 			<div class="buttons-container-absolute">
-				<div style="pointer-events: all">
+				<div style="pointer-events: all; z-index: 4">
 					<Icon on:click={onSelectParent} size="xs" bgColor="primary" name="arrow-up" />
-					<!-- <Icon on:click={console.log} size="xs" bgColor="primary" name="arrow-left" /> -->
-					<!-- <Icon on:click={console.log} size="xs" bgColor="primary" name="arrow-right" /> -->
+					<Icon on:click={onExtractComponent} size="xs" bgColor="warning" name="star" />
+
+					<!-- <Icon class="handle" size="xs" bgColor="primary" name="move" /> -->
 				</div>
 
-				<div style="pointer-events: all">
-					<Icon on:click={onRemoveSlot} size="xs" bgColor="red" name="x" />
+				<div style="pointer-events: all; z-index: 4">
+					<Icon on:click={() => onRemoveSlot(activeSlot.id)} size="xs" bgColor="red" name="x" />
 				</div>
 			</div>
 		</div>
@@ -521,8 +788,9 @@
 	}
 
 	.content {
-        color: black;
-		width: 100%;
+		color: black;
+		margin: 8px;
+		width: calc(100% - 16px);
 		transition: all 0.3s ease-in-out;
 		height: 100%;
 		overflow-y: auto;
@@ -530,7 +798,7 @@
 	}
 
 	.content.sidebar-open {
-		width: calc(100% - 200px);
+		width: calc(100% - 216px);
 	}
 
 	.component-item {
@@ -569,6 +837,19 @@
 		background-color: var(--y-bg-surface-tertiary);
 		color: white;
 	}
+
+	/* :global(.component-wrapper) {
+		position: relative;
+	}
+	:global(.component-wrapper .handle) {
+		position: absolute;
+		top: 0;
+		left: 0;
+		opacity: 0.5;
+		width: 25px;
+		height: 25px;
+		background-color: #20202020;
+	} */
 	:global(.y-tab-item-link) {
 		padding-top: 4px;
 		padding-bottom: 4px;
@@ -622,27 +903,95 @@
 		display: contents;
 	}
 
-	:global(.slot.empty) {
+	:global(.placeholder) {
+		display: block;
+		align-self: stretch;
+		width: auto;
+		transition: all 0.3s ease;
+		opacity: 0;
+		position: relative;
+		z-index: 1 !important;
+		min-width: 0px;
+		margin-left: 0px;
+		margin-right: 0px;
+		min-height: 0px;
+	}
+
+	:global(.dragging .placeholder) {
+		min-width: 8px;
+		margin-left: -4px;
+		margin-right: -4px;
+		min-height: 8px;
+	}
+	:global(.placeholder::before) {
+		content: '';
+		background-color: var(--y-primary);
+		opacity: 0.5;
+		filter: blur(2px);
+		position: absolute;
+		top: -0.3rem;
+		bottom: -0.3rem;
+		left: -0.2rem;
+		right: -0.2rem;
+	}
+
+	:global(.placeholder::before) {
+		top: -0.1rem;
+		bottom: -0.1rem;
+		left: 0rem;
+		right: 0rem;
+	}
+
+	:global(.placeholder::after) {
+		content: '';
+		transition: scale 0.5s ease;
+		background-color: var(--y-primary);
+		position: absolute;
+		top: 0.2rem;
+		bottom: 0.2rem;
+		left: 0.2rem;
+		right: 0.2rem;
+		scale: 0;
+	}
+
+	:global(.placeholder:hover::after) {
+		scale: 1;
+	}
+	:global(.placeholder:hover) {
+		opacity: 1;
+		scale: 1;
+	}
+
+	.dragging :global(.placeholder) {
+		/* width: 12px; */
+		/* height: 12px; */
+		display: block;
+	}
+
+	:global(.placeholder.empty) {
 		display: contents;
 		display: flex;
+		opacity: 0.2 !important;
 		align-items: center;
 		justify-content: center;
 		font-size: 10px;
 		min-width: 30px;
 		min-height: 30px;
+		width: 100%;
 		height: 100%;
+		opacity: 1;
 		background-color: #4060a020;
 	}
-	:global(.slot.empty::before) {
+	:global(.placeholder.empty::before) {
 		content: 'Click to add component';
 		color: var(--y-primary);
 	}
 
-	:global(.slot > *) {
+	/* :global(.slot > *) {
 		border: 1px solid blue;
 		min-width: 20px;
 		min-height: 20px;
-	}
+	} */
 
 	.buttons-container-absolute :global(.y-icon) {
 		display: flex;
