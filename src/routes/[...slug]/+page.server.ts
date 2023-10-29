@@ -244,7 +244,7 @@ export const actions = {
 		}
 
 		if (page) {
-			await locals.api.submitForm(page.id, new URL(request.url).pathname, obj)
+			await locals.api.submitForm(page.id, url.pathname, obj)
 
 			// call api
 			const action = page.actions.find((x) => x.slug === name)
