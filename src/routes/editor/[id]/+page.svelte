@@ -65,7 +65,11 @@
 		console.log('renderSlot', slot)
 		let props: any = {}
 
-		if (slot === '__list__') return '__list__'
+		if (slot === '__list__') {
+			
+
+			return '__list__'
+		}
 
 		const component = getComponent(slot.type)
 		const id = slot.id ?? getId()
@@ -75,7 +79,9 @@
 				const field = component.fields[index]
 
 				if (field.type === 'slot') {
+					console.log(slot)
 					let content = ''
+					
 					for (let index in slot.props?.[field.name] ?? []) {
 						const x = slot.props[field.name][index]
 						const res = renderSlot(x, id, field.name, +index)
@@ -115,19 +121,27 @@
 						target.setAttribute('data-x', x)
 						target.setAttribute('data-y', y)
 					}
+
+					function dragStartListener (event) {
+						dragging = true;
+							currentDraggable=event.target;
+					}
+					
+					function dragEndListener (event) {
+						currentDraggable=null;
+						beforeY=0,beforeX=0;
+						afterY=0,afterX=0;
+					}
+
 					if (!isDraggable.enabled) {
 						interact.dynamicDrop(true)
 						interact('.component-item').draggable({
 							// hold: 1000,
 
-							onstart() {
-								dragging = true
-							},
+							onstart: dragStartListener,
 							onmove: dragMoveListener,
 							onend: (e) => {
-								dragging = false
-
-								console.log(e)
+								dragEndListener(e)
 								const target = e.relatedTarget
 								const source = e.currentTarget.id.split('-')[1]
 
@@ -155,14 +169,12 @@
 						interact('.component-wrapper > *').draggable({
 							// hold: 1000,
 							// allowFrom: '.handle',
-							onstart() {
-								dragging = true
-							},
-
+							onstart: dragStartListener,
 							onmove: dragMoveListener,
 							onend: (e) => {
-								dragging = false
+								dragEndListener(e)
 
+								
 								console.log(e)
 								const target = e.relatedTarget
 								const source = e.currentTarget.parentElement.id.split('-')[1]
@@ -593,23 +605,28 @@ var afterY=0,afterX=0;
 </svelte:head>
 <div class="page" data-bs-theme="dark">
 	<div class="header" class:sidebar-open={sidebarOpen}>
-		<div style="display: flex; align-items: center; gap: 1rem;">
-			<div class="font-bold" style="display: flex; align-items: center; color: #a0d0ff">
-				<Icon on:click={() => goto(`/admin/pages/${data.page.id}`)} name="chevron-left" />
+		<div style="display: flex; align-items: center; gap: 4px;">
+			<div class="font-bold mb-0.5" style="display: flex; align-items: center; color: #a0d0ff">
+				<Icon size="lg" on:click={() => goto(`/admin/pages/${data.page.id}`)} name="chevron-left" />
 			</div>
 
-			<div class="font-bold" style="color: #a0d0ff">UI Builder</div>
+			<div class="font-bold" style="color: #a0d0ff; line-height: 20px; font-size: 16px;">UI Builder</div>
+
+			<div class="font-bold mb-0.5 mx-2" style="display: flex; align-items: center; color: #a0d0ff">
+				<Icon size="lg" on:click={() => goto(`/admin/pages/${data.page.id}`)} name="settings" />
+			</div>
+
 		</div>
 
-		<div style="display: flex; gap: 4px">
+		<div style="display: flex; align-items: center; gap: 4px">
 			<a
+				class="h-[24px] px-[12px]"
 				href="/{data.page.slug}"
-				style="display: flex; align-items: center; gap: 8px; border: 1px solid #405060; background-color: #252525; padding: 2px 8px;">
-				<Icon size="sm" name="eye" />
+				style="display: flex; align-items: center; border: 1px solid var(--y-border-color); gap: 8px; background-color: var(--y-bg-surface);">
 				<span>/{data.page.slug}</span>
 			</a>
 
-			<Button on:click={onSave} class="bg-blue-500" color="primary" size="sm">Save</Button>
+			<Button on:click={onSave} class="bg-blue-500 h-[24px] px-[8px]" color="primary" size="sm">Save</Button>
 
 			<!-- svelte-ignore a11y-click-events-have-key-events -->
 			<!-- svelte-ignore a11y-no-static-element-interactions -->
@@ -622,21 +639,26 @@ var afterY=0,afterX=0;
 						mode = 'add'
 					}
 				}}
-				class="toggle">
+				class="toggle mb-0.5">
 				{#if sidebarOpen}
-					<Icon name="x" />
+				{#if mode === 'options'}
+					<Icon size="lg" name="category-filled" />
+					{:else}
+						<Icon size="lg" name="x"/>
+					{/if}
 				{:else}
-					<Icon name="menu-2" />
+					<Icon size="lg" name="category-filled" />
 				{/if}
 			</div>
 		</div>
 	</div>
 
 	<div class="sidebar" class:open={sidebarOpen}>
-		<div class="sidebar-body">
-			{#if activeSlot}
-				<El px="2" m="2" py="1">{getComponent(activeSlot.type).name}</El>
-			{/if}
+		{#if activeSlot}
+			<El class="component-name">{getComponent(activeSlot.type).name}</El>
+		{/if}
+			<div class="sidebar-body">
+
 
 			{#if mode === 'add'}
 				{#if activeSlot}
@@ -812,12 +834,14 @@ var afterY=0,afterX=0;
 
 	.header {
 		transition: all 0.3s ease-in-out;
-		padding: 4px 4px 4px 1rem;
+		padding: 0 8px;
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
-		/* height: 30px; */
-		background-color: black;
+		height: 36px;
+		box-shadow: 0 2px 4px -2px black;
+		border-bottom: 1px solid var(--y-bg-surface);
+		background-color: var(--y-bg-surface-tertiary);
 		color: white;
 		width: 100%;
 	}
@@ -835,6 +859,7 @@ var afterY=0,afterX=0;
 		transition: all 0.3s ease-in-out;
 		transform: translateX(300px);
 		background-color: var(--y-bg-surface-tertiary);
+		box-shadow: -2px 26px 4px -2px black;
 		color: white;
 	}
 
@@ -872,6 +897,16 @@ var afterY=0,afterX=0;
 		position: absolute;
 		display: none;
 		pointer-events: none;
+	}
+
+	:global(.component-name) {
+		background-color: black;
+		border-bottom: 1px solid var(--y-bg-surface);
+		line-height: 20px;
+		font-size: 16px;
+		height: 27px;
+		
+		padding: 4px;
 	}
 
 	.component-hover-border {
