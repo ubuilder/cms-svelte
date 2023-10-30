@@ -1,6 +1,6 @@
 <script lang="ts">
   import { Button, El, modal, ButtonList, BaseModal, FormInput } from "@ulibs/yesvelte";
-  import AssetImage from "../../../lib/components/AssetTypes/AssetImage.svelte";
+  import AssetImage from "./AssetTypes/AssetImage.svelte";
   import type { AssetType } from "$lib/types/asset";
   import { t } from "$lib/i18n";
 

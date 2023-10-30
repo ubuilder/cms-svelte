@@ -18,34 +18,32 @@
     }
 </script>
 
-<El
-	borderBottom
+<!-- svelte-ignore a11y-no-static-element-interactions -->
+<!-- svelte-ignore a11y-click-events-have-key-events -->
+<div
     on:click={() => activeSlot = slot}
-    d="flex"
-    alignItems="center"
-    justifyContent="between"
-	borderColor="secondary"
-    
-	bgColor={activeSlot?.id === slot.id ? "primary" : undefined}
+
+	class="sidebar-item"
+	class:active={slot === activeSlot}
 	style="padding-left: {level * 16 + 'px'}; padding-right: 8px"
-	py="1">
+>
     
     <span>{component.name}</span>
-    <Icon ms="auto" mb="1" on:click={() => openSettings} name="settings"/>
+    <Icon mb="1" on:click={() => openSettings} name="settings"/>
 	
-</El>
+</div>
 
 {#each component.fields ?? [] as field}
-	{#if field.type === 'slot'}
-		{#each slot.props[field.name] as slotItem}
-			<svelte:self on:open-settings {components} slot={slotItem} level={level + 1} bind:activeSlot />
-			<!-- <El
-				borderBottom
-				borderColor="secondary"
-				style="padding-left: {activeSlot.parent_id ? '48px' : '32px'};"
-				py="1"
-				on:click={() => selectSlot(slotItem.id)}
-				>{getComponent(slotItem.type).name} ({field.name})</El> -->
-		{/each}
+	{#if field.type === 'slot' && Array.isArray(slot.props[field.name] ?? [])}
+	{#each slot.props[field.name] ?? [] as slotItem}
+	<svelte:self on:open-settings {components} slot={slotItem} level={level + 1} bind:activeSlot />
+	<!-- <El
+		borderBottom
+		borderColor="secondary"
+		style="padding-left: {activeSlot.parent_id ? '48px' : '32px'};"
+		py="1"
+		on:click={() => selectSlot(slotItem.id)}
+		>{getComponent(slotItem.type).name} ({field.name})</El> -->
+{/each}
 	{/if}
 {/each}

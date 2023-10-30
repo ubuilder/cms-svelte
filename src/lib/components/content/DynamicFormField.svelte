@@ -164,7 +164,6 @@
 <style>
 	.dynamic-icon {
 		z-index: 10;
-		transition: all 0.3s ease;
 		display: flex;
 		align-items: center;
 		justify-content: center;
