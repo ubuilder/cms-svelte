@@ -1,6 +1,7 @@
 <script>
-  import {ButtonList, Page, Button, El, StatusItem} from '@ulibs/yesvelte' 
+  import {ButtonList, Page, Button, El, StatusItem, FormField} from '@ulibs/yesvelte' 
   import { t } from '$lib/i18n';
+	import PageItem from './[page_id]/pages/PageItem.svelte'
   
   export let data;
 
@@ -13,7 +14,7 @@
   }
 </script>
 
-<Page title="{t("dashboard.title")}">
+<Page title="{t("dashboard.title")}" theme={data.theme} dir={data.dir}>
 
   <ButtonList slot="header-buttons">
     <Button color="azure" on:click={() => openImportModal()}>{t('buttons.import')}</Button>
@@ -52,5 +53,11 @@
       value={data.file_count}
     />
   </El>
+  <FormField label="Pages">
+    {#each data.pages as page}
+      <PageItem {page}/>
+    {/each}
+  </FormField>
+  
 
 </Page>

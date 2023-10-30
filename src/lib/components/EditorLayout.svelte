@@ -21,11 +21,18 @@
 		modal,
 	} from '@ulibs/yesvelte'
 	import { goto, invalidate, invalidateAll } from '$app/navigation'
-	import AddComponentModal from '../../admin/components/AddComponentModal.svelte'
+	import AddComponentModal from '$lib/components/components/AddComponentModal.svelte'
 	import interact from 'interactjs'
 	import { browser } from '$app/environment'
 	import SlotSidebarItem from './SlotSidebarItem.svelte'
-	export let data
+
+	export let components: any[] = []
+	export let type = 'page'
+
+	export let page: any = {}
+	export let component: any = {}
+
+	$: slots = type === 'page' ? page.slot : (type === 'component' ? component.slot : [])
 
 	let activeComponent: any = null
 	let activeSlot: any = null
@@ -74,8 +81,7 @@
 		} else {
 			console.log('render()')
 			html =
-				data.page.slot.map((x, i) => renderSlot(x, '', '', i)).join('') +
-				placeholder('', '', data.page.slot.length)
+				slots.map((x, i) => renderSlot(x, '', '', i)).join('') + placeholder('', '', slots.length)
 
 			contentEl.innerHTML = html
 		}
@@ -180,7 +186,7 @@
 									const field = target.getAttribute('data-field')
 									const index = +target.getAttribute('data-index')
 
-									// let result = JSON.parse(JSON.stringify(data.page.slot));
+									// let result = JSON.parse(JSON.stringify(slots));
 
 									console.log('insertComponent', source, parent, field, index)
 									insertComponent(source, parent, field, index)
@@ -343,7 +349,7 @@
 	}
 
 	function onSave() {
-		const result = JSON.parse(JSON.stringify(data.page))
+		const result = JSON.parse(JSON.stringify(page))
 
 		forEachSlot(result.slot, (slot) => {
 			delete slot['id']
@@ -352,7 +358,7 @@
 			delete slot['parent_index']
 		})
 
-		fetch(`/admin/pages/${result.id}?/updatePage`, {
+		fetch(`/edit/${page.id}/pages/${result.id}?/updatePage`, {
 			method: 'POST',
 			body: JSON.stringify(result),
 		}).then((res) => {
@@ -361,9 +367,9 @@
 	}
 
 	function onRemoveSlot(id: string) {
-		data.page.slot = data.page.slot.filter((x) => x.id !== id)
+		slots = slots.filter((x) => x.id !== id)
 
-		forEachSlot(data.page.slot, (slot) => {
+		forEachSlot(slots, (slot) => {
 			const component = getComponent(slot.type)
 			for (let field of component.fields) {
 				if (field.type === 'slot') {
@@ -382,7 +388,7 @@
 	}
 
 	function onSelectParent() {
-		const slot = data.page.slot.find((x) => x.id === activeSlot.id)
+		const slot = slots.find((x) => x.id === activeSlot.id)
 		if (slot) {
 			mode = 'add'
 			activeSlot = null
@@ -391,7 +397,7 @@
 			return
 		}
 
-		forEachSlot(data.page.slot, (slot) => {
+		forEachSlot(slots, (slot) => {
 			const component = getComponent(slot.type)
 			for (let field of component.fields) {
 				if (field.type === 'slot') {
@@ -403,7 +409,7 @@
 	}
 
 	function getComponent(id: string) {
-		return data.components.find((x) => x.id === id)
+		return components.find((x) => x.id === id)
 	}
 
 	let elStack: HTMLElement[] = []
@@ -422,7 +428,7 @@
 		for (let index in slots) {
 			const slot = slots[index]
 			const component = getComponent(slot.type)
-			// const index = data.components.findIndex((x) => x.id === slot.type)
+			// const index = components.findIndex((x) => x.id === slot.type)
 
 			if (slot.id === id) {
 				slot.parent_id = parent?.id ?? null
@@ -452,7 +458,7 @@
 			activeComponent = null
 			borderPosition = {}
 		}
-		let slotItem = findSlot(id, data.page.slot)
+		let slotItem = findSlot(id, slots)
 
 		if (slotItem) {
 			sidebarOpen = true
@@ -491,7 +497,7 @@
 		field_name: string = '',
 		index: number = 0
 	) {
-		const slot = findSlot(slot_id, data.page.slot)
+		const slot = findSlot(slot_id, slots)
 
 		insertComponent(slot.type, parent_id, field_name, index, slot.props)
 		onRemoveSlot(slot.id)
@@ -514,8 +520,8 @@
 		}
 
 		if (!parent_id) {
-			// data.page.slot.push(newSlot)
-			data.page.slot = [...data.page.slot.slice(0, index), newSlot, ...data.page.slot.slice(index)]
+			// slots.push(newSlot)
+			slots = [...slots.slice(0, index), newSlot, ...slots.slice(index)]
 			setTimeout(() => {
 				selectSlot(id)
 			}, 1)
@@ -551,7 +557,7 @@
 			}
 		}
 
-		for (let slot of data.page.slot) {
+		for (let slot of slots) {
 			findAndInsert(slot)
 		}
 
@@ -568,7 +574,7 @@
 		})
 
 		if (value?.name) {
-			if (data.components.map((x) => x.name).includes(value.name)) {
+			if (components.map((x) => x.name).includes(value.name)) {
 				return
 			}
 
@@ -581,11 +587,11 @@
 				slot: [{ type: activeSlot.type, props: activeSlot.props }],
 			}
 
-			fetch('/admin/components/?/createComponent', {
+			fetch(`/edit/${page.id}/components/?/createComponent`, {
 				method: 'POST',
 				body: JSON.stringify(newComponent),
 			}).then((res) => {
-				goto('/editor/' + data.page.id)
+				goto('/editor/' + page.id)
 			})
 		}
 	}
@@ -631,7 +637,7 @@
 	}
 
 	onMount(() => {
-		for (let component of data.components) {
+		for (let component of components) {
 			hbsTemplates[component.id] = hbs.compile(component.template)
 		}
 
@@ -645,25 +651,31 @@
 </script>
 
 <svelte:head>
-	{@html data.head}
-	<script src="https://cdn.tailwindcss.com"></script>
+	<!-- <script src="https://cdn.tailwindcss.com"></script> -->
+	<!-- <script src="https://cdn.tailwindcss.com"></script> -->
+	<script src="/cdn.tailwindcss.com.js"></script>
 </svelte:head>
+{#if type === 'page' || type === 'component'}
 <div class="page" data-bs-theme="dark">
 	<div class="header" class:sidebar-open={sidebarOpen}>
 		<div style="display: flex; align-items: center; gap: 4px;">
-			<div class="font-bold mb-0.5" style="display: flex; align-items: center; color: #a0d0ff">
-				<Icon size="lg" on:click={() => goto(`/admin/pages/${data.page.id}`)} name="chevron-left" />
-			</div>
+			
 
-			<div
-				on:click={() => (offcanvasOpen = !offcanvasOpen)}
+			<button
+				on:click={() => {
+                    offcanvasOpen = true
+                    goto(`/edit/${page.id}/pages`)
+                    }}
 				class="font-bold"
 				style="color: #a0d0ff; line-height: 20px; font-size: 16px;">
-				Pages
-			</div>
+				<Icon name="menu-2"/>
+			</button>
 
 			<div class="font-bold mb-0.5 mx-2" style="display: flex; align-items: center; color: #a0d0ff">
-				<Icon size="lg" on:click={() => goto(`/admin/pages/${data.page.id}`)} name="settings" />
+				<Icon size="lg" on:click={() => {
+                    offcanvasOpen = true
+                    goto(`/edit/${page.id}/pages/${page.id}`)
+                    }} name="settings" />
 			</div>
 		</div>
 
@@ -671,7 +683,7 @@
 			<Button on:click={onSave} class="bg-blue-500 h-[24px] px-[8px]" color="primary" size="sm"
 				>Save</Button>
 			<Button
-				href="/{data.page.slug}"
+				href="/{page.slug}"
 				on:click={onSave}
 				class="bg-green-500 h-[24px] px-[8px]"
 				color="success"
@@ -716,8 +728,8 @@
 		</div>
 	</div>
 
-	<Offcanvas style="width: max-content" backdrop autoClose placement="start" bind:show={offcanvasOpen}>
-		<OffcanvasBody style="width: 700px">
+	<Offcanvas style="width: 700px" backdrop autoClose placement="start" bind:show={offcanvasOpen}>
+		<OffcanvasBody>
 			<!--  -->
 			<!-- <PageList data={}/> -->
 			<!-- Content -->
@@ -734,7 +746,7 @@
 				{#if activeSlot}
 					<Button on:click={() => (mode = 'options')} bgColor="primary">Options</Button>
 				{/if}
-				{#each data.components as component}
+				{#each components as component}
 					<!-- svelte-ignore a11y-click-events-have-key-events -->
 					<!-- svelte-ignore a11y-no-static-element-interactions -->
 					<div
@@ -753,10 +765,10 @@
 				{/each}
 			{:else if mode == 'slot'}
 				<div class="h-[32px] border-b border-gray-500">Slots</div>
-				{#each data.page.slot as slot}
+				{#each slots as slot}
 					<SlotSidebarItem
 						on:open-settings={() => (mode = 'options')}
-						components={data.components}
+						{components}
 						{slot}
 						bind:activeSlot />
 				{/each}
@@ -771,7 +783,7 @@
 							{#each activeComponent.fields as field}
 								{#if field.type !== 'slot'}
 									<ComponentProp
-										components={data.components}
+										{components}
 										items={{}}
 										{field}
 										bind:value={activeSlot.props[field.name]} />
@@ -833,6 +845,9 @@
 	</div>
 	<ModalProvider />
 </div>
+{:else}
+    <div>Page or component not found <a href="/edit">Go Back</a></div>
+{/if}
 
 <style>
 	:global(body),

@@ -2,7 +2,7 @@
   import { El, Icon, modal, confirmModal } from "@ulibs/yesvelte";
   import AssetImage from "./AssetTypes/AssetImage.svelte";
   import { invalidateAll } from "$app/navigation";
-  import AssetUpdateModal from "./AssetUpdateModal.svelte";
+  import AssetUpdateModal from "../../routes/edit/assets/AssetUpdateModal.svelte";
   import type { AssetType } from "$lib/types/asset";
   import { t } from "$lib/i18n";
 

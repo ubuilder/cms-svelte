@@ -108,7 +108,7 @@
 
 		// }
 
-		goto('/admin/components/' + component.id)
+		goto('/edit/_/components/' + component.id)
 	}
 
 	onMount(() => {

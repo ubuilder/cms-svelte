@@ -75,7 +75,7 @@ export async function load({ locals, params, url }) {
 	}
 
 	if (url.searchParams.has('edit')) {
-		throw redirect(302, '/admin/pages/' + page.id)
+		throw redirect(302, '/edit/' + page.id)
 	}
 
 	const style = await locals.api.getPageCss({ page_id: page.id }).then((res) => res.data)

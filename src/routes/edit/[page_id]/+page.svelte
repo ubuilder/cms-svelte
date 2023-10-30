@@ -110,7 +110,7 @@
 			fetch('?/removePage', {
 				method: 'POST',
 				body: JSON.stringify(request),
-			}).then((res) => goto('/admin/pages'))
+			}).then((res) => goto('/edit'))
 		}
 	}
 
@@ -227,7 +227,7 @@
 					<TabList>
 						<TabItem>General</TabItem>
 						<TabItem>Load</TabItem>
-						<TabItem>Content</TabItem>
+						<!-- <TabItem>Content</TabItem> -->
 						<TabItem>Actions</TabItem>
 						<TabItem>Forms</TabItem>
 					</TabList>
@@ -274,13 +274,13 @@
 								bind:load={request.load}
 								bind:tables={data.tables} />
 						</TabPanel>
-						<TabPanel>
+						<!-- <TabPanel>
 							<SlotList
 								components={data.components}
 								items={getItems(request.load)}
 								on:move={onMove}
 								bind:slotList={request.slot} />
-						</TabPanel>
+						</TabPanel> -->
 						<TabPanel>
 							<FormField label="Actions">
 								<Accordions>
@@ -350,7 +350,7 @@
 							<Button on:click={openRemoveConfirmModal} color="danger">
 								{t('buttons.remove')}
 							</Button>
-							<Button href="/admin/pages">{t('buttons.cancel')}</Button>
+							<Button disabled href="/..">{t('buttons.cancel')}</Button>
 							<Button on:click={updatePage} color="primary">{t('buttons.save')}</Button>
 						</ButtonList>
 					</CardFooter>

@@ -34,7 +34,7 @@
 
             <CardFooter>
                 <ButtonList ms="auto">
-                    <Button href="/admin/">{t('buttons.cancel')}</Button>
+                    <Button disabled href="..">{t('buttons.cancel')}</Button>
     
                     <Button type="submit" color="primary">{t('buttons.update')}</Button>
                 </ButtonList>
