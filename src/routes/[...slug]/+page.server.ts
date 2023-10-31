@@ -173,6 +173,8 @@ export async function load({ locals, params, url }) {
 					} else {
 						props[field.name] = renderVariable(slot.props[field.name], items)
 					}
+					props['Class'] = slot.props['Class']
+
 				}
 
 				console.log(props, fields, slot)
@@ -242,7 +244,7 @@ export const actions = {
 		}
 
 		if (page) {
-			await locals.api.submitForm(page.id, new URL(request.url).pathname, obj)
+			await locals.api.submitForm(page.id, url.pathname, obj)
 
 			// call api
 			const action = page.actions.find((x) => x.slug === name)
