@@ -55,7 +55,7 @@
   const dispatch = createEventDispatcher()
   function update() {
     // updateComponent....
-    dispatch('update')
+    dispatch('update', component)
     
   }
 
