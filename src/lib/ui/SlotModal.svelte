@@ -105,7 +105,7 @@
 			<Button
 				target="_blank"
 				color={items.length === 0 ? 'primary' : undefined}
-				href="/admin/components/">
+				href="/edit/_/components/">
 				<Icon name="plus" />
 				Create New Component
 			</Button>

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { goto, invalidateAll } from '$app/navigation'
-	import type { FieldRelation, Page as PageType } from '$lib/types'
+	import type { FieldRelation, Page as PageType, Table } from '$lib/types'
 	import {
 		Page,
 		modal,
@@ -38,94 +38,94 @@
 	import DynamicFormField from '$lib/components/content/DynamicFormField.svelte'
 	import { t } from '$lib/i18n'
 	import FormViewer from './FormViewer.svelte'
+	import { createEventDispatcher } from 'svelte'
 
-	export let data
-	let request: Partial<PageType> = data.page
+	export let page: Partial<PageType> = {};
+	export let tables: Table[] = [];
+	export let forms: any[] = [];
+	export let components: any[] = [];
+
 
 	//sets and syncs with slots store
-	let flag = false
-	slots.subscribe((s) => {
-		if (flag) {
-			data.page.slot = s
-		}
-	})
-	$: {
-		if ($slots !== data.page.slot) {
-			if (data?.page?.slot) {
-				slots.set(data.page.slot)
-				flag = true
-			}
-		}
-	}
+	// let flag = false
+	// slots.subscribe((s) => {
+	// 	if (flag) {
+	// 		page.slot = s
+	// 	}
+	// })
+	// $: {
+	// 	if ($slots !== data.page.slot) {
+	// 		if (data?.page?.slot) {
+	// 			slots.set(data.page.slot)
+	// 			flag = true
+	// 		}
+	// 	}
+	// }
 
-	function onMove(detail) {
-		console.log('onMove', detail)
-		console.log(request.slot.map((x) => x.type))
+	// function onMove(detail) {
+	// 	console.log('onMove', detail)
+	// 	console.log(page.slot.map((x) => x.type))
 
-		if (detail.from.length === 0 && detail.to.length === 0) {
-			// swap elements
+	// 	if (detail.from.length === 0 && detail.to.length === 0) {
+	// 		// swap elements
 
-			if (detail.fromIndex < detail.toIndex) {
-				detail.toIndex = detail.toIndex - 1
-			}
+	// 		if (detail.fromIndex < detail.toIndex) {
+	// 			detail.toIndex = detail.toIndex - 1
+	// 		}
 
-			const item = request.slot.splice(detail.fromIndex, 1)
-			request.slot = [
-				...request.slot.slice(0, detail.toIndex),
-				item[0],
-				...request.slot.slice(detail.toIndex),
-			]
+	// 		const item = page.slot.splice(detail.fromIndex, 1)
+	// 		page.slot = [
+	// 			...page.slot.slice(0, detail.toIndex),
+	// 			item[0],
+	// 			...page.slot.slice(detail.toIndex),
+	// 		]
 
-			update()
-		}
-	}
+	// 		update()
+	// 	}
+	// }
 
-	function update() {
-		fetch('?/updatePage', {
-			method: 'POST',
-			body: JSON.stringify(request),
-		}).then((res) => {
-			// invalidateAll()
-			console.log('done')
-			// alert.success("page updated!")
-		})
-	}
-	async function openPreviewModal() {
-		await modal.open(
-			PreviewModal,
-			{
-				slug: request.slug,
-				title: request.title,
-				autoClose: true,
-			},
-			{
-				size: 'lg',
-				autoClose: true,
-			}
-		)
-	}
+	// function update() {
+	// 	fetch('?/updatePage', {
+	// 		method: 'POST',
+	// 		body: JSON.stringify(request),
+	// 	}).then((res) => {
+	// 		// invalidateAll()
+	// 		console.log('done')
+	// 		// alert.success("page updated!")
+	// 	})
+	// }
+	// async function openPreviewModal() {
+	// 	await modal.open(
+	// 		PreviewModal,
+	// 		{
+	// 			slug: page.slug,
+	// 			title: page.title,
+	// 			autoClose: true,
+	// 		},
+	// 		{
+	// 			size: 'lg',
+	// 			autoClose: true,
+	// 		}
+	// 	)
+	// }
 	async function openRemoveConfirmModal() {
 		const res = await confirmModal.open({ status: 'danger' }, { autoClose: true })
 		if (res) {
-			fetch('?/removePage', {
-				method: 'POST',
-				body: JSON.stringify(request),
-			}).then((res) => goto('/admin/pages'))
+			dispatch('remove')
+
 		}
 	}
+	const dispatch = createEventDispatcher()
 
 	function updatePage() {
-		fetch('?/updatePage', {
-			method: 'POST',
-			body: JSON.stringify(request),
-		}).then((res) => {
-			invalidateAll()
-			alert.success('page updated!')
-		})
+		dispatch('update')
+	}
+	function cancel() {
+		dispatch('cancel')
 	}
 
 	function getItems(load: any): any[] {
-		let params = request.slug?.match(/\{\w+\}/g)
+		let params = page.slug?.match(/\{\w+\}/g)
 
 		let items: any = {
 			page: {
@@ -165,7 +165,7 @@
 
 		console.log('load: ', load)
 		for (let item of load) {
-			const table = data.tables.find((x) => x.id === item.table)
+			const table = tables.find((x) => x.id === item.table)
 			if (!table) continue
 
 			const fields: any = {}
@@ -180,7 +180,7 @@
 				}
 
 				if (field.type === 'relation') {
-					const otherTable = data.tables.find((x) => x.id === (field as FieldRelation).table)
+					const otherTable = tables.find((x) => x.id === (field as FieldRelation).table)
 					const otherFields: any = {}
 					for (let otherField of otherTable.fields) {
 						otherFields[otherField.name] = {
@@ -210,14 +210,21 @@
 	}
 </script>
 
-<Page title="Update Page '{data.page.title}'">
+<Page>
 	<ButtonList slot="header-buttons">
-		<Button on:click={() => history.back()}>
+		<!-- <Button on:click={() => history.back()}>
 			<Icon name="chevron-left" />
 			Back
 		</Button>
-		<Button on:click={openPreviewModal} color="primary">Preview</Button>
-		<Button href="/editor/{data.page.id}" color="success">Edit</Button>
+		 -->
+		 <Button on:click={openRemoveConfirmModal} color="danger">
+			{t('buttons.remove')}
+		</Button>
+		<Button on:click={cancel}>{t('buttons.cancel')}</Button>
+		<Button on:click={updatePage} color="primary">{t('buttons.save')}</Button>
+	
+		<!-- <Button on:click={openPreviewModal} color="primary">Preview</Button> -->
+		<!-- <Button href="/editor/{data.page.id}" color="success">Edit</Button> -->
 	</ButtonList>
 
 	<El row>
@@ -227,7 +234,7 @@
 					<TabList>
 						<TabItem>General</TabItem>
 						<TabItem>Load</TabItem>
-						<TabItem>Content</TabItem>
+						<!-- <TabItem>Content</TabItem> -->
 						<TabItem>Actions</TabItem>
 						<TabItem>Forms</TabItem>
 					</TabList>
@@ -236,55 +243,55 @@
 				<TabContent>
 					<CardBody>
 						<TabPanel>
-							<FormInput bind:value={request.slug} label="Slug" />
+							<FormInput bind:value={page.slug} label="Slug" />
 
 							<DynamicFormField
-								items={getItems(request.load)}
+								items={getItems(page.load)}
 								type="plain_text"
-								bind:value={request.title}
+								bind:value={page.title}
 								label="Title" />
 							<DynamicFormField
-								items={getItems(request.load)}
+								items={getItems(page.load)}
 								type="plain_text"
 								input_type="textarea"
 								label="Description"
-								bind:value={request.description} />
+								bind:value={page.description} />
 							<DynamicFormField
 								dir="ltr"
-								items={getItems(request.load)}
+								items={getItems(page.load)}
 								type="plain_text"
 								input_type="textarea"
 								label="Head"
-								bind:value={request.head} />
+								bind:value={page.head} />
 
 							<DynamicFormField
 								type="select"
-								items={getItems(request.load)}
+								items={getItems(page.load)}
 								input_type="radio_group"
 								options={[
 									{ key: 'rtl', text: 'Right to left' },
 									{ key: 'ltr', text: 'Left to right' },
 								]}
-								bind:value={request.dir}
+								bind:value={page.dir}
 								label="Direction" />
 						</TabPanel>
 						<TabPanel>
 							<PageLoad
-								items={getItems(request.load)}
-								bind:load={request.load}
-								bind:tables={data.tables} />
+								items={getItems(page.load)}
+								bind:load={page.load}
+								bind:tables />
 						</TabPanel>
-						<TabPanel>
+						<!-- <TabPanel>
 							<SlotList
 								components={data.components}
-								items={getItems(request.load)}
+								items={getItems(page.load)}
 								on:move={onMove}
-								bind:slotList={request.slot} />
-						</TabPanel>
+								bind:slotList={page.slot} />
+						</TabPanel> -->
 						<TabPanel>
 							<FormField label="Actions">
 								<Accordions>
-									{#each request.actions as action}
+									{#each page.actions as action}
 										<Accordion>
 											<AccordionHeader>
 												{action.name}
@@ -302,7 +309,7 @@
 													<ButtonList ms="auto">
 													<Button
 														on:click={() =>
-															(request.actions = request.actions.filter((x) => x !== action))}
+															(page.actions = page.actions.filter((x) => x !== action))}
 														color="danger">Remove</Button>
 													</ButtonList>
 												</El>
@@ -317,14 +324,14 @@
 							<Button
 								color="primary"
 								mt="2"
-								on:click={() => (request.actions = [...(request.actions ?? []), {}])}>
+								on:click={() => (page.actions = [...(page.actions ?? []), {}])}>
 								<Icon name="plus" />
 								Add Action
 							</Button>
 						</TabPanel>
 						<TabPanel>
-							{#if data.forms.data.length}
-								<ListBox items={data.forms.data} let:item>
+							{#if forms.data.length}
+								<ListBox items={forms.data} let:item>
 									<!-- <ListItem name="Form">{item.}</ListItem> -->
 									<ListItem name="URL">{item.pathname}</ListItem>
 									<ListItem name="Content (JSON)"
@@ -345,15 +352,7 @@
 							{/if}
 						</TabPanel>
 					</CardBody>
-					<CardFooter>
-						<ButtonList ms="auto">
-							<Button on:click={openRemoveConfirmModal} color="danger">
-								{t('buttons.remove')}
-							</Button>
-							<Button href="/admin/pages">{t('buttons.cancel')}</Button>
-							<Button on:click={updatePage} color="primary">{t('buttons.save')}</Button>
-						</ButtonList>
-					</CardFooter>
+				
 				</TabContent>
 			</Card>
 		</Tabs>

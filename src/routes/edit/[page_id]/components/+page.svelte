@@ -1,6 +1,6 @@
 <script>
     import {Button, ButtonList, Page, FilterList, TextFilter, El, Card, Icon, modal} from '@ulibs/yesvelte'
-  import AddComponentModal from './AddComponentModal.svelte';
+  import AddComponentModal from '$lib/components/components/AddComponentModal.svelte';
   import { invalidateAll } from '$app/navigation';
   import { t } from '$lib/i18n';
     export let data;

@@ -2,7 +2,7 @@
     import { El, Icon } from "@ulibs/yesvelte";
   
   import { createEventDispatcher } from "svelte";
-  import AssetImage from "../../../routes/admin/assets/AssetTypes/AssetImage.svelte";
+  import AssetImage from "$lib/components/AssetTypes/AssetImage.svelte";
   
     export let asset: any;
   

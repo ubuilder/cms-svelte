@@ -25,8 +25,8 @@ export const handle = async ({ event, resolve }) => {
 
 	
 
-	// /admin
-	if (event.url.pathname.startsWith('/admin/')) {
+	// /edit
+	if (event.url.pathname.startsWith('/edit/')) {
 		// settings
 		event.locals.settings = (await event.locals.api.getSettings()) ?? {}
 

@@ -24,16 +24,18 @@
     Textarea,
     confirmModal,
   } from "@ulibs/yesvelte";
+	import { createEventDispatcher } from "svelte"
 
-  export let data
+  export let component: any = {}
+  export let components:any[] = []
+
 
   async function remove() {
     const res = await confirmModal.open({ status: "danger" });
 
     if (res) {
       // fetch remove
-      fetch('?/remove', {method: 'POST', body: '{}'}).then(res => goto('../', {invalidateAll: true}))
-    }
+   dispatch('remove') }
   }
 
   function getItems(fields: any[]) {
@@ -50,16 +52,22 @@
     return res
   }
 
+  const dispatch = createEventDispatcher()
   function update() {
     // updateComponent....
-    fetch('?/update', {method: 'POST', body: JSON.stringify(data.component)}).then(res => goto('../', {invalidateAll: true}))
-
+    dispatch('update')
+    
   }
 
-  let title = t('components.edit_component') + ` "${data.component?.name ?? ''}"`
+  let title = t('components.edit_component') + ` "${component?.name ?? ''}"`
 </script>
 
-<Page {title}>
+<Page>
+  <ButtonList slot="header-buttons" ms="auto">
+    <Button on:click={remove} color="danger">{t('buttons.remove')}</Button>
+    <Button disabled href="../">{t('buttons.cancel')}</Button>
+    <Button on:click={update} color="primary">{t('buttons.update')}</Button>
+  </ButtonList>
   <Card>
     <Tabs>
       <CardHeader>
@@ -71,33 +79,35 @@
       <CardBody>
         <TabContent>
           <TabPanel>
-            <FormInput bind:value={data.component.name} label={t('components.forms.name')}/>
-            <FormSwitch  bind:checked={data.component.hidden} description="Useful when you want to use it only as child component.">
+            <FormInput bind:value={component.name} label={t('components.forms.name')}/>
+            <FormSwitch  bind:checked={component.hidden} description="Useful when you want to use it only as child component.">
               Hide from components list
               </FormSwitch>
 
             <!-- after create redirect to edit page in server side -->
-            <ComponentFields components={data.components} bind:fields={data.component.fields} />
+            <ComponentFields {components} bind:fields={component.fields} />
             
           </TabPanel>
           <TabPanel>
-            <FormSwitch  bind:checked={data.component.raw}>
+            <FormSwitch  bind:checked={component.raw}>
               Write raw HTML
               </FormSwitch>
-              {#if data.component.raw}
+              {#if component.raw}
             <FormField label={t('components.forms.template')}>
             <Textarea dir="ltr" style="font-family: monospace;" rows="12"
-              bind:value={data.component.template}
+              bind:value={component.template}
             />
         
           </FormField>
           {:else}
           <FormField label={t('components.forms.content')}>
             
-          <SlotList
-								components={data.components}
-								items={getItems(data.component.fields)}
-								bind:slotList={data.component.slot} />
+            TODO::::
+          <!-- <SlotList
+								components={components}
+								items={getItems(component.fields)}
+								bind:slotList={component.slot} />
+                 -->
             </FormField>
 
           {/if}
@@ -106,13 +116,5 @@
         </TabContent>
       </CardBody>
     </Tabs>
-
-    <CardFooter>
-      <ButtonList ms="auto">
-        <Button on:click={remove} color="danger">{t('buttons.remove')}</Button>
-        <Button href="/admin/components/">{t('buttons.cancel')}</Button>
-        <Button on:click={update} color="primary">{t('buttons.update')}</Button>
-      </ButtonList>
-    </CardFooter>
   </Card>
 </Page>

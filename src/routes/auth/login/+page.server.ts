@@ -9,7 +9,7 @@ export async function load({url}) {
 		data.fromAdmin = true
 	}
 	const redirectTo = url.searchParams.get('redirect')
-	if(redirectTo && redirectTo !== '/admin/logout') {
+	if(redirectTo && redirectTo !== '/edit/logout') {
 		data.redirect = redirectTo
 	}
 	
@@ -42,7 +42,7 @@ export const actions = {
 			maxAge: 60 * 60 * 24 * 15,
 		})
 
-		throw redirect(302, redirectTo ?? '/admin/')
+		throw redirect(302, redirectTo ?? '/edit/')
 
 	},
 }

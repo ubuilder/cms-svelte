@@ -31,7 +31,7 @@
     formData.append("file", event.target.files[0]);
 
     console.log('uploading....')
-    const result = await fetch("/admin/assets?/upload", {
+    const result = await fetch("/edit/_/assets?/upload", {
       method: "POST",
       body: formData,
     }).then((res) => res.json());
@@ -50,7 +50,7 @@
       }
     });
 
-    const res = await fetch("/admin/assets/get", {
+    const res = await fetch("/edit/_/assets/get", {
       method: "POST",
       body: JSON.stringify(filtersObject),
       headers: {

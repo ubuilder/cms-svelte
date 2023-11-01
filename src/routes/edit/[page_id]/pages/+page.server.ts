@@ -16,7 +16,7 @@ export const actions: Actions = {
 			slug: body.slug?.startsWith('/') ? body.slug?.substring(1) : body.slug,
 		})
 
-		throw redirect(301, '/admin/pages/' + page.data!.id)
+		throw redirect(301, '/edit/' + page.data!.id)
 
 		return { success: true }
 	},

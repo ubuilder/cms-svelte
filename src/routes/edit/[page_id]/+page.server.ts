@@ -7,14 +7,13 @@ export async function load({ locals, params }) {
 		.then((res) => res.data!.data)
 	const components = await locals.api.getComponents({ perPage: 500 }).then((res) => res.data)
 
+	const forms = await locals.api.getForms(params.page_id).then((res) => res.data)
 
-	const forms = await locals.api.getForms(params.id).then(res => res.data)
-
-	console.log({forms})
+	console.log({ forms })
 	return {
 		tables,
 		components,
-		page: await locals.api.getPage(params.id),
+		page: await locals.api.getPage(params.page_id),
 		forms,
 	}
 }
@@ -28,8 +27,8 @@ export const actions = {
 		return { success: true }
 	},
 	async removePage({ request, locals, params }) {
-		console.log('remove page', params.id)
-		const id = params.id
+		console.log('remove page', params.page_id)
+		const id = params.page_id
 		await locals.api.removePage(id)
 
 		return { success: true }

@@ -1,30 +1,46 @@
 <script lang="ts">
-  import { Page, FilterList, TextFilter, SelectFilter, Button, El, Icon } from "@ulibs/yesvelte";
-  import Asset from "./Asset.svelte";
+  import { Page, FilterList, TextFilter, SelectFilter, Button, El, Icon, modal } from "@ulibs/yesvelte";
+  import Asset from "$lib/components/Asset.svelte";
   import { invalidateAll } from "$app/navigation";
   import { t } from "$lib/i18n";
+	import type { AssetType } from "$lib/types/asset"
+	import { createEventDispatcher } from "svelte"
+	import AssetUpdateModal from "$lib/components/AssetUpdateModal.svelte"
 
-  export let data;
+  export let assets: AssetType[] = [];
 
   let uploadInput: any;
+
+  const dispatch = createEventDispatcher()
+
 
   async function onSubmit(event: any) {
 
     const formData = new FormData();
 
     formData.append("file", event.target.files[0]);
+  
+    dispatch('upload', formData)
 
-    const result = await fetch("?/upload", {
-      method: "POST",
-      body: formData,
-    }).then((res) => res.json());
+  }
 
-    await invalidateAll();
-    console.log(result);
+  async function onPreview({detail}: CustomEvent) {
+    const choice = await modal.open(
+      AssetUpdateModal,
+      {
+        asset: detail,
+      },
+      { size: "lg" }
+    );
+
+    if (choice) {
+      dispatch('update', detail)
+
+    }
   }
 </script>
 
-<Page title={t('assets.title')}>
+<Page>
   <Button
     on:click={() => uploadInput.click()}
     color="primary"
@@ -58,13 +74,8 @@
   </El>
 
   <El row>
-    {#each data.assets as asset}
-      {#if asset.type === "image"}
-        <Asset {asset} />
-      {:else}
-        {JSON.stringify(asset)}
-        <br />
-      {/if}
+    {#each assets as asset}
+      <Asset on:remove on:select={onPreview} {asset} />
     {/each}
   </El>
 </Page>

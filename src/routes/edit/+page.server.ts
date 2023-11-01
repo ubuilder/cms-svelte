@@ -14,5 +14,6 @@ console.log(tables)
 		table_count: tables.data!.total,
 		total_rows,
 		file_count: 4, // files.data!.total
+		pages: pages.data.data
 	}
 }

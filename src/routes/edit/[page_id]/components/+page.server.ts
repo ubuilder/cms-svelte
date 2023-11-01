@@ -7,6 +7,6 @@ export const actions = {
 		console.log(body)
 		const result = await event.locals.api.createComponent(body)
 
-		throw redirect(301, '/admin/components/' + result.id)
+		throw redirect(301, '/edit/_/components/' + result.id)
 	},
 }

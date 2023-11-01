@@ -17,6 +17,6 @@ export const actions = {
 
 		await locals.api.updateProfile({ username, name, email, profile })
 
-		throw redirect(302, '/admin/profile?success')
+		throw redirect(302, '/edit/profile?success')
 	},
 }
