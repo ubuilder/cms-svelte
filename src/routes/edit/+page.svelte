@@ -1,7 +1,10 @@
 <script>
-  import {ButtonList, Page, Button, El, StatusItem, FormField} from '@ulibs/yesvelte' 
+  import {ButtonList, Page, Button, Layout, El, StatusItem, FormField, Dropdown, Avatar, DropdownItem, DropdownMenu, Icon, modal} from '@ulibs/yesvelte' 
   import { t } from '$lib/i18n';
 	import PageItem from './[page_id]/pages/PageItem.svelte'
+	import AdminLayout from '$lib/components/AdminLayout.svelte'
+	import AddPageModal from './[page_id]/pages/AddPageModal.svelte'
+	import { goto } from '$app/navigation'
   
   export let data;
 
@@ -12,13 +15,33 @@
   function openImportModal() {
     console.log("openImportModal");
   }
-</script>
 
-<Page title="{t("dashboard.title")}" theme={data.theme} dir={data.dir}>
+  async function createPage() {
+    const page = await modal.open(AddPageModal, {
+      page: {}
+    })
+
+    fetch('./_/pages?/addPage', { 
+      method: 'POST',
+      body: JSON.stringify(page)
+    }).then(res => {
+      return res.json()
+    }).then(res => {
+      console.log(res)
+      goto(res.location, {invalidateAll: true})
+    })
+
+  }
+
+</script>
+<AdminLayout {...data}>
+
+<Page title="{t("dashboard.title")}">
 
   <ButtonList slot="header-buttons">
-    <Button color="azure" on:click={() => openImportModal()}>{t('buttons.import')}</Button>
-    <Button color="success" on:click={() => openExportModal()}>{t('buttons.export')}</Button>
+    <Button color="primary" on:click={createPage}>{t('pages.add_page')}</Button>
+    <!-- <Button color="azure" on:click={() => openImportModal()}>{t('buttons.import')}</Button>
+    <Button color="success" on:click={() => openExportModal()}>{t('buttons.export')}</Button> -->
   </ButtonList>
 
   <El my="2" fontSize="3">
@@ -61,3 +84,5 @@
   
 
 </Page>
+
+</AdminLayout>
