@@ -3,6 +3,7 @@
 	import { customAlphabet } from 'nanoid'
 	import hbs from 'handlebars'
 	import '@ulibs/yesvelte/styles.css'
+	import './Editor.css'
 	import { onMount, tick } from 'svelte'
 	import {
 		AlertProvider,
@@ -21,7 +22,9 @@
 		TabPanel,
 		Tabs,
 		alert,
+		Page,
 		modal,
+		ButtonList,
 	} from '@ulibs/yesvelte'
 	import { goto, invalidate, invalidateAll } from '$app/navigation'
 	import AddComponentModal from '$lib/components/components/AddComponentModal.svelte'
@@ -31,6 +34,7 @@
 	import EditPage from '../../routes/edit/[page_id]/EditPage.svelte'
 	import EditComponent from '../../routes/edit/[page_id]/components/[id]/EditComponent.svelte'
 	import AssetsPage from '../../routes/edit/[page_id]/assets/AssetsPage.svelte'
+	import TableEditCard from '../../routes/edit/[page_id]/content/TableEditCard.svelte'
 
 	export let components: any[] = []
 	export let type = 'page'
@@ -62,7 +66,9 @@
 
 	let dragging = false
 
-	let props = {}
+	let activeTable = null
+
+	const slotMap : any = {}
 
 	function nanoid() {
 		return customAlphabet('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', 8)
@@ -118,6 +124,14 @@
 		const component = getComponent(slot.type)
 		const id = slot.id ?? getId()
 
+		
+		slot.parent_id = parent_id ?? null
+		slot.parent_field = parent_field
+		slot.parent_index = parent_index
+
+		slotMap[id] = slot
+
+		
 		if (component?.raw) {
 			for (let index in component.fields) {
 				const field = component.fields[index]
@@ -217,7 +231,8 @@
 							autoScroll: { container: contentEl },
 						})
 
-						interact('.component-wrapper > *').draggable({
+						console.log(document.querySelectorAll('.component-wrapper > :first-child'))
+						interact('.component-wrapper > :first-child').draggable({
 							// hold: 1000,
 							// allowFrom: '.handle',
 							onstart: dragStartListener,
@@ -379,7 +394,7 @@
 			method: 'POST',
 			body: JSON.stringify(result),
 		}).then((res) => {
-			goto('/edit/' + result.id)
+			goto('/edit/' + result.id, { invalidateAll: true })
 		})
 	}
 
@@ -439,31 +454,37 @@
 		elStack = elStack.filter((x) => x !== e.target)
 	}
 
-	function findSlot(id: string, slots: any[], field = null, parent = null) {
-		if (!id) return null
-		console.log({ id, slots })
-		for (let index in slots) {
-			const slot = slots[index]
-			const component = getComponent(slot.type)
-			// const index = components.findIndex((x) => x.id === slot.type)
 
-			if (slot.id === id) {
-				slot.parent_id = parent?.id ?? null
-				slot.parent_field = field
-				slot.parent_index = index
-				return slot
-			}
+	// function findSlot(id: string, slots: any[], field = null, parent = null) {
+	// 	console.log("findSlot",id, slotMap)
 
-			for (let field of component.fields) {
-				if (field.type === 'slot') {
-					const res = findSlot(id, slot.props[field.name] ?? [], field.name, slot)
+	// 	if(slotMap[id]) return slotMap[id]
 
-					if (res) return res
-				}
-			}
-		}
-		return null
-	}
+	// 	if (!id) return null
+	// 	for (let index in slots) {
+	// 		const slot = slots[index]
+	// 		const component = getComponent(slot.type)
+	// 		// const index = components.findIndex((x) => x.id === slot.type)
+
+	// 		if (slot.id === id) {
+	// 			slot.parent_id = parent?.id ?? null
+	// 			slot.parent_field = field
+	// 			slot.parent_index = index
+
+	// 			slotMap[id] = slot
+	// 			return slot
+	// 		}
+
+	// 		for (let field of component.fields) {
+	// 			if (field.type === 'slot') {
+	// 				const res = findSlot(id, slot.props[field.name] ?? [], field.name, slot)
+
+	// 				if (res) return res
+	// 			}
+	// 		}
+	// 	}
+	// 	return null
+	// }
 
 	function selectSlot(id) {
 		mode = 'options'
@@ -475,7 +496,7 @@
 			activeComponent = null
 			borderPosition = {}
 		}
-		let slotItem = findSlot(id, slots)
+		let slotItem = slotMap[id]
 
 		if (slotItem) {
 			rightSidebarOpen = true
@@ -514,7 +535,7 @@
 		field_name: string = '',
 		index: number = 0
 	) {
-		const slot = findSlot(slot_id, slots)
+		const slot = slotMap[slot_id]
 
 		insertComponent(slot.type, parent_id, field_name, index, slot.props)
 		onRemoveSlot(slot.id)
@@ -608,7 +629,7 @@
 				method: 'POST',
 				body: JSON.stringify(newComponent),
 			}).then((res) => {
-				goto('/edit/' + page.id)
+				goto('/edit/' + page.id, { invalidateAll: true })
 			})
 		}
 	}
@@ -679,9 +700,63 @@
 		activeComponent = component
 	}
 
-	async function updateComponent() {
-		await fetch('?/update', { method: 'POST', body: JSON.stringify(component) })
-		goto('.', { invalidateAll: true })
+	async function updateComponent({detail}: CustomEvent) {
+		rightOffcanvasOpen = false;
+		await fetch(`./components/${detail.id}/?/update`, { method: 'POST', body: JSON.stringify(detail) })
+		goto('/edit/' + page.id, { invalidateAll: true })
+
+	}
+
+	async function openAddComponentModal() {
+		const value = await modal.open(AddComponentModal, {
+			data: {
+			}
+		})
+
+		if (value?.name) {
+			if (components.map((x) => x.name).includes(value.name)) {
+				return
+			}
+
+			const newComponent = {
+				name: value.name,
+				fields: [],
+				slot: [],
+				raw: false,
+				template: ''
+			}
+
+			fetch(`/edit/${page.id}/components/?/createComponent`, {
+				method: 'POST',
+				body: JSON.stringify(newComponent),
+			}).then((res) => {
+				goto('/edit/' + page.id, { invalidateAll: true })
+			})
+		}
+	} 
+
+	async function updateTable() {
+		leftOffcanvasOpen = false
+
+fetch(`/edit/${page.id}/content/?/update`, {
+	method: 'POST',
+	body: JSON.stringify(activeTable),
+}).then((res) => {
+	goto('/edit/' + page.id, { invalidateAll: true })
+})
+
+	}
+	
+	async function removeTable() {
+		leftOffcanvasOpen = false
+
+fetch(`/edit/${page.id}/content/?/remove`, {
+	method: 'POST',
+	body: JSON.stringify(activeTable),
+}).then((res) => {
+	goto('/edit/' + page.id, { invalidateAll: true })
+})
+
 	}
 
 	async function updatePage() {
@@ -705,14 +780,13 @@
 		fetch('?/removePage', {
 			method: 'POST',
 			body: JSON.stringify(page),
-		}).then((res) => goto('/edit'))
+		}).then((res) => goto('/edit', { invalidateAll: true }))
 	}
 
-	function removeComponent() {
+	async function removeComponent({detail}: CustomEvent) {
 		rightOffcanvasOpen = false
-		fetch('?/remove', { method: 'POST', body: '{}' }).then((res) =>
-			goto('.', { invalidateAll: true })
-		)
+		await fetch(`./components/${detail.id}/?/remove`, { method: 'POST', body: JSON.stringify(detail) })
+		goto('.', { invalidateAll: true })
 	}
 
 	function cancelUpdatePage() {
@@ -755,6 +829,21 @@
 		await invalidateAll()
 	}
 
+	function openTableData(table) {
+		leftOffcanvasOpen = true
+		offcanvasMode = 'data-list'
+		activeTable = table
+		// 
+	}
+
+	function openTableSettings(table) {
+		leftOffcanvasOpen = true
+		offcanvasMode = 'table-settings'
+		activeTable = table
+
+		// 
+	}
+
 	let leftSidebarOpen = false
 	let rightSidebarOpen = false
 </script>
@@ -788,12 +877,17 @@
 							}
 						}}
 						class="font-bold me-2"
-						style="color: #a0d0ff; line-height: 20px; font-size: 16px;">
-						{#if mode === 'list' && leftSidebarOpen}
-							<Icon name="x" />
-							{:else}
+						style="color: #a0d0ff; line-height: 20px; font-size: 16px;">						
 							<Icon name="menu-2"/>
-						{/if}
+					</div>
+					<div
+						on:click={() => {
+								leftSidebarOpen = true;
+								mode = 'content'
+						}}
+						class="font-bold me-2"
+						style="color: #a0d0ff; line-height: 20px; font-size: 16px;">
+						<Icon name="database" />
 					</div>
 					<div
 						on:click={() => {
@@ -802,7 +896,7 @@
 						}}
 						class="font-bold me-2"
 						style="color: #a0d0ff; line-height: 20px; font-size: 16px;">
-						<Icon name="picture" />
+						<Icon name="photo" />
 					</div>
 					<!-- svelte-ignore a11y-click-events-have-key-events -->
 					<!-- svelte-ignore a11y-no-static-element-interactions -->
@@ -857,20 +951,13 @@
 							}
 						}}
 						class="toggle mb-0.5">
-						{#if rightSidebarOpen}
-							{#if mode === 'options'}
-								<Icon size="lg" name="category-filled" />
-							{:else}
-								<Icon size="lg" name="x" />
-							{/if}
-						{:else}
 							<Icon size="lg" name="category-filled" />
-						{/if}
 					</div>
 				</div>
 			</div>
 
 			<Offcanvas
+				on:close={() => $modal.close()}
 				style="width: 700px"
 				backdrop
 				autoClose
@@ -886,18 +973,42 @@
 							{tables}
 							{forms}
 							{components} />
-					{:else if offcanvasMode === 'assets'}
-						<AssetsPage
-							on:remove={(e) => removeFile(e.detail)}
-							on:update={(e) => updateFile(e.detail)}
-							on:upload={onUpload}
-							{assets} />
-					{:else}
+							{:else if offcanvasMode === 'assets'}
+							<AssetsPage
+								on:remove={(e) => removeFile(e.detail)}
+								on:update={(e) => updateFile(e.detail)}
+								on:upload={onUpload}
+								{assets} />
+						{:else if offcanvasMode === 'table-settings'}
+						
+						<Page>							
+							<ButtonList slot="header-buttons">
+								<Button on:click={() => leftOffcanvasOpen = false}>Cancel</Button>
+								<Button on:click={() => removeTable()} color="danger" bgColor="red">Remove</Button>
+								<Button on:click={() => updateTable()} color="primary" bgColor="blue">Update</Button>
+							</ButtonList>
+							{#if activeTable}
+							<TableEditCard bind:table={activeTable} {tables}/>
+							{/if}
+						</Page>
+
+							<!-- <ContentPage
+								on:remove={(e) => removeFile(e.detail)}
+								on:update={(e) => updateFile(e.detail)}
+								on:upload={onUpload}
+
+								{assets} /> -->
+								{:else if offcanvasMode === 'data-list'}
+								<!-- <DataList table={activeTable}/> -->
+						{:else}
 						<div>Page List</div>
 					{/if}
 				</OffcanvasBody>
+				<ModalProvider/>
+
 			</Offcanvas>
 			<Offcanvas
+				on:close={() => $modal.close()}
 				style="width: 700px"
 				backdrop
 				autoClose
@@ -915,13 +1026,31 @@
 						<div>Page List</div>
 					{/if}
 				</OffcanvasBody>
+				<ModalProvider/>
 			</Offcanvas>
 
 			<div class="sidebar-left" class:open={leftSidebarOpen}>
+				{#if mode === 'content'}
+					<div class="sidebar-title">
+						Tables
+						<Icon ms="auto" on:click={() => leftSidebarOpen = false} name="x"/>
+					</div>
+					{#each tables as tableItem}
+						<div on:click={() => openTableData(tableItem)} class:active={tableItem.id === page.id} class="sidebar-item">
+							{tableItem.name}
+							<Icon name="settings" ms="auto" on:click!stopPropagation={() => openTableSettings(tableItem)}/>
+						</div>
 
-				<div class="sidebar-title">Pages</div>
+					{/each}
+
+				{:else}
+				<div class="sidebar-title">
+					Pages
+
+					<Icon ms="auto" on:click={() => leftSidebarOpen = false} name="x"/>
+				</div>
 				{#each pages as pageItem}
-					<div on:click={() => gotoPageEditor(pageItem)} class:active={pageItem.id === page.id} class="sidebar-item">{pageItem.title} ({pageItem.slug})</div>
+					<div on:click={() => gotoPageEditor(pageItem)} class:active={pageItem.id === page.id} class="sidebar-item">{pageItem.title} <span class="opacity-50">/{pageItem.slug}</span></div>
 				{/each}
 
 
@@ -933,18 +1062,25 @@
 						{slot}
 						bind:activeSlot />
 				{/each}
+				{/if}
 			</div>
 
 			<div class="sidebar" class:open={rightSidebarOpen}>
-				{#if activeSlot}
+				{#if activeSlot && mode === 'options'}
 					<El class="sidebar-title">{getComponent(activeSlot.type).name}</El>
 				{/if}
 				<div class="sidebar-body">
 					{#if mode === 'add'}
-						<El class="sidebar-title">Components</El>
+					
+						<El class="sidebar-title">
+							<Icon me="2" on:click={() => rightSidebarOpen = false} name="x"/>
+
+						Components
+						<Icon ms="auto" on:click={() => openAddComponentModal()} name="plus" bgColor="primary"/>
+					</El>
 
 						{#if activeSlot}
-							<Button my="2" on:click={() => (mode = 'options')} bgColor="primary">Options</Button>
+							<Button my="2" on:click={() => (mode = 'options')} bgColor="primary">{getComponent(activeSlot.type).name} Options</Button>
 					
 						{/if}
 						{#each components as component}
@@ -969,7 +1105,6 @@
 						{/each}
 					
 					{:else if activeSlot}
-					<El class="sidebar-title">Slot options</El>
 
 						<Tabs>
 							<TabList>
@@ -1045,317 +1180,11 @@
 			<div class="fixed top-0 right-0">
 				<AlertProvider alerts={$alert} />
 			</div>
-			<ModalProvider />
+			{#if !leftOffcanvasOpen && !rightOffcanvasOpen}
+				<ModalProvider />
+			{/if}
 		</div>
 	{/if}
 {:else}
 	<div>Page or component not found <a href="/edit">Go Back</a></div>
 {/if}
-
-<style>
-	:global(body),
-	:global(html) {
-		padding: 0;
-		margin: 0;
-		height: 100%;
-	}
-
-	.page {
-		display: flex;
-		height: 100%;
-		overflow: hidden;
-		position: relative;
-		flex-direction: column;
-	}
-
-	.content {
-		color: black;
-		margin: 8px;
-		width: calc(100% - 16px);
-		transition: all 0.3s ease-in-out;
-		height: 100%;
-		overflow-y: auto;
-		background-color: white;
-	}
-
-	.content.left-sidebar-open {
-		margin-left: 208px;
-	}
-
-	.content.right-sidebar-open,
-	.content.left-sidebar-open {
-		width: calc(100% - 216px);
-	}
-	.content.right-sidebar-open.left-sidebar-open {
-		width: calc(100% - 416px);
-	}
-	.component-item {
-		padding: 0.5rem;
-		margin: 0.25rem;
-		border-radius: 4px;
-		box-shadow: 0 4px 8px -8px black;
-		background-color: var(--y-bg-surface);
-		border: 1px solid var(--y-border-color);
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-	}
-	.component-item :global(.y-icon) {
-		cursor: pointer;
-	}
-
-	.header {
-		transition: all 0.3s ease-in-out;
-		padding: 0 8px;
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		height: 36px;
-		box-shadow: 0 2px 4px -2px black;
-		border-bottom: 1px solid var(--y-bg-surface);
-		background-color: var(--y-bg-surface-tertiary);
-		color: white;
-		width: 100%;
-		margin-left: 0;
-	}
-
-	.header.left-sidebar-open {
-		margin-left: 200px;
-	}
-	.header.left-sidebar-open,
-	.header.right-sidebar-open {
-		width: calc(100% - 200px);
-	}
-	.header.left-sidebar-open.right-sidebar-open {
-		width: calc(100% - 400px);
-	}
-
-	.sidebar,
-	.sidebar-left {
-		position: absolute;
-		width: 200px;
-		right: 0;
-		top: 0;
-		overflow: auto;
-		bottom: 0;
-		transition: all 0.3s ease-in-out;
-		transform: translateX(200px);
-		background-color: var(--y-bg-surface-dark);
-		color: white;
-	}
-
-	.sidebar {
-		box-shadow: -2px 0px 4px -2px black;
-
-	}
-	.sidebar-left {
-		left: 0;
-		box-shadow: 2px 0px 4px -2px black;
-
-		transform: translateX(-200px);
-		right: unset;
-	}
-	.sidebar-left.open {
-		transform: translateX(0);
-	}
-
-	:global(.sidebar-title) {
-		height: 34px;
-		margin-bottom: 4px;
-		display: flex;
-		align-items: center;
-		padding: 4px 8px;
-		background-color: var(--y-bg-surface-tertiary);
-		border-top: 1px solid var(--y-bg-surface);
-
-		border-bottom: 1px solid var(--y-bg-surface);
-	}
-	:global(.sidebar-item) {
-		display: block;
-		color: var(--y-light);
-		height: 28px;
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		padding: 4px 8px;
-		border-bottom: 1px solid var(--y-bg-surface);
-		cursor: pointer;
-
-	}
-	
-	:global(.sidebar-item.active) {
-		background-color: var(--y-primary);
-	}
-	:global(.sidebar-item:hover) {
-		text-decoration: none;
-		background-color: var(--y-bg-surface);
-	}
-	/* :global(.component-wrapper) {
-		position: relative;
-	}
-	:global(.component-wrapper .handle) {
-		position: absolute;
-		top: 0;
-		left: 0;
-		opacity: 0.5;
-		width: 25px;
-		height: 25px;
-		background-color: #20202020;
-	} */
-	:global(.y-tab-item-link) {
-		padding-top: 4px;
-		padding-bottom: 4px;
-	}
-	/* .sidebar-body {
-		padding: 8px;
-	} */
-
-	.sidebar.open {
-		transform: translateX(0);
-	}
-
-	:global(.component-wrapper) {
-		display: contents;
-		border: 1px solid red;
-		min-height: 4px;
-	}
-
-	.component-border {
-		border: 2px solid var(--y-primary);
-		position: absolute;
-		display: none;
-		pointer-events: none;
-	}
-
-	:global(.component-name) {
-		background-color: black;
-		border-bottom: 1px solid var(--y-bg-surface);
-		line-height: 20px;
-		font-size: 16px;
-		height: 27px;
-
-		padding: 4px;
-	}
-
-	.component-hover-border {
-		transition: all 0.2s ease;
-		border: 1px dashed var(--y-primary);
-		position: absolute;
-		display: none;
-		pointer-events: none;
-	}
-
-	.buttons-container {
-		position: relative;
-	}
-	.buttons-container-absolute {
-		position: absolute;
-		bottom: 100%;
-		display: flex;
-		justify-content: space-between;
-		height: 16px;
-		display: flex;
-		width: 100%;
-	}
-	.buttons-container-absolute > * {
-		pointer-events: all;
-		cursor: pointer;
-	}
-
-	:global(.slot) {
-		display: contents;
-	}
-
-	:global(.placeholder) {
-		display: block;
-		align-self: stretch;
-		width: auto;
-		transition: all 0.3s ease;
-		opacity: 0;
-		position: relative;
-		z-index: 1 !important;
-		min-width: 0px;
-		margin-left: 0px;
-		margin-right: 0px;
-		min-height: 0px;
-	}
-
-	:global(.dragging .placeholder) {
-		min-width: 8px;
-		margin: -4px;
-		min-height: 8px;
-	}
-	:global(.placeholder::before) {
-		content: '';
-		background-color: var(--y-primary);
-		opacity: 0.5;
-		filter: blur(2px);
-		position: absolute;
-		top: -0.3rem;
-		bottom: -0.3rem;
-		left: -0.2rem;
-		right: -0.2rem;
-	}
-
-	:global(.placeholder::before) {
-		top: -0.1rem;
-		bottom: -0.1rem;
-		left: 0rem;
-		right: 0rem;
-	}
-
-	:global(.placeholder::after) {
-		content: '';
-		transition: scale 0.5s ease;
-		background-color: var(--y-primary);
-		position: absolute;
-		top: 0.2rem;
-		bottom: 0.2rem;
-		left: 0.2rem;
-		right: 0.2rem;
-		scale: 0;
-	}
-
-	:global(.placeholder:hover::after) {
-		scale: 1;
-	}
-	:global(.placeholder:hover) {
-		opacity: 1;
-		scale: 1;
-	}
-
-	.dragging :global(.placeholder) {
-		/* width: 12px; */
-		/* height: 12px; */
-		display: block;
-	}
-
-	:global(.placeholder.empty) {
-		display: contents;
-		display: flex;
-		opacity: 0.2 !important;
-		align-items: center;
-		justify-content: center;
-		font-size: 10px;
-		min-width: 30px;
-		min-height: 30px;
-		width: 100%;
-		height: 100%;
-		opacity: 1;
-		background-color: #4060a020;
-	}
-	:global(.placeholder.empty::before) {
-		content: 'Click to add component';
-		color: var(--y-primary);
-	}
-
-	/* :global(.slot > *) {
-		border: 1px solid blue;
-		min-width: 20px;
-		min-height: 20px;
-	} */
-
-	.buttons-container-absolute :global(.y-icon) {
-		display: flex;
-	}
-</style>
