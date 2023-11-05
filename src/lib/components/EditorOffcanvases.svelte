@@ -8,6 +8,7 @@
 	import { api } from '$lib/helpers/api'
 	import { onMount } from 'svelte'
 	import { t } from '$lib/i18n'
+	import EditSettingsForm from './EditSettingsForm.svelte'
 
 	// import ComponentProp from '$lib/ui/ComponentProp.svelte'
 	// import { customAlphabet } from 'nanoid'
@@ -1044,7 +1045,7 @@
 		{:else if offcanvasMode === 'settings'}
 		<PageHeader px=2 title="Update Profile">
 			<Button on:click={() => leftOffcanvasOpen = false}>{t('buttons.cancel')}</Button>
-			<Button color="primary" bgColor="primary" on:click={updateProfile}>{t('buttons.save')}</Button>
+			<Button color="primary" bgColor="primary" on:click={updateSettings}>{t('buttons.save')}</Button>
 		</PageHeader>
 		<EditSettingsForm bind:settings on:save={() => updateSettings()} />
 			<!-- {:else if offcanvasMode === 'assets'}
