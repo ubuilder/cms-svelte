@@ -120,7 +120,7 @@ export function cms_api(
 		},
 		async getPage(id: string) {
 			return call<DbList<Page>>('/pages/getPages', { where: { id } }).then(
-				(res) => res.data!.data[0]
+				(res) => ({...res, data: res.data!.data[0]})
 			)
 		},
 		async updatePage({ id, data }: any) {
@@ -138,15 +138,15 @@ export function cms_api(
 		async getTables(filters = {}) {
 			return call<DbList<Table>>('/content/getTables', filters)
 		},
-		async getTableBySlug(slug: string): Promise<Table> {
+		async getTableBySlug(slug: string) {
 			return call<DbList<Table>>('/content/getTables', {
 				where: { slug },
-			}).then((res) => res.data!.data[0])
+			}).then((res) => ({...res, data: res.data!.data[0]}))
 		},
 
-		async getTable(id: string): Promise<Table> {
+		async getTable(id: string) {
 			return call<DbList<Table>>('/content/getTables', { where: { id } }).then(
-				(res) => res.data!.data[0]
+				(res) => ({...res, data: res.data!.data[0]})
 			)
 		},
 		async removeTable(id: string) {

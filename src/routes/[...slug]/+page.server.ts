@@ -53,9 +53,11 @@ export async function load({ locals, params, url }) {
 		api: locals.api,
 		slug: params.slug,
 	})
+	console.log(page)
 
 	if (!page) {
 		const settings = await locals.api.getSettings().then(res => res.data)
+		console.log(settings)
 		if (url.pathname === '/') {
 			if (settings.page_home) {
 				page = await locals.api.getPage(settings.page_home).then(res => res.data)
@@ -72,7 +74,9 @@ export async function load({ locals, params, url }) {
 				html: '404: page not found!',
 			}
 		}
+		
 	}
+	console.log(page)
 
 	if (url.searchParams.has('edit')) {
 		throw redirect(302, '/edit/' + page.id)

@@ -36,6 +36,7 @@
 	import { DragDrop } from '$lib/helpers/drag-drop'
 	import SidebarTableList from './SidebarTableList.svelte'
 	import SidebarPageList from './SidebarPageList.svelte'
+	import { api } from '$lib/helpers/api'
 
 	let components: any[] = []
 	export let type = 'page'
@@ -820,10 +821,10 @@
 	onMount(async () => {
 		loading = false
 
-		components = await fetch('/api/components').then(res => res.json()).then(res => res.data)
-		pages = await fetch('/api/pages').then(res => res.json()).then(res => res.data)
-		assets = await fetch('/api/assets').then(res => res.json()).then(res => res.data)
-		// assets = await fetch('/api/assets').then(res => res.json()).then(res => res.data)
+		components = await api('/components').then(res => res.data)
+		pages = await api('/pages').then(res => res.data)
+		assets = await api('/assets').then(res => res.data)
+		// assets = await api('/assets').then(res => res.data)
 
 
 
