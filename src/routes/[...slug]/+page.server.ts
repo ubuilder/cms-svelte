@@ -48,21 +48,21 @@ async function findPageBySlug({
 }
 
 export async function load({ locals, params, url }) {
-	const components = await locals.api.getComponents({ perPage: 500 }).then((res) => res.data)
+	const components = await locals.api.getComponents({ perPage: 500 }).then((res) => res.data.data)
 	let { page, params: pageParams } = await findPageBySlug({
 		api: locals.api,
 		slug: params.slug,
 	})
 
 	if (!page) {
-		const settings = await locals.api.getSettings()
+		const settings = await locals.api.getSettings().then(res => res.data)
 		if (url.pathname === '/') {
 			if (settings.page_home) {
-				page = await locals.api.getPage(settings.page_home)
+				page = await locals.api.getPage(settings.page_home).then(res => res.data)
 			}
 		} else {
 			if (settings.page_404) {
-				page = await locals.api.getPage(settings.page_404)
+				page = await locals.api.getPage(settings.page_404).then(res => res.data)
 			}
 		}
 
@@ -101,7 +101,7 @@ export async function load({ locals, params, url }) {
 			}
 		}
 
-		const table = await locals.api.getTable(load.table)
+		const table = await locals.api.getTable(load.table).then(res => res.data)
 
 		for (let field of table.fields) {
 			if (field.type === 'relation') {
@@ -118,11 +118,11 @@ export async function load({ locals, params, url }) {
 		if (load.multiple) {
 			items[load.name] = await locals.api
 				.getData({ table: load.table, where, with: with_ })
-				.then((res) => res.data!)
+				.then((res) => res.data.data!)
 		} else {
 			items[load.name] = await locals.api
 				.getData({ table: load.table, where, with: with_ })
-				.then((res) => res.data[0]!)
+				.then((res) => res.data.data[0]!)
 		}
 	}
 

@@ -42,19 +42,23 @@
 	import SidebarPageList from './SidebarPageList.svelte'
 	import SidebarSlotList from './SidebarSlotList.svelte'
 
-	export let components: any[] = []
+	let components: any[] = []
 	export let type = 'page'
-	export let tables: any[] = []
+	let tables: any[] = []
 	export let assets: any[] = []
 	export let forms: any[] = []
-	export let pages: any[] = []
 
-	export let page: any = {}
+	let pages: any[] = []
+
+	export let page_id: any = undefined
+
+	let page = {}
+
 	export let component: any = {}
 
 	let draggableModule: typeof import('@shopify/draggable') | null = null
 
-	$: slots = page.slot
+	$: slots = page.slot ?? []
 
 	let activeComponent: any = null
 	let activeSlot: any = null
@@ -818,8 +822,20 @@
 	}
 
 	let loading = true
-	onMount(() => {
+	onMount(async () => {
 		loading = false
+
+		components = await fetch('/api/components').then(res => res.json()).then(res => res.data)
+		pages = await fetch('/api/pages').then(res => res.json()).then(res => res.data)
+		assets = await fetch('/api/assets').then(res => res.json()).then(res => res.data)
+		// assets = await fetch('/api/assets').then(res => res.json()).then(res => res.data)
+
+
+
+		page = pages.find(x => x.id === page_id)
+		
+		console.log('pages: ', pages)
+		
 		for (let component of components) {
 			hbsTemplates[component.id] = hbs.compile(component.template)
 		}
