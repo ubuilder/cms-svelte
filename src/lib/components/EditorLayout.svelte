@@ -30,13 +30,14 @@
 	} from '@ulibs/yesvelte'
 	import { goto, invalidate, invalidateAll } from '$app/navigation'
 	import AddComponentModal from '$lib/components/components/AddComponentModal.svelte'
-	import interact from 'interactjs'
+	// import interact from 'interactjs'
 	import { browser } from '$app/environment'
 	import SlotSidebarItem from './SlotSidebarItem.svelte'
 	import { DragDrop } from '$lib/helpers/drag-drop'
 	import SidebarTableList from './SidebarTableList.svelte'
 	import SidebarPageList from './SidebarPageList.svelte'
 	import { api } from '$lib/helpers/api'
+	import SidebarSlotList from './SidebarSlotList.svelte'
 
 	let components: any[] = []
 	export let type = 'page'
@@ -1013,6 +1014,7 @@
 	<!-- <script src="https://cdn.tailwindcss.com"></script> -->
 	<!-- <script src="https://cdn.tailwindcss.com"></script> -->
 	<!-- <script src="https://cdn.tailwindcss.com"></script> -->
+	<!-- <script src="https://cdn.tailwindcss.com"></script> -->
 	<script src="/cdn.tailwindcss.com.js"></script>
 </svelte:head>
 
@@ -1061,18 +1063,18 @@
 					</div>
 					<!-- svelte-ignore a11y-click-events-have-key-events -->
 					<!-- svelte-ignore a11y-no-static-element-interactions -->
-					<!-- <div
+					<div
 						on:click={() => {
-							if(mode === 'slot' && leftSidebarOpen) {
-								leftSidebarOpen = false;
+							if (mode === 'slot' && leftSidebarOpen) {
+								leftSidebarOpen = false
 							} else {
-								leftSidebarOpen = true;
+								leftSidebarOpen = true
 								mode = 'slot'
 							}
 						}}
 						class="toggle mb-0.5">
 						<Icon name="menu-deep" />
-					</div> -->
+					</div>
 					<div
 						class="font-bold mb-0.5 me-2"
 						style="display: flex; align-items: center; color: #a0d0ff">
@@ -1126,107 +1128,111 @@
 
 			<div class="sidebar-left" class:open={leftSidebarOpen}>
 				<div class="h-full w-full relative">
+					<Icon
+						class="absolute right-2 top-[0.375rem]"
+						on:click={() => (leftSidebarOpen = false)}
+						name="x" />
 
-				<Icon  class="absolute right-2 top-[0.375rem]" on:click={() => (leftSidebarOpen = false)} name="x" />
-
-				{#if mode === 'content'}
-					<SidebarTableList {tables} on:open-table-settings={(event) => openTableSettings(event.detail)} on:open-table-data={(event) => openTableData(event.detail)}/>
-				{:else}
-				
-					<SidebarPageList {page} {pages} on:open-page={(e)=> gotoPageEditor(e.detail)} on:open-page-settings={()=>console.log("settings")}/>
+					{#if mode === 'content'}
+						<SidebarTableList
+							{tables}
+							on:open-table-settings={(event) => openTableSettings(event.detail)}
+							on:open-table-data={(event) => openTableData(event.detail)} />
+					{:else}
+						<SidebarPageList
+							{page}
+							{pages}
+							on:open-page={(e) => gotoPageEditor(e.detail)}
+							on:open-page-settings={() => console.log('settings')} />
 
 						<div class="h-10"></div>
-					<div class=" sidebar-title">Slots</div>
-					{#each slots as slot}
-						<SlotSidebarItem
-							on:open-settings={() => {
-								selectSlot(slot.id)
-							}}
-							{components}
-							{slot}
-							bind:activeSlot />
-					{/each}
-				{/if}
-			</div>
-		</div>
-
-			<div class="sidebar" class:open={rightSidebarOpen}>
-				<div class="h-full w-full relative">
-
-				<Icon  class="absolute left-2 top-[0.375rem]" on:click={() => (rightSidebarOpen = false)} name="x" />
-
-				<!-- {#if activeSlot && mode === 'options'}
-					<El class="pl-8 sidebar-title">{getComponent(activeSlot.type).name}</El>
-				{/if} -->
-				<div class="sidebar-body">
-					{#if mode === 'add'}
-						<El class="pl-8 sidebar-title">
-							
-							Components
-							<Icon
-								ms="auto"
-								on:click={() => openAddComponentModal()}
-								name="plus"
-								bgColor="primary" />
-						</El>
-
-						{#if activeSlot}
-							<Button my="2" on:click={() => (mode = 'options')} bgColor="primary"
-								>{getComponent(activeSlot.type).name} Options</Button>
-						{/if}
-						{#each components as component}
-							<!-- svelte-ignore a11y-click-events-have-key-events -->
-							<!-- svelte-ignore a11y-no-static-element-interactions -->
-							<div class="component-item-placeholder">
-								<div
-									class="component-item"
-									data-draggable
-									data-mode="clone"
-									data-id="component-{component.id}"
-									on:mousedown={() => (dragging = true)}>
-									<span>{component.name}</span>
-									<Icon
-										name="settings"
-										on:click!stopPropagation={(e) => openComponentSettings(component)} />
-								</div>
-							</div>
-						{/each}
-					{:else if activeSlot}
-					<div class="pl-8 sidebar-title">{getComponent(activeSlot.type).name} options</div>
-						<Tabs>
-							<TabList>
-								<TabItem>Props</TabItem>
-								<TabItem>Style</TabItem>
-							</TabList>
-							<TabContent>
-								<TabPanel p="2">
-									{#each getComponent(activeSlot.type)?.fields ?? [] as field}
-										{#if field.type !== 'slot'}
-											<ComponentProp
-												{components}
-												items={{}}
-												{field}
-												bind:value={activeSlot.props[field.name]} />
-										{/if}
-									{/each}
-
-									<El row>
-										<El col></El>
-									</El>
-								</TabPanel>
-								<TabPanel p="2">
-									<El row>
-										<El col>
-											<FormInput label="Class" bind:value={activeSlot.props.Class} />
-										</El>
-									</El>
-								</TabPanel>
-							</TabContent>
-						</Tabs>
+						<SidebarSlotList
+							on:open-settings={(e) => selectSlot(e.detail.id)}
+							{slots}
+							{activeSlot}
+							{components} />
 					{/if}
 				</div>
 			</div>
-		</div>
+
+			<div class="sidebar" class:open={rightSidebarOpen}>
+				<div class="h-full w-full relative">
+					<Icon
+						class="absolute left-2 top-[0.375rem]"
+						on:click={() => (rightSidebarOpen = false)}
+						name="x" />
+
+					<!-- {#if activeSlot && mode === 'options'}
+					<El class="sidebar-title">{getComponent(activeSlot.type).name}</El>
+				{/if} -->
+					<div class="sidebar-body">
+						{#if mode === 'add'}
+							<El class="sidebar-title">
+								Components
+								<Icon
+									ms="auto"
+									on:click={() => openAddComponentModal()}
+									name="plus"
+									bgColor="primary" />
+							</El>
+
+							{#if activeSlot}
+								<Button my="2" on:click={() => (mode = 'options')} bgColor="primary"
+									>{getComponent(activeSlot.type).name} Options</Button>
+							{/if}
+							{#each components as component}
+								<!-- svelte-ignore a11y-click-events-have-key-events -->
+								<!-- svelte-ignore a11y-no-static-element-interactions -->
+								<div class="component-item-placeholder">
+									<div
+										class="component-item"
+										data-draggable
+										data-mode="clone"
+										data-id="component-{component.id}"
+										on:mousedown={() => (dragging = true)}>
+										<span>{component.name}</span>
+										<Icon
+											name="settings"
+											on:click!stopPropagation={(e) => openComponentSettings(component)} />
+									</div>
+								</div>
+							{/each}
+						{:else if activeSlot}
+							<div class="sidebar-title">{getComponent(activeSlot.type).name} options</div>
+							<Tabs>
+								<TabList>
+									<TabItem>Props</TabItem>
+									<TabItem>Style</TabItem>
+								</TabList>
+								<TabContent>
+									<TabPanel p="2">
+										{#each getComponent(activeSlot.type)?.fields ?? [] as field}
+											{#if field.type !== 'slot'}
+												<ComponentProp
+													{components}
+													items={{}}
+													{field}
+													bind:value={activeSlot.props[field.name]} />
+											{/if}
+										{/each}
+
+										<El row>
+											<El col></El>
+										</El>
+									</TabPanel>
+									<TabPanel p="2">
+										<El row>
+											<El col>
+												<FormInput label="Class" bind:value={activeSlot.props.Class} />
+											</El>
+										</El>
+									</TabPanel>
+								</TabContent>
+							</Tabs>
+						{/if}
+					</div>
+				</div>
+			</div>
 
 			<!-- svelte-ignore a11y-click-events-have-key-events -->
 			<!-- svelte-ignore a11y-no-static-element-interactions -->
