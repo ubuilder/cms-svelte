@@ -1055,7 +1055,7 @@
 					<div
 						on:click={() => {
 							leftOffcanvasOpen = true
-							offcanvasMode = 'assets'
+							offcanvasMode = 'profile'
 						}}
 						class="font-bold me-2"
 						style="color: #a0d0ff; line-height: 20px; font-size: 16px;">

@@ -1,5 +1,6 @@
-<script>
+<script lang="ts">
 	import { invalidateAll } from '$app/navigation'
+	import { api } from '$lib/helpers/api'
 	import { t } from '$lib/i18n'
 	import {
 		Button,
@@ -15,18 +16,11 @@
 		Icon,
 		Page,
 	} from '@ulibs/yesvelte'
+	import { createEventDispatcher, onMount } from 'svelte'
 	// export let data;
-	export let data
+	export let settings: any = {}
 
-	function save() {
-		fetch('?/save', {
-			method: 'POST',
-			body: JSON.stringify(data.settings),
-		}).then((res) => {
-			location.reload()
-		})
-	}
-	let pages = data.pages
+	let pages: any[] = []
 
 	let languages = [
 		{ key: 'fa', text: 'فارسی' },
@@ -38,16 +32,26 @@
 		{ key: 'dark', text: t('settings.dark') },
 		{ key: 'light', text: t('settings.light') },
 	]
+
+	const dispatch = createEventDispatcher()
+
+	onMount(() => {
+		pages = api('/pages').then(res => res.data)
+	})
+
+	function save() {
+		dispatch('save', settings)
+	}
 </script>
 
-<Page title={t('settings.title')}>
+<Page title="">
 	<Card>
 		<CardBody>
 			<FormSelect
 				items={languages}
 				key="key"
 				placeholder={t('settings.choose_language')}
-				bind:value={data.settings.lang}
+				bind:value={settings.lang}
 				label={t('settings.language')}
 				let:item>
 				{item.text}
@@ -56,7 +60,7 @@
 				inline
 				items={themes}
 				key="key"
-				bind:value={data.settings.theme}
+				bind:value={settings.theme}
 				label={t('settings.theme')}
 				let:item>
 				{item.text}
@@ -66,7 +70,7 @@
 				items={pages.filter(x => !x.slug.includes('/{'))}
 				key="id"
 				placeholder={t('settings.page_home_placeholder')}
-				bind:value={data.settings.page_home}
+				bind:value={settings.page_home}
 				label={t('settings.page_home')}
 				let:item>
 				{item.title} ({item.slug})
@@ -76,7 +80,7 @@
 				items={pages.filter(x => !x.slug.includes('/{'))}
 				key="id"
 				placeholder={t('settings.page_404_placeholder')}
-				bind:value={data.settings.page_404}
+				bind:value={settings.page_404}
 				label={t('settings.page_404')}
 				let:item>
 				{item.title}
@@ -84,13 +88,13 @@
 
 			<FormField label="Menus (Sidebar)">
 				<El row>
-					{#each data.settings.menu ?? [] as menu, index}
+					{#each settings.menu ?? [] as menu, index}
 						<FormInput bind:value={menu.icon} col="2" label={index == 0 ? 'Icon' : undefined} />
 						<FormInput bind:value={menu.title} col="5" label={index == 0 ? 'Name' : undefined} />
 						<FormInput bind:value={menu.href} col label={index == 0 ? 'Href' : undefined} />
 						<El col="auto" mt={index === 0 ? '4' : undefined}>
 							<Button
-								on:click={() => (data.settings.menu = data.settings.menu.filter((x) => x !== menu))}
+								on:click={() => (settings.menu = settings.menu.filter((x) => x !== menu))}
 								ghost
 								color="danger"><Icon name="trash" /></Button>
 						</El>
@@ -101,8 +105,8 @@
 						<Button
 							color="primary"
 							on:click={() =>
-								(data.settings.menu = [
-									...(data.settings.menu ?? []),
+								(settings.menu = [
+									...(settings.menu ?? []),
 									{ icon: '', title: '', href: '' },
 								])}>
 							<Icon name="plus" />

@@ -1,9 +1,13 @@
 <script lang="ts">
-	import { ModalProvider, alert, modal } from '@ulibs/yesvelte'
+	import { ModalProvider, PageHeader, alert, modal } from '@ulibs/yesvelte'
 	import EditPage from './EditPage.svelte'
 
-	import { Offcanvas, OffcanvasBody } from 'yesvelte'
+	import { Button, Offcanvas, OffcanvasBody, OffcanvasHeader } from 'yesvelte'
 	import { goto } from '$app/navigation'
+	import EditProfileForm from './EditProfileForm.svelte'
+	import { api } from '$lib/helpers/api'
+	import { onMount } from 'svelte'
+	import { t } from '$lib/i18n'
 
 	// import ComponentProp from '$lib/ui/ComponentProp.svelte'
 	// import { customAlphabet } from 'nanoid'
@@ -919,6 +923,8 @@
 	export let page: any
 	export let components: any[] = []
 	export let tables: any[] = []
+	let user = {};
+	let settings = {};
 	export let forms: any[] = [] // forms of current page
 
 	export let leftOffcanvasOpen = false
@@ -995,6 +1001,21 @@
 	function onOffcanvasClose() {
 		if($modal) $modal.close()
 	}
+
+	async function updateProfile() {
+		const res = await api('/profile', {data: user})
+		alert.success(res.message)
+	}
+	async function updateSettings() {
+		const res = await api('/settings', {data: settings})
+		alert.success(res.message)
+	}
+
+	onMount(async () => {
+		user = await api('/profile').then(res => res.data);
+		settings = await api('/settings').then(res => res.data);
+
+	})
 </script>
 
 <Offcanvas
@@ -1014,6 +1035,18 @@
 				{tables}
 				{forms}
 				{components} />
+		{:else if offcanvasMode === 'profile'}
+		<PageHeader px=2 title="Update Profile">
+			<Button on:click={() => leftOffcanvasOpen = false}>{t('buttons.cancel')}</Button>
+			<Button color="primary" bgColor="primary" on:click={updateProfile}>{t('buttons.save')}</Button>
+		</PageHeader>
+		<EditProfileForm bind:user on:submit={() => updateProfile()}/>
+		{:else if offcanvasMode === 'settings'}
+		<PageHeader px=2 title="Update Profile">
+			<Button on:click={() => leftOffcanvasOpen = false}>{t('buttons.cancel')}</Button>
+			<Button color="primary" bgColor="primary" on:click={updateProfile}>{t('buttons.save')}</Button>
+		</PageHeader>
+		<EditSettingsForm bind:settings on:save={() => updateSettings()} />
 			<!-- {:else if offcanvasMode === 'assets'}
 						<AssetsPage
 							on:remove={(e) => removeFile(e.detail)}
@@ -1047,6 +1080,7 @@
 					-->
 		{/if}
 	</OffcanvasBody>
+	
 	<ModalProvider />
 </Offcanvas>
 <Offcanvas
