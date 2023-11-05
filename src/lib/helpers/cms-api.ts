@@ -110,63 +110,63 @@ export function cms_api(
 			return call<string>('/pages/getPageCss', { page_id })
 		},
 		async getSettings() {
-			return call<any>('/settings/getSettings').then((res) => res.data)
+			return call<any>('/settings/getSettings')
 		},
 		async setSettings(settings: any) {
-			return call<any>('/settings/setSettings', settings).then((res) => res.data)
+			return call<any>('/settings/setSettings', settings)
 		},
 		async createPage({ title, slug }: any) {
 			return call('/pages/createPage', { title, slug })
 		},
 		async getPage(id: string) {
 			return call<DbList<Page>>('/pages/getPages', { where: { id } }).then(
-				(res) => res.data!.data[0]
+				(res) => ({...res, data: res.data!.data[0]})
 			)
 		},
 		async updatePage({ id, data }: any) {
-			return call<any>('/pages/updatePage', { id, data }).then((res) => res.data)
+			return call<any>('/pages/updatePage', { id, data })
 		},
 		async removePage(id: string) {
-			return call<any>('/pages/removePage', { id }).then((res) => res.data)
+			return call<any>('/pages/removePage', { id })
 		},
 		async createTable({ name, icon, fields = [] }: Partial<Table>) {
-			return call<any>('/content/createTable', { name, icon, fields }).then((res) => res.data)
+			return call<any>('/content/createTable', { name, icon, fields })
 		},
 		async updateTable({ id, data }: { id: string; data: Partial<Table> }) {
-			return call<any>('/content/updateTable', { id, data }).then((res) => res.data)
+			return call<any>('/content/updateTable', { id, data })
 		},
 		async getTables(filters = {}) {
 			return call<DbList<Table>>('/content/getTables', filters)
 		},
-		async getTableBySlug(slug: string): Promise<Table> {
+		async getTableBySlug(slug: string) {
 			return call<DbList<Table>>('/content/getTables', {
 				where: { slug },
-			}).then((res) => res.data!.data[0])
+			}).then((res) => ({...res, data: res.data!.data[0]}))
 		},
 
-		async getTable(id: string): Promise<Table> {
+		async getTable(id: string) {
 			return call<DbList<Table>>('/content/getTables', { where: { id } }).then(
-				(res) => res.data!.data[0]
+				(res) => ({...res, data: res.data!.data[0]})
 			)
 		},
 		async removeTable(id: string) {
-			return call<any>('/content/removeTable', { id }).then((res) => res.data)
+			return call<any>('/content/removeTable', { id })
 		},
 		async getComponents(params: any): Promise<Component> {
-			return call<any>('/components/getComponents', params).then((res) => res.data)
+			return call<any>('/components/getComponents', params)
 		},
 		async createComponent(component: Partial<Component>): Promise<Component> {
-			return call<any>('/components/createComponent', component).then((res) => res.data)
+			return call<any>('/components/createComponent', component)
 		},
 		async updateComponent(id: string, component: Partial<Component>): Promise<Component> {
 			return call<any>('/components/updateComponent', {
 				id,
 				data: component,
-			}).then((res) => res.data)
+			})
 		},
 		async removeComponent(id: string): Promise<Component> {
 			console.log('removeComponent', id)
-			return call<any>('/components/removeComponent', { id }).then((res) => res.data)
+			return call<any>('/components/removeComponent', { id })
 		},
 		async getComponent(id: string): Promise<Component> {
 			return call<any>('/components/getComponents', { where: { id } }).then(
@@ -203,13 +203,13 @@ export function cms_api(
 
 
 		async getAssets(params: any) {
-			return call<DbList<any>>('/assets/getFiles', params).then((res) => res.data)
+			return call<DbList<any>>('/assets/getFiles', params)
 		},
 		async removeAsset(id: string) {
-			return call<any>('/assets/removeFile', { id }).then((res) => res.data)
+			return call<any>('/assets/removeFile', { id })
 		},
 		async updateAsset(id: string, data: any) {
-			return call<any>('/assets/updateFile', { id, data }).then((res) => res.data)
+			return call<any>('/assets/updateFile', { id, data })
 		},
 		async uploadFile(file: File) {
 			const body = new FormData()

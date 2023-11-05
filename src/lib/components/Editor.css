@@ -114,6 +114,14 @@ html {
 
 	border-bottom: 1px solid var(--y-bg-surface);
 }
+
+.sidebar-left .sidebar-title {
+	padding-right: 2rem;
+}
+
+.sidebar .sidebar-title {
+	padding-left: 2rem;
+}
 .sidebar-item {
 	display: block;
 	color: var(--y-light);
@@ -223,7 +231,7 @@ html {
 	min-height: 0px;
 }
 
-.dragging .placeholder {
+.placeholder {
 	min-width: 8px;
 	margin: -4px;
 	min-height: 8px;
@@ -259,15 +267,18 @@ html {
 	scale: 0;
 }
 
-.placeholder:hover::after {
+.dragging .placeholder:hover::after {
 	scale: 1;
 }
-.placeholder:hover {
+.dragging .placeholder:hover {
 	opacity: 1;
 	scale: 1;
 }
+.current-draggable .placeholder {
+	display: none;
+}
 
-.dragging .placeholder {
+.placeholder {
 	/* width: 12px; */
 	/* height: 12px; */
 	display: block;

@@ -1,5 +1,7 @@
 <script lang="ts">
-	import ComponentProp from '$lib/ui/ComponentProp.svelte'
+	import EditorOffcanvases from './EditorOffcanvases.svelte'
+
+	// import ComponentProp from '$lib/ui/ComponentProp.svelte'
 	import { customAlphabet } from 'nanoid'
 	import hbs from 'handlebars'
 	import '@ulibs/yesvelte/styles.css'
@@ -25,36 +27,47 @@
 		Page,
 		modal,
 		ButtonList,
+		Dropdown,
+		Avatar,
+		DropdownMenu,
+		DropdownItem,
 	} from '@ulibs/yesvelte'
 	import { goto, invalidate, invalidateAll } from '$app/navigation'
 	import AddComponentModal from '$lib/components/components/AddComponentModal.svelte'
-	import interact from 'interactjs'
 	import { browser } from '$app/environment'
+	
 	import SlotSidebarItem from './SlotSidebarItem.svelte'
-	import EditPage from '../../routes/edit/[page_id]/EditPage.svelte'
-	import EditComponent from '../../routes/edit/[page_id]/components/[id]/EditComponent.svelte'
-	import AssetsPage from '../../routes/edit/[page_id]/assets/AssetsPage.svelte'
-	import TableEditCard from '../../routes/edit/[page_id]/content/TableEditCard.svelte'
+	import { DragDrop } from '$lib/helpers/drag-drop'
+	import SidebarTableList from './SidebarTableList.svelte'
+	import SidebarPageList from './SidebarPageList.svelte'
+	import { api } from '$lib/helpers/api'
+	import SidebarSlotList from './SidebarSlotList.svelte'
+	import SidebarComponentList from './SidebarComponentList.svelte'
+	import SidebarComponentOption from './SidebarComponentOption.svelte'
+	import HeaderItem from './HeaderItem.svelte'
+	import { t } from '$lib/i18n'
 
-	export let components: any[] = []
+	let components: any[] = []
 	export let type = 'page'
-	export let tables: any[] = []
+	let tables: any[] = []
 	export let assets: any[] = []
 	export let forms: any[] = []
-	export let pages: any[] = []
 
+	let user = {}
+	let pages: any[] = []
 
-	export let page: any = {}
+	export let page_id: any = undefined
+
+	let page = {}
+
 	export let component: any = {}
 
-	$: slots = page.slot
+	let draggableModule: typeof import('@shopify/draggable') | null = null
+
+	$: slots = page.slot ?? []
 
 	let activeComponent: any = null
 	let activeSlot: any = null
-
-	let newComponentPosition: string | null = null
-	let newComponentPositionField: any = null
-	let newComponentPositionIndex: any = null
 
 	let mode = 'options'
 	let contentEl: any
@@ -66,9 +79,10 @@
 
 	let dragging = false
 
-	let activeTable = null
+	let activeTable: any = null
+	let instance: any = null
 
-	const slotMap : any = {}
+	const slotMap: any = {}
 
 	function nanoid() {
 		return customAlphabet('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', 8)
@@ -81,14 +95,140 @@
 	const hbsTemplates: any = {}
 
 	const placeholder = (parent: string, field: string = '', index: number = 0, className = '') =>
-		`<span class="placeholder ${className}" data-parent="${parent}" data-index="${index}" data-field="${field}"></span>`
-
+		`<span class="placeholder ${className}" data-dropzone data-parent="${parent}" data-index="${index}" data-field="${field}"></span>`
 	let html = ''
 
 	let leftOffcanvasOpen = false
 	let rightOffcanvasOpen = false
 
 	function render(slot = null) {
+		if (draggableModule !== null) {
+			setTimeout(() => {
+				console.log('initialize draggable')
+				if (instance) {
+					instance.destroy()
+
+					instance = null
+				}
+
+				document.querySelectorAll('.component-wrapper > :first-child').forEach((x) => {
+					x.setAttribute('data-draggable', '')
+
+					x.setAttribute('data-id', x.parentElement.id)
+				})
+
+				instance = DragDrop(document.querySelector('.page'), {
+					draggable: '[data-draggable]',
+					dropzone: '[data-dropzone]',
+				})
+
+				instance.on('start', (event) => {
+					// event.current.classList.add('current-draggable')
+					dragging = true
+				})
+
+				instance.on('return', (event) => {
+					// event.current.classList.remove('current-draggable')
+					dragging = false
+				})
+
+				instance.on('drop', (event) => {
+					dragging = false
+					// event.current.classList.remove('current-draggable')
+
+					const target = event.target
+					const source = event.source.dataset.id.split('-')[1]
+					// 	const target = event.data.dropzone
+					// 	const source = event.data.dragEvent.source.dataset.id.split('-')[1]
+
+					console.log({ target, source: event.source })
+
+					if (target) {
+						const parent = target.getAttribute('data-parent')
+						const field = target.getAttribute('data-field')
+						const index = +target.getAttribute('data-index')
+
+						console.log('move or insert: ', { source, parent, field, index })
+
+						if (event.source.dataset.mode === 'clone') {
+							insertComponent(source, parent, field, index)
+						} else {
+							if (source && parent && field) {
+								moveComponent(source, parent, field, index)
+							} else if (source && parent === '' && field === '' && !isNaN(index)) {
+								moveComponent(source, parent, field, index)
+							}
+						}
+					}
+					// 		console.log('moveComponent', source, parent, field, index)
+					// 		if (source && ((parent && field && !isNaN(index)) || (!parent && !field))) {
+					// 			if(event.data.dragEvent.source.dataset.mode === 'clone') {
+					// 				insertComponent(source, parent, field, index)
+					// 			} else {
+					// 				if(parent !== field) {
+					// 					moveComponent(source, parent, field, index)
+					// 				}
+					// 			}
+					// 		}
+					// 	}
+				})
+
+				// instance = new draggableModule!.Droppable(document.querySelectorAll('.page'), {
+				// 	draggable: '[data-draggable]',
+				// 	dropzone: '[data-dropzone]',
+				// 	classes: {
+				// 		'draggable:active': 'bg-green-400',
+				// 		'source:dragging': 'bg-red-500',
+				// 		mirror: 'bg-blue-500',
+				// 		'source:original': 'bg-sky-300'
+				// 	}
+				// 	// 	'droppable:active': 'highlight',
+				// 	// 	'source:dragging': 'component-original',
+				// 	// 	'source:original': 'component-dragging',
+				// 	// 	mirror: 'mirror',
+				// 	// 	'container:dragging': 'dragging',
+				// 	// },
+				// })
+
+				// console.log(instance)
+
+				// instance.on('droppable:stop', (event) => {
+				// 	console.log('event: ', event)
+				// 	console.log(event.data.dragEvent.source.dataset.id)
+				// 	console.log(event.data.dropzone)
+
+				// 	const target = event.data.dropzone
+				// 	const source = event.data.dragEvent.source.dataset.id.split('-')[1]
+
+				// 	// 				console.log({ target, source })
+
+				// 	if (target) {
+				// 		const parent = target.getAttribute('data-parent')
+				// 		const field = target.getAttribute('data-field')
+				// 		const index = +target.getAttribute('data-index')
+
+				// 		console.log('moveComponent', source, parent, field, index)
+				// 		if (source && ((parent && field && !isNaN(index)) || (!parent && !field))) {
+				// 			if(event.data.dragEvent.source.dataset.mode === 'clone') {
+				// 				insertComponent(source, parent, field, index)
+				// 			} else {
+				// 				if(parent !== field) {
+				// 					moveComponent(source, parent, field, index)
+				// 				}
+				// 			}
+				// 		}
+				// 	}
+				// })
+			}, 5)
+		} else {
+			import('@shopify/draggable').then((mod) => {
+				draggableModule = mod
+
+				render()
+			})
+			return ''
+		}
+
 		if (slot) {
 			console.log(`render(${slot.id})`)
 
@@ -124,14 +264,12 @@
 		const component = getComponent(slot.type)
 		const id = slot.id ?? getId()
 
-		
 		slot.parent_id = parent_id ?? null
 		slot.parent_field = parent_field
 		slot.parent_index = parent_index
 
 		slotMap[id] = slot
 
-		
 		if (component?.raw) {
 			for (let index in component.fields) {
 				const field = component.fields[index]
@@ -149,9 +287,9 @@
 					}
 
 					if (content) {
-						props[field.name] = `<div class="slot${
-							!content ? ' placeholder' : ''
-						}" data-parent="${id}" data-index="0">${content}</div>`
+						props[
+							field.name
+						] = `<div class="slot" data-parent="${id}" data-index="0">${content}</div>`
 					} else {
 						props[field.name] = placeholder(id, field.name, 0, 'empty')
 					}
@@ -164,165 +302,12 @@
 
 			if (hbsTemplates[slot.type]) {
 				setTimeout(() => {
-					const isDraggable = interact('.component-item').draggable()
-
-					function dragMoveListener(event) {
-						dragging = true
-						var target = event.target
-						// keep the dragged position in the data-x/data-y attributes
-						var x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx
-						var y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy
-
-						// translate the element
-						target.style.transform = 'translate(' + x + 'px, ' + y + 'px)'
-
-						target.style.opacity = '0.5'
-						// update the posiion attributes
-						target.setAttribute('data-x', x)
-						target.setAttribute('data-y', y)
-					}
-
-					function dragStartListener(event) {
-						dragging = true
-						currentDraggable = event.target
-					}
-
-					function dragEndListener(event) {
-						currentDraggable = null
-						beforeY = 0
-						beforeX = 0
-						afterY = 0
-						afterX = 0
-					}
-
-					if (!isDraggable.enabled) {
-						interact.dynamicDrop(true)
-						interact('.component-item').draggable({
-							// hold: 1000,
-
-							onstart: dragStartListener,
-							// onmove: dragMoveListener,
-							onend: (e) => {
-								dragEndListener(e)
-								const target = e.relatedTarget
-								const source = e.currentTarget.id.split('-')[1]
-
-								console.log({ target, source })
-
-								if (target) {
-									const parent = target.getAttribute('data-parent')
-									const field = target.getAttribute('data-field')
-									const index = +target.getAttribute('data-index')
-
-									// let result = JSON.parse(JSON.stringify(slots));
-
-									console.log('insertComponent', source, parent, field, index)
-									insertComponent(source, parent, field, index)
-								} else {
-									console.log('render: else of drag end')
-									render(activeSlot)
-								}
-							},
-							// restrict: {
-							// restriction: "parent",
-							// endOnly: true,
-							// elementRect: { top: 0, left: 0, bottom: 1, right: 1 }
-							// },
-							autoScroll: { container: contentEl },
-						})
-
-						console.log(document.querySelectorAll('.component-wrapper > :first-child'))
-						interact('.component-wrapper > :first-child').draggable({
-							// hold: 1000,
-							// allowFrom: '.handle',
-							onstart: dragStartListener,
-							// onmove: dragMoveListener,
-							onend: (e) => {
-								dragEndListener(e)
-
-								console.log(e)
-								const target = e.relatedTarget
-								const source = e.currentTarget.parentElement.id.split('-')[1]
-
-								console.log({ target, source })
-								if (target) {
-									const parent = target.getAttribute('data-parent')
-									const field = target.getAttribute('data-field')
-									const index = target.getAttribute('data-index')
-
-									console.log('moveComponent', source, parent, field, index)
-									moveComponent(source, parent, field, index)
-								} else {
-									console.log('render: else of drag end 2')
-									render(activeSlot)
-								}
-							},
-
-							// restrict: {
-							// restriction: "parent",
-							// endOnly: true,
-							// elementRect: { top: 0, left: 0, bottom: 1, right: 1 }
-							// },
-							autoScroll: { container: contentEl },
-							listeners: {},
-						})
-						interact('.placeholder').dropzone({
-							//
-							accept({ dropzone, draggableElement }) {
-								console.log('accept')
-								// allowedComponents of slot...
-								return true
-							},
-						})
-
-						var currentDraggable: any = null
-						var beforeY = 0,
-							beforeX = 0
-						var afterY = 0,
-							afterX = 0
-
-						interact(contentEl).on('scroll', function () {
-							if (!currentDraggable) {
-								return
-							}
-
-							beforeY = afterY
-							beforeX = afterX
-
-							if (afterY == 0 && beforeY == 0) beforeY = this.scrollTop
-							if (afterX == 0 && beforeX == 0) beforeX = this.scrollLeft
-
-							afterY = this.scrollTop
-							afterX = this.scrollLeft
-
-							var y = (parseInt(currentDraggable.getAttribute('data-y')) || 0) + (afterY - beforeY)
-							var x = (parseInt(currentDraggable.getAttribute('data-x')) || 0) + (afterX - beforeX)
-
-							// translate the element
-							currentDraggable.style.webkitTransform = currentDraggable.style.transform =
-								'translate(' + x + 'px, ' + y + 'px)'
-
-							// update the position attributes
-							currentDraggable.setAttribute('data-x', x)
-							currentDraggable.setAttribute('data-y', y)
-						})
-					}
-
-					// interact('.slot.empty').dropzone({
-					// 	//
-					// 	accept({ dropzone, draggableElement }) {
-					// 		console.log({ dropzone, draggableElement })
-					// 		// allowedComponents of slot...
-					// 		return true
-					// 	},
-					// }),
-
 					document.querySelector(`[data-parent="${id}"]`)?.addEventListener('click', (e) => {
 						e.stopPropagation()
 						rightSidebarOpen = true
-						newComponentPosition = id
-						newComponentPositionField = e.target.getAttribute('data-field')
-						newComponentPositionIndex = +e.target.getAttribute('data-index')
+						// newComponentPosition = id
+						// newComponentPositionField = e.target.getAttribute('data-field')
+						// newComponentPositionIndex = +e.target.getAttribute('data-index')
 
 						selectSlot(id)
 						mode = 'add'
@@ -345,13 +330,168 @@
 							onMouseLeave(e)
 						})
 					}
-				}, 1)
+				}, 5)
+
 				slot.id = id
 				return `${
 					withPlaceholder ? placeholder(parent_id, parent_field, parent_index) : ''
 				}<div class="component-wrapper" id="component-${id}">${hbsTemplates[slot.type](
 					props
 				)}</div>`
+
+				// setTimeout(() => {
+				// 	const isDraggable = interact('.component-item').draggable()
+
+				// 	function dragMoveListener(event) {
+				// 		dragging = true
+				// 		var target = event.target
+				// 		// keep the dragged position in the data-x/data-y attributes
+				// 		var x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx
+				// 		var y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy
+
+				// 		// translate the element
+				// 		target.style.transform = 'translate(' + x + 'px, ' + y + 'px)'
+
+				// 		target.style.opacity = '0.5'
+				// 		// update the posiion attributes
+				// 		target.setAttribute('data-x', x)
+				// 		target.setAttribute('data-y', y)
+				// 	}
+
+				// 	function dragStartListener(event) {
+				// 		dragging = true
+				// 		currentDraggable = event.target
+				// 	}
+
+				// 	function dragEndListener(event) {
+				// 		currentDraggable = null
+				// 		beforeY = 0
+				// 		beforeX = 0
+				// 		afterY = 0
+				// 		afterX = 0
+				// 	}
+
+				// 	if (!isDraggable.enabled) {
+				// 		interact.dynamicDrop(true)
+				// 		interact('.component-item').draggable({
+				// 			// hold: 1000,
+
+				// 			onstart: dragStartListener,
+				// 			// onmove: dragMoveListener,
+				// 			onend: (e) => {
+				// 				dragEndListener(e)
+				// 				const target = e.relatedTarget
+				// 				const source = e.currentTarget.id.split('-')[1]
+
+				// 				console.log({ target, source })
+
+				// 				if (target) {
+				// 					const parent = target.getAttribute('data-parent')
+				// 					const field = target.getAttribute('data-field')
+				// 					const index = +target.getAttribute('data-index')
+
+				// 					// let result = JSON.parse(JSON.stringify(slots));
+
+				// 					console.log('insertComponent', source, parent, field, index)
+				// 					insertComponent(source, parent, field, index)
+				// 				} else {
+				// 					console.log('render: else of drag end')
+				// 					render(activeSlot)
+				// 				}
+				// 			},
+				// 			// restrict: {
+				// 			// restriction: "parent",
+				// 			// endOnly: true,
+				// 			// elementRect: { top: 0, left: 0, bottom: 1, right: 1 }
+				// 			// },
+				// 			autoScroll: { container: contentEl },
+				// 		})
+
+				// 		console.log(document.querySelectorAll('.component-wrapper > :first-child'))
+				// 		interact('.component-wrapper > :first-child').draggable({
+				// 			// hold: 1000,
+				// 			// allowFrom: '.handle',
+				// 			onstart: dragStartListener,
+				// 			// onmove: dragMoveListener,
+				// 			onend: (e) => {
+				// 				dragEndListener(e)
+
+				// 				console.log(e)
+				// 				const target = e.relatedTarget
+				// 				const source = e.currentTarget.parentElement.id.split('-')[1]
+
+				// 				console.log({ target, source })
+				// 				if (target) {
+				// 					const parent = target.getAttribute('data-parent')
+				// 					const field = target.getAttribute('data-field')
+				// 					const index = target.getAttribute('data-index')
+
+				// 					console.log('moveComponent', source, parent, field, index)
+				// 					moveComponent(source, parent, field, index)
+				// 				} else {
+				// 					console.log('render: else of drag end 2')
+				// 					render(activeSlot)
+				// 				}
+				// 			},
+
+				// 			// restrict: {
+				// 			// restriction: "parent",
+				// 			// endOnly: true,
+				// 			// elementRect: { top: 0, left: 0, bottom: 1, right: 1 }
+				// 			// },
+				// 			autoScroll: { container: contentEl },
+				// 			listeners: {},
+				// 		})
+				// 		interact('.placeholder').dropzone({
+				// 			//
+				// 			accept({ dropzone, draggableElement }) {
+				// 				console.log('accept')
+				// 				// allowedComponents of slot...
+				// 				return true
+				// 			},
+				// 		})
+
+				// 		var currentDraggable: any = null
+				// 		var beforeY = 0,
+				// 			beforeX = 0
+				// 		var afterY = 0,
+				// 			afterX = 0
+
+				// 		interact(contentEl).on('scroll', function () {
+				// 			if (!currentDraggable) {
+				// 				return
+				// 			}
+
+				// 			beforeY = afterY
+				// 			beforeX = afterX
+
+				// 			if (afterY == 0 && beforeY == 0) beforeY = this.scrollTop
+				// 			if (afterX == 0 && beforeX == 0) beforeX = this.scrollLeft
+
+				// 			afterY = this.scrollTop
+				// 			afterX = this.scrollLeft
+
+				// 			var y = (parseInt(currentDraggable.getAttribute('data-y')) || 0) + (afterY - beforeY)
+				// 			var x = (parseInt(currentDraggable.getAttribute('data-x')) || 0) + (afterX - beforeX)
+
+				// 			// translate the element
+				// 			currentDraggable.style.webkitTransform = currentDraggable.style.transform =
+				// 				'translate(' + x + 'px, ' + y + 'px)'
+
+				// 			// update the position attributes
+				// 			currentDraggable.setAttribute('data-x', x)
+				// 			currentDraggable.setAttribute('data-y', y)
+				// 		})
+				// 	}
+
+				// 	// interact('.slot.empty').dropzone({
+				// 	// 	//
+				// 	// 	accept({ dropzone, draggableElement }) {
+				// 	// 		console.log({ dropzone, draggableElement })
+				// 	// 		// allowedComponents of slot...
+				// 	// 		return true
+				// 	// 	},
+				// 	// }),
 			}
 		}
 		if (!component) return 'todo'
@@ -454,7 +594,6 @@
 		elStack = elStack.filter((x) => x !== e.target)
 	}
 
-
 	// function findSlot(id: string, slots: any[], field = null, parent = null) {
 	// 	console.log("findSlot",id, slotMap)
 
@@ -535,6 +674,7 @@
 		field_name: string = '',
 		index: number = 0
 	) {
+		console.log('moveComponent', slot_id, parent_id, field_name, index)
 		const slot = slotMap[slot_id]
 
 		insertComponent(slot.type, parent_id, field_name, index, slot.props)
@@ -547,6 +687,16 @@
 		index: number = 0,
 		props = {}
 	) {
+		console.log(
+			'insertComponent',
+			getComponent(component_id).name,
+			parent_id,
+			field_name,
+			index,
+			props
+		)
+		let localSlots = JSON.parse(JSON.stringify(slots))
+
 		mode = 'options'
 
 		const id = getId()
@@ -559,7 +709,7 @@
 
 		if (!parent_id) {
 			// slots.push(newSlot)
-			slots = [...slots.slice(0, index), newSlot, ...slots.slice(index)]
+			localSlots = [...localSlots.slice(0, index), newSlot, ...localSlots.slice(index)]
 			setTimeout(() => {
 				selectSlot(id)
 			}, 1)
@@ -595,12 +745,12 @@
 			}
 		}
 
-		for (let slot of slots) {
+		for (let slot of localSlots) {
 			findAndInsert(slot)
 		}
 
-		console.log('render: insert component...', slots)
-
+		slots = localSlots
+		console.log('render: insert component...', slots, localSlots)
 		render()
 	}
 
@@ -668,27 +818,34 @@
 	}
 
 	$: {
-		leftSidebarOpen;
-		rightSidebarOpen;
-		
+		leftSidebarOpen
+		rightSidebarOpen
+
 		setTimeout(() => {
 			updateActiveBorder()
 		}, 400)
 	}
 
 	let loading = true
-	onMount(() => {
+	onMount(async () => {
 		loading = false
+		components = await api('/components').then(res => res.data)
+		pages = await api('/pages').then(res => res.data)
+		assets = await api('/assets').then(res => res.data)
+		// assets = await api('/assets').then(res => res.data)
+
+		page = pages.find((x) => x.id === page_id)
+
+		console.log('pages: ', pages)
+
 		for (let component of components) {
 			hbsTemplates[component.id] = hbs.compile(component.template)
 		}
 
 		console.log('render: on mount')
-		
-
 	})
 
-	$: if(contentEl) {
+	$: if (contentEl) {
 		render()
 		contentEl.addEventListener('scroll', updateActiveBorder)
 	}
@@ -700,99 +857,6 @@
 		activeComponent = component
 	}
 
-	async function updateComponent({detail}: CustomEvent) {
-		rightOffcanvasOpen = false;
-		await fetch(`./components/${detail.id}/?/update`, { method: 'POST', body: JSON.stringify(detail) })
-		goto('/edit/' + page.id, { invalidateAll: true })
-
-	}
-
-	async function openAddComponentModal() {
-		const value = await modal.open(AddComponentModal, {
-			data: {
-			}
-		})
-
-		if (value?.name) {
-			if (components.map((x) => x.name).includes(value.name)) {
-				return
-			}
-
-			const newComponent = {
-				name: value.name,
-				fields: [],
-				slot: [],
-				raw: false,
-				template: ''
-			}
-
-			fetch(`/edit/${page.id}/components/?/createComponent`, {
-				method: 'POST',
-				body: JSON.stringify(newComponent),
-			}).then((res) => {
-				goto('/edit/' + page.id, { invalidateAll: true })
-			})
-		}
-	} 
-
-	async function updateTable() {
-		leftOffcanvasOpen = false
-
-fetch(`/edit/${page.id}/content/?/update`, {
-	method: 'POST',
-	body: JSON.stringify(activeTable),
-}).then((res) => {
-	goto('/edit/' + page.id, { invalidateAll: true })
-})
-
-	}
-	
-	async function removeTable() {
-		leftOffcanvasOpen = false
-
-fetch(`/edit/${page.id}/content/?/remove`, {
-	method: 'POST',
-	body: JSON.stringify(activeTable),
-}).then((res) => {
-	goto('/edit/' + page.id, { invalidateAll: true })
-})
-
-	}
-
-	async function updatePage() {
-		leftOffcanvasOpen = false
-
-		await onSave()
-
-		// invalidateAll()
-		alert.success('page updated!')
-
-		// fetch('?/updatePage', {
-		// 	method: 'POST',
-		// 	body: JSON.stringify(page),
-		// }).then((res) => {
-		// })
-	}
-
-	function removePage() {
-		leftOffcanvasOpen = false
-
-		fetch('?/removePage', {
-			method: 'POST',
-			body: JSON.stringify(page),
-		}).then((res) => goto('/edit', { invalidateAll: true }))
-	}
-
-	async function removeComponent({detail}: CustomEvent) {
-		rightOffcanvasOpen = false
-		await fetch(`./components/${detail.id}/?/remove`, { method: 'POST', body: JSON.stringify(detail) })
-		goto('.', { invalidateAll: true })
-	}
-
-	function cancelUpdatePage() {
-		leftOffcanvasOpen = false
-	}
-
 	function gotoPageEditor(newPage) {
 		page = newPage
 		slots = newPage.slot
@@ -800,40 +864,11 @@ fetch(`/edit/${page.id}/content/?/remove`, {
 		render()
 	}
 
-	async function onUpload({ detail }: CustomEvent) {
-		const result = await fetch('./assets?/upload', {
-			method: 'POST',
-			body: detail,
-		}).then((res) => res.json())
-
-		invalidateAll()
-	}
-
-	async function removeFile(id: string) {
-		await fetch('./assets?/remove', {
-			method: 'POST',
-			body: JSON.stringify({ id }),
-		}).then((res) => res.json())
-
-		await invalidateAll()
-	}
-
-	async function updateFile(asset: any) {
-		await fetch('./assets?/update', {
-			method: 'POST',
-			body: JSON.stringify({
-				id: asset.id,
-				data: asset,
-			}),
-		}).then((res) => res.json())
-		await invalidateAll()
-	}
-
 	function openTableData(table) {
 		leftOffcanvasOpen = true
 		offcanvasMode = 'data-list'
 		activeTable = table
-		// 
+		//
 	}
 
 	function openTableSettings(table) {
@@ -841,9 +876,23 @@ fetch(`/edit/${page.id}/content/?/remove`, {
 		offcanvasMode = 'table-settings'
 		activeTable = table
 
-		// 
+		//
 	}
 
+	$: if (mode === 'add') {
+		render()
+	}
+
+	function openEditProfile() {
+		leftOffcanvasOpen = true
+		offcanvasMode = 'profile'
+	}
+	
+	function openEditSettings() {
+		leftOffcanvasOpen = true
+		offcanvasMode = 'settings'
+	}
+	
 	let leftSidebarOpen = false
 	let rightSidebarOpen = false
 </script>
@@ -853,9 +902,15 @@ fetch(`/edit/${page.id}/content/?/remove`, {
 	<!-- <script src="https://cdn.tailwindcss.com"></script> -->
 	<!-- <script src="https://cdn.tailwindcss.com"></script> -->
 	<!-- <script src="https://cdn.tailwindcss.com"></script> -->
+	<!-- <script src="https://cdn.tailwindcss.com"></script> -->
+	<!-- <script src="https://cdn.tailwindcss.com"></script> -->
+	<!-- <script src="https://cdn.tailwindcss.com"></script> -->
+	<!-- <script src="https://cdn.tailwindcss.com"></script> -->
+	<!-- <script src="https://cdn.tailwindcss.com"></script> -->
+	<!-- <script src="https://cdn.tailwindcss.com"></script> -->
 	<script src="/cdn.tailwindcss.com.js"></script>
 </svelte:head>
-{#if type === 'page'}
+
 	{#if loading}
 		<Loading show />
 	{:else}
@@ -864,84 +919,67 @@ fetch(`/edit/${page.id}/content/?/remove`, {
 				class="header"
 				class:right-sidebar-open={rightSidebarOpen}
 				class:left-sidebar-open={leftSidebarOpen}>
-				<div style="display: flex; align-items: center; gap: 4px;">
+				<div class="flex items-center gap-2">
+					<HeaderItem
+						icon="file"
+						on:click={() => {
+							leftSidebarOpen = true
+							mode = 'list'
+						}} />
+
+					<HeaderItem
+						icon="database"
+						on:click={() => {
+							leftSidebarOpen = true
+							mode = 'content'
+						}} />
+
+					<HeaderItem
+						icon="photo"
+						on:click={() => {
+							leftOffcanvasOpen = true
+							offcanvasMode = 'assets'
+						}} />
 					<!-- svelte-ignore a11y-click-events-have-key-events -->
 					<!-- svelte-ignore a11y-no-static-element-interactions -->
-					<div
-						on:click={() => {
-							if(mode === 'list' && leftSidebarOpen) {
-								leftSidebarOpen = false;
-							} else {
-								leftSidebarOpen = true;
-								mode = 'list'
-							}
-						}}
-						class="font-bold me-2"
-						style="color: #a0d0ff; line-height: 20px; font-size: 16px;">						
-							<Icon name="menu-2"/>
-					</div>
-					<div
-						on:click={() => {
-								leftSidebarOpen = true;
-								mode = 'content'
-						}}
-						class="font-bold me-2"
-						style="color: #a0d0ff; line-height: 20px; font-size: 16px;">
-						<Icon name="database" />
-					</div>
-					<div
-						on:click={() => {
-								leftOffcanvasOpen = true;
-								offcanvasMode = 'assets'
-						}}
-						class="font-bold me-2"
-						style="color: #a0d0ff; line-height: 20px; font-size: 16px;">
-						<Icon name="photo" />
-					</div>
-					<!-- svelte-ignore a11y-click-events-have-key-events -->
-					<!-- svelte-ignore a11y-no-static-element-interactions -->
-					<!-- <div
-						on:click={() => {
-							if(mode === 'slot' && leftSidebarOpen) {
-								leftSidebarOpen = false;
-							} else {
-								leftSidebarOpen = true;
-								mode = 'slot'
-							}
-						}}
-						class="toggle mb-0.5">
-						<Icon name="menu-deep" />
-					</div> -->
-					<div
-						class="font-bold mb-0.5 me-2"
-						style="display: flex; align-items: center; color: #a0d0ff">
-						<Icon
-							size="lg"
-							on:click={() => {
-								offcanvasMode = 'edit'
-								leftOffcanvasOpen = true
-							}}
-							name="settings" />
-					</div>
+					
 				</div>
 
-				<div style="display: flex; align-items: center; gap: 8px">
-					<Button on:click={onSave} class="bg-blue-500 h-[24px] px-[8px]" color="primary" size="sm"
-						>Save</Button>
-					{#key page.slug}
-						<Button
-							href="/{page.slug}"
-							on:click={onSave}
-							class="bg-green-500 h-[24px] px-[8px]"
-							color="success"
-							target="_blank"
-							size="sm">View</Button>
-					{/key}
-
-					
-					<!-- svelte-ignore a11y-click-events-have-key-events -->
-					<!-- svelte-ignore a11y-no-static-element-interactions -->
-					<div
+				<div class="flex items-center gap-2">
+					<HeaderItem on:click={onSave}>
+						<Button class="bg-blue-500 h-[24px] px-[8px]" color="primary" size="sm">Save</Button>
+					</HeaderItem>
+					<HeaderItem>
+						{#key page.slug}
+							<Button
+								href="/{page.slug}"
+								class="bg-green-500 h-[24px] px-[8px]"
+								color="success"
+								target="_blank"
+								size="sm">View</Button>
+						{/key}
+					</HeaderItem>
+					<HeaderItem
+					>
+					<Dropdown autoClose arrow={false} placement="bottom-end">
+						<Avatar slot="target" size="xs" shape="circle" color="primary">
+						  {#if user.profile}
+							<img alt="profile" src="/files/{user.profile}" />
+						  {:else}
+							<img alt="profile" src="/images/avatar.png" />
+						  {/if}
+						</Avatar>
+						<DropdownMenu>
+						  <DropdownItem on:click={openEditProfile}>{t('profile.title')}</DropdownItem>
+						  <DropdownItem on:click={openEditSettings}>{t('settings.title')}</DropdownItem>
+						  <DropdownItem divider />
+						  <DropdownItem href="/edit/logout">{t('layout.logout')}</DropdownItem>
+						</DropdownMenu>
+					  </Dropdown>
+					<!--  -->
+					</HeaderItem>
+					<HeaderItem
+						icon="category-filled"
 						on:click={() => {
 							if (rightSidebarOpen && mode === 'options') {
 								mode = 'add'
@@ -949,206 +987,83 @@ fetch(`/edit/${page.id}/content/?/remove`, {
 								rightSidebarOpen = !rightSidebarOpen
 								mode = 'add'
 							}
-						}}
-						class="toggle mb-0.5">
-							<Icon size="lg" name="category-filled" />
-					</div>
+						}} />
 				</div>
 			</div>
-
-			<Offcanvas
-				on:close={() => $modal.close()}
-				style="width: 700px"
-				backdrop
-				autoClose
-				placement="start"
-				bind:show={leftOffcanvasOpen}>
-				<OffcanvasBody p="0">
-					{#if offcanvasMode === 'edit'}
-						<EditPage
-							on:update={updatePage}
-							on:cancel={cancelUpdatePage}
-							on:remove={removePage}
-							bind:page
-							{tables}
-							{forms}
-							{components} />
-							{:else if offcanvasMode === 'assets'}
-							<AssetsPage
-								on:remove={(e) => removeFile(e.detail)}
-								on:update={(e) => updateFile(e.detail)}
-								on:upload={onUpload}
-								{assets} />
-						{:else if offcanvasMode === 'table-settings'}
-						
-						<Page>							
-							<ButtonList slot="header-buttons">
-								<Button on:click={() => leftOffcanvasOpen = false}>Cancel</Button>
-								<Button on:click={() => removeTable()} color="danger" bgColor="red">Remove</Button>
-								<Button on:click={() => updateTable()} color="primary" bgColor="blue">Update</Button>
-							</ButtonList>
-							{#if activeTable}
-							<TableEditCard bind:table={activeTable} {tables}/>
-							{/if}
-						</Page>
-
-							<!-- <ContentPage
-								on:remove={(e) => removeFile(e.detail)}
-								on:update={(e) => updateFile(e.detail)}
-								on:upload={onUpload}
-
-								{assets} /> -->
-								{:else if offcanvasMode === 'data-list'}
-								<!-- <DataList table={activeTable}/> -->
-						{:else}
-						<div>Page List</div>
-					{/if}
-				</OffcanvasBody>
-				<ModalProvider/>
-
-			</Offcanvas>
-			<Offcanvas
-				on:close={() => $modal.close()}
-				style="width: 700px"
-				backdrop
-				autoClose
-				placement="end"
-				bind:show={rightOffcanvasOpen}>
-				<OffcanvasBody p="0">
-					{#if offcanvasMode === 'component-settings'}
-						<EditComponent
-							{components}
-							component={activeComponent}
-							on:remove={removeComponent}
-							on:cancel={() => (rightOffcanvasOpen = false)}
-							on:update={updateComponent} />
-					{:else}
-						<div>Page List</div>
-					{/if}
-				</OffcanvasBody>
-				<ModalProvider/>
-			</Offcanvas>
+			<EditorOffcanvases
+				{tables}
+				{forms}
+				{components}
+				bind:page
+				bind:offcanvasMode
+				bind:leftOffcanvasOpen
+				bind:rightOffcanvasOpen />
 
 			<div class="sidebar-left" class:open={leftSidebarOpen}>
-				{#if mode === 'content'}
-					<div class="sidebar-title">
-						Tables
-						<Icon ms="auto" on:click={() => leftSidebarOpen = false} name="x"/>
-					</div>
-					{#each tables as tableItem}
-						<div on:click={() => openTableData(tableItem)} class:active={tableItem.id === page.id} class="sidebar-item">
-							{tableItem.name}
-							<Icon name="settings" ms="auto" on:click!stopPropagation={() => openTableSettings(tableItem)}/>
-						</div>
+				<div class="h-full w-full relative">
+					<Icon
+						class="absolute right-2 top-[0.375rem]"
+						on:click={() => (leftSidebarOpen = false)}
+						name="x" />
 
-					{/each}
+					{#if mode === 'content'}
+						<SidebarTableList
+							{tables}
+							on:open-table-settings={(event) => openTableSettings(event.detail)}
+							on:open-table-data={(event) => openTableData(event.detail)} />
+					{:else}
+						<SidebarPageList
+							{page}
+							{pages}
+							on:open-page={(e) => gotoPageEditor(e.detail)}
+							on:open-page-settings={() => console.log('settings')} />
 
-				{:else}
-				<div class="sidebar-title">
-					Pages
-
-					<Icon ms="auto" on:click={() => leftSidebarOpen = false} name="x"/>
+						<div class="h-10"></div>
+						<SidebarSlotList
+							on:open-settings={(e) => selectSlot(e.detail.id)}
+							{slots}
+							{activeSlot}
+							{components} />
+					{/if}
 				</div>
-				{#each pages as pageItem}
-					<div on:click={() => gotoPageEditor(pageItem)} class:active={pageItem.id === page.id} class="sidebar-item">{pageItem.title} <span class="opacity-50">/{pageItem.slug}</span></div>
-				{/each}
-
-
-				<div class="mt-10 sidebar-title">Slots</div>
-				{#each slots as slot}
-					<SlotSidebarItem
-						on:open-settings={() => { selectSlot(slot.id)}}
-						{components}
-						{slot}
-						bind:activeSlot />
-				{/each}
-				{/if}
 			</div>
 
 			<div class="sidebar" class:open={rightSidebarOpen}>
-				{#if activeSlot && mode === 'options'}
+				<div class="h-full w-full relative">
+					<Icon
+						class="absolute left-2 top-[0.375rem]"
+						on:click={() => (rightSidebarOpen = false)}
+						name="x" />
+
+					<!-- {#if activeSlot && mode === 'options'}
 					<El class="sidebar-title">{getComponent(activeSlot.type).name}</El>
-				{/if}
-				<div class="sidebar-body">
-					{#if mode === 'add'}
-					
-						<El class="sidebar-title">
-							<Icon me="2" on:click={() => rightSidebarOpen = false} name="x"/>
-
-						Components
-						<Icon ms="auto" on:click={() => openAddComponentModal()} name="plus" bgColor="primary"/>
-					</El>
-
-						{#if activeSlot}
-							<Button my="2" on:click={() => (mode = 'options')} bgColor="primary">{getComponent(activeSlot.type).name} Options</Button>
-					
+				{/if} -->
+					<div class="sidebar-body">
+						{#if mode === 'add'}
+							<SidebarComponentList on:open-component-settings={(e)=> openComponentSettings(e.detail)} {activeSlot} {mode} {components} {dragging} />
+						{:else if activeSlot}
+							<SidebarComponentOption {activeSlot} />
 						{/if}
-						{#each components as component}
-							<!-- svelte-ignore a11y-click-events-have-key-events -->
-							<!-- svelte-ignore a11y-no-static-element-interactions -->
-							<div
-								class="component-item"
-								id="component-{component.id}"
-								on:mousedown={() => (dragging = true)}
-								on:click={() =>
-									insertComponent(
-										component.id,
-										newComponentPosition,
-										newComponentPositionField,
-										newComponentPositionIndex
-									)}>
-								<span>{component.name}</span>
-								<Icon
-									name="settings"
-									on:click!stopPropagation={(e) => openComponentSettings(component)} />
-							</div>
-						{/each}
-					
-					{:else if activeSlot}
-
-						<Tabs>
-							<TabList>
-								<TabItem>Props</TabItem>
-								<TabItem>Style</TabItem>
-							</TabList>
-							<TabContent>
-								<TabPanel p="2">
-									{#each getComponent(activeSlot.type)?.fields ?? [] as field}
-										{#if field.type !== 'slot'}
-											<ComponentProp
-												{components}
-												items={{}}
-												{field}
-												bind:value={activeSlot.props[field.name]} />
-										{/if}
-									{/each}
-
-									<El row>
-										<El col></El>
-									</El>
-								</TabPanel>
-								<TabPanel p="2">
-									<El row>
-										<El col>
-											<FormInput label="Class" bind:value={activeSlot.props.Class} />
-										</El>
-									</El>
-								</TabPanel>
-							</TabContent>
-						</Tabs>
-					{/if}
+					</div>
 				</div>
 			</div>
+
 			<!-- svelte-ignore a11y-click-events-have-key-events -->
 			<!-- svelte-ignore a11y-no-static-element-interactions -->
+			{#if page}
 			<div
 				on:click={() => selectSlot('')}
 				bind:this={contentEl}
 				class="content"
+				data-dropzone
 				class:dragging
 				class:right-sidebar-open={rightSidebarOpen}
 				class:left-sidebar-open={leftSidebarOpen}>
 			</div>
+			{:else}
+			No page selected..
+			{/if}
+			
 
 			<div
 				class="component-hover-border"
@@ -1177,7 +1092,7 @@ fetch(`/edit/${page.id}/content/?/remove`, {
 					</div>
 				</div>
 			</div>
-			<div class="fixed top-0 right-0">
+			<div class="fixed top-8 right-0">
 				<AlertProvider alerts={$alert} />
 			</div>
 			{#if !leftOffcanvasOpen && !rightOffcanvasOpen}
@@ -1185,6 +1100,3 @@ fetch(`/edit/${page.id}/content/?/remove`, {
 			{/if}
 		</div>
 	{/if}
-{:else}
-	<div>Page or component not found <a href="/edit">Go Back</a></div>
-{/if}

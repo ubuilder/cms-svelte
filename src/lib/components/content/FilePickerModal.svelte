@@ -50,14 +50,16 @@
       }
     });
 
-    const res = await fetch("/edit/_/assets/get", {
+    const res = await fetch("/edit/assets/get", {
       method: "POST",
       body: JSON.stringify(filtersObject),
       headers: {
         "content-type": "application/json",
       },
     });
+
     assets = await res.json().then((res) => res.assets);
+    console.log(assets)
   }
 
   let title: string;
