@@ -10,7 +10,7 @@ export let icon: string = '';
 
 <div
 	on:click
-	class="font-bold me-2"
+	class="font-bold"
 	style="color: #a0d0ff; line-height: 20px; font-size: 16px;">
     <slot>
         <Icon name={icon}/>

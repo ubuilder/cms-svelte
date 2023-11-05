@@ -1029,7 +1029,7 @@
 				class="header"
 				class:right-sidebar-open={rightSidebarOpen}
 				class:left-sidebar-open={leftSidebarOpen}>
-				<div style="display: flex; align-items: center; gap: 4px;">
+				<div class="flex items-center gap-2">
 					<HeaderItem
 						icon="file"
 						on:click={() => {
@@ -1060,7 +1060,7 @@
 						}} />
 				</div>
 
-				<div class="flex items-center gap-1 -m-2">
+				<div class="flex items-center gap-2">
 					<HeaderItem on:click={onSave}>
 						<Button class="bg-blue-500 h-[24px] px-[8px]" color="primary" size="sm">Save</Button>
 					</HeaderItem>
