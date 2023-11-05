@@ -114,6 +114,14 @@ html {
 
 	border-bottom: 1px solid var(--y-bg-surface);
 }
+
+.sidebar-left .sidebar-title {
+	padding-right: 2rem;
+}
+
+.sidebar .sidebar-title {
+	padding-left: 2rem;
+}
 .sidebar-item {
 	display: block;
 	color: var(--y-light);
