@@ -1,11 +1,26 @@
 <script lang="ts">
+	import { alert, modal } from '@ulibs/yesvelte'
 	import { createEventDispatcher } from 'svelte'
-	import { Icon } from 'yesvelte'
+	import { Button, El, Icon } from 'yesvelte'
+	import AddPageModal from './AddPageModal.svelte'
+	import { api } from '$lib/helpers/api'
+	import SidebarTitleButton from './SidebarTitleButton.svelte'
 
 	export let pages: any[] = []
 	export let page: any
 
 	const dispatch = createEventDispatcher()
+
+	async function addPage() {
+		const data = await modal.open(AddPageModal, {
+
+		})
+
+		const res = await api('/pages', {data})
+
+		alert.success(res.message)
+		dispatch('open-page', res.data);
+	}
 
 	function gotoPageEditor(pageItem: any) {
 		dispatch('open-page', pageItem)
@@ -17,6 +32,7 @@
 </script>
 <div class="sidebar-title">
     Pages
+	<SidebarTitleButton icon="plus" on:click={addPage}/>
 </div>
 
 {#each pages as pageItem}

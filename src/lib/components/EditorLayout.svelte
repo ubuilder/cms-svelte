@@ -27,6 +27,10 @@
 		Page,
 		modal,
 		ButtonList,
+		Dropdown,
+		Avatar,
+		DropdownMenu,
+		DropdownItem,
 	} from '@ulibs/yesvelte'
 	import { goto, invalidate, invalidateAll } from '$app/navigation'
 	import AddComponentModal from '$lib/components/components/AddComponentModal.svelte'
@@ -41,6 +45,7 @@
 	import SidebarComponentList from './SidebarComponentList.svelte'
 	import SidebarComponentOption from './SidebarComponentOption.svelte'
 	import HeaderItem from './HeaderItem.svelte'
+	import { t } from '$lib/i18n'
 
 	let components: any[] = []
 	export let type = 'page'
@@ -48,6 +53,7 @@
 	export let assets: any[] = []
 	export let forms: any[] = []
 
+	let user = {}
 	let pages: any[] = []
 
 	export let page_id: any = undefined
@@ -1002,6 +1008,16 @@
 		render()
 	}
 
+	function openEditProfile() {
+		leftOffcanvasOpen = true
+		offcanvasMode = 'profile'
+	}
+	
+	function openEditSettings() {
+		leftOffcanvasOpen = true
+		offcanvasMode = 'settings'
+	}
+	
 	let leftSidebarOpen = false
 	let rightSidebarOpen = false
 </script>
@@ -1020,7 +1036,6 @@
 	<script src="/cdn.tailwindcss.com.js"></script>
 </svelte:head>
 
-{#if type === 'page'}
 	{#if loading}
 		<Loading show />
 	{:else}
@@ -1052,12 +1067,7 @@
 						}} />
 					<!-- svelte-ignore a11y-click-events-have-key-events -->
 					<!-- svelte-ignore a11y-no-static-element-interactions -->
-					<HeaderItem
-						icon="settings"
-						on:click={() => {
-							offcanvasMode = 'edit'
-							leftOffcanvasOpen = true
-						}} />
+					
 				</div>
 
 				<div class="flex items-center gap-2">
@@ -1073,6 +1083,25 @@
 								target="_blank"
 								size="sm">View</Button>
 						{/key}
+					</HeaderItem>
+					<HeaderItem
+					>
+					<Dropdown autoClose arrow={false} placement="bottom-end">
+						<Avatar slot="target" size="xs" shape="circle" color="primary">
+						  {#if user.profile}
+							<img alt="profile" src="/files/{user.profile}" />
+						  {:else}
+							<img alt="profile" src="/images/avatar.png" />
+						  {/if}
+						</Avatar>
+						<DropdownMenu>
+						  <DropdownItem on:click={openEditProfile}>{t('profile.title')}</DropdownItem>
+						  <DropdownItem on:click={openEditSettings}>{t('settings.title')}</DropdownItem>
+						  <DropdownItem divider />
+						  <DropdownItem href="/edit/logout">{t('layout.logout')}</DropdownItem>
+						</DropdownMenu>
+					  </Dropdown>
+					<!--  -->
 					</HeaderItem>
 					<HeaderItem
 						icon="category-filled"
@@ -1159,6 +1188,7 @@
 
 			<!-- svelte-ignore a11y-click-events-have-key-events -->
 			<!-- svelte-ignore a11y-no-static-element-interactions -->
+			{#if page}
 			<div
 				on:click={() => selectSlot('')}
 				bind:this={contentEl}
@@ -1168,6 +1198,10 @@
 				class:right-sidebar-open={rightSidebarOpen}
 				class:left-sidebar-open={leftSidebarOpen}>
 			</div>
+			{:else}
+			No page selected..
+			{/if}
+			
 
 			<div
 				class="component-hover-border"
@@ -1196,7 +1230,7 @@
 					</div>
 				</div>
 			</div>
-			<div class="fixed top-0 right-0">
+			<div class="fixed top-8 right-0">
 				<AlertProvider alerts={$alert} />
 			</div>
 			{#if !leftOffcanvasOpen && !rightOffcanvasOpen}
@@ -1204,6 +1238,3 @@
 			{/if}
 		</div>
 	{/if}
-{:else}
-	<div>Page or component not found <a href="/edit">Go Back</a></div>
-{/if}

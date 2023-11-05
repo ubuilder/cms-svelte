@@ -19,10 +19,10 @@ export async function GET({request, locals, url}) {
 } 
 
 export async function POST({request, locals, url}) {
-    const body = await request.formData();
+    const body = await request.json();
 
     // upload file
-    const res = await locals.api.updateSettings(body);
+    const res = await locals.api.setSettings(body);
     
     return respond(res.status, res.message, res.data)
 }

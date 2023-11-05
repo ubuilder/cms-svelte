@@ -1,9 +1,20 @@
 <script>
+	import EditorLayout from '$lib/components/EditorLayout.svelte'
+
+	export let data
+</script>
+
+<EditorLayout>
+	<slot/>
+</EditorLayout>
+
+
+<!-- <script>
   import {ButtonList, Page, Button, Layout, El, StatusItem, FormField, Dropdown, Avatar, DropdownItem, DropdownMenu, Icon, modal} from '@ulibs/yesvelte' 
   import { t } from '$lib/i18n';
 	import PageItem from './[page_id]/pages/PageItem.svelte'
 	import AdminLayout from '$lib/components/AdminLayout.svelte'
-	import AddPageModal from './[page_id]/pages/AddPageModal.svelte'
+	import AddPageModal from '../../lib/components/AddPageModal.svelte'
 	import { goto } from '$app/navigation'
 	import { api } from '$lib/helpers/api'
   
@@ -34,9 +45,7 @@
 
   <ButtonList slot="header-buttons">
     <Button color="primary" on:click={createPage}>{t('pages.add_page')}</Button>
-    <!-- <Button color="azure" on:click={() => openImportModal()}>{t('buttons.import')}</Button>
-    <Button color="success" on:click={() => openExportModal()}>{t('buttons.export')}</Button> -->
-  </ButtonList>
+   </ButtonList>
 
   <El my="2" fontSize="3">
    <b>{t('dashboard.hello')} {data.user.name},</b>
@@ -79,4 +88,4 @@
 
 </Page>
 
-</AdminLayout>
+</AdminLayout> -->

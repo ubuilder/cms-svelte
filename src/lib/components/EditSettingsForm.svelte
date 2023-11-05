@@ -35,8 +35,8 @@
 
 	const dispatch = createEventDispatcher()
 
-	onMount(() => {
-		pages = api('/pages').then(res => res.data)
+	onMount(async () => {
+		pages = await api('/pages').then(res => res.data)
 	})
 
 	function save() {
