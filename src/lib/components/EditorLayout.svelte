@@ -1,7 +1,7 @@
 <script lang="ts">
 	import EditorOffcanvases from './EditorOffcanvases.svelte'
 
-	import ComponentProp from '$lib/ui/ComponentProp.svelte'
+	// import ComponentProp from '$lib/ui/ComponentProp.svelte'
 	import { customAlphabet } from 'nanoid'
 	import hbs from 'handlebars'
 	import '@ulibs/yesvelte/styles.css'
@@ -96,7 +96,6 @@
 
 	const placeholder = (parent: string, field: string = '', index: number = 0, className = '') =>
 		`<span class="placeholder ${className}" data-dropzone data-parent="${parent}" data-index="${index}" data-field="${field}"></span>`
-
 	let html = ''
 
 	let leftOffcanvasOpen = false
@@ -858,135 +857,11 @@
 		activeComponent = component
 	}
 
-	async function updateComponent({ detail }: CustomEvent) {
-		rightOffcanvasOpen = false
-		await fetch(`./components/${detail.id}/?/update`, {
-			method: 'POST',
-			body: JSON.stringify(detail),
-		})
-		goto('/edit/' + page.id, { invalidateAll: true })
-	}
-
-	async function openAddComponentModal() {
-		const value = await modal.open(AddComponentModal, {
-			data: {},
-		})
-
-		if (value?.name) {
-			if (components.map((x) => x.name).includes(value.name)) {
-				return
-			}
-
-			const newComponent = {
-				name: value.name,
-				fields: [],
-				slot: [],
-				raw: false,
-				template: '',
-			}
-
-			fetch(`/edit/${page.id}/components/?/createComponent`, {
-				method: 'POST',
-				body: JSON.stringify(newComponent),
-			}).then((res) => {
-				goto('/edit/' + page.id, { invalidateAll: true })
-			})
-		}
-	}
-
-	async function updateTable() {
-		leftOffcanvasOpen = false
-
-		fetch(`/edit/${page.id}/content/?/update`, {
-			method: 'POST',
-			body: JSON.stringify(activeTable),
-		}).then((res) => {
-			goto('/edit/' + page.id, { invalidateAll: true })
-		})
-	}
-
-	async function removeTable() {
-		leftOffcanvasOpen = false
-
-		fetch(`/edit/${page.id}/content/?/remove`, {
-			method: 'POST',
-			body: JSON.stringify(activeTable),
-		}).then((res) => {
-			goto('/edit/' + page.id, { invalidateAll: true })
-		})
-	}
-
-	async function updatePage() {
-		leftOffcanvasOpen = false
-
-		await onSave()
-
-		// invalidateAll()
-		alert.success('page updated!')
-
-		// fetch('?/updatePage', {
-		// 	method: 'POST',
-		// 	body: JSON.stringify(page),
-		// }).then((res) => {
-		// })
-	}
-
-	function removePage() {
-		leftOffcanvasOpen = false
-
-		fetch('?/removePage', {
-			method: 'POST',
-			body: JSON.stringify(page),
-		}).then((res) => goto('/edit', { invalidateAll: true }))
-	}
-
-	async function removeComponent({ detail }: CustomEvent) {
-		rightOffcanvasOpen = false
-		await fetch(`./components/${detail.id}/?/remove`, {
-			method: 'POST',
-			body: JSON.stringify(detail),
-		})
-		goto('.', { invalidateAll: true })
-	}
-
-	function cancelUpdatePage() {
-		leftOffcanvasOpen = false
-	}
-
 	function gotoPageEditor(newPage) {
 		page = newPage
 		slots = newPage.slot
 
 		render()
-	}
-
-	async function onUpload({ detail }: CustomEvent) {
-		const result = await fetch('./assets?/upload', {
-			method: 'POST',
-			body: detail,
-		}).then((res) => res.json())
-
-		invalidateAll()
-	}
-
-	async function removeFile(id: string) {
-		await fetch('./assets?/remove', {
-			method: 'POST',
-			body: JSON.stringify({ id }),
-		}).then((res) => res.json())
-
-		await invalidateAll()
-	}
-
-	async function updateFile(asset: any) {
-		await fetch('./assets?/update', {
-			method: 'POST',
-			body: JSON.stringify({
-				id: asset.id,
-				data: asset,
-			}),
-		}).then((res) => res.json())
-		await invalidateAll()
 	}
 
 	function openTableData(table) {
@@ -1165,20 +1040,7 @@
 				{/if} -->
 					<div class="sidebar-body">
 						{#if mode === 'add'}
-							<El class="sidebar-title">
-								Components
-								<Icon
-									ms="auto"
-									on:click={() => openAddComponentModal()}
-									name="plus"
-									bgColor="primary" />
-							</El>
-
-							{#if activeSlot}
-								<Button my="2" on:click={() => (mode = 'options')} bgColor="primary"
-									>{getComponent(activeSlot.type).name} Options</Button>
-							{/if}
-							<SidebarComponentList {components} {dragging} />
+							<SidebarComponentList on:open-component-settings={(e)=> openComponentSettings(e.detail)} {activeSlot} {mode} {components} {dragging} />
 						{:else if activeSlot}
 							<SidebarComponentOption {activeSlot} />
 						{/if}
