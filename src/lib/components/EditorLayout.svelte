@@ -41,6 +41,9 @@
 	import SidebarTableList from './SidebarTableList.svelte'
 	import SidebarPageList from './SidebarPageList.svelte'
 	import SidebarSlotList from './SidebarSlotList.svelte'
+	import SidebarComponentList from './SidebarComponentList.svelte'
+	import SidebarComponentOption from './SidebarComponentOption.svelte'
+	import HeaderItem from './HeaderItem.svelte'
 
 	let components: any[] = []
 	export let type = 'page'
@@ -825,17 +828,21 @@
 	onMount(async () => {
 		loading = false
 
-		components = await fetch('/api/components').then(res => res.json()).then(res => res.data)
-		pages = await fetch('/api/pages').then(res => res.json()).then(res => res.data)
-		assets = await fetch('/api/assets').then(res => res.json()).then(res => res.data)
+		components = await fetch('/api/components')
+			.then((res) => res.json())
+			.then((res) => res.data)
+		pages = await fetch('/api/pages')
+			.then((res) => res.json())
+			.then((res) => res.data)
+		assets = await fetch('/api/assets')
+			.then((res) => res.json())
+			.then((res) => res.data)
 		// assets = await fetch('/api/assets').then(res => res.json()).then(res => res.data)
 
+		page = pages.find((x) => x.id === page_id)
 
-
-		page = pages.find(x => x.id === page_id)
-		
 		console.log('pages: ', pages)
-		
+
 		for (let component of components) {
 			hbsTemplates[component.id] = hbs.compile(component.template)
 		}
@@ -1018,6 +1025,8 @@
 	<!-- <script src="https://cdn.tailwindcss.com"></script> -->
 	<!-- <script src="https://cdn.tailwindcss.com"></script> -->
 	<!-- <script src="https://cdn.tailwindcss.com"></script> -->
+	<!-- <script src="https://cdn.tailwindcss.com"></script> -->
+	<!-- <script src="https://cdn.tailwindcss.com"></script> -->
 	<script src="/cdn.tailwindcss.com.js"></script>
 </svelte:head>
 
@@ -1031,82 +1040,52 @@
 				class:right-sidebar-open={rightSidebarOpen}
 				class:left-sidebar-open={leftSidebarOpen}>
 				<div style="display: flex; align-items: center; gap: 4px;">
-					<!-- svelte-ignore a11y-click-events-have-key-events -->
-					<!-- svelte-ignore a11y-no-static-element-interactions -->
-					<div
+					<HeaderItem
+						icon="file"
 						on:click={() => {
-							if (mode === 'list' && leftSidebarOpen) {
-								leftSidebarOpen = false
-							} else {
-								leftSidebarOpen = true
-								mode = 'list'
-							}
-						}}
-						class="font-bold me-2"
-						style="color: #a0d0ff; line-height: 20px; font-size: 16px;">
-						<Icon name="menu-2" />
-					</div>
-					<div
+							leftSidebarOpen = true
+							mode = 'list'
+						}} />
+
+					<HeaderItem
+						icon="database"
 						on:click={() => {
 							leftSidebarOpen = true
 							mode = 'content'
-						}}
-						class="font-bold me-2"
-						style="color: #a0d0ff; line-height: 20px; font-size: 16px;">
-						<Icon name="database" />
-					</div>
-					<div
+						}} />
+
+					<HeaderItem
+						icon="photo"
 						on:click={() => {
 							leftOffcanvasOpen = true
 							offcanvasMode = 'assets'
-						}}
-						class="font-bold me-2"
-						style="color: #a0d0ff; line-height: 20px; font-size: 16px;">
-						<Icon name="photo" />
-					</div>
+						}} />
 					<!-- svelte-ignore a11y-click-events-have-key-events -->
 					<!-- svelte-ignore a11y-no-static-element-interactions -->
-					<div
+					<HeaderItem
+						icon="settings"
 						on:click={() => {
-							if (mode === 'slot' && leftSidebarOpen) {
-								leftSidebarOpen = false
-							} else {
-								leftSidebarOpen = true
-								mode = 'slot'
-							}
-						}}
-						class="toggle mb-0.5">
-						<Icon name="menu-deep" />
-					</div>
-					<div
-						class="font-bold mb-0.5 me-2"
-						style="display: flex; align-items: center; color: #a0d0ff">
-						<Icon
-							size="lg"
-							on:click={() => {
-								offcanvasMode = 'edit'
-								leftOffcanvasOpen = true
-							}}
-							name="settings" />
-					</div>
+							offcanvasMode = 'edit'
+							leftOffcanvasOpen = true
+						}} />
 				</div>
 
-				<div style="display: flex; align-items: center; gap: 8px">
-					<Button on:click={onSave} class="bg-blue-500 h-[24px] px-[8px]" color="primary" size="sm"
-						>Save</Button>
-					{#key page.slug}
-						<Button
-							href="/{page.slug}"
-							on:click={onSave}
-							class="bg-green-500 h-[24px] px-[8px]"
-							color="success"
-							target="_blank"
-							size="sm">View</Button>
-					{/key}
-
-					<!-- svelte-ignore a11y-click-events-have-key-events -->
-					<!-- svelte-ignore a11y-no-static-element-interactions -->
-					<div
+				<div class="flex items-center gap-1 -m-2">
+					<HeaderItem on:click={onSave}>
+						<Button class="bg-blue-500 h-[24px] px-[8px]" color="primary" size="sm">Save</Button>
+					</HeaderItem>
+					<HeaderItem>
+						{#key page.slug}
+							<Button
+								href="/{page.slug}"
+								class="bg-green-500 h-[24px] px-[8px]"
+								color="success"
+								target="_blank"
+								size="sm">View</Button>
+						{/key}
+					</HeaderItem>
+					<HeaderItem
+						icon="category-filled"
 						on:click={() => {
 							if (rightSidebarOpen && mode === 'options') {
 								mode = 'add'
@@ -1114,10 +1093,7 @@
 								rightSidebarOpen = !rightSidebarOpen
 								mode = 'add'
 							}
-						}}
-						class="toggle mb-0.5">
-						<Icon size="lg" name="category-filled" />
-					</div>
+						}} />
 				</div>
 			</div>
 			<EditorOffcanvases
@@ -1183,55 +1159,9 @@
 								<Button my="2" on:click={() => (mode = 'options')} bgColor="primary"
 									>{getComponent(activeSlot.type).name} Options</Button>
 							{/if}
-							{#each components as component}
-								<!-- svelte-ignore a11y-click-events-have-key-events -->
-								<!-- svelte-ignore a11y-no-static-element-interactions -->
-								<div class="component-item-placeholder">
-									<div
-										class="component-item"
-										data-draggable
-										data-mode="clone"
-										data-id="component-{component.id}"
-										on:mousedown={() => (dragging = true)}>
-										<span>{component.name}</span>
-										<Icon
-											name="settings"
-											on:click!stopPropagation={(e) => openComponentSettings(component)} />
-									</div>
-								</div>
-							{/each}
+							<SidebarComponentList {components} {dragging} />
 						{:else if activeSlot}
-							<div class="sidebar-title">{getComponent(activeSlot.type).name} options</div>
-							<Tabs>
-								<TabList>
-									<TabItem>Props</TabItem>
-									<TabItem>Style</TabItem>
-								</TabList>
-								<TabContent>
-									<TabPanel p="2">
-										{#each getComponent(activeSlot.type)?.fields ?? [] as field}
-											{#if field.type !== 'slot'}
-												<ComponentProp
-													{components}
-													items={{}}
-													{field}
-													bind:value={activeSlot.props[field.name]} />
-											{/if}
-										{/each}
-
-										<El row>
-											<El col></El>
-										</El>
-									</TabPanel>
-									<TabPanel p="2">
-										<El row>
-											<El col>
-												<FormInput label="Class" bind:value={activeSlot.props.Class} />
-											</El>
-										</El>
-									</TabPanel>
-								</TabContent>
-							</Tabs>
+							<SidebarComponentOption {activeSlot} />
 						{/if}
 					</div>
 				</div>
