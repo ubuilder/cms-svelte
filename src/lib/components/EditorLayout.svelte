@@ -30,16 +30,13 @@
 	} from '@ulibs/yesvelte'
 	import { goto, invalidate, invalidateAll } from '$app/navigation'
 	import AddComponentModal from '$lib/components/components/AddComponentModal.svelte'
-	// import interact from 'interactjs'
 	import { browser } from '$app/environment'
+	
 	import SlotSidebarItem from './SlotSidebarItem.svelte'
-	// import EditPage from './EditPage.svelte'
-	// import EditComponent from '../../routes/edit/[page_id]/components/[id]/EditComponent.svelte'
-	// import AssetsPage from '../../routes/edit/[page_id]/assets/AssetsPage.svelte'
-	// import TableEditCard from '../../routes/edit/[page_id]/content/TableEditCard.svelte'
 	import { DragDrop } from '$lib/helpers/drag-drop'
 	import SidebarTableList from './SidebarTableList.svelte'
 	import SidebarPageList from './SidebarPageList.svelte'
+	import { api } from '$lib/helpers/api'
 	import SidebarSlotList from './SidebarSlotList.svelte'
 	import SidebarComponentList from './SidebarComponentList.svelte'
 	import SidebarComponentOption from './SidebarComponentOption.svelte'
@@ -827,17 +824,10 @@
 	let loading = true
 	onMount(async () => {
 		loading = false
-
-		components = await fetch('/api/components')
-			.then((res) => res.json())
-			.then((res) => res.data)
-		pages = await fetch('/api/pages')
-			.then((res) => res.json())
-			.then((res) => res.data)
-		assets = await fetch('/api/assets')
-			.then((res) => res.json())
-			.then((res) => res.data)
-		// assets = await fetch('/api/assets').then(res => res.json()).then(res => res.data)
+		components = await api('/components').then(res => res.data)
+		pages = await api('/pages').then(res => res.data)
+		assets = await api('/assets').then(res => res.data)
+		// assets = await api('/assets').then(res => res.data)
 
 		page = pages.find((x) => x.id === page_id)
 

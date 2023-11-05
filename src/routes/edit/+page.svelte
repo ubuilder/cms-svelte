@@ -5,6 +5,7 @@
 	import AdminLayout from '$lib/components/AdminLayout.svelte'
 	import AddPageModal from './[page_id]/pages/AddPageModal.svelte'
 	import { goto } from '$app/navigation'
+	import { api } from '$lib/helpers/api'
   
   export let data;
 
@@ -21,16 +22,9 @@
       page: {}
     })
 
-    fetch('./_/pages?/addPage', { 
-      method: 'POST',
-      body: JSON.stringify(page)
-    }).then(res => {
-      return res.json()
-    }).then(res => {
-      console.log(res)
-      goto(res.location, {invalidateAll: true})
+    api('/pages', {data: page}).then(res => {
+      goto('/edit/' + res.data.id)
     })
-
   }
 
 </script>
