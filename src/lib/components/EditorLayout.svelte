@@ -30,8 +30,8 @@
 	} from '@ulibs/yesvelte'
 	import { goto, invalidate, invalidateAll } from '$app/navigation'
 	import AddComponentModal from '$lib/components/components/AddComponentModal.svelte'
-	// import interact from 'interactjs'
 	import { browser } from '$app/environment'
+	
 	import SlotSidebarItem from './SlotSidebarItem.svelte'
 	import { DragDrop } from '$lib/helpers/drag-drop'
 	import SidebarTableList from './SidebarTableList.svelte'
