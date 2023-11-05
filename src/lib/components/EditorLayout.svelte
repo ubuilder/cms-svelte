@@ -33,27 +33,27 @@
 	import interact from 'interactjs'
 	import { browser } from '$app/environment'
 	import SlotSidebarItem from './SlotSidebarItem.svelte'
-	import EditPage from './EditPage.svelte'
-	import EditComponent from '../../routes/edit/[page_id]/components/[id]/EditComponent.svelte'
-	import AssetsPage from '../../routes/edit/[page_id]/assets/AssetsPage.svelte'
-	import TableEditCard from '../../routes/edit/[page_id]/content/TableEditCard.svelte'
 	import { DragDrop } from '$lib/helpers/drag-drop'
 	import SidebarTableList from './SidebarTableList.svelte'
 	import SidebarPageList from './SidebarPageList.svelte'
 
-	export let components: any[] = []
+	let components: any[] = []
 	export let type = 'page'
-	export let tables: any[] = []
+	let tables: any[] = []
 	export let assets: any[] = []
 	export let forms: any[] = []
-	export let pages: any[] = []
 
-	export let page: any = {}
+	let pages: any[] = []
+
+	export let page_id: any = undefined
+
+	let page = {}
+
 	export let component: any = {}
 
 	let draggableModule: typeof import('@shopify/draggable') | null = null
 
-	$: slots = page.slot
+	$: slots = page.slot ?? []
 
 	let activeComponent: any = null
 	let activeSlot: any = null
@@ -817,8 +817,20 @@
 	}
 
 	let loading = true
-	onMount(() => {
+	onMount(async () => {
 		loading = false
+
+		components = await fetch('/api/components').then(res => res.json()).then(res => res.data)
+		pages = await fetch('/api/pages').then(res => res.json()).then(res => res.data)
+		assets = await fetch('/api/assets').then(res => res.json()).then(res => res.data)
+		// assets = await fetch('/api/assets').then(res => res.json()).then(res => res.data)
+
+
+
+		page = pages.find(x => x.id === page_id)
+		
+		console.log('pages: ', pages)
+		
 		for (let component of components) {
 			hbsTemplates[component.id] = hbs.compile(component.template)
 		}
