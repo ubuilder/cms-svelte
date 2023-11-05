@@ -1,14 +1,17 @@
 <script>
     import {enhance} from '$app/forms'
 	import { page } from '$app/stores'
+	import AdminLayout from '$lib/components/AdminLayout.svelte'
 	import FilePicker from '$lib/components/content/FilePicker.svelte'
 	import { t } from "$lib/i18n"
 
     export let data;
 
-	import { Card, Page, CardBody, Button, ButtonList, FormInput, CardFooter, FormField, Alert } from "@ulibs/yesvelte"
+	import { Card, Page, CardBody, Button, ButtonList, FormInput, CardFooter, FormField, Alert, Layout } from "@ulibs/yesvelte"
 
 </script>
+<AdminLayout {...data}>
+
 <Page title={t('profile.title')}>
     <form method="POST" use:enhance>
         <Card>
@@ -45,3 +48,4 @@
 
 
 </Page>
+</AdminLayout>
