@@ -21,7 +21,6 @@ export async function GET({request, locals, url}) {
 export async function POST({request, locals, url}) {
     const body = await request.formData();
 
-
     if(url.searchParams.get('id')) {
         const id = url.searchParams.get('id');
         const res = await locals.api.updateAsset(id, body);

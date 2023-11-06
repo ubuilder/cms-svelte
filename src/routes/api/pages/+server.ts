@@ -32,7 +32,7 @@ export async function POST({request, locals, url}) {
 
     if(url.searchParams.get('id')) {
         const id = url.searchParams.get('id');
-        const res = await locals.api.updatePage(id, body);
+        const res = await locals.api.updatePage({id, data: body});
 
         return respond(res.status, res.message, res.data)
     }
@@ -40,11 +40,13 @@ export async function POST({request, locals, url}) {
 
     const res = await locals.api.createPage(body)
 
-    const response: any = {}
+    return respond(res.status, res.message, res.data)
+}
 
-    response.message = res.message
-    response.status = res.status    
-    response.data = res.data
-    
+export async function DELETE({request, locals, url}) {
+    const body = await request.json()
+
+    const res = await locals.api.removePage(body.id)
+
     return respond(res.status, res.message, res.data)
 }

@@ -32,7 +32,9 @@
 </script>
 <div class="sidebar-title">
     Pages
+	{#if pages.length >0}
 	<SidebarTitleButton icon="plus" on:click={addPage}/>
+	{/if}
 </div>
 
 {#each pages as pageItem}
@@ -41,11 +43,21 @@
 
 	<div
 		on:click={() => gotoPageEditor(pageItem)}
-		class:active={pageItem.id === page.id}
+		class:active={pageItem.id === page?.id}
 		class="sidebar-item">
 		<div>
 			{pageItem.title} <span class="opacity-50">/{pageItem.slug}</span>
 		</div>
 		<Icon name="settings" ms="auto" on:click!stopPropagation={() => openPageSettings(pageItem)} />
 	</div>
+	{:else}
+
+	<div class="w-full p-1">
+
+		<Button w=100 color="primary" bgColor="primary" on:click={addPage}>
+			<Icon name="plus"/>
+			Add Page
+		</Button>
+	</div>
+
 {/each}

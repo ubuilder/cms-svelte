@@ -1,18 +1,16 @@
 <script lang="ts">
-  import { Page, FilterList, TextFilter, SelectFilter, Button, El, Icon, modal } from "@ulibs/yesvelte";
+  import { Page, FilterList, TextFilter, SelectFilter, Button, El, Icon, modal, alert } from "@ulibs/yesvelte";
   import Asset from "$lib/components/Asset.svelte";
   import { invalidateAll } from "$app/navigation";
   import { t } from "$lib/i18n";
 	import type { AssetType } from "$lib/types/asset"
-	import { createEventDispatcher } from "svelte"
+	import { createEventDispatcher, onMount } from "svelte"
 	import AssetUpdateModal from "$lib/components/AssetUpdateModal.svelte"
+	import { api } from "$lib/helpers/api"
 
-  export let assets: AssetType[] = [];
+  let assets: AssetType[] = [];
 
   let uploadInput: any;
-
-  const dispatch = createEventDispatcher()
-
 
   async function onSubmit(event: any) {
 
@@ -20,8 +18,11 @@
 
     formData.append("file", event.target.files[0]);
   
-    dispatch('upload', formData)
+    // dispatch('upload', formData)
 
+    api('/assets', {
+      formData
+    }).then(res => alert.success(res.message))
   }
 
   async function onPreview({detail}: CustomEvent) {
@@ -34,10 +35,14 @@
     );
 
     if (choice) {
-      dispatch('update', detail)
 
+      await api('/assets', {params: {id: detail.id}, data: detail})
     }
   }
+
+  onMount(async () => {
+    assets = await api('/assets').then(res => res.data)
+  })
 </script>
 
 <Page>
@@ -75,7 +80,7 @@
 
   <El row>
     {#each assets as asset}
-      <Asset on:remove on:select={onPreview} {asset} />
+      <Asset on:remove={(event) => api('/assets', {params: {id: asset.id}, method: 'DELETE'})} on:select={onPreview} {asset} />
     {/each}
   </El>
 </Page>

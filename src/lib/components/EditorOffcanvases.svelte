@@ -6,9 +6,11 @@
 	import { goto } from '$app/navigation'
 	import EditProfileForm from './EditProfileForm.svelte'
 	import { api } from '$lib/helpers/api'
-	import { onMount } from 'svelte'
+	import { createEventDispatcher, onMount } from 'svelte'
 	import { t } from '$lib/i18n'
 	import EditSettingsForm from './EditSettingsForm.svelte'
+	import AssetsPage from './AssetsPage.svelte'
+
 
 	// import ComponentProp from '$lib/ui/ComponentProp.svelte'
 	// import { customAlphabet } from 'nanoid'
@@ -44,7 +46,6 @@
 	// import SlotSidebarItem from './SlotSidebarItem.svelte'
 	// import EditPage from '../../routes/edit/[page_id]/EditPage.svelte'
 	// import EditComponent from '../../routes/edit/[page_id]/components/[id]/EditComponent.svelte'
-	// import AssetsPage from '../../routes/edit/[page_id]/assets/AssetsPage.svelte'
 	// import TableEditCard from '../../routes/edit/[page_id]/content/TableEditCard.svelte'
 	// import { DragDrop } from '$lib/helpers/drag-drop'
 
@@ -924,24 +925,33 @@
 	export let page: any
 	export let components: any[] = []
 	export let tables: any[] = []
-	let user = {};
-	let settings = {};
+	let user = {}
+	let settings = {}
 	export let forms: any[] = [] // forms of current page
 
 	export let leftOffcanvasOpen = false
 	export let rightOffcanvasOpen = false
 	export let offcanvasMode: string
 
+	const dispatch = createEventDispatcher()
+
 	async function updatePage() {
 		leftOffcanvasOpen = false
 
 		await onSave()
-
-		alert.success('page updated!')
 	}
 
 	function removePage() {
 		leftOffcanvasOpen = false
+
+		api('/pages', {
+			params: {
+				id: page.id,
+			},
+			method: 'DELETE',
+		}).then((res) => {
+			dispatch('reload', ['pages'])
+		})
 
 		fetch('?/removePage', {
 			method: 'POST',
@@ -987,11 +997,9 @@
 			delete slot['parent_index']
 		})
 
-		fetch(`/edit/${page.id}?/updatePage`, {
-			method: 'POST',
-			body: JSON.stringify(result),
-		}).then((res) => {
-			goto('/edit/' + result.id, { invalidateAll: true })
+		api(`/pages`, { data: result }).then((res) => {
+			alert.success(res.message)
+			dispatch('reload', ['pages'])
 		})
 	}
 
@@ -1000,25 +1008,23 @@
 	}
 
 	function onOffcanvasClose() {
-		if($modal) $modal.close()
+		if ($modal) $modal.close()
 	}
 
 	async function updateProfile() {
-		const res = await api('/profile', {data: user})
+		const res = await api('/profile', { data: user })
 		alert.success(res.message)
-		leftOffcanvasOpen =false
-
+		leftOffcanvasOpen = false
 	}
 	async function updateSettings() {
-		const res = await api('/settings', {data: settings})
+		const res = await api('/settings', { data: settings })
 		alert.success(res.message)
-		leftOffcanvasOpen =false
+		leftOffcanvasOpen = false
 	}
 
 	onMount(async () => {
-		user = await api('/profile').then(res => res.data);
-		settings = await api('/settings').then(res => res.data);
-
+		user = await api('/profile').then((res) => res.data)
+		settings = await api('/settings').then((res) => res.data)
 	})
 </script>
 
@@ -1040,24 +1046,26 @@
 				{forms}
 				{components} />
 		{:else if offcanvasMode === 'profile'}
-		<PageHeader px=2 title="Update Profile">
-			<Button on:click={() => leftOffcanvasOpen = false}>{t('buttons.cancel')}</Button>
-			<Button color="primary" bgColor="primary" on:click={updateProfile}>{t('buttons.save')}</Button>
-		</PageHeader>
-		<EditProfileForm bind:user on:submit={() => updateProfile()}/>
+			<PageHeader px="2" title="Update Profile">
+				<Button on:click={() => (leftOffcanvasOpen = false)}>{t('buttons.cancel')}</Button>
+				<Button color="primary" bgColor="primary" on:click={updateProfile}
+					>{t('buttons.save')}</Button>
+			</PageHeader>
+			<EditProfileForm bind:user on:submit={() => updateProfile()} />
 		{:else if offcanvasMode === 'settings'}
-		<PageHeader px=2 title="Settings">
-			<Button on:click={() => leftOffcanvasOpen = false}>{t('buttons.cancel')}</Button>
-			<Button color="primary" bgColor="primary" on:click={updateSettings}>{t('buttons.save')}</Button>
-		</PageHeader>
-		<EditSettingsForm bind:settings on:save={() => updateSettings()} />
-			<!-- {:else if offcanvasMode === 'assets'}
+			<PageHeader px="2" title="Settings">
+				<Button on:click={() => (leftOffcanvasOpen = false)}>{t('buttons.cancel')}</Button>
+				<Button color="primary" bgColor="primary" on:click={updateSettings}
+					>{t('buttons.save')}</Button>
+			</PageHeader>
+			<EditSettingsForm bind:settings on:save={() => updateSettings()} />
+			{:else if offcanvasMode === 'assets'}
 						<AssetsPage
 							on:remove={(e) => removeFile(e.detail)}
 							on:update={(e) => updateFile(e.detail)}
-							on:upload={onUpload}
-							{assets} />
-					{:else if offcanvasMode === 'table-settings'}
+							
+							 />
+			<!--	{:else if offcanvasMode === 'table-settings'}
 						<Page>
 							<ButtonList slot="header-buttons">
 								<Button on:click={() => (leftOffcanvasOpen = false)}>Cancel</Button>
@@ -1084,12 +1092,11 @@
 					-->
 		{/if}
 	</OffcanvasBody>
-	
+
 	<ModalProvider />
 </Offcanvas>
 <Offcanvas
 	on:close={onOffcanvasClose}
-
 	style="width: 700px"
 	backdrop
 	autoClose

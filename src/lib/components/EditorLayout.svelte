@@ -35,7 +35,7 @@
 	import { goto, invalidate, invalidateAll } from '$app/navigation'
 	import AddComponentModal from '$lib/components/components/AddComponentModal.svelte'
 	import { browser } from '$app/environment'
-	
+
 	import SlotSidebarItem from './SlotSidebarItem.svelte'
 	import { DragDrop } from '$lib/helpers/drag-drop'
 	import SidebarTableList from './SidebarTableList.svelte'
@@ -58,13 +58,11 @@
 
 	export let page_id: any = undefined
 
-	let page = {}
+	let page: any = null
 
 	export let component: any = {}
 
 	let draggableModule: typeof import('@shopify/draggable') | null = null
-
-	$: slots = page.slot ?? []
 
 	let activeComponent: any = null
 	let activeSlot: any = null
@@ -102,7 +100,8 @@
 	let rightOffcanvasOpen = false
 
 	function render(slot = null) {
-		if (draggableModule !== null) {
+		if (!page) return
+		if (false) {
 			setTimeout(() => {
 				console.log('initialize draggable')
 				if (instance) {
@@ -220,13 +219,6 @@
 				// 	}
 				// })
 			}, 5)
-		} else {
-			import('@shopify/draggable').then((mod) => {
-				draggableModule = mod
-
-				render()
-			})
-			return ''
 		}
 
 		if (slot) {
@@ -241,8 +233,10 @@
 		} else {
 			console.log('render()')
 			html =
-				slots.map((x, i) => renderSlot(x, '', '', i)).join('') + placeholder('', '', slots.length)
+				page.slot.map((x, i) => renderSlot(x, '', '', i)).join('') +
+				placeholder('', '', page.slot.length, 'h-full')
 
+				
 			contentEl.innerHTML = html
 		}
 	}
@@ -518,9 +512,8 @@
 		}
 	}
 
-	function onSave() {
-		console.log('onSave', page, slots)
-		page.slot = slots
+	async function onSave() {
+		console.log('onSave', page)
 		const result = JSON.parse(JSON.stringify(page))
 
 		forEachSlot(result.slot, (slot) => {
@@ -530,18 +523,18 @@
 			delete slot['parent_index']
 		})
 
-		fetch(`/edit/${page.id}?/updatePage`, {
-			method: 'POST',
-			body: JSON.stringify(result),
-		}).then((res) => {
-			goto('/edit/' + result.id, { invalidateAll: true })
-		})
+		await api('/pages', {
+			params: {
+				id: result.id,
+			},
+			data: result,
+		}).then(res => alert.success(res.message))
 	}
 
 	function onRemoveSlot(id: string) {
-		slots = slots.filter((x) => x.id !== id)
+		page.slot = page.slot.filter((x) => x.id !== id)
 
-		forEachSlot(slots, (slot) => {
+		forEachSlot(page.slot, (slot) => {
 			const component = getComponent(slot.type)
 			for (let field of component.fields) {
 				if (field.type === 'slot') {
@@ -560,7 +553,7 @@
 	}
 
 	function onSelectParent() {
-		const slot = slots.find((x) => x.id === activeSlot.id)
+		const slot = page.slot.find((x) => x.id === activeSlot.id)
 		if (slot) {
 			mode = 'add'
 			activeSlot = null
@@ -569,7 +562,7 @@
 			return
 		}
 
-		forEachSlot(slots, (slot) => {
+		forEachSlot(page.slot, (slot) => {
 			const component = getComponent(slot.type)
 			for (let field of component.fields) {
 				if (field.type === 'slot') {
@@ -695,7 +688,7 @@
 			index,
 			props
 		)
-		let localSlots = JSON.parse(JSON.stringify(slots))
+		let localSlots = JSON.parse(JSON.stringify(page.slot))
 
 		mode = 'options'
 
@@ -749,8 +742,8 @@
 			findAndInsert(slot)
 		}
 
-		slots = localSlots
-		console.log('render: insert component...', slots, localSlots)
+		page.slot = localSlots
+		console.log('render: insert component...', page.slot, localSlots)
 		render()
 	}
 
@@ -775,11 +768,10 @@
 				slot: [{ type: activeSlot.type, props: activeSlot.props }],
 			}
 
-			fetch(`/edit/${page.id}/components/?/createComponent`, {
-				method: 'POST',
-				body: JSON.stringify(newComponent),
-			}).then((res) => {
-				goto('/edit/' + page.id, { invalidateAll: true })
+			api('/components', {data: newComponent}).then(res => {
+
+				console.log('update slot....')
+				reload(['components'])
 			})
 		}
 	}
@@ -817,6 +809,8 @@
 		})
 	}
 
+	$: page = pages.find((x) => x.id === page_id) ?? null
+
 	$: {
 		leftSidebarOpen
 		rightSidebarOpen
@@ -827,25 +821,45 @@
 	}
 
 	let loading = true
-	onMount(async () => {
-		loading = false
-		components = await api('/components').then(res => res.data)
-		pages = await api('/pages').then(res => res.data)
-		assets = await api('/assets').then(res => res.data)
-		// assets = await api('/assets').then(res => res.data)
 
-		page = pages.find((x) => x.id === page_id)
+	async function reload(event: CustomEvent<string[]> | string[] | null = null) {
+		if (event) {
+			const items: string[] = Array.isArray(event) ? event : event.detail
+
+			if (items.includes('components')) {
+				components = await api('/components').then((res) => res.data)
+				for (let component of components) {
+					hbsTemplates[component.id] = hbs.compile(component.template)
+				}
+			}
+			if (items.includes('pages')) {
+				pages = await api('/pages').then((res) => res.data)
+			}
+			if (items.includes('assets')) {
+				assets = await api('/assets').then((res) => res.data)
+			}
+		} else {
+			components = await api('/components').then((res) => res.data)
+			pages = await api('/pages').then((res) => res.data)
+			assets = await api('/assets').then((res) => res.data)
+
+			for (let component of components) {
+				hbsTemplates[component.id] = hbs.compile(component.template)
+			}
+		}
+	}
+
+	onMount(async () => {
+		// assets = await api('/assets').then(res => res.data)
+		await reload()
+		loading = false
 
 		console.log('pages: ', pages)
-
-		for (let component of components) {
-			hbsTemplates[component.id] = hbs.compile(component.template)
-		}
 
 		console.log('render: on mount')
 	})
 
-	$: if (contentEl) {
+	$: if (contentEl && page) {
 		render()
 		contentEl.addEventListener('scroll', updateActiveBorder)
 	}
@@ -857,10 +871,11 @@
 		activeComponent = component
 	}
 
-	function gotoPageEditor(newPage) {
-		page = newPage
-		slots = newPage.slot
+	function gotoPageEditor(newPage: any) {
+		reload()
+		page_id = newPage.id
 
+		window.history.pushState({}, null, '/edit/' + page_id);
 		render()
 	}
 
@@ -887,18 +902,20 @@
 		leftOffcanvasOpen = true
 		offcanvasMode = 'profile'
 	}
-	
+
 	function openEditSettings() {
 		leftOffcanvasOpen = true
 		offcanvasMode = 'settings'
 	}
-	
+
 	let leftSidebarOpen = false
 	let rightSidebarOpen = false
 </script>
 
 <svelte:head>
-	<title>Page Editor | {page.title}</title>
+	<title>Page Editor | {page?.title ?? '---'}</title>
+	<!-- <script src="https://cdn.tailwindcss.com"></script> -->
+	<!-- <script src="https://cdn.tailwindcss.com"></script> -->
 	<!-- <script src="https://cdn.tailwindcss.com"></script> -->
 	<!-- <script src="https://cdn.tailwindcss.com"></script> -->
 	<!-- <script src="https://cdn.tailwindcss.com"></script> -->
@@ -911,41 +928,41 @@
 	<script src="/cdn.tailwindcss.com.js"></script>
 </svelte:head>
 
-	{#if loading}
-		<Loading show />
-	{:else}
-		<div class="page" data-bs-theme="dark" dir="ltr">
-			<div
-				class="header"
-				class:right-sidebar-open={rightSidebarOpen}
-				class:left-sidebar-open={leftSidebarOpen}>
-				<div class="flex items-center gap-2">
-					<HeaderItem
-						icon="file"
-						on:click={() => {
-							leftSidebarOpen = true
-							mode = 'list'
-						}} />
+{#if loading}
+	<Loading show />
+{:else}
+	<div class="page" data-bs-theme="dark" dir="ltr">
+		<div
+			class="header"
+			class:right-sidebar-open={rightSidebarOpen}
+			class:left-sidebar-open={leftSidebarOpen}>
+			<div class="flex items-center gap-2">
+				<HeaderItem
+					icon="file"
+					on:click={() => {
+						leftSidebarOpen = true
+						mode = 'list'
+					}} />
 
-					<HeaderItem
-						icon="database"
-						on:click={() => {
-							leftSidebarOpen = true
-							mode = 'content'
-						}} />
+				<HeaderItem
+					icon="database"
+					on:click={() => {
+						leftSidebarOpen = true
+						mode = 'content'
+					}} />
 
-					<HeaderItem
-						icon="photo"
-						on:click={() => {
-							leftOffcanvasOpen = true
-							offcanvasMode = 'assets'
-						}} />
-					<!-- svelte-ignore a11y-click-events-have-key-events -->
-					<!-- svelte-ignore a11y-no-static-element-interactions -->
-					
-				</div>
+				<HeaderItem
+					icon="photo"
+					on:click={() => {
+						leftOffcanvasOpen = true
+						offcanvasMode = 'assets'
+					}} />
+				<!-- svelte-ignore a11y-click-events-have-key-events -->
+				<!-- svelte-ignore a11y-no-static-element-interactions -->
+			</div>
 
-				<div class="flex items-center gap-2">
+			<div class="flex items-center gap-2">
+				{#if page}
 					<HeaderItem on:click={onSave}>
 						<Button class="bg-blue-500 h-[24px] px-[8px]" color="primary" size="sm">Save</Button>
 					</HeaderItem>
@@ -959,144 +976,163 @@
 								size="sm">View</Button>
 						{/key}
 					</HeaderItem>
-					<HeaderItem
-					>
+				{/if}
+				<HeaderItem>
 					<Dropdown autoClose arrow={false} placement="bottom-end">
 						<Avatar slot="target" size="xs" shape="circle" color="primary">
-						  {#if user.profile}
-							<img alt="profile" src="/files/{user.profile}" />
-						  {:else}
-							<img alt="profile" src="/images/avatar.png" />
-						  {/if}
+							{#if user.profile}
+								<img alt="profile" src="/files/{user.profile}" />
+							{:else}
+								<img alt="profile" src="/images/avatar.png" />
+							{/if}
 						</Avatar>
 						<DropdownMenu>
-						  <DropdownItem on:click={openEditProfile}>{t('profile.title')}</DropdownItem>
-						  <DropdownItem on:click={openEditSettings}>{t('settings.title')}</DropdownItem>
-						  <DropdownItem divider />
-						  <DropdownItem href="/edit/logout">{t('layout.logout')}</DropdownItem>
+							<DropdownItem on:click={openEditProfile}>{t('profile.title')}</DropdownItem>
+							<DropdownItem on:click={openEditSettings}>{t('settings.title')}</DropdownItem>
+							<DropdownItem divider />
+							<DropdownItem href="/edit/logout">{t('layout.logout')}</DropdownItem>
 						</DropdownMenu>
-					  </Dropdown>
+					</Dropdown>
 					<!--  -->
-					</HeaderItem>
-					<HeaderItem
-						icon="category-filled"
-						on:click={() => {
-							if (rightSidebarOpen && mode === 'options') {
-								mode = 'add'
-							} else {
-								rightSidebarOpen = !rightSidebarOpen
-								mode = 'add'
-							}
-						}} />
-				</div>
+				</HeaderItem>
+				<HeaderItem
+					icon="category-filled"
+					on:click={() => {
+						if (rightSidebarOpen && mode === 'options') {
+							mode = 'add'
+						} else {
+							rightSidebarOpen = !rightSidebarOpen
+							mode = 'add'
+						}
+					}} />
 			</div>
-			<EditorOffcanvases
-				{tables}
-				{forms}
-				{components}
-				bind:page
-				bind:offcanvasMode
-				bind:leftOffcanvasOpen
-				bind:rightOffcanvasOpen />
+		</div>
+		<EditorOffcanvases
+			{tables}
+			{forms}
+			{components}
+			bind:page
+			bind:offcanvasMode
+			bind:leftOffcanvasOpen
+			bind:rightOffcanvasOpen />
 
-			<div class="sidebar-left" class:open={leftSidebarOpen}>
-				<div class="h-full w-full relative">
-					<Icon
-						class="absolute right-2 top-[0.375rem]"
-						on:click={() => (leftSidebarOpen = false)}
-						name="x" />
+		<div class="sidebar-left" class:open={leftSidebarOpen}>
+			<div class="h-full w-full relative">
+				<Icon
+					class="absolute right-2 top-[0.375rem]"
+					on:click={() => (leftSidebarOpen = false)}
+					name="x" />
 
-					{#if mode === 'content'}
-						<SidebarTableList
-							{tables}
-							on:open-table-settings={(event) => openTableSettings(event.detail)}
-							on:open-table-data={(event) => openTableData(event.detail)} />
-					{:else}
-						<SidebarPageList
-							{page}
-							{pages}
-							on:open-page={(e) => gotoPageEditor(e.detail)}
-							on:open-page-settings={() => console.log('settings')} />
+				{#if mode === 'content'}
+					<SidebarTableList
+						on:reload={reload}
+						{tables}
+						on:open-table-settings={(event) => openTableSettings(event.detail)}
+						on:open-table-data={(event) => openTableData(event.detail)} />
+				{:else}
+					<SidebarPageList
+						on:reload={reload}
+						{page}
+						{pages}
+						on:open-page={(e) => gotoPageEditor(e.detail)}
+						on:open-page-settings={() => console.log('settings')} />
 
-						<div class="h-10"></div>
+					<div class="h-10"></div>
+					{#if page}
 						<SidebarSlotList
+							on:reload={reload}
 							on:open-settings={(e) => selectSlot(e.detail.id)}
-							{slots}
+							slots={page.slot}
 							{activeSlot}
 							{components} />
 					{/if}
-				</div>
+				{/if}
 			</div>
+		</div>
 
-			<div class="sidebar" class:open={rightSidebarOpen}>
-				<div class="h-full w-full relative">
-					<Icon
-						class="absolute left-2 top-[0.375rem]"
-						on:click={() => (rightSidebarOpen = false)}
-						name="x" />
+		<div class="sidebar" class:open={rightSidebarOpen}>
+			<div class="h-full w-full relative">
+				<Icon
+					class="absolute left-2 top-[0.375rem]"
+					on:click={() => (rightSidebarOpen = false)}
+					name="x" />
 
-					<!-- {#if activeSlot && mode === 'options'}
+				<!-- {#if activeSlot && mode === 'options'}
 					<El class="sidebar-title">{getComponent(activeSlot.type).name}</El>
 				{/if} -->
-					<div class="sidebar-body">
-						{#if mode === 'add'}
-							<SidebarComponentList on:open-component-settings={(e)=> openComponentSettings(e.detail)} {activeSlot} {mode} {components} {dragging} />
-						{:else if activeSlot}
-							<SidebarComponentOption {activeSlot} />
-						{/if}
-					</div>
+				<div class="sidebar-body">
+					{#if mode === 'add'}
+						<SidebarComponentList
+							on:reload={reload}
+							on:open-component-settings={(e) => openComponentSettings(e.detail)}
+							bind:activeSlot
+							bind:mode
+							{components} />
+					{:else if activeSlot}
+						<SidebarComponentOption {components} on:select-slot={(e) => selectSlot(e.detail.id)} on:reload={reload} bind:activeSlot />
+					{/if}
 				</div>
 			</div>
+		</div>
 
-			<!-- svelte-ignore a11y-click-events-have-key-events -->
-			<!-- svelte-ignore a11y-no-static-element-interactions -->
-			{#if page}
-			<div
-				on:click={() => selectSlot('')}
-				bind:this={contentEl}
-				class="content"
-				data-dropzone
-				class:dragging
-				class:right-sidebar-open={rightSidebarOpen}
-				class:left-sidebar-open={leftSidebarOpen}>
-			</div>
-			{:else}
-			No page selected..
-			{/if}
-			
+		<!-- svelte-ignore a11y-click-events-have-key-events -->
+		<!-- svelte-ignore a11y-no-static-element-interactions -->
 
-			<div
-				class="component-hover-border"
-				style="display: {hoverBorderPosition.w
-					? 'block'
-					: 'none'}; width: {hoverBorderPosition.w}px; height: {hoverBorderPosition.h}px; left: {hoverBorderPosition.x}px; top: {hoverBorderPosition.y}px">
-			</div>
-
-			<div
-				class="component-border"
-				style="display: {borderPosition.w
-					? 'block'
-					: 'none'}; width: {borderPosition.w}px; height: {borderPosition.h}px; left: {borderPosition.x}px; top: {borderPosition.y}px">
-				<div class="buttons-container">
-					<div class="buttons-container-absolute">
-						<div style="display: flex; pointer-events: all; z-index: 4">
-							<Icon size="1x" on:click={onSelectParent} bgColor="primary" name="arrow-up" />
-							<Icon size="1x" on:click={onExtractComponent} bgColor="warning" name="star" />
-
-							<!-- <Icon size="1x" class="handle" bgColor="primary" name="move" /> -->
-						</div>
-
-						<div style="pointer-events: all; z-index: 4">
-							<Icon size="1x" on:click={() => onRemoveSlot(activeSlot.id)} bgColor="red" name="x" />
-						</div>
-					</div>
+		<!-- 				on:click={() => selectSlot('')} -->
+		<div
+			bind:this={contentEl}
+			class="content"
+			data-dropzone
+			class:dragging
+			class:right-sidebar-open={rightSidebarOpen}
+			class:left-sidebar-open={leftSidebarOpen}>
+			{#if !page}
+				<div class="flex flex-col gap-4 h-full pb-20 items-center justify-center">
+					<h1 class="font-bold text-2xl">No page selected</h1>
+					<h2 class="text-lg font-normal text-gray-800">
+						Open a page from <span
+							class="cursor-pointer hover:bg-blue-50 rounded p-0.5 font-bold text-blue-700"
+							on:click|stopPropagation={() => {
+								leftSidebarOpen = true
+								mode = 'list'
+							}}>Sidebar</span> to continue
+					</h2>
 				</div>
-			</div>
-			<div class="fixed top-8 right-0">
-				<AlertProvider alerts={$alert} />
-			</div>
-			{#if !leftOffcanvasOpen && !rightOffcanvasOpen}
-				<ModalProvider />
 			{/if}
 		</div>
-	{/if}
+
+		<div
+			class="component-hover-border"
+			style="display: {hoverBorderPosition.w
+				? 'block'
+				: 'none'}; width: {hoverBorderPosition.w}px; height: {hoverBorderPosition.h}px; left: {hoverBorderPosition.x}px; top: {hoverBorderPosition.y}px">
+		</div>
+
+		<div
+			class="component-border"
+			style="display: {borderPosition.w
+				? 'block'
+				: 'none'}; width: {borderPosition.w}px; height: {borderPosition.h}px; left: {borderPosition.x}px; top: {borderPosition.y}px">
+			<div class="buttons-container">
+				<div class="buttons-container-absolute">
+					<div style="display: flex; pointer-events: all; z-index: 4">
+						<Icon size="1x" on:click={onSelectParent} bgColor="primary" name="arrow-up" />
+						<Icon size="1x" on:click={onExtractComponent} bgColor="warning" name="star" />
+
+						<!-- <Icon size="1x" class="handle" bgColor="primary" name="move" /> -->
+					</div>
+
+					<div style="pointer-events: all; z-index: 4">
+						<Icon size="1x" on:click={() => onRemoveSlot(activeSlot.id)} bgColor="red" name="x" />
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="fixed top-8 right-0">
+			<AlertProvider alerts={$alert} />
+		</div>
+		{#if !leftOffcanvasOpen && !rightOffcanvasOpen}
+			<ModalProvider />
+		{/if}
+	</div>
+{/if}

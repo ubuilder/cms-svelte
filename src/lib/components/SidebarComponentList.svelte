@@ -5,10 +5,10 @@
 	import { Button, Icon, El } from 'yesvelte'
 	import AddComponentModal from './components/AddComponentModal.svelte'
 	import { api } from '$lib/helpers/api'
+	import SidebarTitleButton from './SidebarTitleButton.svelte'
 
 	export let components: any[] = []
-	export let dragging: any
-    export let activeSlot: any;
+    export let activeSlot: any = undefined;
     export let mode: string;
 
 	const dispatch = createEventDispatcher()
@@ -17,11 +17,11 @@
 		dispatch('open-component-settings', component)
 	}
 
-    function getComponent(activeSlot: any) {
-		dispatch('get-active-slot', activeSlot.type)
+    function getComponent(id: any) {
+		return components.find(x => x.id === id)
 	}
 
-    async function openAddComponentModal() {
+    async function addComponent() {
 		const value = await modal.open(AddComponentModal, {
 			data: {},
 		})
@@ -41,7 +41,7 @@
             
             api("/components",{data: newComponent}).then(() => {
 				// goto('.', { invalidateAll: true })
-                location.reload()
+                dispatch('reload', ['components'])
 			})
 			
 		}
@@ -50,16 +50,21 @@
 
 <El class="sidebar-title">
     Components
-    <Icon
-        ms="auto"
-        on:click={() => openAddComponentModal()}
-        name="plus"
-        bgColor="primary" />
+
+	{#if components.length >0}
+		<SidebarTitleButton icon="plus" on:click={addComponent}/>
+	{/if}
+    
 </El>
 
 {#if activeSlot}
-    <Button my="2" on:click={() => (mode = 'options')} bgColor="primary"
-        >{getComponent(activeSlot.type).name} Options</Button>
+<El p="2">
+
+    <Button w="100" on:click={() => (mode = 'options')} bgColor="primary">
+		{getComponent(activeSlot.type).name} Options
+	</Button>
+</El>
+
 {/if}
 
 {#each components as component}
@@ -71,10 +76,16 @@
 			class="component-item"
 			data-draggable
 			data-mode="clone"
-			data-id="component-{component.id}"
-			on:mousedown={() => (dragging = true)}>
+			data-id="component-{component.id}">
 			<span>{component.name}</span>
 			<Icon name="settings" on:click!stopPropagation={(e) => openComponentSettings(component)} />
 		</div>
+	</div>
+	{:else}
+	<div class="w-full p-1">
+		<Button w=100 color="primary" bgColor="primary" on:click={addComponent}>
+			<Icon name="plus"/>
+			Add Component
+		</Button>
 	</div>
 {/each}
