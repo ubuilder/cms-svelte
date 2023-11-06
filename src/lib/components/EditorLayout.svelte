@@ -887,6 +887,10 @@
 		window.history.pushState({}, null, '/edit/' + page_id);
 		render()
 	}
+	function openTableCreate(){
+		leftOffcanvasOpen = true
+		offcanvasMode = 'table-create'
+	}
 
 	function openTableData(table) {
 		leftOffcanvasOpen = true
@@ -1036,6 +1040,7 @@
 						on:reload={reload}
 						{tables}
 						on:open-table-settings={(event) => openTableSettings(event.detail)}
+						on:open-table-create = {openTableCreate}
 						on:open-table-data={(event) => openTableData(event.detail)} />
 				{:else}
 					<SidebarPageList

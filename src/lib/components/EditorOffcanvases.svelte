@@ -10,6 +10,8 @@
 	import { t } from '$lib/i18n'
 	import EditSettingsForm from './EditSettingsForm.svelte'
 	import AssetsPage from './AssetsPage.svelte'
+	import DataList from './content/DataList.svelte'
+	import TableCreateCard from './content/TableCreateCard.svelte'
 
 	// import ComponentProp from '$lib/ui/ComponentProp.svelte'
 	// import { customAlphabet } from 'nanoid'
@@ -1078,11 +1080,15 @@
 								on:upload={onUpload}
 
 								{assets} />
-					{:else if offcanvasMode === 'data-list'}
-						<DataList table={activeTable}/>
-					{:else}
-						<div>Page List</div>
 					-->
+		{:else if offcanvasMode === 'table-create'}
+
+		<TableCreateCard tables = {[]} />
+
+		{:else if offcanvasMode === 'data-list'}
+			<DataList table={activeTable} />
+		{:else}
+			<div>Page List</div>
 		{/if}
 	</OffcanvasBody>
 
