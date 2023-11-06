@@ -39,3 +39,8 @@ export async function POST({request, locals, url}) {
     
     return respond(res.status, res.message, res.data)
 }
+export async function DELETE({locals:{api}, url,request}){
+api.re
+
+
+}
