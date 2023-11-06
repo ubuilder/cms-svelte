@@ -1,13 +1,4 @@
-function respond(status = 200, message = "", data = {}) {
-    const response: any = {}
-
-    response.message = message
-    response.status = status
-    response.data = data;
-    
-    
-    return new Response(JSON.stringify(response))    
-}
+import { respond } from '$lib/helpers/api.js';
 
 export async function GET({request, locals, url}) {
 
