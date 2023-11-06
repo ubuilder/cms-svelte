@@ -77,6 +77,7 @@
 
 	let dragging = false
 
+	let activePage: any = null
 	let activeTable: any = null
 	let instance: any = null
 
@@ -747,6 +748,14 @@
 		render()
 	}
 
+	function openPageSettings(page) {
+		activePage = page;
+
+		leftOffcanvasOpen = true;
+		offcanvasMode = 'edit-page'
+
+	}
+
 	async function onExtractComponent() {
 		// activeSlot.props
 
@@ -1008,10 +1017,9 @@
 			</div>
 		</div>
 		<EditorOffcanvases
-			{tables}
-			{forms}
-			{components}
+			on:reload={reload}
 			bind:page
+			bind:activePage
 			bind:offcanvasMode
 			bind:leftOffcanvasOpen
 			bind:rightOffcanvasOpen />
@@ -1035,7 +1043,7 @@
 						{page}
 						{pages}
 						on:open-page={(e) => gotoPageEditor(e.detail)}
-						on:open-page-settings={() => console.log('settings')} />
+						on:open-page-settings={(e) => openPageSettings(e.detail)} />
 
 					<div class="h-10"></div>
 					{#if page}

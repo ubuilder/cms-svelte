@@ -37,28 +37,44 @@
 	import DynamicFormField from '$lib/components/content/DynamicFormField.svelte'
 	import { t } from '$lib/i18n'
 	import FormViewer from './FormViewer.svelte'
-	import { createEventDispatcher } from 'svelte'
+	import { createEventDispatcher, onMount } from 'svelte'
+	import { api } from '$lib/helpers/api'
 
 	export let page: Partial<PageType> = {};
-	export let tables: Table[] = [];
-	export let forms: any[] = [];
-	export let components: any[] = [];
+	
+	let tables: Table[] = [];
+	let forms: any[] = [];
 
 
 	async function openRemoveConfirmModal() {
 		const res = await confirmModal.open({ status: 'danger' }, { autoClose: true })
 		if (res) {
-			dispatch('remove')
+			const res = await api('/pages', {
+				params: {
+					id: page.id
+				},
+				method: 'DELETE'
+			})
+			alert.success(res.message)		
+			dispatch('close')
+			dispatch('reload', ['pages'])
 
 		}
 	}
 	const dispatch = createEventDispatcher()
 
-	function updatePage() {
-		dispatch('update')
+	async function updatePage() {
+		const res = await api('/pages', {
+			params: {
+				id: page.id
+			},
+			data: page
+		})
+		alert.success(res.message)		
 	}
 	function cancel() {
-		dispatch('cancel')
+		dispatch('close')
+
 	}
 
 	function getItems(load: any): any[] {
@@ -98,9 +114,7 @@
 				},
 			},
 		}
-		console.log(items)
 
-		console.log('load: ', load)
 		for (let item of load) {
 			const table = tables.find((x) => x.id === item.table)
 			if (!table) continue
@@ -145,6 +159,13 @@
 		console.log(items)
 		return items
 	}
+
+	onMount(async () => {
+		tables = await api('/tables').then(res => res.data)
+		forms = await api('/pages/forms', {params: {id: page.id}}).then(res => res.data)
+		// actions = await api('/actions').then(res => res.data)
+	})
+
 </script>
 
 <Page>
@@ -213,18 +234,14 @@
 								label="Direction" />
 						</TabPanel>
 						<TabPanel>
+							{#if tables.length}
 							<PageLoad
 								items={getItems(page.load)}
 								bind:load={page.load}
 								bind:tables />
+							{/if}
 						</TabPanel>
-						<!-- <TabPanel>
-							<SlotList
-								components={data.components}
-								items={getItems(page.load)}
-								on:move={onMove}
-								bind:slotList={page.slot} />
-						</TabPanel> -->
+						
 						<TabPanel>
 							<FormField label="Actions">
 								<Accordions>
@@ -267,8 +284,8 @@
 							</Button>
 						</TabPanel>
 						<TabPanel>
-							{#if forms.data.length}
-								<ListBox items={forms.data} let:item>
+							{#if forms.length}
+								<ListBox items={forms} let:item>
 									<!-- <ListItem name="Form">{item.}</ListItem> -->
 									<ListItem name="URL">{item.pathname}</ListItem>
 									<ListItem name="Content (JSON)"

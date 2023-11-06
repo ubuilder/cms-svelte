@@ -928,6 +928,8 @@
 	let settings = {}
 	export let forms: any[] = [] // forms of current page
 
+
+	export let activePage: any = null
 	export let leftOffcanvasOpen = false
 	export let rightOffcanvasOpen = false
 	export let offcanvasMode: string
@@ -1036,19 +1038,15 @@
 	bind:show={leftOffcanvasOpen}>
 	<OffcanvasBody p="0">
 		{#if offcanvasMode === 'edit-page'}
-			<EditPage
-				on:update={updatePage}
-				on:cancel={cancelUpdatePage}
-				on:remove={removePage}
-				bind:page
-				{tables}
-				{forms}
-				{components} />
+		{#if activePage}
+			<EditPage on:reload on:close={(e) => (leftOffcanvasOpen = false)} bind:page={activePage} />
+		{/if}
 		{:else if offcanvasMode === 'profile'}
 			<PageHeader px="2" title="Update Profile">
 				<Button on:click={() => (leftOffcanvasOpen = false)}>{t('buttons.cancel')}</Button>
-				<Button color="primary" bgColor="primary" on:click={updateProfile}
-					>{t('buttons.save')}</Button>
+				<Button color="primary" bgColor="primary" on:click={updateProfile}>
+					{t('buttons.save')}
+				</Button>
 			</PageHeader>
 			<EditProfileForm bind:user on:submit={() => updateProfile()} />
 		{:else if offcanvasMode === 'settings'}
