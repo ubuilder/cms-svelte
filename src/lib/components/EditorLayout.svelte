@@ -1054,6 +1054,7 @@
 					{#if page}
 						<SidebarSlotList
 							on:reload={reload}
+							on:remove-slot={(e) => onRemoveSlot(e.detail.id)}
 							on:open-settings={(e) => selectSlot(e.detail.id)}
 							slots={page.slot}
 							{activeSlot}

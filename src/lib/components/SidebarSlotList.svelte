@@ -11,5 +11,5 @@
 
 <div class=" sidebar-title">Slots</div>
 {#each slots as slot}
-	<SlotSidebarItem on:open-settings {components} {slot} bind:activeSlot />
+	<SlotSidebarItem on:remove-slot on:open-settings {components} {slot} bind:activeSlot />
 {/each}
