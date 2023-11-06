@@ -1,10 +1,10 @@
 <script lang="ts">
-  import { Page, FilterList, TextFilter, SelectFilter, Button, El, Icon, modal, alert } from "@ulibs/yesvelte";
+  import { Page, FilterList, TextFilter, SelectFilter, Button, El, Icon, modal, alert, PageHeader } from "@ulibs/yesvelte";
   import Asset from "$lib/components/Asset.svelte";
   import { invalidateAll } from "$app/navigation";
   import { t } from "$lib/i18n";
 	import type { AssetType } from "$lib/types/asset"
-	import { createEventDispatcher, onMount } from "svelte"
+	import { onMount } from "svelte"
 	import AssetUpdateModal from "$lib/components/AssetUpdateModal.svelte"
 	import { api } from "$lib/helpers/api"
 
@@ -46,14 +46,15 @@
 </script>
 
 <Page>
-  <Button
+  <PageHeader title="Assets">
+    <Button
     on:click={() => uploadInput.click()}
     color="primary"
-    slot="header-buttons"
   >
     <Icon name="upload" />
     {t('assets.upload')}
   </Button>
+  </PageHeader>
 
   <FilterList>
     <SelectFilter

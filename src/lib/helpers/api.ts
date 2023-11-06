@@ -6,6 +6,8 @@ export async function api(url: string, { params, data, formData, method }: any =
 	if (formData) {
 		opts.method = 'POST'
 		opts.body = formData
+
+		console.log(formData.get('file'))
 	} else if (data) {
 		opts.method = 'POST'
 
@@ -15,8 +17,10 @@ export async function api(url: string, { params, data, formData, method }: any =
 		opts.body = JSON.stringify(data)
 	}
 
-	opts.method = method
+	opts.method ??= method
 
+	console.log(opts)
+	
 	const paramsStr = params ? `?${stringify(params)}` : ''
 	const res: {message: string, status: number, data: any} = await fetch('/api' + url + paramsStr, opts).then((res) => res.json())
 
