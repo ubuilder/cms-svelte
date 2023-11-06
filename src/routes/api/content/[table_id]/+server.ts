@@ -20,7 +20,6 @@ export async function GET({request, locals, url, params}) {
 export async function POST({request, locals, url, params}) {
     const body = await request.json();
 
-
     if(url.searchParams.get('id')) {
         const id = url.searchParams.get('id');
         const res = await locals.api.updateData({data: body, table: params.table_id, id});

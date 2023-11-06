@@ -1,18 +1,17 @@
 import { fail, redirect } from '@sveltejs/kit'
 
-export async function load({url}) {
+export async function load({ url }) {
 	let data: any = {}
-	if(url.searchParams.get('fromRegister')) {
+	if (url.searchParams.get('fromRegister')) {
 		data.fromRegister = true
 	}
-	if(url.searchParams.get('fromAdmin')) {
+	if (url.searchParams.get('fromAdmin')) {
 		data.fromAdmin = true
 	}
 	const redirectTo = url.searchParams.get('redirect')
-	if(redirectTo && redirectTo !== '/edit/logout') {
+	if (redirectTo && redirectTo !== '/edit/logout') {
 		data.redirect = redirectTo
 	}
-	
 
 	data.theme = 'dark'
 
@@ -26,8 +25,8 @@ export const actions = {
 		const username = formData.get('username')
 		const password = formData.get('password')
 
-		const redirectTo = event.url.searchParams.get('redirect')		
-		console.log(redirectTo, event.url)
+		// const redirectTo = event.url.searchParams.get('redirect')
+		// console.log(redirectTo, event.url)
 
 		const response = await event.locals.api.login({ username, password })
 		if (response.status !== 200) {
@@ -42,7 +41,7 @@ export const actions = {
 			maxAge: 60 * 60 * 24 * 15,
 		})
 
-		throw redirect(302, redirectTo ?? '/edit/')
+		throw redirect(301,'/edit/')
 
 	},
 }

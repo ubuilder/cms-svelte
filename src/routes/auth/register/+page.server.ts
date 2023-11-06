@@ -50,7 +50,7 @@ export const actions = {
 			maxAge: 60 * 60 * 24 * 15,
 		})
 
-		throw redirect(301, redirectTo ?? '/edit/')
+		throw redirect(301, '/edit/')
 		// return {
 		// 	success: true,
 		// 	code: 201,
