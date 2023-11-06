@@ -11,7 +11,6 @@
 	import EditSettingsForm from './EditSettingsForm.svelte'
 	import AssetsPage from './AssetsPage.svelte'
 
-
 	// import ComponentProp from '$lib/ui/ComponentProp.svelte'
 	// import { customAlphabet } from 'nanoid'
 	// import hbs from 'handlebars'
@@ -1059,12 +1058,8 @@
 					>{t('buttons.save')}</Button>
 			</PageHeader>
 			<EditSettingsForm bind:settings on:save={() => updateSettings()} />
-			{:else if offcanvasMode === 'assets'}
-						<AssetsPage
-							on:remove={(e) => removeFile(e.detail)}
-							on:update={(e) => updateFile(e.detail)}
-							
-							 />
+		{:else if offcanvasMode === 'assets'}
+			<AssetsPage on:close={(e) => (leftOffcanvasOpen = false)} />
 			<!--	{:else if offcanvasMode === 'table-settings'}
 						<Page>
 							<ButtonList slot="header-buttons">

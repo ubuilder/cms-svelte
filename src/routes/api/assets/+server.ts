@@ -10,17 +10,19 @@ export async function GET({request, locals, url}) {
 } 
 
 export async function POST({request, locals, url}) {
-    const body = await request.formData();
 
     if(url.searchParams.get('id')) {
+        const data = await request.json();
+
         const id = url.searchParams.get('id');
-        const res = await locals.api.updateAsset(id, body);
+        const res = await locals.api.updateAsset({id, data});
 
         return respond(res.status, res.message, res.data)
     }
+    const data = await request.formData();
 
     // upload file
-    	const res = await locals.api.uploadFile(body);
+    	const res = await locals.api.uploadFile(data);
     
     return respond(res.status, res.message, res.data)
 }
