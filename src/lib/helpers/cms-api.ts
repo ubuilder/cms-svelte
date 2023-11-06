@@ -211,9 +211,7 @@ export function cms_api(
 		async updateAsset(id: string, data: any) {
 			return call<any>('/assets/updateFile', { id, data })
 		},
-		async uploadFile(file: File) {
-			const body = new FormData()
-			body.append('file', file)
+		async uploadFile(body: FormData) {
 			console.log('inside api', baseUrl + '/assets/uploadFile', token)
 			const res = await fetch(baseUrl + '/assets/uploadFile', {
 				method: 'POST',
