@@ -12,14 +12,10 @@
 	const dispatch = createEventDispatcher()
 
 	async function addPage() {
-		const data = await modal.open(AddPageModal, {
-
-		})
-
-		const res = await api('/pages', {data})
-
+		const data = await modal.open(AddPageModal, {})
+		const res = await api('/pages', { data })
 		alert.success(res.message)
-		dispatch('open-page', res.data);
+		dispatch('open-page', res.data)
 	}
 
 	function gotoPageEditor(pageItem: any) {
@@ -30,10 +26,11 @@
 		dispatch('open-page-settings', pageItem)
 	}
 </script>
+
 <div class="sidebar-title">
-    Pages
-	{#if pages.length >0}
-	<SidebarTitleButton icon="plus" on:click={addPage}/>
+	Pages
+	{#if pages.length > 0}
+		<SidebarTitleButton icon="plus" on:click={addPage} />
 	{/if}
 </div>
 
@@ -50,14 +47,11 @@
 		</div>
 		<Icon name="pencil" class="text-gray-400" mb=1 ms="auto" on:click!stopPropagation={() => openPageSettings(pageItem)} />
 	</div>
-	{:else}
-
+{:else}
 	<div class="w-full p-1">
-
-		<Button w=100 color="primary" bgColor="primary" on:click={addPage}>
-			<Icon name="plus"/>
+		<Button w="100" color="primary" bgColor="primary" on:click={addPage}>
+			<Icon name="plus" />
 			Add Page
 		</Button>
 	</div>
-
 {/each}

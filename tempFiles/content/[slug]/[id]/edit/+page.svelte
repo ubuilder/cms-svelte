@@ -1,12 +1,11 @@
 <script lang="ts">
 	import FieldInput from '$lib/components/content/FieldInput.svelte'
-  import {enhance} from '$app/forms'
+	import { enhance } from '$app/forms'
 	import { t } from '$lib/i18n'
 	import { Button, Card, CardBody, El, ButtonList, Page } from '@ulibs/yesvelte'
 
 	export let data
 	export let form
-
 
 	// async function onSubmit() {
 	// 	const value2: any = {}
@@ -44,7 +43,7 @@
 <Page title="Update {data.table.name} ({data.value.id})" back>
 	<Card>
 		<form method="POST" action="?/update" use:enhance>
-			<input type="hidden" value={data.value.id} name="id"/>
+			<input type="hidden" value={data.value.id} name="id" />
 			<CardBody row>
 				{#each data.table.fields as field}
 					{@const errorMessage = form?.field === field.name ? form.message : undefined}
