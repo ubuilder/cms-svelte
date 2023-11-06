@@ -1,5 +1,7 @@
 <script lang="ts">
 	import { ModalProvider, PageHeader, alert, modal } from '@ulibs/yesvelte'
+	import EditComponent from '$lib/components/components/EditComponent.svelte'
+
 	import EditPage from './EditPage.svelte'
 
 	import { Button, Offcanvas, OffcanvasBody, OffcanvasHeader } from 'yesvelte'
@@ -44,7 +46,6 @@
 	// import { browser } from '$app/environment'
 	// import SlotSidebarItem from './SlotSidebarItem.svelte'
 	// import EditPage from '../../routes/edit/[page_id]/EditPage.svelte'
-	// import EditComponent from '../../routes/edit/[page_id]/components/[id]/EditComponent.svelte'
 	// import TableEditCard from '../../routes/edit/[page_id]/content/TableEditCard.svelte'
 	// import { DragDrop } from '$lib/helpers/drag-drop'
 
@@ -923,13 +924,12 @@
 
 	export let page: any
 	export let components: any[] = []
-	export let tables: any[] = []
 	let user = {}
 	let settings = {}
-	export let forms: any[] = [] // forms of current page
 
 
 	export let activePage: any = null
+	export let activeComponent: any = null
 	export let leftOffcanvasOpen = false
 	export let rightOffcanvasOpen = false
 	export let offcanvasMode: string
@@ -1095,10 +1095,9 @@
 	autoClose
 	placement="end"
 	bind:show={rightOffcanvasOpen}>
-	<!-- <OffcanvasBody p="0">
+	<OffcanvasBody p="0">
 					{#if offcanvasMode === 'component-settings'}
 						<EditComponent
-							{components}
 							component={activeComponent}
 							on:remove={removeComponent}
 							on:cancel={() => (rightOffcanvasOpen = false)}
@@ -1106,6 +1105,6 @@
 					{:else}
 						<div>Page List</div>
 					{/if}
-				</OffcanvasBody> -->
+				</OffcanvasBody>
 	<ModalProvider />
 </Offcanvas>

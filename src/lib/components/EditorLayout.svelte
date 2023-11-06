@@ -1020,6 +1020,7 @@
 			on:reload={reload}
 			bind:page
 			bind:activePage
+			bind:activeComponent
 			bind:offcanvasMode
 			bind:leftOffcanvasOpen
 			bind:rightOffcanvasOpen />
