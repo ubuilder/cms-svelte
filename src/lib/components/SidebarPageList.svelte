@@ -48,7 +48,7 @@
 		<div>
 			{pageItem.title} <span class="opacity-50">/{pageItem.slug}</span>
 		</div>
-		<Icon name="settings" ms="auto" on:click!stopPropagation={() => openPageSettings(pageItem)} />
+		<Icon name="pencil" class="text-gray-400" mb=1 ms="auto" on:click!stopPropagation={() => openPageSettings(pageItem)} />
 	</div>
 	{:else}
 
