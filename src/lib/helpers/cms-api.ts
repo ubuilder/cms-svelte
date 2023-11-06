@@ -219,11 +219,9 @@ export function cms_api(
 					authorization: `bearer ${token}`,
 				},
 				body,
-			})
+			}).then(res => res.json())
 
-			return {
-				data: [],
-			}
+			return res
 			// return (await res.json()).data;
 		},
 		async downloadFile(id: string) {

@@ -10,6 +10,7 @@
 		modal,
 		alert,
 		PageHeader,
+		confirmModal,
 	} from '@ulibs/yesvelte'
 	import Asset from '$lib/components/Asset.svelte'
 	import { invalidateAll } from '$app/navigation'
@@ -30,12 +31,14 @@
 
 		formData.append('file', event.target.files[0])
 
-		api('/assets', {
+		const res = await api('/assets', {
 			formData,
-		}).then(async (res) => {
-			alert.success(res.message || 'File uploaded successfully')
-      reload()
 		})
+
+		console.log('file uploaded: res: ', res)
+		reload()
+
+		alert.success(res.message || 'File uploaded successfully')
 	}
 
 	async function onPreview({ detail }: CustomEvent) {
@@ -49,16 +52,29 @@
 
 		if (choice) {
 			await api('/assets', { params: { id: detail.id }, data: detail })
-      reload()
+
+			reload()
 		}
 	}
 
-  async function reload() {
+	async function onRemove(asset: Asset) {
+		const choice = await confirmModal.open()
+
+		if (choice) {
+			await api('/assets', { params: { id: asset.id }, method: 'DELETE' })
+			setTimeout(() => {
+				reload()
+			}, 2000)
+		}
+	}
+
+	async function reload() {
+		console.log('reload assets')
 		assets = await api('/assets').then((res) => res.data)
-  }
-  
+	}
+
 	onMount(() => {
-    reload()
+		reload()
 	})
 
 	let filters = {}
@@ -80,9 +96,9 @@
 		<SelectFilter
 			key="type"
 			items={[
-				{ text: t('assets.image'), key: 'image' },
-				{ text: t('assets.audio'), key: 'audio' },
-				{ text: t('assets.video'), key: 'video' },
+				{ text: t('assets.filters.image'), key: 'image' },
+				{ text: t('assets.filters.audio'), key: 'audio' },
+				{ text: t('assets.filters.video'), key: 'video' },
 			]}
 			text="Type" />
 		<TextFilter key="name" text={t('assets.filters.name')} />
@@ -95,10 +111,7 @@
 
 	<El row>
 		{#each assets as asset}
-			<Asset
-				on:remove={(event) => api('/assets', { params: { id: asset.id }, method: 'DELETE' })}
-				on:select={onPreview}
-				{asset} />
+			<Asset on:remove={(event) => onRemove(asset)} on:select={onPreview} {asset} />
 		{/each}
 	</El>
 </Page>

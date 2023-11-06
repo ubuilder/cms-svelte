@@ -14,7 +14,7 @@ export async function POST({ request, locals, url }) {
 		const data = await request.json()
 
 		const id = url.searchParams.get('id')
-		const res = await locals.api.updateAsset({ id, data })
+		const res = await locals.api.updateAsset(id, data)
 
 		return respond(res.status, res.message, res.data)
 	}
