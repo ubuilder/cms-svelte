@@ -60,8 +60,6 @@
 
 	const dispatch = createEventDispatcher()
 	async function update() {
-		// updateComponent....
-		// dispatch('update', component)
 		const res = await api('/components', {
 			params: {
 				id: component.id,
@@ -69,11 +67,9 @@
 			data: component,
 		})
 		alert.success(res.message)
-		console.log('dispatch close')
-
+	
 		dispatch('close')
 		dispatch('reload', ['components'])
-	
 	}
 
 	onMount(async () => {
@@ -84,7 +80,7 @@
 </script>
 
 <Page>
-	<ButtonList slot="header-buttons" ms="auto">
+	<ButtonList {title} slot="header" ms="auto">
 		<Button on:click={remove} color="danger">{t('buttons.remove')}</Button>
 		<Button disabled href="../">{t('buttons.cancel')}</Button>
 		<Button on:click={update} color="primary">{t('buttons.update')}</Button>
