@@ -8,6 +8,7 @@
 		Card,
 		CardBody,
 		CardFooter,
+		CardHeader,
 		El,
 		FormField,
 		FormInput,
@@ -15,6 +16,7 @@
 		FormSelect,
 		Icon,
 		Page,
+		PageHeader,
 	} from '@ulibs/yesvelte'
 	import { createEventDispatcher, onMount } from 'svelte'
 	// export let data;
@@ -37,14 +39,24 @@
 
 	onMount(async () => {
 		pages = await api('/pages').then(res => res.data)
+		settings = await api('/settings').then((res) => res.data)
 	})
+
+	function close(){
+		dispatch('close')
+	}
 
 	function save() {
 		dispatch('save', settings)
 	}
 </script>
 
-<Page title="">
+<Page>
+	<PageHeader slot="header" px="2" title="Settings">
+		<Button on:click={close}>{t('buttons.cancel')}</Button>
+		<Button color="primary" bgColor="primary" on:click={save}
+			>{t('buttons.save')}</Button>
+	</PageHeader>
 	<Card>
 		<CardBody>
 			<FormSelect
@@ -116,11 +128,5 @@
 				</El>
 			</FormField>
 		</CardBody>
-		<CardFooter>
-			<ButtonList ms="auto">
-				<Button href="../">{t('buttons.cancel')}</Button>
-				<Button color="primary" on:click={save}>{t('buttons.save')}</Button>
-			</ButtonList>
-		</CardFooter>
 	</Card>
 </Page>

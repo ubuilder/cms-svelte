@@ -1019,6 +1019,7 @@
 		alert.success(res.message)
 		leftOffcanvasOpen = false
 	}
+
 	async function updateSettings() {
 		const res = await api('/settings', { data: settings })
 		alert.success(res.message)
@@ -1027,7 +1028,6 @@
 
 	onMount(async () => {
 		user = await api('/profile').then((res) => res.data)
-		settings = await api('/settings').then((res) => res.data)
 	})
 </script>
 
@@ -1052,11 +1052,6 @@
 			</PageHeader>
 			<EditProfileForm bind:user on:submit={() => updateProfile()} />
 		{:else if offcanvasMode === 'settings'}
-			<PageHeader px="2" title="Settings">
-				<Button on:click={() => (leftOffcanvasOpen = false)}>{t('buttons.cancel')}</Button>
-				<Button color="primary" bgColor="primary" on:click={updateSettings}
-					>{t('buttons.save')}</Button>
-			</PageHeader>
 			<EditSettingsForm bind:settings on:save={() => updateSettings()} />
 		{:else if offcanvasMode === 'assets'}
 			<AssetsPage on:close={(e) => (leftOffcanvasOpen = false)} />
