@@ -15,10 +15,10 @@
     return { ...prev, [curr.name]: curr.default_value }
   }, {})
   async function insert() {
-    const res = await api(`/content/${table.id}`, { data: form }).then(res =>res)
+    console.log({value})
+    const res = await api(`/content/${table.id}`, { data: value }).then(res =>res)
     console.log("res", res)
     goBack()
-
   }
   
   const dispatch = createEventDispatcher()
@@ -28,7 +28,7 @@
 </script>
 
 <Page>
-  <PageHeader title="Edit Table">
+  <PageHeader title="Insert in {table.name}">
     <Button on:click={goBack}>Cancel</Button>
     <Button on:click={insert} color="primary" bgColor="blue">Insert</Button>
   </PageHeader>
