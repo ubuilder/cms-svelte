@@ -933,7 +933,7 @@
 
 	export let leftOffcanvasOpen = false
 	export let rightOffcanvasOpen = false
-	export let offcanvasMode: string
+	export let offcanvasMode: string | undefined = undefined
 
 	const dispatch = createEventDispatcher()
 
@@ -954,20 +954,17 @@
 		}).then((res) => {
 			dispatch('reload', ['pages'])
 		})
-
-		fetch('?/removePage', {
-			method: 'POST',
-			body: JSON.stringify(page),
-		}).then((res) => goto('/edit', { invalidateAll: true }))
 	}
 
 	async function removeComponent({ detail }: CustomEvent) {
 		rightOffcanvasOpen = false
-		await fetch(`./components/${detail.id}/?/remove`, {
-			method: 'POST',
-			body: JSON.stringify(detail),
+		api('/components', {
+			params: {id: detail.id},
+			method: 'DELETE'
+		}).then(res => {
+			alert.success(res.message)
+			dispatch('reload', ['components'])
 		})
-		goto('.', { invalidateAll: true })
 	}
 
 	function cancelUpdatePage() {
@@ -1024,6 +1021,7 @@
 
 	function closeOffcanvas() {
 		leftOffcanvasOpen = false
+		rightOffcanvasOpen = false
 	}
 
 	onMount(async () => {
@@ -1100,10 +1098,10 @@
 	<OffcanvasBody p="0">
 					{#if offcanvasMode === 'component-settings'}
 						<EditComponent
+							on:close={closeOffcanvas}
 							component={data.activeComponent}
-							on:remove={removeComponent}
-							on:cancel={() => (rightOffcanvasOpen = false)}
-							on:update={updateComponent} />
+							
+							 />
 					{:else}
 						<div>Page List</div>
 					{/if}

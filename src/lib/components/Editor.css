@@ -14,25 +14,29 @@ html {
 }
 
 .content {
-	color: black;
-	margin: 8px;
-	width: calc(100% - 16px);
+}
+
+.wrapper {
 	transition: all 0.3s ease-in-out;
+	width: 100%;
+	padding: 8px;
+	color: black;
+	background: linear-gradient(45deg, #d0a0d0, #a0d0d0);
 	height: 100%;
 	overflow-y: auto;
-	background-color: white;
+
 }
 
-.content.left-sidebar-open {
-	margin-left: 208px;
+.wrapper.left-sidebar-open {
+	margin-left: 200px;
 }
 
-.content.right-sidebar-open,
-.content.left-sidebar-open {
-	width: calc(100% - 216px);
+.wrapper.right-sidebar-open,
+.wrapper.left-sidebar-open {
+	width: calc(100% - 200px);
 }
-.content.right-sidebar-open.left-sidebar-open {
-	width: calc(100% - 416px);
+.wrapper.right-sidebar-open.left-sidebar-open {
+	width: calc(100% - 400px);
 }
 .component-item {
 	padding: 0.5rem;
