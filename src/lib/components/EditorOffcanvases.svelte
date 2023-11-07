@@ -990,17 +990,7 @@
 		if ($modal) $modal.close()
 	}
 
-	async function updateProfile() {
-		const res = await api('/profile', { data: user })
-		alert.success(res.message)
-		leftOffcanvasOpen = false
-	}
-
-	async function updateSettings() {
-		const res = await api('/settings', { data: settings })
-		alert.success(res.message)
-		leftOffcanvasOpen = false
-	}
+	
 
 	function closeOffcanvas() {
 		leftOffcanvasOpen = false
@@ -1022,13 +1012,12 @@
 	<OffcanvasBody p="0">
 		{#if offcanvasMode === 'edit-page'}
 		{#if data.activePage}
-			<EditPage on:reload on:close={(e) => (leftOffcanvasOpen = false)} bind:page={data.activePage} />
+			<EditPage on:reload on:close={closeOffcanvas} bind:page={data.activePage} />
 		{/if}
 		{:else if offcanvasMode === 'profile'}
-			
-			<EditProfileForm on:close={closeOffcanvas} bind:user on:submit={() => updateProfile()} />
+			<EditProfileForm on:close={closeOffcanvas} bind:user />
 		{:else if offcanvasMode === 'settings'}
-			<EditSettingsForm bind:settings on:save={() => updateSettings()} />
+			<EditSettingsForm bind:settings on:close={closeOffcanvas}  />
 		{:else if offcanvasMode === 'assets'}
 			<AssetsPage on:close={(e) => (leftOffcanvasOpen = false)} />
 	    {:else if offcanvasMode === 'table-settings'}

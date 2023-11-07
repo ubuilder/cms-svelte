@@ -257,7 +257,7 @@
 							<DropdownItem on:click={() => offcanvas.openLeft('profile')}>
 								{t('profile.title')}
 							</DropdownItem>
-							<DropdownItem on:click={() => offcanvas.openLeft('profile')}>
+							<DropdownItem on:click={() => offcanvas.openLeft('settings')}>
 								{t('settings.title')}
 							</DropdownItem>
 							<DropdownItem divider />

@@ -17,6 +17,7 @@
 		Icon,
 		Page,
 		PageHeader,
+		alert,
 	} from '@ulibs/yesvelte'
 	import { createEventDispatcher, onMount } from 'svelte'
 	// export let data;
@@ -46,15 +47,19 @@
 		dispatch('close')
 	}
 
-	function save() {
-		dispatch('save', settings)
+	async function updateSettings() {
+		const res = await api('/settings', { data: settings })
+		alert.success(res.message)
+		dispatch('close')	
+		setTimeout(()=> location.reload(), 1000)
 	}
+
 </script>
 
 <Page>
 	<PageHeader slot="header" px="2" title="Settings">
 		<Button on:click={close}>{t('buttons.cancel')}</Button>
-		<Button color="primary" bgColor="primary" on:click={save}
+		<Button color="primary" bgColor="primary" on:click={updateSettings}
 			>{t('buttons.save')}</Button>
 	</PageHeader>
 	<Card>
