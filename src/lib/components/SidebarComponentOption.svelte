@@ -1,16 +1,17 @@
 <script lang="ts">
 	import ComponentProp from '$lib/ui/ComponentProp.svelte'
 	import { createEventDispatcher, onMount } from 'svelte'
-	import { El, FormField, FormInput, TabContent, TabItem, TabList, TabPanel, Tabs } from 'yesvelte'
+	import { El, FormField, FormInput, Icon, Label, TabContent, TabItem, TabList, TabPanel, Tabs } from 'yesvelte'
 
 	export let components: any[] = []
 	export let activeSlot: any
-
 	const dispatch = createEventDispatcher()
 
 	function selectSlot(slot: any) {
 		dispatch('select-slot', slot)
 	}
+
+	$: dispatch('update', activeSlot)
 
 	const  getComponent = (id) => components.find(x => x.id === id);
 </script>
@@ -32,12 +33,13 @@
 						items={{}}
 						{field}
 						bind:value={activeSlot.props[field.name]} />
+						
 					{:else}
 
-					<FormField label={field.name}>
+					<FormField label={field.name} mb="2">
 						{#each activeSlot.props[field.name] ?? [] as slot}
-							<El px=3 py="2" border on:click={() => selectSlot(slot.id)}>
-								{getComponent(slot.type)}
+							<El px=3 py="2" borderRoundSize="2" border on:click={() => selectSlot(slot.id)}>
+								{getComponent(slot.type)?.name}
 							</El>
 						{/each}
 					</FormField>

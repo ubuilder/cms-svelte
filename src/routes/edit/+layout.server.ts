@@ -22,7 +22,7 @@ export async function load({ request, locals }) {
 		user: locals.user,
 		lang: locals.settings.lang,
 		dir: getDir(locals.settings.lang),
-		theme: locals.settings.theme ?? 'dark',
+		theme: locals.settings.theme ?? 'light',
 		siteId: locals.siteId,
 		// menu: locals.settings.menu ?? []
 	}

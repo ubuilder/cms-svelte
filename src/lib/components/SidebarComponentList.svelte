@@ -6,6 +6,7 @@
 	import AddComponentModal from './components/AddComponentModal.svelte'
 	import { api } from '$lib/helpers/api'
 	import SidebarTitleButton from './SidebarTitleButton.svelte'
+  import type { Component } from '$lib/ui'
 
 	export let components: any[] = []
     export let activeSlot: any = undefined;
@@ -15,6 +16,11 @@
 
 	function openComponentSettings(component: any) {
 		dispatch('open-component-settings', component)
+	}
+	function openComponentEditor(component: any) {
+		dispatch('open-component-editor', component)
+		console.log(component)
+
 	}
 
     function getComponent(id: any) {
@@ -78,7 +84,14 @@
 			data-mode="clone"
 			data-id="component-{component.id}">
 			<span>{component.name}</span>
-			<Icon name="settings" on:click!stopPropagation={(e) => openComponentSettings(component)} />
+			<div class="flex items-center gap-2">
+				{#if !component.raw}
+					<Icon name="pencil" on:click!stopPropagation={(e) => openComponentEditor(component)} />
+				{/if}
+				<Icon name="settings" on:click!stopPropagation={(e) => openComponentSettings(component)} />
+
+			</div>
+
 		</div>
 	</div>
 	{:else}

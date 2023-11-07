@@ -11,8 +11,18 @@ export let icon: string = '';
 <div
 	on:click
 	class="font-bold"
-	style="color: #a0d0ff; line-height: 20px; font-size: 16px;">
+	style="">
     <slot>
         <Icon name={icon}/>
     </slot>
 </div>
+
+
+<style>
+	div {
+		color: #6b768b; line-height: 20px; font-size: 16px;
+	}
+	:global([data-bs-theme="dark"]) div {
+		color: #a0d0ff;
+	}
+</style>

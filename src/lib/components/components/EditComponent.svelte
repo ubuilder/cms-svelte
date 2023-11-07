@@ -27,6 +27,7 @@
 		confirmModal,
 	} from '@ulibs/yesvelte'
 	import { createEventDispatcher, onMount } from 'svelte'
+  import SlotEditor from '../SlotEditor.svelte'
 
 	export let component: any = {}
 
@@ -118,12 +119,9 @@
 							</FormField>
 						{:else}
 							<FormField label={t('components.forms.content')}>
-								TODO::::
-								<!-- <SlotList
-								components={components}
-								items={getItems(component.fields)}
-								bind:slotList={component.slot} />
-                 -->
+								
+								
+								<!-- <SlotEditor slotList={component.slot}/> -->
 							</FormField>
 						{/if}
 					</TabPanel>

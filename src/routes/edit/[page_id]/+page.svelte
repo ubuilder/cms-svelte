@@ -4,6 +4,6 @@
 	export let data
 </script>
 
-<EditorLayout page_id={data.page_id}>
+<EditorLayout theme={data.theme} dir={data.dir} page_id={data.page_id}>
 	<slot/>
 </EditorLayout>

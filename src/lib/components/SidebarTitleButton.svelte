@@ -5,7 +5,7 @@
     export let icon: string | undefined = undefined;
 
 </script>
-<El bgColor="primary" class="ms-auto rounded hover:shadow">
+<div class="sidebar-title-button">
     <Icon class="m-[2px]" name={icon} on:click/>
 
-</El>
+</div>

@@ -14,6 +14,20 @@
 	} from 'yesvelte'
 	import SlotList from './SlotList.svelte'
 
+	
+	const icons: any = {
+		plain_text: "abc",
+		rich_text: "float-left",
+		// date_time: "calendar",
+		switch: "toggle-right",
+		number: "123",
+		file: "file-text",
+		image: "photo",
+		slot: "box",
+		// relation: "database-share",
+		select: "list",
+	};
+
 	export let field: ComponentField
 	export let items: any = {}
 	export let components: any[] = []
@@ -208,6 +222,6 @@
 	</FormField>
 {:else}
   {#key key}
-    <DynamicFormField on:change={reload} {accept} col={field.col} label={field.name} {items} {...field} bind:value />
+    <DynamicFormField on:change={reload} {accept} col={field.col} icon={icons[field.type]} label={field.name} {items} {...field} bind:value />
   {/key}
 {/if}
