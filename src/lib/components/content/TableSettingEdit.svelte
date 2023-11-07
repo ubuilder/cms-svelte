@@ -1,14 +1,32 @@
 <script lang="ts">
-  import { Button, Page, PageHeader } from '@ulibs/yesvelte'
+  import { Button, Page, PageHeader, alert } from '@ulibs/yesvelte'
   import TableEditCard from './TableEditCard.svelte'
+  import { api } from '$lib/helpers/api'
+  import { createEventDispatcher } from 'svelte'
 
   export let table = {}
-  console.log('table: ', table)
+  async function removeTable() {
+    const res = await api('/tables', { params: { id: table.id }, method: 'DELETE' }).then(
+      (res) => res
+    )
+    alert.success(res.message)
+    close()
+  }
+  async function updateTable() {
+    const res = await api('/tables', { data: table, params: { id: table.id } }).then((res) => res)
+    alert.success(res.message)
+    close()
+  }
+
+  const dispatch = createEventDispatcher()
+  function close() {
+    dispatch('close')
+  }
 </script>
 
 <Page>
-  <PageHeader slot="header" title="Edit Table">
-    <Button on:click={() => (leftOffcanvasOpen = false)}>Cancel</Button>
+  <PageHeader title="Edit Table">
+    <Button on:click={close}>Cancel</Button>
     <Button on:click={() => removeTable()} color="danger" bgColor="red">Remove</Button>
     <Button on:click={() => updateTable()} color="primary" bgColor="blue">Update</Button>
   </PageHeader>
@@ -16,10 +34,3 @@
     <TableEditCard bind:table />
   {/if}
 </Page>
-
-<!-- <ContentPage
-        on:remove={(e) => removeFile(e.detail)}
-        on:update={(e) => updateFile(e.detail)}
-        on:upload={onUpload}
-
-        {assets} />   -->

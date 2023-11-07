@@ -16,20 +16,7 @@
 	import TableCreateCard from './content/TableCreateCard.svelte'
 
 	import {
-		AlertProvider,
-		Card,
-		El,
-		FormInput,
-		Icon,
-		Loading,
 		OffcanvasBody,
-		TabContent,
-		TabItem,
-		TabList,
-		TabPanel,
-		Tabs,
-		Page,
-		ButtonList,
 		Button, Offcanvas, OffcanvasHeader
 
 	} from '@ulibs/yesvelte'
@@ -1050,7 +1037,7 @@
 		{:else if offcanvasMode === 'assets'}
 			<AssetsPage on:close={(e) => (leftOffcanvasOpen = false)} />
 	    {:else if offcanvasMode === 'table-settings'}
-						<TableSettingEdit bind:table ={data.activeTable} />
+						<TableSettingEdit on:close ={closeOffcanvas}  bind:leftOffcanvasOpen bind:table ={data.activeTable} />
 		{:else if offcanvasMode === 'table-create'}
 
 		<TableCreateCard tables = {[]} />
