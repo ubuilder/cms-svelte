@@ -1,6 +1,5 @@
 import { respond } from '$lib/helpers/api.js';
 
-
 export async function GET({request, locals, url}) {
     const user = await locals.api.getUser()
       
@@ -9,7 +8,6 @@ export async function GET({request, locals, url}) {
 
 export async function POST({request, locals, url}) {
     const body = await request.json();
-
 
     const res = await locals.api.updateProfile(body)
     

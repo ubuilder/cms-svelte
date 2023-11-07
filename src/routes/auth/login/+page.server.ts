@@ -25,7 +25,7 @@ export const actions = {
 		const username = formData.get('username')
 		const password = formData.get('password')
 
-		// const redirectTo = event.url.searchParams.get('redirect')
+		const redirectTo = event.url.searchParams.get('redirect')
 		// console.log(redirectTo, event.url)
 
 		const response = await event.locals.api.login({ username, password })
@@ -41,7 +41,7 @@ export const actions = {
 			maxAge: 60 * 60 * 24 * 15,
 		})
 
-		throw redirect(301,'/edit/')
+		throw redirect(301, redirectTo ?? "/edit/")
 
 	},
 }

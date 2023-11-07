@@ -1,5 +1,6 @@
 <script lang="ts">
 	import FilePicker from '$lib/components/content/FilePicker.svelte'
+	import { api } from '$lib/helpers/api'
 	import { t } from '$lib/i18n'
 	import {
 		Card,
@@ -13,11 +14,18 @@
 		Alert,
 		Layout,
 		PageHeader,
+		alert,
 	} from '@ulibs/yesvelte'
 	import { createEventDispatcher } from 'svelte'
-
 	export let user: any = {}
 	export let successMessage = ''
+
+	async function updateProfile() {
+		const res = await api('/profile', { data: user })
+		alert.success(res.message)
+		dispatch('close')
+		setTimeout(()=> location.reload(), 1000)
+	}
 
 	const dispatch = createEventDispatcher()
 </script>
