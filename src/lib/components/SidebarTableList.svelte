@@ -32,7 +32,6 @@
 <div class="sidebar-title">
 	Tables
 	<div class="sidebar-title">
-		Pages
 		{#if tables.length > 0}
 			<SidebarTitleButton icon="plus" on:click={addTable} />
 		{/if}

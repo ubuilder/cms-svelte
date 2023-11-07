@@ -20,6 +20,7 @@
     icon: 'database',
     fields: [],
   };
+  $:console.log('table: ', table)
   export let tables: Table[] = [];
 
   

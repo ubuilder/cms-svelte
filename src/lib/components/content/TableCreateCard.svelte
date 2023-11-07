@@ -35,7 +35,7 @@
 </script>
 
 <El container="lg">
-	<PageHeader title={t('content.create_table')} back />
+	<!-- <PageHeader title={t('content.create_table')} back /> -->
 	<TableEditCard bind:table tables={tables}>
 		<svelte:fragment slot="footer">
 			<Button on:click={() => history.back()}>{t('buttons.cancel')}</Button>

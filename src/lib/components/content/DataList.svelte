@@ -24,6 +24,10 @@
 	import RelationItem from './RelationItem.svelte'
 
 	export let table
+	console.log("table", table)
+	onMount(async () =>{
+
+	})
 
 	async function removeItem(item: any) {
 		const choice = await confirmModal.open({

@@ -4,7 +4,7 @@
 
 	import EditPage from './EditPage.svelte'
 
-	import { Button, Offcanvas, OffcanvasBody, OffcanvasHeader } from 'yesvelte'
+	
 	import { goto } from '$app/navigation'
 	import EditProfileForm from './EditProfileForm.svelte'
 	import { api } from '$lib/helpers/api'
@@ -21,27 +21,27 @@
 	// import '@ulibs/yesvelte/styles.css'
 	// import './Editor.css'
 	// import { onMount, tick } from 'svelte'
-	// import {
-	// 	AlertProvider,
-	// 	Button,
-	// 	Card,
-	// 	El,
-	// 	FormInput,
-	// 	Icon,
-	// 	Loading,
-	// 	ModalProvider,
-	// 	Offcanvas,
-	// 	OffcanvasBody,
-	// 	TabContent,
-	// 	TabItem,
-	// 	TabList,
-	// 	TabPanel,
-	// 	Tabs,
-	// 	alert,
-	// 	Page,
-	// 	modal,
-	// 	ButtonList,
-	// } from '@ulibs/yesvelte'
+	import {
+		AlertProvider,
+		Card,
+		El,
+		FormInput,
+		Icon,
+		Loading,
+		OffcanvasBody,
+		TabContent,
+		TabItem,
+		TabList,
+		TabPanel,
+		Tabs,
+		Page,
+		ButtonList,
+		Button, Offcanvas, OffcanvasHeader
+
+	} from '@ulibs/yesvelte'
+	import TableEditCard from './content/TableEditCard.svelte'
+  import TableSettingEdit from './content/TableSettingEdit.svelte'
+	
 	// import { goto, invalidate, invalidateAll } from '$app/navigation'
 	// import AddComponentModal from '$lib/components/components/AddComponentModal.svelte'
 	// import interact from 'interactjs'
@@ -931,6 +931,7 @@
 
 
 	export let activePage: any = null
+	export let activeTable: any = null
 	export let activeComponent: any = null
 	export let leftOffcanvasOpen = false
 	export let rightOffcanvasOpen = false
@@ -1060,35 +1061,21 @@
 			<EditSettingsForm bind:settings on:save={() => updateSettings()} />
 		{:else if offcanvasMode === 'assets'}
 			<AssetsPage on:close={(e) => (leftOffcanvasOpen = false)} />
-			<!--	{:else if offcanvasMode === 'table-settings'}
-						<Page>
-							<ButtonList slot="header-buttons">
-								<Button on:click={() => (leftOffcanvasOpen = false)}>Cancel</Button>
-								<Button on:click={() => removeTable()} color="danger" bgColor="red">Remove</Button>
-								<Button on:click={() => updateTable()} color="primary" bgColor="blue"
-									>Update</Button>
-							</ButtonList>
-							{#if activeTable}
-								<TableEditCard bind:table={activeTable} {tables} />
-							{/if}
-						</Page>
-
-						
-						<ContentPage
-								on:remove={(e) => removeFile(e.detail)}
-								on:update={(e) => updateFile(e.detail)}
-								on:upload={onUpload}
-
-								{assets} />
-					-->
+		{:else if offcanvasMode === 'table-settings'}
+		<TableSettingEdit bind:table = {activeTable} />
+		
+						 
 		{:else if offcanvasMode === 'table-create'}
 
 		<TableCreateCard tables = {[]} />
 
+
 		{:else if offcanvasMode === 'data-list'}
+		
 			<DataList table={activeTable} />
 		{:else}
-			<div>Page List</div>
+		{offcanvasMode}
+			<div>Page List </div>
 		{/if}
 	</OffcanvasBody>
 
