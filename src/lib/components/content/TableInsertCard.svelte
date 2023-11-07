@@ -30,8 +30,5 @@
       <Button on:click={() => removeTable()} color="danger" bgColor="red">Remove</Button>
       <Button on:click={() => updateTable()} color="primary" bgColor="blue">Update</Button>
     </PageHeader>
-
-
-
   </Page>
   
