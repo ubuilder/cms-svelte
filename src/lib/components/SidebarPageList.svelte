@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { alert, modal } from '@ulibs/yesvelte'
 	import { createEventDispatcher } from 'svelte'
-	import { Button, El, Icon } from 'yesvelte'
+	import { Button, El, Icon, Badge } from 'yesvelte'
 	import AddPageModal from './AddPageModal.svelte'
 	import { api } from '$lib/helpers/api'
 	import SidebarTitleButton from './SidebarTitleButton.svelte'
@@ -9,6 +9,8 @@
 	export let pages: any[] = []
 	export let page: any
 
+	export let settings = {}
+	
 	const dispatch = createEventDispatcher()
 
 	async function addPage() {
@@ -42,10 +44,23 @@
 		on:click={() => gotoPageEditor(pageItem)}
 		class:active={pageItem.id === page?.id}
 		class="sidebar-item">
+
 		<div>
 			{pageItem.title} <span class="opacity-50">/{pageItem.slug}</span>
 		</div>
-		<Icon name="pencil" class="text-gray-400" mb=1 ms="auto" on:click!stopPropagation={() => openPageSettings(pageItem)} />
+		<div class="flex items-center gap-2">
+			{#if pageItem.id === settings?.page_home}
+			<Badge fontSize="6" p=0 color="success">
+				<Icon name="home" />
+			</Badge>
+			{/if}
+			{#if pageItem.id === settings?.page_404}
+	
+			<Badge fontSize="6"  color="warning">404</Badge>
+			{/if}
+			
+			<Icon name="pencil" class="text-gray-400" mb=1 ms="auto" on:click!stopPropagation={() => openPageSettings(pageItem)} />
+		</div>
 	</div>
 {:else}
 	<div class="w-full p-1">
