@@ -17,7 +17,7 @@
 		DropdownMenu,
 		DropdownItem,
 	} from '@ulibs/yesvelte'
-	
+
 	import SidebarTableList from './SidebarTableList.svelte'
 	import SidebarPageList from './SidebarPageList.svelte'
 	import { api } from '$lib/helpers/api'
@@ -28,12 +28,13 @@
 	import { t } from '$lib/i18n'
 	import SlotEditor from './SlotEditor.svelte'
 
-	let editor: any;
+	let editor: any
 
 	let components: any[] = []
 
 	let user = {}
 	let pages: any[] = []
+	let settings = {}
 
 	export let page_id: any = undefined
 
@@ -46,13 +47,11 @@
 	let offcanvasMode: string | undefined = undefined
 	let offcanvasData = {}
 
-
 	const hbsTemplates: any = {}
 
 	let leftOffcanvasOpen = false
 	let rightOffcanvasOpen = false
 
-	
 	function getComponent(id: string) {
 		return components.find((x) => x.id === id)
 	}
@@ -90,37 +89,6 @@
 		}).then((res) => alert.success(res.message))
 	}
 
-	// function findSlot(id: string, slots: any[], field = null, parent = null) {
-	// 	console.log("findSlot",id, slotMap)
-
-	// 	if(slotMap[id]) return slotMap[id]
-
-	// 	if (!id) return null
-	// 	for (let index in slots) {
-	// 		const slot = slots[index]
-	// 		const component = getComponent(slot.type)
-	// 		// const index = components.findIndex((x) => x.id === slot.type)
-
-	// 		if (slot.id === id) {
-	// 			slot.parent_id = parent?.id ?? null
-	// 			slot.parent_field = field
-	// 			slot.parent_index = index
-
-	// 			slotMap[id] = slot
-	// 			return slot
-	// 		}
-
-	// 		for (let field of component.fields) {
-	// 			if (field.type === 'slot') {
-	// 				const res = findSlot(id, slot.props[field.name] ?? [], field.name, slot)
-
-	// 				if (res) return res
-	// 			}
-	// 		}
-	// 	}
-	// 	return null
-	// }
-
 	function openPageSettings(page: any) {
 		offcanvas.openLeft('edit-page', {
 			activePage: page,
@@ -156,6 +124,7 @@
 		} else {
 			components = await api('/components').then((res) => res.data)
 			pages = await api('/pages').then((res) => res.data)
+			settings = await api('/settings').then((res) => res.data)
 
 			for (let component of components) {
 				hbsTemplates[component.id] = hbs.compile(component.template)
@@ -166,10 +135,6 @@
 	onMount(async () => {
 		await reload()
 		loading = false
-
-		console.log('pages: ', pages)
-
-		console.log('render: on mount')
 	})
 
 	function openComponentSettings(component: any) {
@@ -182,7 +147,7 @@
 		reload()
 		page_id = newPage.id
 
-		window.history.pushState({}, null, '/edit/' + page_id)
+		window.history.pushState({}, '', '/edit/' + page_id)
 		editor?.render()
 	}
 	function openTableCreate() {
@@ -195,7 +160,7 @@
 		})
 	}
 
-	function openTableSettings(table) {
+	function openTableSettings(table: any) {
 		offcanvas.openLeft('table-settings', {
 			activeTable: table,
 		})
@@ -229,6 +194,7 @@
 
 <svelte:head>
 	<title>Page Editor | {page?.title ?? '---'}</title>
+	<!-- <script src="https://cdn.tailwindcss.com"></script> -->
 	<!-- <script src="https://cdn.tailwindcss.com"></script> -->
 	<script src="/cdn.tailwindcss.com.js"></script>
 </svelte:head>
@@ -335,6 +301,7 @@
 				{:else}
 					<SidebarPageList
 						on:reload={reload}
+						{settings}
 						{page}
 						{pages}
 						on:open-page={(e) => gotoPageEditor(e.detail)}
@@ -344,8 +311,8 @@
 					{#if page}
 						<SidebarSlotList
 							on:reload={reload}
-							on:remove-slot={(e) => onRemoveSlot(e.detail.id)}
-							on:open-settings={(e) => selectSlot(e.detail.id)}
+							on:remove-slot={(e) => editor?.removeSlot(e.detail.id)}
+							on:open-settings={(e) => editor?.selectSlot(e.detail.id)}
 							slots={page.slot}
 							{activeSlot}
 							{components} />
@@ -375,7 +342,7 @@
 					{:else if activeSlot}
 						<SidebarComponentOption
 							{components}
-							on:select-slot={(e) => selectSlot(e.detail.id)}
+							on:select-slot={(e) => editor.selectSlot(e.detail.id)}
 							on:reload={reload}
 							bind:activeSlot />
 					{/if}
@@ -383,25 +350,39 @@
 			</div>
 		</div>
 
-		<div class="wrapper" class:right-sidebar-open={rightSidebarOpen}
-		class:left-sidebar-open={leftSidebarOpen}>
-		{#if page}
-
-			<!-- <SlotEditor bind:this={editor} on:open-component-list={() => {mode = 'add'; rightSidebarOpen = true}} bind:slotList={page.slot}/> -->
+		<div
+			class="wrapper"
+			class:right-sidebar-open={rightSidebarOpen}
+			class:left-sidebar-open={leftSidebarOpen}>
+			{#if page}
+				<SlotEditor
+					bind:this={editor}
+					on:open-component-list={() => {
+						mode = 'add'
+						rightSidebarOpen = true
+					}}
+					on:open-component-options={(e) => {
+						console.log('open component options', e.detail)
+						mode = 'options'
+						rightSidebarOpen = true
+						activeSlot = e.detail
+					}}
+					bind:slotList={page.slot} />
 			{:else}
-			<div class="flex flex-col gap-4 h-full pb-20 items-center justify-center">
-				<h1 class="font-bold text-2xl">No page selected</h1>
-				<h2 class="text-lg font-normal text-gray-800">
-					<!-- svelte-ignore a11y-click-events-have-key-events -->
-					<!-- svelte-ignore a11y-no-static-element-interactions -->
-					Open a page from <span
-						class="cursor-pointer hover:bg-blue-50 rounded p-0.5 font-bold text-blue-700"
-						on:click|stopPropagation={() => {
-							leftSidebarOpen = true
-							mode = 'list'
-						}}>Sidebar</span> to continue
-				</h2>
-			</div>
+				<div class="flex flex-col gap-4 h-full pb-20 items-center justify-center">
+					<h1 class="font-bold text-2xl">No page selected</h1>
+					<h2 class="text-lg font-normal text-gray-800">
+						<!-- svelte-ignore a11y-click-events-have-key-events -->
+						<!-- svelte-ignore a11y-no-static-element-interactions -->
+						Open a page from
+						<span
+							class="cursor-pointer hover:bg-blue-50 rounded p-0.5 font-bold text-blue-700"
+							on:click|stopPropagation={() => {
+								leftSidebarOpen = true
+								mode = 'list'
+							}}>Sidebar</span> to continue
+					</h2>
+				</div>
 			{/if}
 		</div>
 

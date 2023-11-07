@@ -1,18 +1,33 @@
 <script lang="ts">
+	import hbs from 'handlebars'
 	import { customAlphabet } from 'nanoid'
-	import { createEventDispatcher } from 'svelte'
+	import { createEventDispatcher, onMount } from 'svelte'
+	import { DragDrop } from '$lib/helpers/drag-drop';
+	import { Icon, Loading } from '@ulibs/yesvelte'
+	import { api } from '$lib/helpers/api'
+  import { browser } from '$app/environment'
+	
 
 	export let slotList: any[] = []
 
 	let contentEl: any
 
 	let activeSlot: any = null
+	let dragging = false;
+	let loading = true
 
 	let borderPosition: any = {}
 	let hoverBorderPosition: any = {}
 	let components = []
 
+	let instance;
+
+
+	const hbsTemplates: any = {}
 	const slotMap: any = {}
+
+	const dispatch = createEventDispatcher()
+
 
 	function nanoid() {
 		return customAlphabet('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', 8)
@@ -22,7 +37,7 @@
 		return nanoid()()
 	}
 
-	function onRemoveSlot(id: string) {
+	export function removeSlot(id: string) {
 		slotList = slotList.filter((x) => x.id !== id)
 
 		forEachSlot(slotList, (slot: any) => {
@@ -37,10 +52,18 @@
 		// TODO: can be optimized...
 		render()
 
-		const dispatch = createEventDispatcher()
-		dispatch('open-component-list')
+		openComponentList()
 		activeSlot = null
 		borderPosition = {}
+	}
+
+	function openComponentList() {
+		console.log('open component list')
+		dispatch('open-component-list')
+
+		// setTimeout(() => {
+		// 	render()
+		// }, 10)
 	}
 
 	function onSelectParent() {
@@ -77,9 +100,9 @@
 		elStack = elStack.filter((x) => x !== e.target)
 	}
 
-	function render(slot = null) {
-		if (!page) return
-		if (false) {
+	export function render(slot = null) {
+		// if (!page) return
+		if (true) {
 			setTimeout(() => {
 				console.log('initialize draggable')
 				if (instance) {
@@ -88,11 +111,11 @@
 					instance = null
 				}
 
-				document.querySelectorAll('.component-wrapper > :first-child').forEach((x) => {
-					x.setAttribute('data-draggable', '')
+				// document.querySelectorAll('.component-wrapper > :first-child').forEach((x) => {
+				// 	x.setAttribute('data-draggable', '')
 
-					x.setAttribute('data-id', x.parentElement.id)
-				})
+				// 	x.setAttribute('data-id', x.parentElement.id)
+				// })
 
 				instance = DragDrop(document.querySelector('.page'), {
 					draggable: '[data-draggable]',
@@ -100,30 +123,34 @@
 				})
 
 				instance.on('start', (event) => {
-					// event.current.classList.add('current-draggable')
+					console.log('dragging started ', event)
 					dragging = true
+					event.source.classList.add('active-slot')
 				})
 
 				instance.on('return', (event) => {
-					// event.current.classList.remove('current-draggable')
 					dragging = false
+					event.source.classList.remove('active-slot')
+
 				})
 
 				instance.on('drop', (event) => {
 					dragging = false
-					// event.current.classList.remove('current-draggable')
+					event.source.classList.remove('active-slot')
+
 
 					const target = event.target
 					const source = event.source.dataset.id.split('-')[1]
-					// 	const target = event.data.dropzone
-					// 	const source = event.data.dragEvent.source.dataset.id.split('-')[1]
 
+					
 					console.log({ target, source: event.source })
 
 					if (target) {
 						const parent = target.getAttribute('data-parent')
 						const field = target.getAttribute('data-field')
 						const index = +target.getAttribute('data-index')
+
+						if(parent === source) return;
 
 						console.log('move or insert: ', { source, parent, field, index })
 
@@ -210,9 +237,19 @@
 			}
 		} else {
 			console.log('render()')
+			setTimeout(() => {
+				document.querySelectorAll('.placeholder.empty').forEach(el => {
+					el.onclick = (e) => {
+						e.stopPropagation()
+						setTimeout(() => {
+							openComponentList()
+						})
+					}
+				})
+			})
 			html =
 				slotList.map((x, i) => renderSlot(x, '', '', i)).join('') +
-				placeholder('', '', slotList.length, 'h-full')
+				placeholder('', '', slotList.length, 'empty')
 
 			contentEl.innerHTML = html
 		}
@@ -254,13 +291,13 @@
 
 						console.log('render: render inside renderSlot..')
 						const res = renderSlot(x, id, field.name, +index)
-						content += res + placeholder(id, field.name, +index + 1)
+						content += res 
 					}
 
 					if (content) {
 						props[
 							field.name
-						] = `<div class="slot" data-parent="${id}" data-index="0">${content}</div>`
+						] = `<div class="slot" data-parent="${id}" data-index="0">${content}</div>`+ placeholder(id, field.name, +index + 1)
 					} else {
 						props[field.name] = placeholder(id, field.name, 0, 'empty')
 					}
@@ -273,15 +310,15 @@
 
 			if (hbsTemplates[slot.type]) {
 				setTimeout(() => {
+					console.log('here')
 					document.querySelector(`[data-parent="${id}"]`)?.addEventListener('click', (e) => {
 						e.stopPropagation()
-						rightSidebarOpen = true
 						// newComponentPosition = id
 						// newComponentPositionField = e.target.getAttribute('data-field')
 						// newComponentPositionIndex = +e.target.getAttribute('data-index')
 
+						// openComponentList()
 						selectSlot(id)
-						mode = 'add'
 					})
 
 					const el = document.querySelector('#component-' + id)
@@ -463,10 +500,13 @@
 				// 	// 		return true
 				// 	// 	},
 				// 	// }),
+			} else {
+				return 'ERROR'
 			}
 		}
 		if (!component) return 'todo'
-
+		
+		if(component.raw) return '';
 		return component.slot
 			.map((x) => {
 				console.log('renderSlot: render custom component...')
@@ -526,7 +566,15 @@
 		})
 	}
 
-	$: if (contentEl && page) {
+	onMount(async () => {
+		components = await api('/components').then((res) => res.data)
+		for (let component of components) {
+			hbsTemplates[component.id] = hbs.compile(component.template)
+		}
+		loading = false
+	})
+
+	$: if (contentEl && slotList) {
 		render()
 		contentEl.addEventListener('scroll', updateActiveBorder)
 	}
@@ -559,23 +607,21 @@
 		}
 	}
 
-	function selectSlot(id) {
-		mode = 'options'
+	export function selectSlot(id: string) {
 
-		if (!id) {
-			mode = 'add'
+		// if (!id) {
+		// 	mode = 'add'
 
-			activeSlot = null
-			activeComponent = null
-			borderPosition = {}
-		}
+		// 	activeSlot = null
+		// 	activeComponent = null
+		// 	borderPosition = {}
+		// }
 		let slotItem = slotMap[id]
 
 		if (slotItem) {
-			rightSidebarOpen = true
+			dispatch('open-component-options', slotItem)
 
-			activeSlot = slotItem
-			activeComponent = getComponent(activeSlot.type)
+			activeSlot = slotItem	
 
 			setTimeout(() => {
 				const rects = document
@@ -612,7 +658,7 @@
 		const slot = slotMap[slot_id]
 
 		insertComponent(slot.type, parent_id, field_name, index, slot.props)
-		onRemoveSlot(slot.id)
+		removeSlot(slot.id)
 	}
 	function insertComponent(
 		component_id: string,
@@ -630,8 +676,6 @@
 			props
 		)
 		let localSlots = JSON.parse(JSON.stringify(slotList))
-
-		mode = 'options'
 
 		const id = getId()
 
@@ -689,34 +733,40 @@
 	}
 </script>
 
-<div>
-	<div bind:this={contentEl} class="content" data-dropzone class:dragging></div>
+<div style="width: 100%; height: 100%">
+	{#if loading}
+		<Loading show absolute/>
+	{:else}
+		<div bind:this={contentEl} on:click={() => openComponentList()} class="content" data-dropzone class:dragging></div>
+	{/if}
 
-	<div
-		class="component-hover-border"
-		style="display: {hoverBorderPosition.w
-			? 'block'
-			: 'none'}; width: {hoverBorderPosition.w}px; height: {hoverBorderPosition.h}px; left: {hoverBorderPosition.x}px; top: {hoverBorderPosition.y}px">
-	</div>
+</div>
+<div
+class="component-hover-border"
+style="display: {hoverBorderPosition.w
+	? 'block'
+	: 'none'}; width: {hoverBorderPosition.w}px; height: {hoverBorderPosition.h}px; left: {hoverBorderPosition.x}px; top: {hoverBorderPosition.y}px">
+</div>
 
-	<div
-		class="component-border"
-		style="display: {borderPosition.w
-			? 'block'
-			: 'none'}; width: {borderPosition.w}px; height: {borderPosition.h}px; left: {borderPosition.x}px; top: {borderPosition.y}px">
-		<div class="buttons-container">
-			<div class="buttons-container-absolute">
-				<div style="display: flex; pointer-events: all; z-index: 4">
-					<Icon size="1x" on:click={onSelectParent} bgColor="primary" name="arrow-up" />
-					<Icon size="1x" on:click={onExtractComponent} bgColor="warning" name="star" />
+<div
 
-					<!-- <Icon size="1x" class="handle" bgColor="primary" name="move" /> -->
-				</div>
+class="component-border"
+style="display: {borderPosition.w
+	? 'block'
+	: 'none'}; width: {borderPosition.w}px; height: {borderPosition.h}px; left: {borderPosition.x}px; top: {borderPosition.y}px">
+<div class="buttons-container">
+	<div class="buttons-container-absolute">
+		<div style="display: flex; pointer-events: all; z-index: 4">
+			<Icon size="1x" on:click={onSelectParent} bgColor="primary" name="arrow-up" />
+			<Icon size="1x" data-draggable data-id="component-{activeSlot?.id}" bgColor="primary" name="move" />
+			<Icon size="1x" on:click={onExtractComponent} bgColor="warning" name="star" />
 
-				<div style="pointer-events: all; z-index: 4">
-					<Icon size="1x" on:click={() => onRemoveSlot(activeSlot.id)} bgColor="red" name="x" />
-				</div>
-			</div>
+
+		</div>
+
+		<div style="pointer-events: all; z-index: 4">
+			<Icon size="1x" on:click={() => removeSlot(activeSlot.id)} bgColor="red" name="x" />
 		</div>
 	</div>
+</div> 
 </div>

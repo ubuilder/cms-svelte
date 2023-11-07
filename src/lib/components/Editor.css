@@ -14,17 +14,28 @@ html {
 }
 
 .content {
+	background-color: white;
+	height: calc(100% - 32px);
+	margin: 24px 16px 16px 16px;
+
 }
 
 .wrapper {
 	transition: all 0.3s ease-in-out;
-	width: 100%;
-	padding: 8px;
+    width: 100%;
 	color: black;
 	background: linear-gradient(45deg, #d0a0d0, #a0d0d0);
 	height: 100%;
-	overflow-y: auto;
+	overflow: hidden;
+}
 
+[data-draggable] {
+	cursor: grab;
+	user-select: none;
+}
+
+body:has(.dragging) * {
+	cursor: grabbing !important;
 }
 
 .wrapper.left-sidebar-open {
@@ -232,14 +243,34 @@ html {
 	min-width: 0px;
 	margin-left: 0px;
 	margin-right: 0px;
+	margin-top: 0px;
+	margin-bottom: 0px;
 	min-height: 0px;
 }
 
 .placeholder {
+	min-height: 16px;
+	margin: -8px;
+	min-width: 16px;
+}
+
+.placeholder:last-child, .placeholder:first-child {
+	min-height: 16px;
+	min-width: 16px;
+}
+
+.slot> .placeholder {
+	min-height: 16px;
+	min-width: 16px;
+}
+/* .slot > .placeholder:first-child, .slot > .placeholder:last-child {
+	min-height: 8px;
 	min-width: 8px;
-	margin: -4px;
+} */
+.content > .placeholder:first-child {
 	min-height: 8px;
 }
+
 .placeholder::before {
 	content: '';
 	background-color: var(--y-primary);
@@ -253,8 +284,8 @@ html {
 }
 
 .placeholder::before {
-	top: -0.1rem;
-	bottom: -0.1rem;
+	top: 0rem;
+	bottom: 0rem;
 	left: 0rem;
 	right: 0rem;
 }
@@ -272,6 +303,7 @@ html {
 }
 
 .dragging .placeholder:hover::after {
+	opacity: 1;
 	scale: 1;
 }
 .dragging .placeholder:hover {
@@ -280,6 +312,16 @@ html {
 }
 .current-draggable .placeholder {
 	display: none;
+}
+
+.placeholder.empty {
+	/* margin: `0; */
+	max-height: 80px;
+}
+
+.placeholder.empty::after {
+	margin: 0;
+	opacity: 0.5;
 }
 
 .placeholder {
@@ -299,13 +341,19 @@ html {
 	min-height: 30px;
 	width: 100%;
 	height: 100%;
-	opacity: 1;
+	border: 1px solid var(--y-primary);
 	background-color: #4060a020;
+	margin: 0;
 }
 .placeholder.empty::before {
 	content: 'Click to add component';
 	color: var(--y-primary);
 }
+.placeholder.empty::after {
+	opacity: 0;
+	scale: 0.8;
+}
+
 
 /* .slot > * {
 		border: 1px solid blue;
