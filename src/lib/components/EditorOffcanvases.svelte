@@ -13,6 +13,7 @@
 	import EditSettingsForm from './EditSettingsForm.svelte'
 	import AssetsPage from './AssetsPage.svelte'
 	import DataList from './content/DataList.svelte'
+	import DataInsert from './content/DataInsert.svelte'
 	import TableCreateCard from './content/TableCreateCard.svelte'
 
 	import {
@@ -1021,14 +1022,14 @@
 		{:else if offcanvasMode === 'assets'}
 			<AssetsPage on:close={(e) => (leftOffcanvasOpen = false)} />
 	    {:else if offcanvasMode === 'table-settings'}
-						<TableSettingEdit on:close ={closeOffcanvas}  bind:leftOffcanvasOpen bind:table ={data.activeTable} />
+						<TableSettingEdit on:close ={closeOffcanvas}   bind:table ={data.activeTable} />
 		{:else if offcanvasMode === 'table-create'}
 
 		<TableCreateCard tables = {[]} />
-
-
 		{:else if offcanvasMode === 'data-list'}
-			<DataList table={data.activeTable} />
+			<DataList on:dataInsert={()=>{offcanvasMode = "data-insert"}} bind:table={data.activeTable} on:close  = {closeOffcanvas} />
+		{:else if offcanvasMode === 'data-insert'}
+			<DataInsert on:goBack={()=>{offcanvasMode = 'data-list'}} bind:table={data.activeTable} on:close  = {closeOffcanvas} />
 		{:else}
 		{offcanvasMode}
 			<div>Page List </div>
