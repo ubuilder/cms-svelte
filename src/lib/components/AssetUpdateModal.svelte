@@ -17,7 +17,7 @@
       {/if}
     </El>
     <El col="12" colSm="4">
-      <form action="?/update">
+      <form on:submit|stopPropagation={() => $modal.resolve(asset)}>
         <FormInput
           col="12"
           label={t('assets.forms.name')}
@@ -43,7 +43,7 @@
 
   <ButtonList slot="footer" justifyContent="end">
     <Button on:click={() => $modal.close()}>{t('buttons.cancel')}</Button>
-    <Button on:click={() => $modal.resolve(true)} color="primary">
+    <Button on:click={() => $modal.resolve(asset)} color="primary">
       {t("buttons.update")}
     </Button>
   </ButtonList>

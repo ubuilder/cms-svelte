@@ -48,10 +48,6 @@
 	import { t } from '$lib/i18n'
 
 	let components: any[] = []
-	export let type = 'page'
-	let tables: any[] = []
-	export let assets: any[] = []
-	export let forms: any[] = []
 
 	let user = {}
 	let pages: any[] = []
@@ -73,7 +69,8 @@
 	let borderPosition: any = {}
 	let hoverBorderPosition: any = {}
 
-	let offcanvasMode = 'edit'
+	let offcanvasMode:string | undefined = undefined
+	let offcanvasData = {}
 
 	let dragging = false
 
@@ -237,7 +234,6 @@
 				page.slot.map((x, i) => renderSlot(x, '', '', i)).join('') +
 				placeholder('', '', page.slot.length, 'h-full')
 
-				
 			contentEl.innerHTML = html
 		}
 	}
@@ -529,7 +525,7 @@
 				id: result.id,
 			},
 			data: result,
-		}).then(res => alert.success(res.message))
+		}).then((res) => alert.success(res.message))
 	}
 
 	function onRemoveSlot(id: string) {
@@ -748,12 +744,10 @@
 		render()
 	}
 
-	function openPageSettings(page) {
-		activePage = page;
-
-		leftOffcanvasOpen = true;
-		offcanvasMode = 'edit-page'
-
+	function openPageSettings(page: any) {
+		offcanvas.openLeft('edit-page', {
+			activePage: page
+		})
 	}
 
 	async function onExtractComponent() {
@@ -777,8 +771,7 @@
 				slot: [{ type: activeSlot.type, props: activeSlot.props }],
 			}
 
-			api('/components', {data: newComponent}).then(res => {
-
+			api('/components', { data: newComponent }).then((res) => {
 				console.log('update slot....')
 				reload(['components'])
 			})
@@ -844,13 +837,9 @@
 			if (items.includes('pages')) {
 				pages = await api('/pages').then((res) => res.data)
 			}
-			if (items.includes('assets')) {
-				assets = await api('/assets').then((res) => res.data)
-			}
 		} else {
 			components = await api('/components').then((res) => res.data)
 			pages = await api('/pages').then((res) => res.data)
-			assets = await api('/assets').then((res) => res.data)
 
 			for (let component of components) {
 				hbsTemplates[component.id] = hbs.compile(component.template)
@@ -859,7 +848,6 @@
 	}
 
 	onMount(async () => {
-		// assets = await api('/assets').then(res => res.data)
 		await reload()
 		loading = false
 
@@ -884,10 +872,10 @@
 		reload()
 		page_id = newPage.id
 
-		window.history.pushState({}, null, '/edit/' + page_id);
+		window.history.pushState({}, null, '/edit/' + page_id)
 		render()
 	}
-	function openTableCreate(){
+	function openTableCreate() {
 		leftOffcanvasOpen = true
 		offcanvasMode = 'table-create'
 	}
@@ -903,22 +891,27 @@
 		leftOffcanvasOpen = true
 		offcanvasMode = 'table-settings'
 		activeTable = table
+	}
 
-		//
+	const offcanvas = {
+		openLeft(mode: string, data: any = {}) {
+			leftOffcanvasOpen = true
+			offcanvasData = data
+			offcanvasMode = mode
+		},
+		openRight(mode: string, data: any = {}) {
+			rightOffcanvasOpen = true
+			offcanvasData = data
+			offcanvasMode = mode
+		},
+		close() {
+			leftOffcanvasOpen = false
+			rightOffcanvasOpen = false
+		},
 	}
 
 	$: if (mode === 'add') {
 		render()
-	}
-
-	function openEditProfile() {
-		leftOffcanvasOpen = true
-		offcanvasMode = 'profile'
-	}
-
-	function openEditSettings() {
-		leftOffcanvasOpen = true
-		offcanvasMode = 'settings'
 	}
 
 	let leftSidebarOpen = false
@@ -927,6 +920,7 @@
 
 <svelte:head>
 	<title>Page Editor | {page?.title ?? '---'}</title>
+	<!-- <script src="https://cdn.tailwindcss.com"></script> -->
 	<!-- <script src="https://cdn.tailwindcss.com"></script> -->
 	<!-- <script src="https://cdn.tailwindcss.com"></script> -->
 	<!-- <script src="https://cdn.tailwindcss.com"></script> -->
@@ -966,10 +960,7 @@
 
 				<HeaderItem
 					icon="photo"
-					on:click={() => {
-						leftOffcanvasOpen = true
-						offcanvasMode = 'assets'
-					}} />
+					on:click={() => offcanvas.openLeft('assets')} />
 				<!-- svelte-ignore a11y-click-events-have-key-events -->
 				<!-- svelte-ignore a11y-no-static-element-interactions -->
 			</div>
@@ -1000,8 +991,12 @@
 							{/if}
 						</Avatar>
 						<DropdownMenu>
-							<DropdownItem on:click={openEditProfile}>{t('profile.title')}</DropdownItem>
-							<DropdownItem on:click={openEditSettings}>{t('settings.title')}</DropdownItem>
+							<DropdownItem on:click={() => offcanvas.openLeft('profile')}>
+								{t('profile.title')}
+							</DropdownItem>
+							<DropdownItem on:click={() => offcanvas.openLeft('profile')}>
+								{t('settings.title')}
+							</DropdownItem>
 							<DropdownItem divider />
 							<DropdownItem href="/edit/logout">{t('layout.logout')}</DropdownItem>
 						</DropdownMenu>
@@ -1020,11 +1015,13 @@
 					}} />
 			</div>
 		</div>
+		<!-- bind:page
+		bind:activePage
+		bind:activeComponent -->
+
 		<EditorOffcanvases
 			on:reload={reload}
-			bind:page
-			bind:activePage
-			bind:activeComponent
+			bind:data={offcanvasData}
 			bind:offcanvasMode
 			bind:leftOffcanvasOpen
 			bind:rightOffcanvasOpen />
@@ -1039,9 +1036,9 @@
 				{#if mode === 'content'}
 					<SidebarTableList
 						on:reload={reload}
-						{tables}
-						on:open-table-settings={(event) => openTableSettings(event.detail)}
-						on:open-table-create = {openTableCreate}
+						on:open-table-settings={(event) =>
+							offcanvas.openLeft('table-settings', { activeTable: event.detail })}
+						on:open-table-create={openTableCreate}
 						on:open-table-data={(event) => openTableData(event.detail)} />
 				{:else}
 					<SidebarPageList
@@ -1084,7 +1081,11 @@
 							bind:mode
 							{components} />
 					{:else if activeSlot}
-						<SidebarComponentOption {components} on:select-slot={(e) => selectSlot(e.detail.id)} on:reload={reload} bind:activeSlot />
+						<SidebarComponentOption
+							{components}
+							on:select-slot={(e) => selectSlot(e.detail.id)}
+							on:reload={reload}
+							bind:activeSlot />
 					{/if}
 				</div>
 			</div>

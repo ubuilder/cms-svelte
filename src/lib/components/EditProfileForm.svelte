@@ -2,15 +2,22 @@
 
     import FilePicker from '$lib/components/content/FilePicker.svelte'
 	import { t } from "$lib/i18n"
-	import { Card, Page, CardBody, Button, ButtonList, FormInput, CardFooter, FormField, Alert, Layout } from "@ulibs/yesvelte"
+	import { Card, Page, CardBody, Button, ButtonList, FormInput, CardFooter, FormField, Alert, Layout, PageHeader } from "@ulibs/yesvelte"
+	import { createEventDispatcher } from 'svelte'
 
     export let user: any = {};
     export let successMessage = '';
 
-
+    const dispatch = createEventDispatcher()
 </script>
 
 <Page>
+    <PageHeader slot="header" px="2" title="Update Profile">
+        <Button on:click={() => dispatch('close')}>{t('buttons.cancel')}</Button>
+        <Button color="primary" bgColor="primary" on:click={updateProfile}>
+            {t('buttons.save')}
+        </Button>
+    </PageHeader>
     <form method="POST" on:submit|preventDefault>
         <Card>
             <CardBody>
