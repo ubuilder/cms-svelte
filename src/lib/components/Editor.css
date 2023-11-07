@@ -134,6 +134,7 @@ body:has(.dragging) * {
 	background-color: var(--y-bg-surface-tertiary);
 }
 [data-bs-theme="dark"] .sidebar-title {
+	color: var(--y-light);
 	background-color: var(--y-bg-surface-tertiary);
 	border-top: 1px solid var(--y-bg-surface);
 	border-bottom: 1px solid var(--y-bg-surface);
