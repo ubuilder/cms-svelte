@@ -7,9 +7,6 @@
 
 	setLang(data.lang)
 
-	function hasAccess() {
-		return !!data.user
-	}
 </script>
 
 <svelte:head>
@@ -23,7 +20,7 @@
 		rel="stylesheet" />
 </svelte:head>
 
-{#if hasAccess()}
+{#if data.user}
     <slot/>
 {/if}
 
