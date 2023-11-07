@@ -42,7 +42,7 @@
 	}
 
 	async function onPreview({ detail }: CustomEvent) {
-		const choice = await modal.open(
+		const data = await modal.open(
 			AssetUpdateModal,
 			{
 				asset: detail,
@@ -50,8 +50,8 @@
 			{ size: 'lg' }
 		)
 
-		if (choice) {
-			await api('/assets', { params: { id: detail.id }, data: detail })
+		if (data) {
+			await api('/assets', { params: { id: detail.id }, data })
 
 			reload()
 		}

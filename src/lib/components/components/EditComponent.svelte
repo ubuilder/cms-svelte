@@ -23,6 +23,7 @@
 		TabPanel,
 		Tabs,
 		Textarea,
+		alert,
 		confirmModal,
 	} from '@ulibs/yesvelte'
 	import { createEventDispatcher, onMount } from 'svelte'
@@ -35,10 +36,12 @@
 		const res = await confirmModal.open({ status: 'danger' })
 
 		if (res) {
-		
-      await api('/components', {params: {id: component.id}, method: "DELETE"})
-      dispatch('close')
-      dispatch('reload', ['components'])
+			const response = await api('/components', { params: { id: component.id }, method: 'DELETE' })
+			alert.success(response.message)
+	
+			console.log('dispatch close')
+			dispatch('close')
+			dispatch('reload', ['components'])
 		}
 	}
 
@@ -56,9 +59,21 @@
 	}
 
 	const dispatch = createEventDispatcher()
-	function update() {
+	async function update() {
 		// updateComponent....
-		dispatch('update', component)
+		// dispatch('update', component)
+		const res = await api('/components', {
+			params: {
+				id: component.id,
+			},
+			data: component,
+		})
+		alert.success(res.message)
+		console.log('dispatch close')
+
+		dispatch('close')
+		dispatch('reload', ['components'])
+	
 	}
 
 	onMount(async () => {

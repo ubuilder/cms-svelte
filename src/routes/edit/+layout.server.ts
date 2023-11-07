@@ -10,12 +10,6 @@ export const trailingSlash = 'always'
 const show_auth_warning = true
 
 export async function load({ request, locals }) {
-	console.log('in layou load')
-
-	// INITIALIZE translations
-	// await i18next.changeLanguage("en")
-
-	// i18n.locale = 'fa'
 
 	console.log('locals', locals)
 	console.log('user: ', locals.user)
@@ -25,7 +19,6 @@ export async function load({ request, locals }) {
 	}
 
 	return {
-		show_auth_warning: request.headers.get('host')?.includes('localhost') && show_auth_warning,
 		user: locals.user,
 		lang: locals.settings.lang,
 		dir: getDir(locals.settings.lang),

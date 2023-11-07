@@ -15,12 +15,6 @@
 	import DataList from './content/DataList.svelte'
 	import TableCreateCard from './content/TableCreateCard.svelte'
 
-	// import ComponentProp from '$lib/ui/ComponentProp.svelte'
-	// import { customAlphabet } from 'nanoid'
-	// import hbs from 'handlebars'
-	// import '@ulibs/yesvelte/styles.css'
-	// import './Editor.css'
-	// import { onMount, tick } from 'svelte'
 	import {
 		AlertProvider,
 		Card,
@@ -924,18 +918,17 @@
 	// let leftSidebarOpen = false
 	// let rightSidebarOpen = false
 
-	export let page: any
+
+	export let data: any = {}
+	// export let page: any
 	export let components: any[] = []
 	let user = {}
 	let settings = {}
 
 
-	export let activePage: any = null
-	export let activeTable: any = null
-	export let activeComponent: any = null
 	export let leftOffcanvasOpen = false
 	export let rightOffcanvasOpen = false
-	export let offcanvasMode: string
+	export let offcanvasMode: string | undefined = undefined
 
 	const dispatch = createEventDispatcher()
 
@@ -950,26 +943,23 @@
 
 		api('/pages', {
 			params: {
-				id: page.id,
+				id: data.activePage.id,
 			},
 			method: 'DELETE',
 		}).then((res) => {
 			dispatch('reload', ['pages'])
 		})
-
-		fetch('?/removePage', {
-			method: 'POST',
-			body: JSON.stringify(page),
-		}).then((res) => goto('/edit', { invalidateAll: true }))
 	}
 
 	async function removeComponent({ detail }: CustomEvent) {
 		rightOffcanvasOpen = false
-		await fetch(`./components/${detail.id}/?/remove`, {
-			method: 'POST',
-			body: JSON.stringify(detail),
+		api('/components', {
+			params: {id: detail.id},
+			method: 'DELETE'
+		}).then(res => {
+			alert.success(res.message)
+			dispatch('reload', ['components'])
 		})
-		goto('.', { invalidateAll: true })
 	}
 
 	function cancelUpdatePage() {
@@ -990,8 +980,6 @@
 	}
 
 	function onSave() {
-		console.log('onSave', page, page.slot)
-		page.slot = page.slot
 		const result = JSON.parse(JSON.stringify(page))
 
 		forEachSlot(result.slot, (slot) => {
@@ -1026,6 +1014,11 @@
 		leftOffcanvasOpen = false
 	}
 
+	function closeOffcanvas() {
+		leftOffcanvasOpen = false
+		rightOffcanvasOpen = false
+	}
+
 	onMount(async () => {
 		user = await api('/profile').then((res) => res.data)
 		settings = await api('/settings').then((res) => res.data)
@@ -1041,38 +1034,49 @@
 	bind:show={leftOffcanvasOpen}>
 	<OffcanvasBody p="0">
 		{#if offcanvasMode === 'edit-page'}
-		{#if activePage}
-			<EditPage on:reload on:close={(e) => (leftOffcanvasOpen = false)} bind:page={activePage} />
+		{#if data.activePage}
+			<EditPage on:reload on:close={(e) => (leftOffcanvasOpen = false)} bind:page={data.activePage} />
 		{/if}
 		{:else if offcanvasMode === 'profile'}
-			<PageHeader px="2" title="Update Profile">
-				<Button on:click={() => (leftOffcanvasOpen = false)}>{t('buttons.cancel')}</Button>
-				<Button color="primary" bgColor="primary" on:click={updateProfile}>
-					{t('buttons.save')}
-				</Button>
-			</PageHeader>
-			<EditProfileForm bind:user on:submit={() => updateProfile()} />
+			
+			<EditProfileForm on:close={closeOffcanvas} bind:user on:submit={() => updateProfile()} />
 		{:else if offcanvasMode === 'settings'}
 			<PageHeader px="2" title="Settings">
-				<Button on:click={() => (leftOffcanvasOpen = false)}>{t('buttons.cancel')}</Button>
+				<Button on:click={closeOffcanvas}>{t('buttons.cancel')}</Button>
 				<Button color="primary" bgColor="primary" on:click={updateSettings}
 					>{t('buttons.save')}</Button>
 			</PageHeader>
 			<EditSettingsForm bind:settings on:save={() => updateSettings()} />
 		{:else if offcanvasMode === 'assets'}
 			<AssetsPage on:close={(e) => (leftOffcanvasOpen = false)} />
-		{:else if offcanvasMode === 'table-settings'}
-		<TableSettingEdit bind:table = {activeTable} />
-		
-						 
+			<!--	{:else if offcanvasMode === 'table-settings'}
+						<Page>
+							<ButtonList slot="header-buttons">
+								<Button on:click={() => (leftOffcanvasOpen = false)}>Cancel</Button>
+								<Button on:click={() => removeTable()} color="danger" bgColor="red">Remove</Button>
+								<Button on:click={() => updateTable()} color="primary" bgColor="blue"
+									>Update</Button>
+							</ButtonList>
+							{#if activeTable}
+								<TableEditCard bind:table={activeTable} {tables} />
+							{/if}
+						</Page>
+
+						
+						<ContentPage
+								on:remove={(e) => removeFile(e.detail)}
+								on:update={(e) => updateFile(e.detail)}
+								on:upload={onUpload}
+
+								{assets} />
+					-->
 		{:else if offcanvasMode === 'table-create'}
 
 		<TableCreateCard tables = {[]} />
 
 
 		{:else if offcanvasMode === 'data-list'}
-		
-			<DataList table={activeTable} />
+			<DataList table={data.activeTable} />
 		{:else}
 		{offcanvasMode}
 			<div>Page List </div>
@@ -1091,10 +1095,10 @@
 	<OffcanvasBody p="0">
 					{#if offcanvasMode === 'component-settings'}
 						<EditComponent
-							component={activeComponent}
-							on:remove={removeComponent}
-							on:cancel={() => (rightOffcanvasOpen = false)}
-							on:update={updateComponent} />
+							on:close={closeOffcanvas}
+							component={data.activeComponent}
+							
+							 />
 					{:else}
 						<div>Page List</div>
 					{/if}
