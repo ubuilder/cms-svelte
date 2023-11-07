@@ -1049,27 +1049,8 @@
 			<EditSettingsForm bind:settings on:save={() => updateSettings()} />
 		{:else if offcanvasMode === 'assets'}
 			<AssetsPage on:close={(e) => (leftOffcanvasOpen = false)} />
-			<!--	{:else if offcanvasMode === 'table-settings'}
-						<Page>
-							<ButtonList slot="header-buttons">
-								<Button on:click={() => (leftOffcanvasOpen = false)}>Cancel</Button>
-								<Button on:click={() => removeTable()} color="danger" bgColor="red">Remove</Button>
-								<Button on:click={() => updateTable()} color="primary" bgColor="blue"
-									>Update</Button>
-							</ButtonList>
-							{#if activeTable}
-								<TableEditCard bind:table={activeTable} {tables} />
-							{/if}
-						</Page>
-
-						
-						<ContentPage
-								on:remove={(e) => removeFile(e.detail)}
-								on:update={(e) => updateFile(e.detail)}
-								on:upload={onUpload}
-
-								{assets} />
-					-->
+	    {:else if offcanvasMode === 'table-settings'}
+						<TableSettingEdit bind:table ={data.activeTable} />
 		{:else if offcanvasMode === 'table-create'}
 
 		<TableCreateCard tables = {[]} />

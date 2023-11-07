@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Button, ButtonList, Page } from '@ulibs/yesvelte'
+  import { Button, Page, PageHeader } from '@ulibs/yesvelte'
   import TableEditCard from './TableEditCard.svelte'
 
   export let table = {}
@@ -7,7 +7,7 @@
 </script>
 
 <Page>
-  <PageHeader slot ='header' title="Edit Table">
+  <PageHeader slot="header" title="Edit Table">
     <Button on:click={() => (leftOffcanvasOpen = false)}>Cancel</Button>
     <Button on:click={() => removeTable()} color="danger" bgColor="red">Remove</Button>
     <Button on:click={() => updateTable()} color="primary" bgColor="blue">Update</Button>
