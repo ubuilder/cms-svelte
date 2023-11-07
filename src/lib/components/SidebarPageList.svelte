@@ -9,6 +9,8 @@
 	export let pages: any[] = []
 	export let page: any
 
+	export let settings = {}
+	
 	const dispatch = createEventDispatcher()
 
 	async function addPage() {
@@ -42,10 +44,21 @@
 		on:click={() => gotoPageEditor(pageItem)}
 		class:active={pageItem.id === page?.id}
 		class="sidebar-item">
+
 		<div>
 			{pageItem.title} <span class="opacity-50">/{pageItem.slug}</span>
 		</div>
-		<Icon name="pencil" class="text-gray-400" mb=1 ms="auto" on:click!stopPropagation={() => openPageSettings(pageItem)} />
+		<div>
+			{#if pageItem.id === settings?.page_home}
+				<Icon name="home" bgColor="primary"/>
+			{/if}
+			{#if pageItem.id === settings?.page_404}
+	
+				<Icon name="404" bgColor="warning"/>
+			{/if}
+			
+			<Icon name="pencil" class="text-gray-400" mb=1 ms="auto" on:click!stopPropagation={() => openPageSettings(pageItem)} />
+		</div>
 	</div>
 {:else}
 	<div class="w-full p-1">
