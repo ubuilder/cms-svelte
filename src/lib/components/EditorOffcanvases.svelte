@@ -4,7 +4,7 @@
 
 	import EditPage from './EditPage.svelte'
 
-	import { Button, Offcanvas, OffcanvasBody, OffcanvasHeader } from 'yesvelte'
+	
 	import { goto } from '$app/navigation'
 	import EditProfileForm from './EditProfileForm.svelte'
 	import { api } from '$lib/helpers/api'
@@ -15,33 +15,27 @@
 	import DataList from './content/DataList.svelte'
 	import TableCreateCard from './content/TableCreateCard.svelte'
 
-	// import ComponentProp from '$lib/ui/ComponentProp.svelte'
-	// import { customAlphabet } from 'nanoid'
-	// import hbs from 'handlebars'
-	// import '@ulibs/yesvelte/styles.css'
-	// import './Editor.css'
-	// import { onMount, tick } from 'svelte'
-	// import {
-	// 	AlertProvider,
-	// 	Button,
-	// 	Card,
-	// 	El,
-	// 	FormInput,
-	// 	Icon,
-	// 	Loading,
-	// 	ModalProvider,
-	// 	Offcanvas,
-	// 	OffcanvasBody,
-	// 	TabContent,
-	// 	TabItem,
-	// 	TabList,
-	// 	TabPanel,
-	// 	Tabs,
-	// 	alert,
-	// 	Page,
-	// 	modal,
-	// 	ButtonList,
-	// } from '@ulibs/yesvelte'
+	import {
+		AlertProvider,
+		Card,
+		El,
+		FormInput,
+		Icon,
+		Loading,
+		OffcanvasBody,
+		TabContent,
+		TabItem,
+		TabList,
+		TabPanel,
+		Tabs,
+		Page,
+		ButtonList,
+		Button, Offcanvas, OffcanvasHeader
+
+	} from '@ulibs/yesvelte'
+	import TableEditCard from './content/TableEditCard.svelte'
+  import TableSettingEdit from './content/TableSettingEdit.svelte'
+	
 	// import { goto, invalidate, invalidateAll } from '$app/navigation'
 	// import AddComponentModal from '$lib/components/components/AddComponentModal.svelte'
 	// import interact from 'interactjs'
@@ -924,17 +918,17 @@
 	// let leftSidebarOpen = false
 	// let rightSidebarOpen = false
 
-	export let page: any
+
+	export let data: any = {}
+	// export let page: any
 	export let components: any[] = []
 	let user = {}
 	let settings = {}
 
 
-	export let activePage: any = null
-	export let activeComponent: any = null
 	export let leftOffcanvasOpen = false
 	export let rightOffcanvasOpen = false
-	export let offcanvasMode: string
+	export let offcanvasMode: string | undefined = undefined
 
 	const dispatch = createEventDispatcher()
 
@@ -949,26 +943,23 @@
 
 		api('/pages', {
 			params: {
-				id: page.id,
+				id: data.activePage.id,
 			},
 			method: 'DELETE',
 		}).then((res) => {
 			dispatch('reload', ['pages'])
 		})
-
-		fetch('?/removePage', {
-			method: 'POST',
-			body: JSON.stringify(page),
-		}).then((res) => goto('/edit', { invalidateAll: true }))
 	}
 
 	async function removeComponent({ detail }: CustomEvent) {
 		rightOffcanvasOpen = false
-		await fetch(`./components/${detail.id}/?/remove`, {
-			method: 'POST',
-			body: JSON.stringify(detail),
+		api('/components', {
+			params: {id: detail.id},
+			method: 'DELETE'
+		}).then(res => {
+			alert.success(res.message)
+			dispatch('reload', ['components'])
 		})
-		goto('.', { invalidateAll: true })
 	}
 
 	function cancelUpdatePage() {
@@ -989,8 +980,6 @@
 	}
 
 	function onSave() {
-		console.log('onSave', page, page.slot)
-		page.slot = page.slot
 		const result = JSON.parse(JSON.stringify(page))
 
 		forEachSlot(result.slot, (slot) => {
@@ -1026,6 +1015,11 @@
 		leftOffcanvasOpen = false
 	}
 
+	function closeOffcanvas() {
+		leftOffcanvasOpen = false
+		rightOffcanvasOpen = false
+	}
+
 	onMount(async () => {
 		user = await api('/profile').then((res) => res.data)
 	})
@@ -1040,17 +1034,12 @@
 	bind:show={leftOffcanvasOpen}>
 	<OffcanvasBody p="0">
 		{#if offcanvasMode === 'edit-page'}
-		{#if activePage}
-			<EditPage on:reload on:close={(e) => (leftOffcanvasOpen = false)} bind:page={activePage} />
+		{#if data.activePage}
+			<EditPage on:reload on:close={(e) => (leftOffcanvasOpen = false)} bind:page={data.activePage} />
 		{/if}
 		{:else if offcanvasMode === 'profile'}
-			<PageHeader px="2" title="Update Profile">
-				<Button on:click={() => (leftOffcanvasOpen = false)}>{t('buttons.cancel')}</Button>
-				<Button color="primary" bgColor="primary" on:click={updateProfile}>
-					{t('buttons.save')}
-				</Button>
-			</PageHeader>
-			<EditProfileForm bind:user on:submit={() => updateProfile()} />
+			
+			<EditProfileForm on:close={closeOffcanvas} bind:user on:submit={() => updateProfile()} />
 		{:else if offcanvasMode === 'settings'}
 			<EditSettingsForm bind:settings on:save={() => updateSettings()} />
 		{:else if offcanvasMode === 'assets'}
@@ -1080,10 +1069,12 @@
 
 		<TableCreateCard tables = {[]} />
 
+
 		{:else if offcanvasMode === 'data-list'}
-			<DataList table={activeTable} />
+			<DataList table={data.activeTable} />
 		{:else}
-			<div>Page List</div>
+		{offcanvasMode}
+			<div>Page List </div>
 		{/if}
 	</OffcanvasBody>
 
@@ -1099,10 +1090,10 @@
 	<OffcanvasBody p="0">
 					{#if offcanvasMode === 'component-settings'}
 						<EditComponent
-							component={activeComponent}
-							on:remove={removeComponent}
-							on:cancel={() => (rightOffcanvasOpen = false)}
-							on:update={updateComponent} />
+							on:close={closeOffcanvas}
+							component={data.activeComponent}
+							
+							 />
 					{:else}
 						<div>Page List</div>
 					{/if}

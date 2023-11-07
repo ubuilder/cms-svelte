@@ -28,7 +28,7 @@ export const handle = async ({ event, resolve }) => {
 	// /edit
 	if (event.url.pathname.startsWith('/edit/')) {
 		// settings
-		event.locals.settings = (await event.locals.api.getSettings()) ?? {}
+		event.locals.settings = await event.locals.api.getSettings().then(res => res.data) ?? {}
 
 		// auth
 		if (event.cookies.get('token')) {
