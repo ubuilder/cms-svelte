@@ -48,15 +48,6 @@
       <FormFields {tables} bind:fields={table.fields} />
     </El>
   </CardBody>
-
-  <CardFooter>
-
-    <ButtonList ms="auto">
-      <slot name="footer">
-    </slot>
-  </ButtonList>
-</CardFooter>
-
 </Card>
 
 <style>
