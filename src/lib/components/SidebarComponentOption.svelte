@@ -1,6 +1,6 @@
 <script lang="ts">
 	import ComponentProp from '$lib/ui/ComponentProp.svelte'
-	import { createEventDispatcher } from 'svelte'
+	import { createEventDispatcher, onMount } from 'svelte'
 	import { El, FormField, FormInput, TabContent, TabItem, TabList, TabPanel, Tabs } from 'yesvelte'
 
 	export let components: any[] = []
@@ -35,7 +35,7 @@
 					{:else}
 
 					<FormField label={field.name}>
-						{#each activeSlot.props[field.name] as slot}
+						{#each activeSlot.props[field.name] ?? [] as slot}
 							<El px=3 py="2" border on:click={() => selectSlot(slot.id)}>
 								{getComponent(slot.type)}
 							</El>

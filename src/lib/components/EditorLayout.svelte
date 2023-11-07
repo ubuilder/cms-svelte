@@ -17,7 +17,7 @@
 		DropdownMenu,
 		DropdownItem,
 	} from '@ulibs/yesvelte'
-	
+
 	import SidebarTableList from './SidebarTableList.svelte'
 	import SidebarPageList from './SidebarPageList.svelte'
 	import { api } from '$lib/helpers/api'
@@ -28,7 +28,7 @@
 	import { t } from '$lib/i18n'
 	import SlotEditor from './SlotEditor.svelte'
 
-	let editor: any;
+	let editor: any
 
 	let components: any[] = []
 
@@ -47,13 +47,11 @@
 	let offcanvasMode: string | undefined = undefined
 	let offcanvasData = {}
 
-
 	const hbsTemplates: any = {}
 
 	let leftOffcanvasOpen = false
 	let rightOffcanvasOpen = false
 
-	
 	function getComponent(id: string) {
 		return components.find((x) => x.id === id)
 	}
@@ -126,7 +124,7 @@
 		} else {
 			components = await api('/components').then((res) => res.data)
 			pages = await api('/pages').then((res) => res.data)
-			settings = await api('/settings').then(res => res.data)
+			settings = await api('/settings').then((res) => res.data)
 
 			for (let component of components) {
 				hbsTemplates[component.id] = hbs.compile(component.template)
@@ -196,6 +194,7 @@
 
 <svelte:head>
 	<title>Page Editor | {page?.title ?? '---'}</title>
+	<!-- <script src="https://cdn.tailwindcss.com"></script> -->
 	<!-- <script src="https://cdn.tailwindcss.com"></script> -->
 	<script src="/cdn.tailwindcss.com.js"></script>
 </svelte:head>
@@ -302,7 +301,7 @@
 				{:else}
 					<SidebarPageList
 						on:reload={reload}
-						
+						{settings}
 						{page}
 						{pages}
 						on:open-page={(e) => gotoPageEditor(e.detail)}
@@ -312,8 +311,8 @@
 					{#if page}
 						<SidebarSlotList
 							on:reload={reload}
-							on:remove-slot={(e) => onRemoveSlot(e.detail.id)}
-							on:open-settings={(e) => selectSlot(e.detail.id)}
+							on:remove-slot={(e) => editor?.removeSlot(e.detail.id)}
+							on:open-settings={(e) => editor?.selectSlot(e.detail.id)}
 							slots={page.slot}
 							{activeSlot}
 							{components} />
@@ -343,7 +342,7 @@
 					{:else if activeSlot}
 						<SidebarComponentOption
 							{components}
-							on:select-slot={(e) => selectSlot(e.detail.id)}
+							on:select-slot={(e) => editor.selectSlot(e.detail.id)}
 							on:reload={reload}
 							bind:activeSlot />
 					{/if}
@@ -351,25 +350,39 @@
 			</div>
 		</div>
 
-		<div class="wrapper" class:right-sidebar-open={rightSidebarOpen}
-		class:left-sidebar-open={leftSidebarOpen}>
-		{#if page}
-
-			<SlotEditor bind:this={editor} on:open-component-list={() => {mode = 'add'; rightSidebarOpen = true}} bind:slotList={page.slot}/>
+		<div
+			class="wrapper"
+			class:right-sidebar-open={rightSidebarOpen}
+			class:left-sidebar-open={leftSidebarOpen}>
+			{#if page}
+				<SlotEditor
+					bind:this={editor}
+					on:open-component-list={() => {
+						mode = 'add'
+						rightSidebarOpen = true
+					}}
+					on:open-component-options={(e) => {
+						console.log('open component options', e.detail)
+						mode = 'options'
+						rightSidebarOpen = true
+						activeSlot = e.detail
+					}}
+					bind:slotList={page.slot} />
 			{:else}
-			<div class="flex flex-col gap-4 h-full pb-20 items-center justify-center">
-				<h1 class="font-bold text-2xl">No page selected</h1>
-				<h2 class="text-lg font-normal text-gray-800">
-					<!-- svelte-ignore a11y-click-events-have-key-events -->
-					<!-- svelte-ignore a11y-no-static-element-interactions -->
-					Open a page from <span
-						class="cursor-pointer hover:bg-blue-50 rounded p-0.5 font-bold text-blue-700"
-						on:click|stopPropagation={() => {
-							leftSidebarOpen = true
-							mode = 'list'
-						}}>Sidebar</span> to continue
-				</h2>
-			</div>
+				<div class="flex flex-col gap-4 h-full pb-20 items-center justify-center">
+					<h1 class="font-bold text-2xl">No page selected</h1>
+					<h2 class="text-lg font-normal text-gray-800">
+						<!-- svelte-ignore a11y-click-events-have-key-events -->
+						<!-- svelte-ignore a11y-no-static-element-interactions -->
+						Open a page from
+						<span
+							class="cursor-pointer hover:bg-blue-50 rounded p-0.5 font-bold text-blue-700"
+							on:click|stopPropagation={() => {
+								leftSidebarOpen = true
+								mode = 'list'
+							}}>Sidebar</span> to continue
+					</h2>
+				</div>
 			{/if}
 		</div>
 

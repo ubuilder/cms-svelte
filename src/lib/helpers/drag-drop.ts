@@ -5,7 +5,7 @@ interface Options {
 export function DragDrop(container: HTMLElement, options: Options) {
 	const draggables = container.querySelectorAll(options.draggable)
 	const dropzones = container.querySelectorAll(options.dropzone)
-	const listeners: Record<string, any[]> = {
+	let listeners: Record<string, any[]> = {
 		return: [],
 		drop: [],
 		start: [],
@@ -18,8 +18,10 @@ export function DragDrop(container: HTMLElement, options: Options) {
 
     container.style.position = 'relative'
 
+	let timer: any
 	function onMouseDown(event: MouseEvent, el: HTMLElement) {
-        setTimeout(() => {
+		if(timer) clearTimeout(timer)
+        timer = setTimeout(() => {
             event.stopPropagation()
 
 		current = el
@@ -29,7 +31,7 @@ export function DragDrop(container: HTMLElement, options: Options) {
 		clientY = event.clientY
 
 		isDown = true
-    }, 10)
+    }, 100)
 
 	}
 
@@ -41,6 +43,7 @@ export function DragDrop(container: HTMLElement, options: Options) {
 	}
 
 	function onDocumentMouseUp(event: MouseEvent) {
+		if(timer) clearTimeout(timer)
 		if (isDown) {
 			isDown = false
 			
@@ -49,6 +52,7 @@ export function DragDrop(container: HTMLElement, options: Options) {
 	}
 
 	function onDropzoneMouseUp(event: MouseEvent) {
+		if(timer) clearTimeout(timer)
 		if (isDown) {
 			
 
@@ -72,6 +76,12 @@ export function DragDrop(container: HTMLElement, options: Options) {
 
 
     function destroy() {
+		listeners = {
+			return: [],
+			drop: [],
+			start: [],
+			move: [],
+		}
         document.removeEventListener('mouseup', onDocumentMouseUp)
 
         draggables.forEach((el) => {

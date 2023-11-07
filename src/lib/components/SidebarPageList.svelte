@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { alert, modal } from '@ulibs/yesvelte'
 	import { createEventDispatcher } from 'svelte'
-	import { Button, El, Icon } from 'yesvelte'
+	import { Button, El, Icon, Badge } from 'yesvelte'
 	import AddPageModal from './AddPageModal.svelte'
 	import { api } from '$lib/helpers/api'
 	import SidebarTitleButton from './SidebarTitleButton.svelte'
@@ -48,13 +48,15 @@
 		<div>
 			{pageItem.title} <span class="opacity-50">/{pageItem.slug}</span>
 		</div>
-		<div>
+		<div class="flex items-center gap-2">
 			{#if pageItem.id === settings?.page_home}
-				<Icon name="home" bgColor="primary"/>
+			<Badge fontSize="6" p=0 color="success">
+				<Icon name="home" />
+			</Badge>
 			{/if}
 			{#if pageItem.id === settings?.page_404}
 	
-				<Icon name="404" bgColor="warning"/>
+			<Badge fontSize="6"  color="warning">404</Badge>
 			{/if}
 			
 			<Icon name="pencil" class="text-gray-400" mb=1 ms="auto" on:click!stopPropagation={() => openPageSettings(pageItem)} />
