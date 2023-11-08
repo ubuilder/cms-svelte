@@ -17,6 +17,7 @@
 		const data = await modal.open(AddPageModal, {})
 		const res = await api('/pages', { data })
 		alert.success(res.message)
+		pages = [...pages, res.data]
 		dispatch('open-page', res.data)
 	}
 

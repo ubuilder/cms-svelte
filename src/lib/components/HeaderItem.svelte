@@ -19,10 +19,13 @@ export let icon: string = '';
 
 
 <style>
-	div {
-		color: #6b768b; line-height: 20px; font-size: 16px;
-	}
+	
 	:global([data-bs-theme="dark"]) div {
 		color: #a0d0ff;
 	}
+
+	div {
+		color: #6b768b; line-height: 20px; font-size: 16px;
+	}
+
 </style>

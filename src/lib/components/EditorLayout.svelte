@@ -159,6 +159,7 @@
 			}
 		} else {
 			components = await api('/components').then((res) => res.data)
+
 			pages = await api('/pages').then((res) => res.data)
 			settings = await api('/settings').then((res) => res.data)
 
@@ -396,7 +397,7 @@
 							{components}
 							on:select-slot={(e) => editor.selectSlot(e.detail)}
 							on:reload={reload}
-							on:update={(e) => editor.render(e.detail)}
+							on:update={(e) => {editor.render(e.detail); reload(['components'])}}
 							bind:activeSlot />
 					{/if}
 				</div>
@@ -409,6 +410,8 @@
 			class:left-sidebar-open={leftSidebarOpen}>
 			{#if page}
 				<SlotEditor
+					{components}
+					{hbsTemplates}
 					bind:this={editor}
 					on:open-component-list={() => {
 						sidebarMode = 'add'
@@ -423,6 +426,8 @@
 					bind:slotList={page.slot} />
 			{:else if mode === 'component' && component}
 			<SlotEditor
+					components={components.filter(x => x.id !== component.id)}
+					{hbsTemplates}
 					bind:this={editor}
 					on:open-component-list={() => {
 						sidebarMode = 'add'
@@ -441,13 +446,6 @@
 					<h2 class="text-lg font-normal text-gray-800">
 						<!-- svelte-ignore a11y-click-events-have-key-events -->
 						<!-- svelte-ignore a11y-no-static-element-interactions -->
-						{mode}
-						{JSON.stringify(page)}
-						{JSON.stringify(component)}
-						{JSON.stringify(page_id)}
-						{JSON.stringify(component_id)}
-
-
 						Open a page from
 						<span
 							class="cursor-pointer hover:bg-blue-500/10 rounded p-0.5 font-bold text-blue-700"

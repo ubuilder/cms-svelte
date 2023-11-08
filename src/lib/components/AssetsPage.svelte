@@ -35,10 +35,11 @@
 			formData,
 		})
 
-		console.log('file uploaded: res: ', res)
-		reload()
+		// console.log('file uploaded: res: ', res)
+		// reload()
 
 		alert.success(res.message || 'File uploaded successfully')
+		assets = [...assets, res.data]
 	}
 
 	async function onPreview({ detail }: CustomEvent) {

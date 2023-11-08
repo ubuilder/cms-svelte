@@ -21,12 +21,14 @@ export async function load({ url }) {
 
 export const actions = {
 	async login(event) {
+		console.log(event.url)
 		const formData = await event.request.formData()
 		const username = formData.get('username')
 		const password = formData.get('password')
 
-		const redirectTo = event.url.searchParams.get('redirect')
+		let redirectTo = event.url.searchParams.get('redirect')
 		// console.log(redirectTo, event.url)
+		if(!redirectTo || redirectTo === 'undefined') redirectTo = '/edit/'
 
 		const response = await event.locals.api.login({ username, password })
 		if (response.status !== 200) {
@@ -41,7 +43,8 @@ export const actions = {
 			maxAge: 60 * 60 * 24 * 15,
 		})
 
-		throw redirect(301, redirectTo ?? "/edit/")
+		console.log('redirectTo: ', redirectTo)
+		throw redirect(301, redirectTo )
 
 	},
 }

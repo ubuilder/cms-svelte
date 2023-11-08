@@ -18,11 +18,11 @@
 
   let borderPosition: any = {}
   let hoverBorderPosition: any = {}
-  let components: any[] = []
+  export let components: any[] = []
 
   let instance: any
 
-  const hbsTemplates: any = {}
+  export let hbsTemplates: any = {}
   const slotMap: any = {}
 
   const dispatch = createEventDispatcher()
@@ -339,14 +339,6 @@
     })
   }
 
-  onMount(async () => {
-    components = await api('/components').then((res) => res.data)
-    for (let component of components) {
-      hbsTemplates[component.id] = hbs.compile(component.template)
-    }
-    loading = false
-  })
-
   $: if (contentEl && slotList) {
     render()
     contentEl.addEventListener('scroll', updateActiveBorder)
@@ -412,7 +404,7 @@
   }
 
   $: {
-    if (activeSlot) {
+    if (activeSlot && components) {
       console.log('render: active Slot changed')
       // re render Active slot
       render(activeSlot)
@@ -510,9 +502,6 @@
 </script>
 
 <div style="width: 100%; height: 100%">
-  {#if loading}
-    <Loading show absolute />
-  {:else}
     <div
       bind:this={contentEl}
       on:click={() => openComponentList()}
@@ -520,7 +509,6 @@
       data-dropzone
       class:dragging>
     </div>
-  {/if}
 </div>
 <div
   class="component-hover-border"

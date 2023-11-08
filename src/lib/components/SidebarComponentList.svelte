@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation'
-	import { modal } from '@ulibs/yesvelte'
+	import { alert, modal } from '@ulibs/yesvelte'
 	import { createEventDispatcher } from 'svelte'
 	import { Button, Icon, El } from 'yesvelte'
 	import AddComponentModal from './components/AddComponentModal.svelte'
@@ -45,8 +45,11 @@
 				template: '',
 			}
             
-            api("/components",{data: newComponent}).then(() => {
+            api("/components",{data: newComponent}).then((res) => {
 				// goto('.', { invalidateAll: true })
+				alert.success(res.message)
+				// components = [...components, res.data]
+
                 dispatch('reload', ['components'])
 			})
 			
@@ -66,7 +69,7 @@
 {#if activeSlot}
 <El p="2">
 
-    <Button w="100" on:click={() => (mode = 'options')} bgColor="primary">
+    <Button w="100" on:click={() => (mode = 'options')} color="primary" bgColor="primary">
 		{getComponent(activeSlot.type).name} Options
 	</Button>
 </El>
