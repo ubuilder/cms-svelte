@@ -27,6 +27,7 @@
 	import HeaderItem from './HeaderItem.svelte'
 	import { t } from '$lib/i18n'
 	import SlotEditor from './SlotEditor.svelte'
+  import { goto } from '$app/navigation'
 
 	let editor: any
 
@@ -38,11 +39,14 @@
 
 	export let page_id: any = undefined
 	export let component_id: any = undefined
+	export let redirectTo: any = undefined
+
 	export let theme: 'light' | 'dark' = 'light'
 	export let dir: 'ltr' | 'rtl' = 'ltr'
 
 	let mode: string = component_id ? 'component' : 'page'
 
+	let hasChanges = true
 
 	let page: any = null
 	let component: any = null
@@ -55,7 +59,6 @@
 	let offcanvasData = {}
 
 	const hbsTemplates: any = {}
-	let activeComponent: any = null
 
 	let leftOffcanvasOpen = false
 	let rightOffcanvasOpen = false
@@ -101,7 +104,10 @@
 				id: result.id,
 			},
 			data: result,
-		}).then((res) => alert.success(res.message))
+		}).then((res) => {
+			goto(redirectTo)
+			alert.success(res.message)
+		})
 
 	}
 	async function onSavePage() {
@@ -169,14 +175,20 @@
 		}
 	}
 
+	let prevState = '';
 	onMount(async () => {
 		await reload()
+		setTimeout(() => {
+			prevState = JSON.stringify(mode === 'page' ? page.slot : component.slot)
+		}, 1000)
 		loading = false
 	})
 
-	function openComponentEditor(component: any) {
-		activeComponent = component
-		console.log(activeComponent)
+	async function openComponentEditor(component: any) {
+		// activeComponent = component
+		await onSave()
+		goto(`/edit/${page_id ?? '_'}/component/${component.id}`)
+		// console.log(activeComponent)
 	}
 
 	function openComponentSettings(component: any) {
@@ -235,10 +247,12 @@
 </script>
 
 <svelte:head>
-	<title>Page Editor | {page?.title ?? '---'}</title>
-	<!-- <script src="https://cdn.tailwindcss.com"></script> -->
-	<!-- <script src="https://cdn.tailwindcss.com"></script> -->
+	<!-- <script src="https://cdn.tailwindcss.com?plugins=forms,typography,aspect-ratio,line-clamp"></script> -->
 	<script src="/cdn.tailwindcss.com.js"></script>
+	{#if page}
+		{@html page?.head}
+	{/if}
+	<title>Page Editor | {page?.title ?? '---'}</title>
 </svelte:head>
 
 {#if loading}
@@ -272,14 +286,26 @@
 			</div>
 
 			<div class="flex items-center gap-2">
-				<HeaderItem on:click={onSave}>
-					<Button class="bg-blue-500 h-[24px] px-[8px]" color="primary" size="sm">Save</Button>
+				{#if mode === 'component'}
+				<HeaderItem>
+					<Button href={redirectTo} class="bg-gray-200 h-[24px] px-[8px]" size="sm">Back</Button>				
 				</HeaderItem>
+				{#if hasChanges}
+					<HeaderItem on:click={onSaveComponent}>
+						<Button class="bg-blue-500 h-[24px] px-[8px]" color="primary" size="sm">Save</Button>
+					</HeaderItem>
+				{/if}
+				{/if}
 
 				{#if mode === 'page'}
 
 					{#if page}
-					<HeaderItem>
+					{#if hasChanges}
+						<HeaderItem on:click={onSave}>
+							<Button class="bg-blue-500 h-[24px] px-[8px]" color="primary" size="sm">Save</Button>
+						</HeaderItem>
+						{/if}
+						<HeaderItem>
 						{#key page.slug}
 							<Button
 								href="/{page.slug}"
@@ -381,7 +407,6 @@
 				<!-- {#if activeSlot && mode === 'options'}
 					<El class="sidebar-title">{getComponent(activeSlot.type).name}</El>
 				{/if} -->
-				<div class="sidebar-body">
 					{#if sidebarMode === 'add'}
 						<SidebarComponentList
 							on:reload={reload}
@@ -395,12 +420,12 @@
 					{:else if activeSlot}
 						<SidebarComponentOption
 							{components}
+							on:open-component-settings={(e) => openComponentSettings(e.detail)}
 							on:select-slot={(e) => editor.selectSlot(e.detail)}
 							on:reload={reload}
 							on:update={(e) => {editor.render(e.detail); reload(['components'])}}
 							bind:activeSlot />
 					{/if}
-				</div>
 			</div>
 		</div>
 
@@ -458,7 +483,7 @@
 			{/if}
 		</div>
 
-		<div class="fixed top-8 right-0">
+		<div class="fixed z-20 bottom-0 right-0">
 			<AlertProvider alerts={$alert} />
 		</div>
 		{#if !leftOffcanvasOpen && !rightOffcanvasOpen}
@@ -466,13 +491,13 @@
 		{/if}
 
 
-		{#if !component_id && activeComponent}
+		<!-- {#if !component_id && activeComponent}
 		<div class="z-[10] shadow-lg bg-blue-400 fixed p-1 w-full h-full">
 			<iframe title="" src="/edit/component/{activeComponent.id}" class="w-full h-full">
 
 			</iframe>
 		
 		</div>
-			{/if}
+			{/if} -->
 	</div>
 {/if}

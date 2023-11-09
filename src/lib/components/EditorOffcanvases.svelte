@@ -1016,7 +1016,7 @@
 		{:else if offcanvasMode === 'settings'}
 			<EditSettingsForm on:close={closeOffcanvas}/>
 		{:else if offcanvasMode === 'assets'}
-			<AssetsPage on:close={(e) => (leftOffcanvasOpen = false)} />
+			<AssetsPage on:reload on:close={(e) => (leftOffcanvasOpen = false)} />
 	    {:else if offcanvasMode === 'table-settings'}
 						<TableSettingEdit on:close ={closeOffcanvas}   bind:table ={data.activeTable} />
 		{:else if offcanvasMode === 'table-create'}
@@ -1044,6 +1044,7 @@
 	<OffcanvasBody p="0">
 					{#if offcanvasMode === 'component-settings'}
 						<EditComponent
+							on:reload
 							on:close={closeOffcanvas}
 							component={data.activeComponent}
 							

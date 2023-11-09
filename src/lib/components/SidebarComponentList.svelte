@@ -2,7 +2,7 @@
 	import { goto } from '$app/navigation'
 	import { alert, modal } from '@ulibs/yesvelte'
 	import { createEventDispatcher } from 'svelte'
-	import { Button, Icon, El } from 'yesvelte'
+	import { Button, Icon, El, Status } from 'yesvelte'
 	import AddComponentModal from './components/AddComponentModal.svelte'
 	import { api } from '$lib/helpers/api'
 	import SidebarTitleButton from './SidebarTitleButton.svelte'
@@ -66,6 +66,8 @@
     
 </El>
 
+<div class="sidebar-body">
+
 {#if activeSlot}
 <El p="2">
 
@@ -88,11 +90,14 @@
 			data-id="component-{component.id}">
 			<span>{component.name}</span>
 			<div class="flex items-center gap-2">
-				{#if !component.raw}
-					<Icon name="pencil" on:click!stopPropagation={(e) => openComponentEditor(component)} />
+				{#if !component.global}
+					{#if !component.raw}
+						<Icon name="pencil" on:click!stopPropagation={(e) => openComponentEditor(component)} />
+					{/if}
+					<Icon name="settings" on:click!stopPropagation={(e) => openComponentSettings(component)} />
+				{:else}
+					<!-- <Status color="primary">Global</Status> -->
 				{/if}
-				<Icon name="settings" on:click!stopPropagation={(e) => openComponentSettings(component)} />
-
 			</div>
 
 		</div>
@@ -105,3 +110,4 @@
 		</Button>
 	</div>
 {/each}
+</div>

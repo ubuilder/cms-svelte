@@ -409,3 +409,16 @@ body:has(.dragging) * {
 .buttons-container-absolute .y-icon {
 	display: flex;
 }
+
+
+.y-offcanvas {
+	--y-offcanvas-bg: var(--y-bg-surface-tertiary);
+}
+
+.y-button {
+	background: var(--y-btn-bg) !important;
+
+    --y-btn-hover-bg: var(--y-bg-surface);
+    box-shadow: var(--y-btn-box-shadow);
+
+}

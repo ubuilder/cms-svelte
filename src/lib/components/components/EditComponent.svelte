@@ -17,6 +17,7 @@
 		FormSwitch,
 		FormTextarea,
 		Page,
+		PageHeader,
 		TabContent,
 		TabItem,
 		TabList,
@@ -73,6 +74,11 @@
 		dispatch('reload', ['components'])
 	}
 
+
+	function close() {
+		dispatch('close')
+	}
+	
 	onMount(async () => {
 		components = await api('/components').then((res) => res.data)
 	})
@@ -81,11 +87,12 @@
 </script>
 
 <Page>
-	<ButtonList {title} slot="header" ms="auto">
+	<PageHeader {title} slot="header">
 		<Button on:click={remove} color="danger">{t('buttons.remove')}</Button>
-		<Button disabled href="../">{t('buttons.cancel')}</Button>
+		<Button on:click={close}>{t('buttons.cancel')}</Button>
 		<Button on:click={update} color="primary">{t('buttons.update')}</Button>
-	</ButtonList>
+	</PageHeader>
+
 	<Card>
 		<Tabs>
 			<CardHeader>

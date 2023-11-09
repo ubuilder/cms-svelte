@@ -8,17 +8,19 @@
 
 </script>
 <BaseModal title="Add Page">
-    <ModalBody>
-        <FormInput bind:value={page.title} label="{t('pages.forms.title')}" />
-        <FormInput bind:value={page.slug} label={t("pages.forms.slug")} />
+    <form method="POST" action="/" on:submit|preventDefault={() => $modal.resolve(page)}>
+        <ModalBody>
+            <FormInput bind:value={page.title} label="{t('pages.forms.title')}" />
+            <FormInput bind:value={page.slug} label={t("pages.forms.slug")} />
 
     </ModalBody>
 
     <ModalFooter>
         <ButtonList>
             <Button on:click={() => $modal.close()}>{t('buttons.cancel')}</Button>
-            <Button on:click={() => $modal.resolve(page)} color="primary">{t('buttons.add')}</Button>
+            <Button type="submit" color="primary">{t('buttons.add')}</Button>
             </ButtonList>
     </ModalFooter>
+</form>
 
 </BaseModal>

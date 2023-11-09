@@ -63,9 +63,7 @@
 
 		if (choice) {
 			await api('/assets', { params: { id: asset.id }, method: 'DELETE' })
-			setTimeout(() => {
-				reload()
-			}, 2000)
+			reload()
 		}
 	}
 

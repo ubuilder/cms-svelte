@@ -7,8 +7,9 @@
   export let asset: AssetType;
 </script>
 
-<BaseModal>
-  <El slot="body" row>
+<form on:submit|stopPropagation={() => $modal.resolve(asset)}>
+  <BaseModal>
+    <El slot="body" row>
     <El col="12" colSm="8">
       {#if asset.type === "image"}
         <AssetImage {asset} />
@@ -17,7 +18,6 @@
       {/if}
     </El>
     <El col="12" colSm="4">
-      <form on:submit|stopPropagation={() => $modal.resolve(asset)}>
         <FormInput
           col="12"
           label={t('assets.forms.name')}
@@ -37,14 +37,14 @@
           bind:value={asset.alt}
           name="alt"
         />
-      </form>
     </El>
   </El>
 
   <ButtonList slot="footer" justifyContent="end">
     <Button on:click={() => $modal.close()}>{t('buttons.cancel')}</Button>
-    <Button on:click={() => $modal.resolve(asset)} color="primary">
+    <Button  type="submit"  color="primary">
       {t("buttons.update")}
     </Button>
   </ButtonList>
 </BaseModal>
+</form>

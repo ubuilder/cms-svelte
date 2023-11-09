@@ -26,7 +26,7 @@ export async function POST({ request, locals, url }) {
 	return respond(res.status, res.message, res.data)
 }
 
-export async function DELETE({ request, locals, url: { searchParams } }) {
-	const res = await locals.api.removeAsset(searchParams.get('id'))
+export async function DELETE({ request, locals, url }) {
+	const res = await locals.api.removeAsset(url.searchParams.get('id'))
 	return respond(res.status, res.message, res.data)
 }
