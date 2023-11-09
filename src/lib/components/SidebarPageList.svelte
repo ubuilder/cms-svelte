@@ -50,8 +50,8 @@
 		class:active={pageItem.id === page?.id}
 		class="sidebar-item">
 
-		<div>
-			{pageItem.title} <span class="opacity-50">/{pageItem.slug}</span>
+		<div class="flex flex-col">
+			<span>{pageItem.title}</span> <span class="opacity-50">/{pageItem.slug}</span>
 		</div>
 		<div class="flex items-center gap-2">
 			{#if pageItem.id === settings?.page_home}

@@ -78,10 +78,13 @@
 
 {/if}
 
-{#each components as component}
+{#each components as component, i}
 
 	<!-- svelte-ignore a11y-click-events-have-key-events -->
 	<!-- svelte-ignore a11y-no-static-element-interactions -->
+	{#if !component.global && components[i - 1].global}
+		<div class="px-2 pt-3 pb-1 font-bold text-sm">Your Components</div>
+	{/if}
 	<div class="component-item-placeholder">
 		<div
 			class="component-item"
