@@ -194,6 +194,7 @@
     withPlaceholder = true
   ) {
     console.log(`renderSlot(${slot.id})`)
+    console.log('renderSlot: ', {slot, parent_id, parent_field, parent_index})
     let props: any = {}
 
     if (slot === '__list__') {
@@ -203,7 +204,7 @@
     const component = getComponent(slot.type)
     const id = slot.id ?? getId()
 
-    slot.parent_id = parent_id ?? null
+    slot.parent_id = parent_id
     slot.parent_field = parent_field
     slot.parent_index = parent_index
 
@@ -220,15 +221,15 @@
           for (let index in slot.props?.[field.name] ?? []) {
             const x = slot.props[field.name][index]
 
-            console.log('render: render inside renderSlot..')
+            console.log('render: render inside renderSlot..', {parent_id: id, parent_field: field.name, parnet_index: +index})
             const res = renderSlot(x, id, field.name, +index)
             content += res
           }
 
           if (content) {
             props[field.name] =
-              `<div class="slot" data-parent="${id}" data-index="0">${content}</div>` +
-              placeholder(id, field.name, +index + 1)
+              `<div class="slot" data-parent="${id}" data-index="0">${content + placeholder(id, field.name, slot.props?.[field.name].length)}</div>`
+              
           } else {
             props[field.name] = placeholder(id, field.name, 0, 'empty')
           }
@@ -312,7 +313,7 @@
 
     setTimeout(() => {
       const rects = document
-        .querySelector('#component-' + activeSlot.id)
+        .querySelector('#component-' + activeSlot?.id)
         ?.firstElementChild?.getBoundingClientRect()
 
       if (rects) {
@@ -338,7 +339,23 @@
       }
     })
   }
+  let clipboardSlot: any = null;
 
+  async function getClipboardSlot() {
+    const text = await navigator.clipboard.readText()
+    if(text) {
+      const obj = JSON.parse(text)
+
+      if(getComponent(obj.type)) {
+        clipboardSlot = obj
+      }      
+    }
+  }
+
+  onMount(() => {
+    getClipboardSlot()
+    // clipboardSlot
+  })
   $: if (contentEl && slotList) {
     render()
     contentEl.addEventListener('scroll', updateActiveBorder)
@@ -453,7 +470,7 @@
     let newSlot = {
       id,
       type: component_id,
-      props: { ...defaultProps, props }, // default value
+      props: { ...defaultProps, ...props }, // default value
     }
 
     if (!parent_id) {
@@ -499,6 +516,40 @@
     console.log('render: insert component...', slotList, localSlots)
     render()
   }
+
+  function onCopy() {
+
+    const result = JSON.parse(JSON.stringify([activeSlot]))
+
+    forEachSlot(result, (slot) => {
+      delete slot['id']
+      delete slot['parent_id']
+      delete slot['parent_field']
+      delete slot['parent_index']
+    })
+    
+    navigator.clipboard.writeText(JSON.stringify(activeSlot));
+    setTimeout(() => {
+      getClipboardSlot()
+    }, 1)
+  }
+
+  function paste() {
+    
+    const slot = clipboardSlot
+
+    const nextPlaceholder = document.getElementById('component-' + activeSlot.id)?.nextElementSibling;
+    
+    const field = nextPlaceholder.dataset.field
+    const index = +nextPlaceholder.dataset.index
+    const parent = nextPlaceholder.dataset.parent
+
+    console.log('activeSlot: ', {parent, field, index, slot})
+    insertComponent(slot.type, parent, field, index , slot.props)
+
+
+  }
+
 </script>
 
 <div style="width: 100%; height: 100%">
@@ -534,14 +585,40 @@
           name="arrow-up" />
         <Tooltip placement="top">Select Parent</Tooltip>
         <Icon
+        class="p-0.5"
+        size="lg"
+        color="light"
+        data-draggable
+        data-id="component-{activeSlot?.id}"
+        bgColor="primary"
+        name="arrows-move" />
+      <Tooltip placement="top">Move</Tooltip>
+
+
+
+
+        <Icon
           class="p-0.5"
           size="lg"
           color="light"
-          data-draggable
-          data-id="component-{activeSlot?.id}"
+          on:click={() => onCopy()}
           bgColor="primary"
-          name="arrows-move" />
-        <Tooltip placement="top">Move</Tooltip>
+          name="copy" />
+        <Tooltip placement="top">Copy</Tooltip>
+
+
+        {#if clipboardSlot}
+        <Icon
+          class="p-0.5"
+          size="lg"
+          color="light"
+
+          on:click={() => paste()}
+          bgColor="primary"
+          name="clipboard" />
+        <Tooltip placement="top">Paste</Tooltip>
+        {/if}
+        
 
         <Icon
           class="p-0.5"

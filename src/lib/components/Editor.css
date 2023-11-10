@@ -276,6 +276,17 @@ body:has(.dragging) * {
 	display: contents;
 }
 
+/* .placeholder {
+	opacity: 0.5 !important;
+	scale: 1 !important;
+	backdrop-filter: none !important;
+
+}
+.placeholder ::before {
+	backdrop-filter: none !important;
+	filter: none !important;
+} */
+
 .placeholder {
 	display: block;
 	align-self: stretch;
