@@ -153,6 +153,11 @@ body:has(.dragging) * {
 	border-radius: 4px;
 }
 
+.sidebar-title-button-secondary {
+	background-color: var(--y-secondary);
+}
+
+
 .sidebar-close-icon {
 	position: fixed;
 	top: 0.375rem;

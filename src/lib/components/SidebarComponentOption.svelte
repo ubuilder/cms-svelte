@@ -39,9 +39,18 @@
 {#if activeSlot}
   <div class="sidebar-title">
     {getComponent(activeSlot.type)?.name ?? activeSlot.id} options
-    <SidebarTitleButton icon="settings" on:click={() => openComponentSettings()} />
+    <div class="ms-auto flex gap-2">
+
+    <SidebarTitleButton icon="arrow-up" on:click={() => dispatch('select-parent')} />
+
+    {#if !getComponent(activeSlot.type).global}
+      <SidebarTitleButton icon="settings" color="secondary" on:click={() => openComponentSettings()} />
+    {/if}
+    </div>
+
   </div>
   <div class="sidebar-body">
+
     <Tabs>
       <TabList>
         <TabItem>Props</TabItem>
@@ -61,7 +70,7 @@
             {:else}
               <FormField label={field.name} mb="2">
                 {#each activeSlot.props[field.name] ?? [] as slot}
-                  <El px="3" py="2" borderRoundSize="2" border on:click={() => selectSlot(slot.id)}>
+                  <El class="slot-item" px="3" py="2" borderRoundSize="2" border on:click={() => selectSlot(slot.id)}>
                     {getComponent(slot.type)?.name}
                   </El>
                 {/each}
@@ -87,3 +96,17 @@
     </Tabs>
   </div>
 {/if}
+
+
+<style>
+  :global(.slot-item) {
+    background-color: #ffffff30;
+    margin-top: 4px;
+    
+    box-shadow: 0 2px 4px -2px #20202020;
+  }
+  :global(.slot-item):hover {
+    background-color: #ffffff50;
+    box-shadow: 0 2px 4px -2px 202020a0;
+  }
+</style>

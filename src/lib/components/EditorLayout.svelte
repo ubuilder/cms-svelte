@@ -420,6 +420,7 @@
 							{components}
 							on:open-component-settings={(e) => openComponentSettings(e.detail)}
 							on:select-slot={(e) => editor.selectSlot(e.detail)}
+							on:select-parent={() => editor.onSelectParent()}
 							on:reload={reload}
 							on:update={(e) => {editor.render(e.detail); reload(['components'])}}
 							bind:activeSlot />

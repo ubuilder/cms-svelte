@@ -65,7 +65,7 @@
     // }, 10)
   }
 
-  function onSelectParent() {
+  export function onSelectParent() {
     const slot = slotList.find((x) => x.id === activeSlot?.id)
     // if (slot) {
     // 	mode = 'add'
