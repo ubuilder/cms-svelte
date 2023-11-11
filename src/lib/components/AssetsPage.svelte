@@ -59,16 +59,11 @@
 	}
 
 	async function onRemove(asset: Asset) {
-		const choice = await confirmModal.open()
-
-		if (choice) {
-			await api('/assets', { params: { id: asset.id }, method: 'DELETE' })
-			reload()
-		}
+		await api('/assets', { params: { id: asset.id }, method: 'DELETE' })
+		reload()
 	}
 
 	async function reload() {
-		console.log('reload assets')
 		assets = await api('/assets').then((res) => res.data)
 	}
 

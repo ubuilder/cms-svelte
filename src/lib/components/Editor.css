@@ -25,7 +25,6 @@ html {
 	transition: all 0.3s ease-in-out;
     width: 100%;
 	color: black;
-	background: linear-gradient(45deg, #d09090, #90d0d0);
 	height: 100%;
 	overflow: hidden;
 }
@@ -73,8 +72,10 @@ body:has(.dragging) * {
 	justify-content: space-between;
 	height: 36px;
 	box-shadow: 0 2px 4px -2px black;
+	z-index: 1;
 	border-bottom: 1px solid var(--y-bg-surface);
-	background-color: var(--y-bg-surface-tertiary);
+	background-color: var(--y-bg-surface);
+
 	color: white;
 	width: 100%;
 	margin-left: 0;
@@ -93,6 +94,7 @@ body:has(.dragging) * {
 
 .sidebar,
 .sidebar-left {
+	z-index: 2;
 	position: absolute;
 	width: 200px;
 	right: 0;
@@ -108,7 +110,7 @@ body:has(.dragging) * {
 [data-bs-theme="dark"] .sidebar,[data-bs-theme="dark"] .sidebar-left {
 	background-color: var(--y-bg-surface-dark);
 	color: white;
-
+	
 }
 
 .sidebar {
@@ -134,7 +136,8 @@ body:has(.dragging) * {
 	align-items: center;
 	padding: 4px 8px;
 	color: var(--y-dark);
-	background-color: var(--y-bg-surface-tertiary);
+	background-color: var(--y-bg-surface);
+	box-shadow: 0 0 6px -2px black;
 }
 [data-bs-theme="dark"] .sidebar-title {
 	color: var(--y-light);

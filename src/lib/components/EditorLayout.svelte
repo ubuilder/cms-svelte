@@ -9,7 +9,6 @@
 		AlertProvider,
 		Button,
 		Icon,
-		Loading,
 		ModalProvider,
 		alert,
 		Dropdown,
@@ -19,6 +18,7 @@
 	} from '@ulibs/yesvelte'
 
 	import SidebarTableList from './SidebarTableList.svelte'
+	import Loading from './Loading.svelte'
 	import SidebarPageList from './SidebarPageList.svelte'
 	import { api } from '$lib/helpers/api'
 	import SidebarSlotList from './SidebarSlotList.svelte'
@@ -175,12 +175,8 @@
 		}
 	}
 
-	let prevState = '';
 	onMount(async () => {
 		await reload()
-		setTimeout(() => {
-			prevState = JSON.stringify(mode === 'page' ? page.slot : component.slot)
-		}, 1000)
 		loading = false
 	})
 
@@ -256,7 +252,7 @@
 </svelte:head>
 
 {#if loading}
-	<Loading show />
+	<Loading />
 {:else}
 	<div class="page" data-bs-theme={theme} {dir}>
 		<div
@@ -430,7 +426,7 @@
 		</div>
 
 		<div
-			class="wrapper"
+			class="wrapper bg-gradient-to-tr from-blue-200 to-emerald-200"
 			class:right-sidebar-open={rightSidebarOpen}
 			class:left-sidebar-open={leftSidebarOpen}>
 			{#if page}
