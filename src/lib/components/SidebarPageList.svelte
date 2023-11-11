@@ -64,7 +64,7 @@
 			<Badge fontSize="6"  color="warning">404</Badge>
 			{/if}
 			
-			<Icon name="pencil" class="text-gray-400" mb=1 ms="auto" on:click!stopPropagation={() => openPageSettings(pageItem)} />
+			<Icon name="pencil" class="text-gray-400 hover:text-gray-600 cursor-pointer" mb=1 ms="auto" on:click!stopPropagation={() => openPageSettings(pageItem)} />
 		</div>
 	</div>
 {:else}

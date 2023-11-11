@@ -15,6 +15,7 @@
   } from 'yesvelte'
   import SidebarTitleButton from './SidebarTitleButton.svelte'
   import { template } from 'handlebars'
+  import StyleEditor from './StyleEditor.svelte'
 
   export let components: any[] = []
   export let activeSlot: any
@@ -55,6 +56,9 @@
       <TabList>
         <TabItem>Props</TabItem>
         <TabItem>Style</TabItem>
+        <!-- {#if hasClass}
+          <TabItem>Style</TabItem>
+        {/if} -->
       </TabList>
       <TabContent>
         <TabPanel p="2">
@@ -101,6 +105,7 @@
               <FormInput type="number" min="0" label="Font size" bind:value={activeSlot.props.fontSize} />
             </El>
           </El>
+          <StyleEditor bind:value={activeSlot.props.Class}/>
         </TabPanel>
         <!-- {/if} -->
       </TabContent>
