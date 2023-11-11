@@ -25,7 +25,7 @@
 </script>
 
 <Page>
-  <PageHeader title="Edit Table">
+  <PageHeader slot="header" title="Edit Table">
     <Button on:click={close}>Cancel</Button>
     <Button on:click={() => removeTable()} color="danger" bgColor="red">Remove</Button>
     <Button on:click={() => updateTable()} color="primary" bgColor="blue">Update</Button>

@@ -53,7 +53,9 @@
 
 	let activeSlot: any = null
 
-	let sidebarMode = 'options'
+	let leftSidebarMode = ''
+	let rightSidebarMode = ''
+
 
 	let offcanvasMode: string | undefined = undefined
 	let offcanvasData = {}
@@ -188,6 +190,7 @@
 	}
 
 	function openComponentSettings(component: any) {
+		console.log('component', component)
 		offcanvas.openRight('component-settings', {
 			activeComponent: component,
 		})
@@ -233,7 +236,7 @@
 		},
 	}
 
-	$: if (sidebarMode === 'add') {
+	$: if (rightSidebarMode === 'add') {
 		// enable drag and drop for components in sidebar
 		editor?.render()
 	}
@@ -251,9 +254,9 @@
 	<title>Page Editor | {page?.title ?? '---'}</title>
 </svelte:head>
 
-{#if loading}
-	<Loading />
-{:else}
+<Loading show={loading}/>
+
+{#if !loading}
 	<div class="page" data-bs-theme={theme} {dir}>
 		<div
 			class="header"
@@ -265,17 +268,16 @@
 					icon="file"
 					on:click={() => {
 						leftSidebarOpen = true
-						sidebarMode = 'list'
+						leftSidebarMode = 'list'
 					}} />
+				<HeaderItem icon="photo" on:click={() => offcanvas.openLeft('assets')} />
 
 				<HeaderItem
-					icon="database"
-					on:click={() => {
+					on:dblclick={() => {
 						leftSidebarOpen = true
-						sidebarMode = 'content'
+						leftSidebarMode = 'content'
 					}} />
 
-				<HeaderItem icon="photo" on:click={() => offcanvas.openLeft('assets')} />
 				{/if}
 				<!-- svelte-ignore a11y-click-events-have-key-events -->
 				<!-- svelte-ignore a11y-no-static-element-interactions -->
@@ -338,11 +340,11 @@
 				<HeaderItem
 					icon="category-filled"
 					on:click={() => {
-						if (rightSidebarOpen && sidebarMode === 'options') {
-							sidebarMode = 'add'
+						if (rightSidebarOpen && rightSidebarMode === 'options') {
+							rightSidebarMode = 'add'
 						} else {
 							rightSidebarOpen = !rightSidebarOpen
-							sidebarMode = 'add'
+							rightSidebarMode = 'add'
 						}
 					}} />
 			</div>
@@ -363,7 +365,7 @@
 					on:click={() => (leftSidebarOpen = false)}
 					name="x" />
 
-				{#if sidebarMode === 'content'}
+				{#if leftSidebarMode === 'content'}
 					<SidebarTableList
 						on:reload={reload}
 						on:open-table-settings={(event) => openTableSettings(event.detail)}
@@ -403,7 +405,7 @@
 				<!-- {#if activeSlot && mode === 'options'}
 					<El class="sidebar-title">{getComponent(activeSlot.type).name}</El>
 				{/if} -->
-					{#if sidebarMode === 'add'}
+					{#if rightSidebarMode === 'add'}
 						<SidebarComponentList
 							on:reload={reload}
 							on:open-component-editor={(e) => openComponentEditor(e.detail)}
@@ -411,7 +413,7 @@
 							on:open-component-settings={(e) => openComponentSettings(e.detail)}
 
 							bind:activeSlot
-							bind:mode={sidebarMode}
+							bind:mode={rightSidebarMode}
 							{components} />
 					{:else if activeSlot}
 						<SidebarComponentOption
@@ -435,12 +437,12 @@
 					{hbsTemplates}
 					bind:this={editor}
 					on:open-component-list={() => {
-						sidebarMode = 'add'
+						rightSidebarMode = 'add'
 						rightSidebarOpen = true
 					}}
 					on:open-component-options={(e) => {
 						console.log('open component options', e.detail)
-						sidebarMode = 'options'
+						rightSidebarMode = 'options'
 						rightSidebarOpen = true
 						activeSlot = e.detail
 					}}
@@ -451,12 +453,12 @@
 					{hbsTemplates}
 					bind:this={editor}
 					on:open-component-list={() => {
-						sidebarMode = 'add'
+						rightSidebarMode = 'add'
 						rightSidebarOpen = true
 					}}
 					on:open-component-options={(e) => {
 						console.log('open component options', e.detail)
-						sidebarMode = 'options'
+						rightSidebarMode = 'options'
 						rightSidebarOpen = true
 						activeSlot = e.detail
 					}}
@@ -472,7 +474,7 @@
 							class="cursor-pointer hover:bg-blue-500/10 rounded p-0.5 font-bold text-blue-700"
 							on:click|stopPropagation={() => {
 								leftSidebarOpen = true
-								sidebarMode = 'list'
+								leftSidebarMode = 'list'
 							}}>Sidebar</span> to continue
 					</h2>
 				</div>

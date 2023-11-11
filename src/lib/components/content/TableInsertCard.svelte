@@ -25,7 +25,7 @@
   </script>
   
   <Page>
-    <PageHeader title="Insert Data">
+    <PageHeader slot="header" title="Insert Data">
       <Button on:click={close}>Cancel</Button>
       <Button on:click={() => removeTable()} color="danger" bgColor="red">Remove</Button>
       <Button on:click={() => updateTable()} color="primary" bgColor="blue">Update</Button>

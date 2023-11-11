@@ -9,7 +9,8 @@ export let icon: string = '';
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 
 <div
-	on:click
+on:click
+on:dblclick
 	class="font-bold"
 	style="">
     <slot>

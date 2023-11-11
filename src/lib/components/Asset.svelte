@@ -28,6 +28,7 @@
   <El
     border
     borderRoundSize="3"
+    mb="2"
     style="overflow: hidden"
     on:click={() => dispatch('select', asset)}
     position="relative"
@@ -58,7 +59,7 @@
         alignItems="end"
         textColor="light"
         justifyContent="between"
-        style="background: linear-gradient(0deg, black, transparent);"
+        style="background: linear-gradient(0deg, black, transparent, transparent);"
         p="2"
         position="absolute"
         bottom="0"
@@ -66,7 +67,22 @@
         end="0"
       >
         <El tag="strong" style="overflow: hidden">{asset.name}</El>
-        <Icon on:click!stopPropagation={() => onRemove()} name="trash" />
+        <Icon class="asset-remove-icon" on:click!stopPropagation={() => onRemove()} name="trash" />
       </El>
   </El>
 </El>
+
+<style>
+  
+  :global(.asset-remove-icon){
+    cursor: pointer;
+    
+
+  }
+
+  :global(.asset-remove-icon):hover {
+    color: var(--y-danger);
+    
+
+  }
+</style>

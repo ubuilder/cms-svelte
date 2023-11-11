@@ -6,7 +6,7 @@ export async function GET({ request, locals, url }) {
 	const assets = await locals.api.getAssets({ perPage: 100 })
 	console.log(assets)
 
-	return respond(assets.status, assets.message, assets.data.data)
+	return respond(assets.status, assets.message, assets.data?.data ?? [])
 }
 
 export async function POST({ request, locals, url }) {

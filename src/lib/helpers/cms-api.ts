@@ -43,7 +43,7 @@ export function cms_api(
 			// )
 
 			const res = await axios.post<ApiResponse<T>>(url, body, {headers}).then(x => x.data)
-			if (res.status === 401) {
+			if (res.status == 401) {
 				//
 				await goto('/auth/login')
 

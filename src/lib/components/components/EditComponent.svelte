@@ -83,7 +83,7 @@
 		components = await api('/components').then((res) => res.data)
 	})
 
-	let title = t('components.edit_component') + ` "${component?.name ?? ''}"`
+	let title = t('components.edit_component')
 </script>
 
 <Page>

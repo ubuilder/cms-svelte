@@ -14,6 +14,7 @@
     Tabs,
   } from 'yesvelte'
   import SidebarTitleButton from './SidebarTitleButton.svelte'
+  import { template } from 'handlebars'
 
   export let components: any[] = []
   export let activeSlot: any
@@ -31,6 +32,7 @@
     dispatch('update', activeSlot)
   }
 
+  $: hasClass = getComponent(activeSlot?.type)?.template?.includes("Class");
   const getComponent = (id) => components.find((x) => x.id === id)
 </script>
 
@@ -43,7 +45,9 @@
     <Tabs>
       <TabList>
         <TabItem>Props</TabItem>
+        {#if hasClass}
         <TabItem>Style</TabItem>
+        {/if}
       </TabList>
       <TabContent>
         <TabPanel p="2">
@@ -69,6 +73,8 @@
             <El col></El>
           </El>
         </TabPanel>
+        {#if hasClass}
+
         <TabPanel p="2">
           <El row>
             <El col>
@@ -76,6 +82,7 @@
             </El>
           </El>
         </TabPanel>
+        {/if}
       </TabContent>
     </Tabs>
   </div>

@@ -28,11 +28,9 @@
 
 <div class="sidebar-title">
 	Tables
-	<div class="sidebar-title">
-		{#if tables.length > 0}
-			<SidebarTitleButton icon="plus" on:click={addTable} />
-		{/if}
-	</div>
+	{#if tables.length > 0}
+		<SidebarTitleButton icon="plus" on:click={addTable} />
+	{/if}
 </div>
 {#each tables as tableItem}
 	<!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -45,7 +43,7 @@
 	<div class="w-full p-1">
 		<Button w="100" color="primary" bgColor="primary" on:click={addTable}>
 			<Icon name="plus" />
-			Add Page
+			Add Table
 		</Button>
 	</div>
 {/each}

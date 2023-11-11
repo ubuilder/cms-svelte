@@ -5,4 +5,4 @@
 
 </script>
 
-<El tag="img" src="/files/{asset.id}" alt={asset.alt} style="object-fit: cover" w=100/> 
+<El tag="img" src="/files/{asset.id}" alt={asset.alt} style="object-fit: cover; height: 180px" w=100/> 
