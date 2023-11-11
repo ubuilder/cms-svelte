@@ -251,7 +251,7 @@
 	{#if page}
 		{@html page?.head}
 	{/if}
-	<title>Page Editor | {page?.title ?? '---'}</title>
+	<title>{page?.title ? `${page.title} | UBuilder CMS` : 'UBuilder CMS'}</title>
 </svelte:head>
 
 <Loading show={loading}/>
