@@ -25,8 +25,7 @@
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <div
-    on:click={() => activeSlot = slot}
-
+    on:click={() => openSettings()}
 	class="sidebar-item"
 	class:active={slot === activeSlot}
 	style="padding-left: {level * 16 + 'px'}; padding-right: 8px"
@@ -35,7 +34,6 @@
     <span>{component.name}</span>
 	
 	<div class="flex items-center gap-2">
-		<Icon name="pencil" class="text-gray-400 hover:text-gray-200" mb=1 on:click={() => openSettings()}/>
 		<Icon name="trash" class="text-red-400 hover:text-red-200" mb=1 on:click={() => removeSlot()} />
 	</div>
 	

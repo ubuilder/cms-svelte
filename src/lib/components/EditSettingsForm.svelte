@@ -20,8 +20,6 @@
 		alert,
 	} from '@ulibs/yesvelte'
 	import { createEventDispatcher, onMount } from 'svelte'
-	// export let data;
-	export let settings: any = {}
 
 	let pages: any[] = []
 
@@ -38,9 +36,12 @@
 
 	const dispatch = createEventDispatcher()
 
+	let settings: any = {}
+    
 	onMount(async () => {
 		pages = await api('/pages').then(res => res.data)
 		settings = await api('/settings').then((res) => res.data)
+		console.log(settings)
 	})
 
 	function close(){
@@ -67,7 +68,7 @@
 			<FormSelect
 				items={languages}
 				key="key"
-				placeholder={t('settings.choose_language')}
+				placeholder={settings.lang}
 				bind:value={settings.lang}
 				label={t('settings.language')}
 				let:item>

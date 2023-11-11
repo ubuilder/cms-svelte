@@ -29,6 +29,7 @@
 		AccordionBody,
 		ListBox,
 		ListItem,
+    PageHeader,
 	} from '@ulibs/yesvelte'
 	import SlotList from '$lib/ui/SlotList.svelte'
 	import { writable } from 'svelte/store'
@@ -169,21 +170,13 @@
 </script>
 
 <Page>
-	<ButtonList slot="header-buttons">
-		<!-- <Button on:click={() => history.back()}>
-			<Icon name="chevron-left" />
-			Back
-		</Button>
-		 -->
-		 <Button on:click={openRemoveConfirmModal} color="danger">
+	<PageHeader title="Edit Page" slot="header">
+		<Button on:click={openRemoveConfirmModal} color="danger">
 			{t('buttons.remove')}
 		</Button>
 		<Button on:click={cancel}>{t('buttons.cancel')}</Button>
 		<Button on:click={updatePage} color="primary">{t('buttons.save')}</Button>
-	
-		<!-- <Button on:click={openPreviewModal} color="primary">Preview</Button> -->
-		<!-- <Button href="/editor/{data.page.id}" color="success">Edit</Button> -->
-	</ButtonList>
+	</PageHeader>
 
 	<El row>
 		<Tabs>

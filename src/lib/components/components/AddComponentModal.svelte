@@ -6,14 +6,18 @@
     export let data: any = {};
 </script>
 <BaseModal>
-    <ModalBody>
-        <FormInput label={t("components.forms.name")} bind:value={data.name}/>
+    <form method="POST" action="/" on:submit|preventDefault={() => $modal.resolve(data)}>
+        <ModalBody>
+            <FormInput label={t("components.forms.name")} bind:value={data.name}/>
+        
     </ModalBody>
     
     <ModalFooter>
         <ButtonList>
             <Button on:click={() => $modal.close()}>{t("buttons.cancel")}</Button>
-            <Button on:click={() => $modal.resolve(data)} color="primary">{t("buttons.add")}</Button>
+            <Button type="submit" color="primary">{t("buttons.add")}</Button>
             </ButtonList>
     </ModalFooter>
+</form> 
+
 </BaseModal>

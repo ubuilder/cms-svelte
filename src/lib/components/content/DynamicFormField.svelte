@@ -41,6 +41,7 @@
     dispatch('change')
 	}
 
+	export let icon: string | undefined = undefined;
 	export let items: any = {}
 	export let type: string = 'plain_text'
 	export let accept: string[] = []
@@ -83,6 +84,9 @@
 
 <FormField colMd={col}>
 	<Label d="flex" gap="2" for={id} {required} slot="label">
+		{#if icon}
+			<Icon name={icon}/>
+		{/if}
 		<span>{label}</span>
 		{#if filteredItems.length > 0}
 			<Dropdown autoClose arrow={false} placement="right-start">

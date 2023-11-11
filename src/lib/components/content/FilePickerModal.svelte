@@ -18,6 +18,7 @@
   import { setContext } from "svelte";
   import ModalAssetItem from "./ModalAssetItem.svelte";
   import type { AssetType } from "$lib/types/asset";
+  import { api } from "$lib/helpers/api"
 
   let assets: AssetType[] = [];
   let uploadInput: HTMLInputElement;
@@ -31,11 +32,10 @@
     formData.append("file", event.target.files[0]);
 
     console.log('uploading....')
-    const result = await fetch("/edit/_/assets?/upload", {
-      method: "POST",
-      body: formData,
-    }).then((res) => res.json());
-
+    const result = await api("/assets", {
+      formData,
+    })
+    
     console.log('uploaded')
     // await invalidateAll();
     await loadAssets(filters);
@@ -50,16 +50,11 @@
       }
     });
 
-    const res = await fetch("/edit/assets/get", {
-      method: "POST",
-      body: JSON.stringify(filtersObject),
-      headers: {
-        "content-type": "application/json",
-      },
-    });
-
-    assets = await res.json().then((res) => res.assets);
-    console.log(assets)
+    assets = await api("/assets", {
+      params: {
+        filters: filtersObject,
+      }
+    }).then(res => res.data);
   }
 
   let title: string;
@@ -95,7 +90,7 @@
     />
   </El>
 
-  <ModalBody>
+  <ModalBody class="min-h-[400px]">
     <FilterList>
       
       <SelectFilter

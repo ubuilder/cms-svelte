@@ -31,6 +31,7 @@
   sidebar={false}
   header={false}>
   <Page title="" htmlTitle="Login">
+    {JSON.stringify(form)}
     <El
       mt="5"
       pt="5"

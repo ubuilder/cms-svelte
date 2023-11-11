@@ -6,8 +6,11 @@
 	{@html data.page.head ?? ''}
 	<title>{data.page.title}</title>
 	<meta name="description" content={data.page.description} />
-	<script src="https://cdn.tailwindcss.com"></script>
 
+	<!-- <script src="https://cdn.tailwindcss.com?plugins=forms,typography,aspect-ratio,line-clamp"></script> -->
+	<script src="/cdn.tailwindcss.com.js"></script>
+
+	
 </svelte:head>
 
 {#if false}

@@ -27,6 +27,7 @@
 	import HeaderItem from './HeaderItem.svelte'
 	import { t } from '$lib/i18n'
 	import SlotEditor from './SlotEditor.svelte'
+  import { goto } from '$app/navigation'
 
 	let editor: any
 
@@ -37,12 +38,22 @@
 	let settings = {}
 
 	export let page_id: any = undefined
+	export let component_id: any = undefined
+	export let redirectTo: any = undefined
+
+	export let theme: 'light' | 'dark' = 'light'
+	export let dir: 'ltr' | 'rtl' = 'ltr'
+
+	let mode: string = component_id ? 'component' : 'page'
+
+	let hasChanges = true
 
 	let page: any = null
+	let component: any = null
 
 	let activeSlot: any = null
 
-	let mode = 'options'
+	let sidebarMode = 'options'
 
 	let offcanvasMode: string | undefined = undefined
 	let offcanvasData = {}
@@ -70,8 +81,36 @@
 		}
 	}
 
+
 	async function onSave() {
-		console.log('onSave', page)
+		if(mode === 'page') {
+			onSavePage()
+		} else {
+			onSaveComponent()
+		}
+	}
+	async function onSaveComponent() {
+		const result = JSON.parse(JSON.stringify(component))
+
+		forEachSlot(result.slot, (slot) => {
+			delete slot['id']
+			delete slot['parent_id']
+			delete slot['parent_field']
+			delete slot['parent_index']
+		})
+
+		await api('/components', {
+			params: {
+				id: result.id,
+			},
+			data: result,
+		}).then((res) => {
+			goto(redirectTo)
+			alert.success(res.message)
+		})
+
+	}
+	async function onSavePage() {
 		const result = JSON.parse(JSON.stringify(page))
 
 		forEachSlot(result.slot, (slot) => {
@@ -96,6 +135,8 @@
 	}
 
 	$: page = pages.find((x) => x.id === page_id) ?? null
+	$: component = components.find((x) => x.id === component_id) ?? null
+
 
 	$: {
 		leftSidebarOpen
@@ -109,6 +150,7 @@
 	let loading = true
 
 	async function reload(event: CustomEvent<string[]> | string[] | null = null) {
+		console.log('reload')
 		if (event) {
 			const items: string[] = Array.isArray(event) ? event : event.detail
 
@@ -123,6 +165,7 @@
 			}
 		} else {
 			components = await api('/components').then((res) => res.data)
+
 			pages = await api('/pages').then((res) => res.data)
 			settings = await api('/settings').then((res) => res.data)
 
@@ -132,10 +175,21 @@
 		}
 	}
 
+	let prevState = '';
 	onMount(async () => {
 		await reload()
+		setTimeout(() => {
+			prevState = JSON.stringify(mode === 'page' ? page.slot : component.slot)
+		}, 1000)
 		loading = false
 	})
+
+	async function openComponentEditor(component: any) {
+		// activeComponent = component
+		await onSave()
+		goto(`/edit/${page_id ?? '_'}/component/${component.id}`)
+		// console.log(activeComponent)
+	}
 
 	function openComponentSettings(component: any) {
 		offcanvas.openRight('component-settings', {
@@ -183,7 +237,7 @@
 		},
 	}
 
-	$: if (mode === 'add') {
+	$: if (sidebarMode === 'add') {
 		// enable drag and drop for components in sidebar
 		editor?.render()
 	}
@@ -193,46 +247,65 @@
 </script>
 
 <svelte:head>
-	<title>Page Editor | {page?.title ?? '---'}</title>
-	<!-- <script src="https://cdn.tailwindcss.com"></script> -->
-	<!-- <script src="https://cdn.tailwindcss.com"></script> -->
+	<!-- <script src="https://cdn.tailwindcss.com?plugins=forms,typography,aspect-ratio,line-clamp"></script> -->
 	<script src="/cdn.tailwindcss.com.js"></script>
+	{#if page}
+		{@html page?.head}
+	{/if}
+	<title>Page Editor | {page?.title ?? '---'}</title>
 </svelte:head>
 
 {#if loading}
 	<Loading show />
 {:else}
-	<div class="page" data-bs-theme="dark" dir="ltr">
+	<div class="page" data-bs-theme={theme} {dir}>
 		<div
 			class="header"
 			class:right-sidebar-open={rightSidebarOpen}
 			class:left-sidebar-open={leftSidebarOpen}>
 			<div class="flex items-center gap-2">
+				{#if mode === 'page'}
 				<HeaderItem
 					icon="file"
 					on:click={() => {
 						leftSidebarOpen = true
-						mode = 'list'
+						sidebarMode = 'list'
 					}} />
 
 				<HeaderItem
 					icon="database"
 					on:click={() => {
 						leftSidebarOpen = true
-						mode = 'content'
+						sidebarMode = 'content'
 					}} />
 
 				<HeaderItem icon="photo" on:click={() => offcanvas.openLeft('assets')} />
+				{/if}
 				<!-- svelte-ignore a11y-click-events-have-key-events -->
 				<!-- svelte-ignore a11y-no-static-element-interactions -->
 			</div>
 
 			<div class="flex items-center gap-2">
-				{#if page}
-					<HeaderItem on:click={onSave}>
+				{#if mode === 'component'}
+				<HeaderItem>
+					<Button href={redirectTo} class="bg-gray-200 h-[24px] px-[8px]" size="sm">Back</Button>				
+				</HeaderItem>
+				{#if hasChanges}
+					<HeaderItem on:click={onSaveComponent}>
 						<Button class="bg-blue-500 h-[24px] px-[8px]" color="primary" size="sm">Save</Button>
 					</HeaderItem>
-					<HeaderItem>
+				{/if}
+				{/if}
+
+				{#if mode === 'page'}
+
+					{#if page}
+					{#if hasChanges}
+						<HeaderItem on:click={onSave}>
+							<Button class="bg-blue-500 h-[24px] px-[8px]" color="primary" size="sm">Save</Button>
+						</HeaderItem>
+						{/if}
+						<HeaderItem>
 						{#key page.slug}
 							<Button
 								href="/{page.slug}"
@@ -242,6 +315,7 @@
 								size="sm">View</Button>
 						{/key}
 					</HeaderItem>
+					{/if}
 				{/if}
 				<HeaderItem>
 					<Dropdown autoClose arrow={false} placement="bottom-end">
@@ -268,11 +342,11 @@
 				<HeaderItem
 					icon="category-filled"
 					on:click={() => {
-						if (rightSidebarOpen && mode === 'options') {
-							mode = 'add'
+						if (rightSidebarOpen && sidebarMode === 'options') {
+							sidebarMode = 'add'
 						} else {
 							rightSidebarOpen = !rightSidebarOpen
-							mode = 'add'
+							sidebarMode = 'add'
 						}
 					}} />
 			</div>
@@ -285,14 +359,15 @@
 			bind:leftOffcanvasOpen
 			bind:rightOffcanvasOpen />
 
+			{#if !component_id}
 		<div class="sidebar-left" class:open={leftSidebarOpen}>
 			<div class="h-full w-full relative">
 				<Icon
-					class="absolute right-2 top-[0.375rem]"
+					class="sidebar-close-icon right"
 					on:click={() => (leftSidebarOpen = false)}
 					name="x" />
 
-				{#if mode === 'content'}
+				{#if sidebarMode === 'content'}
 					<SidebarTableList
 						on:reload={reload}
 						on:open-table-settings={(event) => openTableSettings(event.detail)}
@@ -320,33 +395,37 @@
 				{/if}
 			</div>
 		</div>
+		{/if}
 
 		<div class="sidebar" class:open={rightSidebarOpen}>
 			<div class="h-full w-full relative">
 				<Icon
-					class="absolute left-2 top-[0.375rem]"
+					class="sidebar-close-icon left"
 					on:click={() => (rightSidebarOpen = false)}
 					name="x" />
 
 				<!-- {#if activeSlot && mode === 'options'}
 					<El class="sidebar-title">{getComponent(activeSlot.type).name}</El>
 				{/if} -->
-				<div class="sidebar-body">
-					{#if mode === 'add'}
+					{#if sidebarMode === 'add'}
 						<SidebarComponentList
 							on:reload={reload}
+							on:open-component-editor={(e) => openComponentEditor(e.detail)}
+
 							on:open-component-settings={(e) => openComponentSettings(e.detail)}
+
 							bind:activeSlot
-							bind:mode
+							bind:mode={sidebarMode}
 							{components} />
 					{:else if activeSlot}
 						<SidebarComponentOption
 							{components}
-							on:select-slot={(e) => editor.selectSlot(e.detail.id)}
+							on:open-component-settings={(e) => openComponentSettings(e.detail)}
+							on:select-slot={(e) => editor.selectSlot(e.detail)}
 							on:reload={reload}
+							on:update={(e) => {editor.render(e.detail); reload(['components'])}}
 							bind:activeSlot />
 					{/if}
-				</div>
 			</div>
 		</div>
 
@@ -356,18 +435,36 @@
 			class:left-sidebar-open={leftSidebarOpen}>
 			{#if page}
 				<SlotEditor
+					{components}
+					{hbsTemplates}
 					bind:this={editor}
 					on:open-component-list={() => {
-						mode = 'add'
+						sidebarMode = 'add'
 						rightSidebarOpen = true
 					}}
 					on:open-component-options={(e) => {
 						console.log('open component options', e.detail)
-						mode = 'options'
+						sidebarMode = 'options'
 						rightSidebarOpen = true
 						activeSlot = e.detail
 					}}
 					bind:slotList={page.slot} />
+			{:else if mode === 'component' && component}
+			<SlotEditor
+					components={components.filter(x => x.id !== component.id)}
+					{hbsTemplates}
+					bind:this={editor}
+					on:open-component-list={() => {
+						sidebarMode = 'add'
+						rightSidebarOpen = true
+					}}
+					on:open-component-options={(e) => {
+						console.log('open component options', e.detail)
+						sidebarMode = 'options'
+						rightSidebarOpen = true
+						activeSlot = e.detail
+					}}
+					bind:slotList={component.slot} />
 			{:else}
 				<div class="flex flex-col gap-4 h-full pb-20 items-center justify-center">
 					<h1 class="font-bold text-2xl">No page selected</h1>
@@ -376,21 +473,31 @@
 						<!-- svelte-ignore a11y-no-static-element-interactions -->
 						Open a page from
 						<span
-							class="cursor-pointer hover:bg-blue-50 rounded p-0.5 font-bold text-blue-700"
+							class="cursor-pointer hover:bg-blue-500/10 rounded p-0.5 font-bold text-blue-700"
 							on:click|stopPropagation={() => {
 								leftSidebarOpen = true
-								mode = 'list'
+								sidebarMode = 'list'
 							}}>Sidebar</span> to continue
 					</h2>
 				</div>
 			{/if}
 		</div>
 
-		<div class="fixed top-8 right-0">
+		<div class="fixed z-20 bottom-0 right-0">
 			<AlertProvider alerts={$alert} />
 		</div>
 		{#if !leftOffcanvasOpen && !rightOffcanvasOpen}
 			<ModalProvider />
 		{/if}
+
+
+		<!-- {#if !component_id && activeComponent}
+		<div class="z-[10] shadow-lg bg-blue-400 fixed p-1 w-full h-full">
+			<iframe title="" src="/edit/component/{activeComponent.id}" class="w-full h-full">
+
+			</iframe>
+		
+		</div>
+			{/if} -->
 	</div>
 {/if}

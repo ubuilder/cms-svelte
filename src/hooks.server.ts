@@ -4,13 +4,15 @@ import qs from 'qs'
 import { cms_api } from '$lib/helpers/cms-api'
 import { API_URL } from '$env/static/private'
 import { redirect } from '@sveltejs/kit'
+import { goto } from '$app/navigation'
 
 const apiUrl = API_URL ?? 'http://localhost:3000'
 
 export const handle = async ({ event, resolve }) => {
 
 	let siteId = (event.url.host ?? 'default').split('.')[0]
-	// let siteId = 'test'
+	// let siteId = 'components'
+	// let siteId = 'docs'
 	const baseUrl = apiUrl + '/api/' + siteId
 	const token = event.cookies.get('token') ?? ''
 	
@@ -23,7 +25,11 @@ export const handle = async ({ event, resolve }) => {
 	event.locals.baseUrl = baseUrl
 	event.locals.token = token
 
-	
+
+	console.log(event.url)
+	if(event.url.pathname.startsWith('/admin')) {
+		throw redirect(301, event.url.href.replace('/admin', '/edit'))
+	}
 
 	// /edit
 	if (event.url.pathname.startsWith('/edit/')) {
@@ -33,6 +39,8 @@ export const handle = async ({ event, resolve }) => {
 		// auth
 		if (event.cookies.get('token')) {
 			const user = await event.locals.api.getUser().then((res) => res.data)
+
+			console.log('user')
 	
 			if (user) {
 				event.locals.user = user

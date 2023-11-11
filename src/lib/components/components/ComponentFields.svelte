@@ -209,6 +209,7 @@
 
                 {#if field.type !== 'slot'}
                 <DynamicFormField
+                  options={field.options}
                   label="Default Value"
                   type={field.type}
                   bind:value={field.default_value}

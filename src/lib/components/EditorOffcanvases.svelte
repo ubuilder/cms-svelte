@@ -911,8 +911,6 @@
 	// export let page: any
 	export let components: any[] = []
 	let user = {}
-	let settings = {}
-
 
 	export let leftOffcanvasOpen = false
 	export let rightOffcanvasOpen = false
@@ -991,8 +989,6 @@
 		if ($modal) $modal.close()
 	}
 
-	
-
 	function closeOffcanvas() {
 		leftOffcanvasOpen = false
 		rightOffcanvasOpen = false
@@ -1018,9 +1014,9 @@
 		{:else if offcanvasMode === 'profile'}
 			<EditProfileForm on:close={closeOffcanvas} bind:user />
 		{:else if offcanvasMode === 'settings'}
-			<EditSettingsForm bind:settings on:close={closeOffcanvas}  />
+			<EditSettingsForm on:close={closeOffcanvas}/>
 		{:else if offcanvasMode === 'assets'}
-			<AssetsPage on:close={(e) => (leftOffcanvasOpen = false)} />
+			<AssetsPage on:reload on:close={(e) => (leftOffcanvasOpen = false)} />
 	    {:else if offcanvasMode === 'table-settings'}
 						<TableSettingEdit on:close ={closeOffcanvas}   bind:table ={data.activeTable} />
 		{:else if offcanvasMode === 'table-create'}
@@ -1048,6 +1044,7 @@
 	<OffcanvasBody p="0">
 					{#if offcanvasMode === 'component-settings'}
 						<EditComponent
+							on:reload
 							on:close={closeOffcanvas}
 							component={data.activeComponent}
 							

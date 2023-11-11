@@ -28,8 +28,8 @@ export const actions = {
 		const email = formData.get('email')
 
 
-		const redirectTo = event.url.searchParams.get('redirect')
-		
+		let redirectTo = event.url.searchParams.get('redirect')
+		if(!redirectTo || redirectTo === 'undefined') redirectTo = '/edit/'
 
 		if (!username) return fail(400, { field: 'username', message: 'Username is required' })
 		if (!password) return fail(400, { field: 'password', message: 'Password is required' })
@@ -45,12 +45,14 @@ export const actions = {
 			return fail(response.status, { message: response.message })
 		}
 
+		console.log(response)
 		event.cookies.set('token', response.data?.token, {
 			path: '/',
 			maxAge: 60 * 60 * 24 * 15,
 		})
 
-		throw redirect(301, '/edit/')
+		console.log('redirectT0: ', redirectTo)
+		throw redirect(301, redirectTo)
 		// return {
 		// 	success: true,
 		// 	code: 201,
