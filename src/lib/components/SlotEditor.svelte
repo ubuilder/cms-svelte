@@ -528,7 +528,7 @@
       delete slot['parent_index']
     })
     
-    navigator.clipboard.writeText(JSON.stringify(activeSlot));
+    navigator.clipboard.writeText(JSON.stringify(result[0]));
     setTimeout(() => {
       getClipboardSlot()
     }, 1)
