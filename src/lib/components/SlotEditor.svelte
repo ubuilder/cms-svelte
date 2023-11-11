@@ -344,11 +344,17 @@
   async function getClipboardSlot() {
     const text = await navigator.clipboard.readText()
     if(text) {
+      try {
+
       const obj = JSON.parse(text)
 
       if(getComponent(obj.type)) {
         clipboardSlot = obj
       }      
+    } catch(err) {
+      // skip
+    }
+
     }
   }
 

@@ -11,7 +11,7 @@ export let icon: string = '';
 <div
 on:click
 on:dblclick
-	class="font-bold"
+	class="font-bold cursor-pointer hover:text-blue-500"
 	style="">
     <slot>
         <Icon name={icon}/>

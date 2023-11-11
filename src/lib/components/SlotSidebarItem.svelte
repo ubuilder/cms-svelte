@@ -34,7 +34,7 @@
     <span>{component.name}</span>
 	
 	<div class="flex items-center gap-2">
-		<Icon name="trash" class="text-red-400 hover:text-red-200" mb=1 on:click={() => removeSlot()} />
+		<Icon name="trash" class="text-red-400 hover:text-red-600" mb=1 on:click={() => removeSlot()} />
 	</div>
 	
 </div>
