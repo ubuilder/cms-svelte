@@ -28,8 +28,8 @@
   export let table
   let rows = []
 
-  $:console.log('table: ', table)
-  $:console.log('rows: ', rows)
+  $: console.log('table: ', table)
+  $: console.log('rows: ', rows)
 
   async function removeItem(item: any) {
     const choice = await confirmModal.open({
@@ -46,23 +46,18 @@
       await invalidateAll()
     }
   }
-  function insert(){
-	dispatch("dataInsert" )
-
+  function insert() {
+    dispatch('dataInsert')
   }
-  const dispatch  = createEventDispatcher()
-  function close(){
-	dispatch("close")
+  const dispatch = createEventDispatcher()
+  function close() {
+    dispatch('close')
   }
 
-
-  onMount(async ()=>{
-	const res = await api(`/content/${table.id}`, {}).then(res =>res)
+  onMount(async () => {
+    const res = await api(`/content/${table.id}`, {}).then((res) => res)
     rows = res.data
   })
-
-
-
 </script>
 
 <Page title={table.name}>
