@@ -139,6 +139,7 @@
                     </AccordionHeader>
                     <AccordionBody style="background-color: var(--y-bg-surface)" p="0">
                       <El p=2>
+                        <FormInput label="Name (as)" bind:value={activeSlot.props[field.name].name}/>
 
                       <FormSelect bind:value={activeSlot.props[field.name].table} placeholder="Choose table" items={tables} label="Table" key="id" let:item>
                         {item.name}
