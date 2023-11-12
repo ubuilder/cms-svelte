@@ -33,7 +33,7 @@
     dispatch('update', activeSlot)
   }
 
-  // $: hasClass = getComponent(activeSlot?.type)?.template?.includes("Class");
+  $: hasClass = getComponent(activeSlot?.type)?.template?.includes("Class");
   const getComponent = (id) => components.find((x) => x.id === id)
 </script>
 
@@ -55,10 +55,9 @@
     <Tabs>
       <TabList>
         <TabItem>Props</TabItem>
-        <TabItem>Style</TabItem>
-        <!-- {#if hasClass}
+        {#if hasClass}
           <TabItem>Style</TabItem>
-        {/if} -->
+        {/if}
       </TabList>
       <TabContent>
         <TabPanel p="2">
@@ -84,30 +83,12 @@
             <El col></El>
           </El>
         </TabPanel>
-        <!-- {#if hasClass} -->
+        {#if hasClass}
 
         <TabPanel p="2">
-          <El row>
-            <El col>
-              <FormInput type="number" min="0" label="Width" bind:value={activeSlot.props.width} />
-            </El>
-            <El col>
-              <FormInput type="number" min="0" label="Height" bind:value={activeSlot.props.hight} />
-            </El>
-          </El>
-          <El row>
-            <El col>
-              <FormInput type="number" min="0" label="Font size" bind:value={activeSlot.props.fontSize} />
-            </El>
-          </El>
-          <El row>
-            <El col>
-              <FormInput type="number" min="0" label="Font size" bind:value={activeSlot.props.fontSize} />
-            </El>
-          </El>
           <StyleEditor bind:value={activeSlot.props.Class}/>
         </TabPanel>
-        <!-- {/if} -->
+        {/if}
       </TabContent>
     </Tabs>
   </div>
