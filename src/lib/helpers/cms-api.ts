@@ -183,7 +183,7 @@ export function cms_api(
 			return call<any>('/data/removeData', params)
 		},
 		async getData(params: any) {
-			return call<DbList<DbTable>>('/data/getData', params).then((res) => res.data!)
+			return call<DbList<DbTable>>('/data/getData', params)
 		},
 		async recoverData(table: string, history_id: string) {
 			return call<boolean>('/data/recoverData', { table, history_id })
