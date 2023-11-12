@@ -343,7 +343,7 @@
           </div>
         </PopoverBody>
       </Popover>
-    </div>
+    </El>
   </FormField>
 
   <FormField label="Flex Direction">
