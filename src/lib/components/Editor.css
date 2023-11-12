@@ -290,7 +290,7 @@ body:has(.dragging) * {
 	display: contents;
 }
 
-.page-slot {
+.page-slot, .table-field-item {
 	padding: 0.5rem;
 }
 /* .placeholder {
@@ -357,7 +357,8 @@ body:has(.dragging) * {
 	content: '';
 	background-color: var(--y-primary);
 	opacity: 0.2;
-	filter: blur(4px);
+	filter: blur(2px);
+	border-radius: 8px;
 	position: absolute;
 	top: -0.3rem;
 	bottom: -0.3rem;
@@ -396,15 +397,6 @@ body:has(.dragging) * {
 	display: none;
 }
 
-.placeholder.empty {
-	/* margin: `0; */
-	display: block;
-	max-height: 80px;
-}
-.dragging .placeholder {
-	display: block;
-}
-
 .placeholder.empty::after {
 	margin: 0;
 	opacity: 0.5;
@@ -432,6 +424,16 @@ body:has(.dragging) * {
 .placeholder.empty::after {
 	opacity: 0;
 	scale: 0.8;
+}
+
+.placeholder.empty {
+	/* margin: `0; */
+	display: block;
+	max-height: 80px;
+}
+.dragging .placeholder {
+	display: block;
+	opacity: 0.5;
 }
 
 

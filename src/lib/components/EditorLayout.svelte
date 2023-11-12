@@ -35,6 +35,7 @@
 
 	let user = {}
 	let pages: any[] = []
+	let tables: any[] = []
 	let settings = {}
 
 	export let page_id: any = undefined
@@ -139,6 +140,16 @@
 	$: page = pages.find((x) => x.id === page_id) ?? null
 	$: component = components.find((x) => x.id === component_id) ?? null
 
+	
+	$: if(page) {
+		forEachSlot(page.slot, (slot) => {
+			if(Array.isArray(slot)) {
+				slot = {
+					slot
+				}
+			}
+		})
+	}
 
 	$: {
 		leftSidebarOpen
@@ -163,13 +174,16 @@
 				}
 			}
 			if (items.includes('pages')) {
-				pages = await api('/pages').then((res) => res.data)
+				pages = await api('/pages').then((res) => res.data)				
+			}
+			if (items.includes('tables')) {
+				tables = await api('/tables').then((res) => res.data)
 			}
 		} else {
 			components = await api('/components').then((res) => res.data)
-
 			pages = await api('/pages').then((res) => res.data)
 			settings = await api('/settings').then((res) => res.data)
+			tables = await api('/tables').then((res) => res.data)
 
 			for (let component of components) {
 				hbsTemplates[component.id] = hbs.compile(component.template)
@@ -253,7 +267,6 @@
 	{/if}
 	<title>{page?.title ? `${page.title} | UBuilder CMS` : 'UBuilder CMS'}</title>
 </svelte:head>
-
 <Loading show={loading}/>
 
 {#if !loading}
@@ -367,6 +380,7 @@
 
 				{#if leftSidebarMode === 'content'}
 					<SidebarTableList
+						{tables}
 						on:reload={reload}
 						on:open-table-settings={(event) => openTableSettings(event.detail)}
 						on:open-table-create={openTableCreate}

@@ -90,7 +90,7 @@
   <Accordions>
     {#each fields as field}
       <Accordion mb="2">
-        <AccordionHeader border>
+        <AccordionHeader class="table-field-item" border>
           <El d="flex" alignItems="center" gap="2">
             <Icon name={icons[field.type]} />
             <El tag="span" mx="2">

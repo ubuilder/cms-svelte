@@ -23,6 +23,7 @@
 	} from '@ulibs/yesvelte'
 	import TableEditCard from './content/TableEditCard.svelte'
   import TableSettingEdit from './content/TableSettingEdit.svelte'
+  import TableInsertPage from './content/TableInsertPage.svelte'
 	
 	// import { goto, invalidate, invalidateAll } from '$app/navigation'
 	// import AddComponentModal from '$lib/components/components/AddComponentModal.svelte'
@@ -1018,10 +1019,9 @@
 		{:else if offcanvasMode === 'assets'}
 			<AssetsPage on:reload on:close={(e) => (leftOffcanvasOpen = false)} />
 	    {:else if offcanvasMode === 'table-settings'}
-						<TableSettingEdit on:close ={closeOffcanvas}   bind:table ={data.activeTable} />
+			<TableSettingEdit on:reload on:close ={closeOffcanvas}   bind:table ={data.activeTable} />
 		{:else if offcanvasMode === 'table-create'}
-
-		<TableCreateCard tables = {[]} />
+			<TableInsertPage on:reload on:close ={closeOffcanvas} />
 		{:else if offcanvasMode === 'data-list'}
 			<DataList on:dataInsert={()=>{offcanvasMode = "data-insert"}} bind:table={data.activeTable} on:close  = {closeOffcanvas} />
 		{:else if offcanvasMode === 'data-insert'}

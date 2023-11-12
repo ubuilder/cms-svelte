@@ -218,8 +218,8 @@
           console.log(slot)
           let content = ''
 
-          for (let index in slot.props?.[field.name] ?? []) {
-            const x = slot.props[field.name][index]
+          for (let index in slot.props?.[field.name].slot ?? []) {
+            const x = slot.props[field.name].slot[index]
 
             console.log('render: render inside renderSlot..', {parent_id: id, parent_field: field.name, parnet_index: +index})
             const res = renderSlot(x, id, field.name, +index)
@@ -281,12 +281,15 @@
     if (!component) return 'todo'
 
     if (component.raw) return ''
-    return component.slot
-      .map((x) => {
-        console.log('renderSlot: render custom component...')
-        return renderSlot(x)
-      })
-      .join('')
+
+    // return component.slot
+    //   .map((x) => {
+    //     console.log('renderSlot: render custom component...')
+    //     return renderSlot(x).replace(/placeholder\ empty/g, '')
+    //   })
+    //   .join('')
+
+    return 'TODO (raw = false)'
   }
 
   const placeholder = (parent: string, field: string = '', index: number = 0, className = '') =>
@@ -495,7 +498,7 @@
           slot.props[field.name] ??= []
 
           if (index === 0) {
-            slot.props[field.name].push(newSlot)
+            slot.props[field.name].unshift(newSlot)
           } else {
             slot.props[field.name] = [
               ...slot.props[field.name].slice(0, index),
