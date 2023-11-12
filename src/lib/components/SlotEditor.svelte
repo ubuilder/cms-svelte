@@ -41,8 +41,8 @@
     forEachSlot(slotList, (slot: any) => {
       const component = getComponent(slot.type)
       for (let field of component.fields) {
-        if (field.type === 'slot') {
-          slot.props[field.name] = (slot.props[field.name] ?? []).filter((x) => x.id !== id)
+        if (field.type === 'slot' && slot.props[field.name]) {
+          slot.props[field.name].slot = (slot.props[field.name].slot ?? []).filter((x) => x.id !== id)
         }
       }
     })
@@ -73,11 +73,14 @@
     // 	return
     // }
 
+    console.log("slotList", slotList)
     forEachSlot(slotList, (slot) => {
+      console.log("insideForeach slot", slot)
+
       const component = getComponent(slot.type)
       for (let field of component.fields) {
-        if (field.type === 'slot') {
-          const x = (slot.props[field.name] ?? []).find((x) => x.id === activeSlot?.id)
+        if (field.type === 'slot' && slot.props[field.name]) {
+          const x = (slot.props[field.name].slot ?? []).find((x) => x.id === activeSlot?.id)
           if (x) selectSlot(slot.id)
         }
       }
@@ -113,17 +116,14 @@
 
       instance.on('start', (event) => {
         dragging = true
-        event.source.classList.add('active-slot')
       })
 
       instance.on('return', (event) => {
         dragging = false
-        event.source.classList.remove('active-slot')
       })
 
       instance.on('drop', (event) => {
         dragging = false
-        event.source.classList.remove('active-slot')
 
         const target = event.target
         const source = event.source.dataset.id.split('-')[1]
@@ -205,8 +205,8 @@
         if (field.type === 'slot') {
           let content = ''
 
-          for (let index in slot.props?.[field.name].slot ?? []) {
-            const x = slot.props[field.name].slot[index]
+          for (let index in slot.props?.[field.name]?.slot ?? []) {
+            const x = slot.props[field.name]?.slot[index]
 
             const res = renderSlot(x, id, field.name, +index)
             content += res
@@ -287,8 +287,8 @@
       cb(slot, parent, slots)
 
       for (let field of component.fields) {
-        if (field.type === 'slot') {
-          forEachSlot(slot.props[field.name] ?? [], cb, slot)
+        if (field.type === 'slot' && slot.props[field.name]) {
+          forEachSlot(slot.props[field.name].slot ?? [], cb, slot)
         }
       }
     }
@@ -464,22 +464,22 @@
 
       for (let field of component_.fields) {
         if (slot.id === parent_id && field.name === field_name) {
-          slot.props[field.name] ??= []
+          slot.props[field.name] ??= {slot: []}
 
           if (index === 0) {
-            slot.props[field.name].unshift(newSlot)
+            slot.props[field.name].slot.unshift(newSlot)
           } else {
-            slot.props[field.name] = [
-              ...slot.props[field.name].slice(0, index),
+            slot.props[field.name].slot = [
+              ...slot.props[field.name].slot.slice(0, index),
               newSlot,
-              ...slot.props[field.name].slice(index),
+              ...slot.props[field.name].slot.slice(index),
             ]
           }
           setTimeout(() => {
             selectSlot(id)
           }, 1)
         } else if (field.type === 'slot') {
-          for (let subSlot of slot.props[field.name] ?? []) {
+          for (let subSlot of slot.props[field.name]?.slot ?? []) {
             findAndInsert(subSlot)
           }
         }

@@ -77,7 +77,7 @@
 
 			for (let field of component.fields) {
 				if (field.type === 'slot') {
-					forEachSlot(slot.props[field.name] ?? [], cb, slot)
+					forEachSlot(slot.props[field.name]?.slot ?? [], cb, slot)
 				}
 			}
 		}
@@ -429,6 +429,7 @@
 					{:else if activeSlot}
 						<SidebarComponentOption
 							{components}
+							{tables}
 							on:open-component-settings={(e) => openComponentSettings(e.detail)}
 							on:select-slot={(e) => editor.selectSlot(e.detail)}
 							on:select-parent={() => editor.onSelectParent()}

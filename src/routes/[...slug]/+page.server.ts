@@ -77,59 +77,59 @@ export async function load({ locals, params, url }) {
     throw redirect(302, '/edit/' + page.id)
   }
 
-  page = {
-    id: 'FlAdLSSp',
-    title: 'todos',
-    slug: 'todos',
-    actions: [],
-    slot: [
-      {
-        type: 'IfIlaUIw',
-        props: {
-          Class: 'flex flex-col bg-blue-100 __ ',
-          Slot: {
-			slot: [
-            { type: 'bRWpeMxE', props: { Text: '<p>Todos</p>' } },
-            {
-              type: 'IfIlaUIw',
-              props: {
-                Class: 'flex flex-col bg-blue-400 __ p-4',
-                Slot: {
-                  table: 'RwllZjiC',
-                  filters: [],
-                  multiple: true,
-                  name: 'axckawers',
-                  page: 0,
-                  perPage: 5,
-                  // sort:
-                  slot: [
-                    {
-                      type: 'IfIlaUIw',
-                      props: {
-                        Class: ' bg-white text-black __ ',
-                        Slot: {
-							slot: [
-								{
-								  type: 'bRWpeMxE',
-								  props: { Text: '{{axckawers.Text}}' },
-								},
-							  ]
-						},
-                      },
-                    },
-                  ],
-                },
-              },
-            },
-          ]
-		},
-        },
-      },
-    ],
-    head: '<meta name="description" content="{{page.description}}"/>\n<title>{{page.title}}</title>\n<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>',
-    dir: 'ltr',
-    description: '',
-  }
+  // page = {
+  //   id: 'FlAdLSSp',
+  //   title: 'todos',
+  //   slug: 'todos',
+  //   actions: [],
+  //   slot: [
+  //     {
+  //       type: 'IfIlaUIw',
+  //       props: {
+  //         Class: 'flex flex-col bg-blue-100 __ ',
+  //         Slot: {
+	// 		slot: [
+  //           { type: 'bRWpeMxE', props: { Text: '<p>Todos</p>' } },
+  //           {
+  //             type: 'IfIlaUIw',
+  //             props: {
+  //               Class: 'flex flex-col bg-blue-400 __ p-4',
+  //               Slot: {
+  //                 table: 'RwllZjiC',
+  //                 filters: [],
+  //                 multiple: true,
+  //                 name: 'axckawers',
+  //                 page: 0,
+  //                 perPage: 5,
+  //                 // sort:
+  //                 slot: [
+  //                   {
+  //                     type: 'IfIlaUIw',
+  //                     props: {
+  //                       Class: ' bg-white text-black __ ',
+  //                       Slot: {
+	// 						slot: [
+	// 							{
+	// 							  type: 'bRWpeMxE',
+	// 							  props: { Text: '{{axckawers.Text}}' },
+	// 							},
+	// 						  ]
+	// 					},
+  //                     },
+  //                   },
+  //                 ],
+  //               },
+  //             },
+  //           },
+  //         ]
+	// 	},
+  //       },
+  //     },
+  //   ],
+  //   head: '<meta name="description" content="{{page.description}}"/>\n<title>{{page.title}}</title>\n<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>',
+  //   dir: 'ltr',
+  //   description: '',
+  // }
 
   const style = await locals.api.getPageCss({ page_id: page.id }).then((res) => res.data)
 
@@ -164,7 +164,7 @@ export async function load({ locals, params, url }) {
 
     for (let field of component.fields) {
 
-      if (field.type === 'slot' && slot.props[field.name].table) {
+      if (field.type === 'slot' && slot.props[field.name]?.table) {
         // const id = 'id_' + Math.random()
 
         // slot.id = id
@@ -210,6 +210,8 @@ export async function load({ locals, params, url }) {
   })
 
   console.log(JSON.stringify(items, null, 2))
+  console.log(JSON.stringify(page, null, 2))
+
 
   function render(page: Page) {
     function renderSlot(slot: any, items = {}) {
@@ -226,19 +228,18 @@ export async function load({ locals, params, url }) {
         }
 
         for (let field of fields) {
-          if (field.type === 'slot') {
-            if (slot.props[field.name] && !slot.props[field.name].table) {
-              if (slot.props[field.name]) {
+          if (field.type === 'slot' && slot.props[field.name]) {
+            console.log(slot.props)
+            if (!slot.props[field.name].table) {
 
-                if (slot.props[field.name]) {
                   props[field.name] = slot.props[field.name]?.slot?.map((slot) => renderSlot(slot, items))
                     .join('')
-                }
-              }
+              
             } else {
-              const dynamicListOptions = slot.props[field.name]
+              const dynamicListOptions = slot.props[field.name] ?? {}
               const id = dynamicListOptions.name
 
+              console.log(items)
               const listItems = items[id]
 
               let res = ''

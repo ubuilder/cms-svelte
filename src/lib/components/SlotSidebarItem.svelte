@@ -40,8 +40,8 @@
 </div>
 
 {#each component.fields ?? [] as field}
-	{#if field.type === 'slot' && Array.isArray(slot.props[field.name] ?? [])}
-	{#each slot.props[field.name] ?? [] as slotItem}
+	{#if field.type === 'slot' && Array.isArray(slot.props[field.name]?.slot ?? [])}
+	{#each slot.props[field.name]?.slot ?? [] as slotItem}
 	<svelte:self on:open-settings on:remove-slot {components} slot={slotItem} level={level + 1} bind:activeSlot />
 	<!-- <El
 		borderBottom
