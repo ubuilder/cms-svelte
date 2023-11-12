@@ -206,7 +206,7 @@
 
   <El class="inline-flex">
   <!--padding sizing .............................................-->
-  <button class="w-full bg-zinc-700 border-r border-gray-600 hover:bg-gray-400 text-gray-300 font-bold py-2 px-4 rounded-l">Padding</button>
+  <button class="w-full bg-gray-100 border-r border-gray-300 hover:bg-gray-400 text-gray-700 font-bold py-2 px-4 rounded-l">Padding</button>
   <Popover trigger="click">
     <PopoverBody>
       <FormSlider
@@ -230,7 +230,7 @@
 
   <!--margin sizing .............................................-->
 
-  <button class="w-full bg-zinc-700 hover:bg-gray-400 text-gray-300 font-bold py-2 px-4 rounded-r">Margin</button>
+  <button class="w-full bg-gray-100 hover:bg-gray-400 text-gray-700 font-bold py-2 px-4 rounded-r">Margin</button>
   <Popover trigger="click">
     <PopoverBody>
       <FormSlider

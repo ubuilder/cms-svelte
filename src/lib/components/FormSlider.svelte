@@ -43,15 +43,15 @@
               {#if unit === 'px'}
               <Button size="sm">
                 {#if negative}
-                <input class="bg-transparent py-0 px-2 h-[18px] border-none w-[60px]" step="4" type="number" bind:value={num}/>
+                <input class="py-0 px-2 h-[18px] border-none w-[60px]" step="4" type="number" bind:value={num}/>
                 {:else}
-                <input class="bg-transparent py-0 px-2 h-[18px] border-none w-[60px]" step="4" min="0" type="number" bind:value={num}/>
+                <input class="py-0 px-2 h-[18px] border-none w-[60px]" step="4" min="0" type="number" bind:value={num}/>
                 {/if}
               </Button>
               {/if}
-                <Dropdown autoClose arrow={false} bind:value={unit}>
-                    <Button size="sm" slot="target">{#if unit==='%'}{num}{/if}{unit}</Button>
-                    <DropdownMenu style="width: 100px !important">
+                <Dropdown style="background-color:white !important" autoClose arrow={false} bind:value={unit}>
+                    <Button style="background:white !important" size="sm" slot="target">{#if unit==='%'}{num}{/if}{unit}</Button>
+                    <DropdownMenu>
                       <DropdownItem on:click={() => unit = 'px'}>px</DropdownItem>
                       <DropdownItem on:click={() => unit = '%'}>%</DropdownItem>
                     </DropdownMenu>
@@ -59,7 +59,7 @@
             </El>
         </El>
         {#if unit === '%'}
-        <FormSlider>
+        <FormSlider color="blue" connect>
             <SliderKnob bind:value={num} />
         </FormSlider>
         {/if}
