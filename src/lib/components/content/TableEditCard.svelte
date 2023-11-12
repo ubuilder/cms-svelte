@@ -30,7 +30,7 @@
   <CardBody class="table-edit" row>
     <El col="auto">
       <FormField label={t('content.forms.icon')}>
-        <Button style="background-color: var(--y-bg-forms);" outline>
+        <Button style="background-color: var(--y-bg-forms) !important;" outline>
           <Icon name={table.icon} />
         </Button>
       </FormField>

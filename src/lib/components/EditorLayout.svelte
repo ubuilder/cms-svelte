@@ -35,6 +35,7 @@
 
 	let user = {}
 	let pages: any[] = []
+	let tables: any[] = []
 	let settings = {}
 
 	export let page_id: any = undefined
@@ -70,14 +71,13 @@
 	}
 
 	function forEachSlot(slots = [], cb, parent = null) {
-		console.log(slots)
 		for (let slot of slots) {
 			const component = getComponent(slot.type)
 			cb(slot, parent, slots)
 
 			for (let field of component.fields) {
 				if (field.type === 'slot') {
-					forEachSlot(slot.props[field.name] ?? [], cb, slot)
+					forEachSlot(slot.props[field.name]?.slot ?? [], cb, slot)
 				}
 			}
 		}
@@ -140,6 +140,16 @@
 	$: component = components.find((x) => x.id === component_id) ?? null
 
 
+	$: if(page) {
+		forEachSlot(page.slot, (slot) => {
+			if(Array.isArray(slot)) {
+				slot = {
+					slot
+				}
+			}
+		})
+	}
+
 	$: {
 		leftSidebarOpen
 		rightSidebarOpen
@@ -152,7 +162,6 @@
 	let loading = true
 
 	async function reload(event: CustomEvent<string[]> | string[] | null = null) {
-		console.log('reload')
 		if (event) {
 			const items: string[] = Array.isArray(event) ? event : event.detail
 
@@ -163,13 +172,16 @@
 				}
 			}
 			if (items.includes('pages')) {
-				pages = await api('/pages').then((res) => res.data)
+				pages = await api('/pages').then((res) => res.data)				
+			}
+			if (items.includes('tables')) {
+				tables = await api('/tables').then((res) => res.data)
 			}
 		} else {
 			components = await api('/components').then((res) => res.data)
-
 			pages = await api('/pages').then((res) => res.data)
 			settings = await api('/settings').then((res) => res.data)
+			tables = await api('/tables').then((res) => res.data)
 
 			for (let component of components) {
 				hbsTemplates[component.id] = hbs.compile(component.template)
@@ -190,7 +202,6 @@
 	}
 
 	function openComponentSettings(component: any) {
-		console.log('component', component)
 		offcanvas.openRight('component-settings', {
 			activeComponent: component,
 		})
@@ -253,7 +264,6 @@
 	{/if}
 	<title>{page?.title ? `${page.title} | UBuilder CMS` : 'UBuilder CMS'}</title>
 </svelte:head>
-
 <Loading show={loading}/>
 
 {#if !loading}
@@ -273,11 +283,11 @@
 				<HeaderItem icon="photo" on:click={() => offcanvas.openLeft('assets')} />
 
 				<HeaderItem
-					on:dblclick={() => {
+					icon="database"
+					on:click={() => {
 						leftSidebarOpen = true
 						leftSidebarMode = 'content'
 					}} />
-
 				{/if}
 				<!-- svelte-ignore a11y-click-events-have-key-events -->
 				<!-- svelte-ignore a11y-no-static-element-interactions -->
@@ -367,6 +377,7 @@
 
 				{#if leftSidebarMode === 'content'}
 					<SidebarTableList
+						{tables}
 						on:reload={reload}
 						on:open-table-settings={(event) => openTableSettings(event.detail)}
 						on:open-table-create={openTableCreate}
@@ -418,6 +429,7 @@
 					{:else if activeSlot}
 						<SidebarComponentOption
 							{components}
+							{tables}
 							on:open-component-settings={(e) => openComponentSettings(e.detail)}
 							on:select-slot={(e) => editor.selectSlot(e.detail)}
 							on:select-parent={() => editor.onSelectParent()}
@@ -442,7 +454,6 @@
 						rightSidebarOpen = true
 					}}
 					on:open-component-options={(e) => {
-						console.log('open component options', e.detail)
 						rightSidebarMode = 'options'
 						rightSidebarOpen = true
 						activeSlot = e.detail
@@ -458,7 +469,6 @@
 						rightSidebarOpen = true
 					}}
 					on:open-component-options={(e) => {
-						console.log('open component options', e.detail)
 						rightSidebarMode = 'options'
 						rightSidebarOpen = true
 						activeSlot = e.detail

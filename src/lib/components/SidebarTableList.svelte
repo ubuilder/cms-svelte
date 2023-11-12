@@ -6,11 +6,7 @@
 	import SidebarTitleButton from './SidebarTitleButton.svelte'
 	import { api } from '$lib/helpers/api'
 
-	let tables: any[] = []
-	onMount(async () => {
-		const res = await api('/tables', {})
-		tables = res.data
-	})
+	export let tables: any[] = []
 
 	const dispatch = createEventDispatcher()
 	function addTable() {
