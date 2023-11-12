@@ -278,8 +278,8 @@
 <!--colors ------------------------------------->
 
   <FormField label="Colors">
-    <div class="inline-flex">
-      <button class="border-l border-gray-500 text-gray-100 font-bold py-2 px-4 rounded-l !bg-{props.bgColor}"
+    <El class="inline-flex w-full">
+      <button class="w-full border-l border-gray-500 text-gray-100 font-bold py-2 px-4 rounded-l !bg-{props.bgColor}"
         >Background</button>
       <Popover placement="bottom-start">
         <PopoverBody class="max-w-[190px] !p-1 flex flex-wrap -mx-1">
@@ -306,7 +306,7 @@
         </PopoverBody>
       </Popover>
 
-      <button class="border-r border-gray-500 text-gray-100 font-bold py-2 px-4 rounded-r !bg-{props.textColor}"
+      <button class="w-full border-r border-gray-500 text-gray-100 font-bold py-2 px-4 rounded-r !bg-{props.textColor}"
         >Text</button>
       <Popover placement="bottom-start">
         <PopoverBody class="max-w-[190px] !p-1 flex flex-wrap -mx-1">
@@ -332,7 +332,7 @@
           </div>
         </PopoverBody>
       </Popover>
-    </div>
+    </El>
   </FormField>
 
   <FormField label="Flex Direction">
