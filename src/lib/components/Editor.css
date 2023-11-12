@@ -459,3 +459,7 @@ body:has(.dragging) * {
     box-shadow: var(--y-btn-box-shadow);
 
 }
+
+.y-autocomplete-input {
+	box-shadow: none;
+}

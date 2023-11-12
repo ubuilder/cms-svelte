@@ -4,8 +4,10 @@
     import { api } from '$lib/helpers/api'
     import { createEventDispatcher } from 'svelte'
   
-    export let table = {}
-    export let title = "Edit Table"
+    let title = "Create Table"
+    let table = {}
+
+    const dispatch = createEventDispatcher()
 
     async function createTable() {
       const res = await api('/tables', { data: table}).then((res) => res)
@@ -14,7 +16,6 @@
       close()
     }
   
-    const dispatch = createEventDispatcher()
     function close() {
       dispatch('close')
     }

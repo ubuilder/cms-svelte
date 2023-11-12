@@ -140,7 +140,7 @@
 	$: page = pages.find((x) => x.id === page_id) ?? null
 	$: component = components.find((x) => x.id === component_id) ?? null
 
-	
+
 	$: if(page) {
 		forEachSlot(page.slot, (slot) => {
 			if(Array.isArray(slot)) {
@@ -286,7 +286,8 @@
 				<HeaderItem icon="photo" on:click={() => offcanvas.openLeft('assets')} />
 
 				<HeaderItem
-					on:dblclick={() => {
+					icon="database"
+					on:click={() => {
 						leftSidebarOpen = true
 						leftSidebarMode = 'content'
 					}} />
