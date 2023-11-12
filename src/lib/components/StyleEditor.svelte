@@ -200,12 +200,11 @@
 </script>
 
 <El row>
-  <FormSlider attribute="Width" value={props.width} on:change={(e) => set({ width: e.detail })} />
+  <!-- <FormSlider attribute="Width" value={props.width} on:change={(e) => set({ width: e.detail })} />
 
-  <FormSlider attribute="Hight" value={props.height} on:change={(e) => set({ height: e.detail })} />
+  <FormSlider attribute="Hight" value={props.height} on:change={(e) => set({ height: e.detail })} /> -->
 
-  <El class="inline-flex">
-  <!--padding sizing .............................................-->
+  <!-- <El class="inline-flex">
   <button class="w-full bg-gray-100 border-r border-gray-300 hover:bg-gray-400 text-gray-700 font-bold py-2 px-4 rounded-l">Padding</button>
   <Popover trigger="click">
     <PopoverBody>
@@ -228,7 +227,6 @@
     </PopoverBody>
   </Popover>
 
-  <!--margin sizing .............................................-->
 
   <button class="w-full bg-gray-100 hover:bg-gray-400 text-gray-700 font-bold py-2 px-4 rounded-r">Margin</button>
   <Popover trigger="click">
@@ -255,7 +253,7 @@
         on:change={(e) => set({ rightMargin: e.detail })} />
     </PopoverBody>
   </Popover>
-</El>
+</El> -->
 
 <!--font size---------------------------------------->
   <FormSelect
@@ -270,17 +268,93 @@
 
 <!--class ------------------------------------->
   <FormInput
-    label="Class"
-    bind:value={props.Class}
-    on:change={(e) => set({ Class: e.target.value })} />
-  {value}
+  label="Class"
+  bind:value={props.Class}
+  on:change={(e) => set({ Class: e.target.value })} />
 
-<!--colors ------------------------------------->
+  <FormField label="Sizes">
+    <FormSlider attribute="Width" value={props.width} on:change={(e) => set({ width: e.detail })} />
+
+      <FormSlider attribute="Hight" value={props.height} on:change={(e) => set({ height: e.detail })} />
+    
+      <El class="flex items-center gap-2 mt-3">
+        <!--padding sizing .............................................-->
+        <button
+          class="w-full bg-gray-200 border border-gray-300 hover:bg-gray-300 font-bold py-2 px-4 rounded"
+          >Padding</button>
+        <Popover trigger="click">
+          <PopoverBody>
+            <FormSlider
+              attribute="Top"
+              value={props.topPadding}
+              on:change={(e) => set({ topPadding: e.detail })} />
+            <FormSlider
+              attribute="Left"
+              value={props.leftPadding}
+              on:change={(e) => set({ leftPadding: e.detail })} />
+            <FormSlider
+              attribute="bottom"
+              value={props.bottomPadding}
+              on:change={(e) => set({ bottomPadding: e.detail })} />
+            <FormSlider
+              attribute="Right"
+              value={props.rightPadding}
+              on:change={(e) => set({ rightPadding: e.detail })} />
+          </PopoverBody>
+        </Popover>
+    
+        <!--margin sizing .............................................-->
+    
+        <button class="w-full bg-gray-200 border border-gray-300 hover:bg-gray-300 font-bold py-2 px-4 rounded"
+          >Margin</button>
+        <Popover trigger="click">
+          <PopoverBody>
+            <FormSlider
+              negative={true}
+              attribute="Top"
+              value={props.topMargin}
+              on:change={(e) => set({ topMargin: e.detail })} />
+            <FormSlider
+              negative={true}
+              attribute="Left"
+              value={props.leftMargin}
+              on:change={(e) => set({ leftMargin: e.detail })} />
+            <FormSlider
+              negative={true}
+              attribute="bottom"
+              value={props.bottomMargin}
+              on:change={(e) => set({ bottomMargin: e.detail })} />
+            <FormSlider
+              negative={true}
+              attribute="Right"
+              value={props.rightMargin}
+              on:change={(e) => set({ rightMargin: e.detail })} />
+          </PopoverBody>
+        </Popover>
+      </El>
+    
+      <!--font size---------------------------------------->
+      <FormSelect
+        placeholder={props.fontSize ?? 'choose a size'}
+        items={sizes}
+        label="Font size"
+        bind:value={props.fontSize}
+        on:change={(e) => set({ fontSize: e.target.value })}
+        let:item>
+        <El>{item}</El>
+      </FormSelect>
+        
+  </FormField>
+
+  <!--colors ------------------------------------->
 
   <FormField label="Colors">
-    <El class="inline-flex w-full">
-      <button class="w-full border-l border-gray-500 text-gray-100 font-bold py-2 px-4 rounded-l !bg-{props.bgColor}"
-        >Background</button>
+    <El class="flex gap-2">
+      <button
+        class="flex flex-1 items-center border border-gray-300 font-bold py-2 px-4 rounded bg-gray-200">
+        <div class="w-4 h-4 me-2 border border-gray-300 bg-{props.bgColor}"></div>
+        Background
+      </button>
       <Popover placement="bottom-start">
         <PopoverBody class="max-w-[190px] !p-1 flex flex-wrap -mx-1">
           {#each colors as color}
@@ -306,15 +380,18 @@
         </PopoverBody>
       </Popover>
 
-      <button class="w-full border-r border-gray-500 text-gray-100 font-bold py-2 px-4 rounded-r !bg-{props.textColor}"
-        >Text</button>
+      <button
+        class="flex flex-1 items-center border border-gray-300 font-bold py-2 px-4 rounded bg-gray-200">
+        <div class="w-4 h-4 me-2 border border-gray-300 bg-{props.textColor}"></div>
+        Text
+      </button>
       <Popover placement="bottom-start">
         <PopoverBody class="max-w-[190px] !p-1 flex flex-wrap -mx-1">
           {#each colors as color}
             <div class="p-[1px] w-1/10 hover:shadow-lg">
               <div
-              on:click={() => set({ textColor: color })}
-              class="bg-{color} cursor-pointer h-4 w-4">
+                on:click={() => set({ textColor: color })}
+                class="bg-{color} cursor-pointer h-4 w-4">
               </div>
             </div>
           {/each}
@@ -393,6 +470,7 @@
         on:click={() => set({ items: 'baseline' })}><Icon size="sm" name="arrow-top" /></button>
     </div>
   </FormField>
+
   <FormField label="Justify Content">
     <div class="flex">
       <button
@@ -427,5 +505,16 @@
         on:click={() => set({ justify: 'around' })}><Icon size="sm" name="arrow-top" /></button>
     </div>
   </FormField>
-
 </El>
+
+<style>
+  :global(.style-div .y-label) {
+    font-weight: bold;
+    margin-top: 8px;
+    margin-bottom: 4px;
+  }
+  :global(.style-div .y-form-field) {
+    font-weight: bold;
+    margin-bottom: 12px;
+  }
+</style>
