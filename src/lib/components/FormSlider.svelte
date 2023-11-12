@@ -49,17 +49,17 @@
                 {/if}
               </Button>
               {/if}
-                <Dropdown autoClose arrow={false} bind:value={unit}>
-                    <Button size="sm" slot="target">{#if unit==='%'}{num}{/if}{unit}</Button>
-                    <DropdownMenu style="width: 100px !important">
-                      <DropdownItem on:click={() => unit = 'px'}>px</DropdownItem>
-                      <DropdownItem on:click={() => unit = '%'}>%</DropdownItem>
-                    </DropdownMenu>
-                  </Dropdown>
+                <Dropdown autoClose bind:value={unit}>
+                  <Button size="sm" slot="target">{#if unit==='%'}{num}{/if}{unit}</Button>
+                  <DropdownMenu style="width: 100px !important">
+                    <DropdownItem on:click={() => unit = 'px'}>px</DropdownItem>
+                    <DropdownItem on:click={() => unit = '%'}>%</DropdownItem>
+                  </DropdownMenu>
+                </Dropdown>
             </El>
         </El>
         {#if unit === '%'}
-        <FormSlider>
+        <FormSlider step={4}>
             <SliderKnob bind:value={num} />
         </FormSlider>
         {/if}
