@@ -42,12 +42,15 @@ body:has(.dragging) * {
 	margin-left: 200px;
 }
 
-.wrapper.right-sidebar-open,
+.wrapper.right-sidebar-open {
+	width: calc(100% - 300px);
+
+}
 .wrapper.left-sidebar-open {
 	width: calc(100% - 200px);
 }
 .wrapper.right-sidebar-open.left-sidebar-open {
-	width: calc(100% - 400px);
+	width: calc(100% - 500px);
 }
 .component-item {
 	padding: 0.5rem;
@@ -84,25 +87,27 @@ body:has(.dragging) * {
 .header.left-sidebar-open {
 	margin-left: 200px;
 }
-.header.left-sidebar-open,
-.header.right-sidebar-open {
+.header.left-sidebar-open {
 	width: calc(100% - 200px);
 }
+.header.right-sidebar-open {
+	width: calc(100% - 300px);
+}
 .header.left-sidebar-open.right-sidebar-open {
-	width: calc(100% - 400px);
+	width: calc(100% - 500px);
 }
 
 .sidebar,
 .sidebar-left {
 	z-index: 2;
 	position: absolute;
-	width: 200px;
+	width: 300px;
 	right: 0;
 	top: 0;
 	overflow: auto;
 	bottom: 0;
 	transition: all 0.3s ease-in-out;
-	transform: translateX(200px);
+	transform: translateX(300px);
 	color: var(--y-dark);
 	background-color: var(--y-bg-surface);
 }
@@ -118,6 +123,7 @@ body:has(.dragging) * {
 }
 .sidebar-left {
 	left: 0;
+	width: 200px;
 	box-shadow: 2px 0px 4px -2px #20202080;
 
 	transform: translateX(-200px);
