@@ -457,9 +457,12 @@ body:has(.dragging) * {
 
     --y-btn-hover-bg: var(--y-bg-surface);
     box-shadow: var(--y-btn-box-shadow);
+}
 
+.y-card {
+	overflow: visible !important;
 }
 
 .y-autocomplete-input {
-	box-shadow: none;
+	box-shadow: none !important;
 }

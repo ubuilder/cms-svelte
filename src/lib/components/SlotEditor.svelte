@@ -57,7 +57,6 @@
 
   function openComponentList() {
     selectSlot()
-    console.log('open component list')
     dispatch('open-component-list')
 
     // setTimeout(() => {
@@ -101,7 +100,6 @@
 
   export function render(slot = null) {
     setTimeout(() => {
-      console.log('initialize draggable')
       if (instance) {
         instance.destroy()
 
@@ -114,7 +112,6 @@
       })
 
       instance.on('start', (event) => {
-        console.log('dragging started ', event)
         dragging = true
         event.source.classList.add('active-slot')
       })
@@ -131,16 +128,12 @@
         const target = event.target
         const source = event.source.dataset.id.split('-')[1]
 
-        console.log({ target, source: event.source })
-
         if (target) {
           const parent = target.getAttribute('data-parent')
           const field = target.getAttribute('data-field')
           const index = +target.getAttribute('data-index')
 
           if (parent === source) return
-
-          console.log('move or insert: ', { source, parent, field, index })
 
           if (event.source.dataset.mode === 'clone') {
             insertComponent(source, parent, field, index)
@@ -156,8 +149,6 @@
     }, 5)
 
     if (slot) {
-      console.log(`render(${slot.id})`)
-
       if (browser) {
         const a = document.querySelector(`[id="component-${slot.id}"]`)
         if (a) {
@@ -165,7 +156,6 @@
         }
       }
     } else {
-      console.log('render()')
       setTimeout(() => {
         document.querySelectorAll('.placeholder.empty').forEach((el) => {
           el.onclick = (e) => {
@@ -193,8 +183,6 @@
     parent_index = 0,
     withPlaceholder = true
   ) {
-    console.log(`renderSlot(${slot.id})`)
-    console.log('renderSlot: ', {slot, parent_id, parent_field, parent_index})
     let props: any = {}
 
     if (slot === '__list__') {
@@ -215,13 +203,11 @@
         const field = component.fields[index]
 
         if (field.type === 'slot') {
-          console.log(slot)
           let content = ''
 
           for (let index in slot.props?.[field.name].slot ?? []) {
             const x = slot.props[field.name].slot[index]
 
-            console.log('render: render inside renderSlot..', {parent_id: id, parent_field: field.name, parnet_index: +index})
             const res = renderSlot(x, id, field.name, +index)
             content += res
           }
@@ -242,7 +228,6 @@
 
       if (hbsTemplates[slot.type]) {
         setTimeout(() => {
-          console.log('here')
           document.querySelector(`[data-parent="${id}"]`)?.addEventListener('click', (e) => {
             e.stopPropagation()
 
@@ -297,7 +282,6 @@
   let html = ''
 
   function forEachSlot(slots: any[] = [], cb, parent = null) {
-    console.log(slots)
     for (let slot of slots) {
       const component = getComponent(slot.type)
       cb(slot, parent, slots)
@@ -382,7 +366,6 @@
         return
       }
 
-      console.log(activeSlot)
       // const slot = activeSlot.
 
       const newComponent = {
@@ -392,10 +375,7 @@
         slot: [{ type: activeSlot.type, props: activeSlot.props }],
       }
 
-      console.log({ newComponent })
-
       api('/components', { data: newComponent }).then((res) => {
-        console.log('update slot....')
         alert.success(res.message)
         dispatch('reload', ['components'])
       })
@@ -431,7 +411,6 @@
 
   $: {
     if (activeSlot && components) {
-      console.log('render: active Slot changed')
       // re render Active slot
       render(activeSlot)
 
@@ -445,7 +424,6 @@
     field_name: string = '',
     index: number = 0
   ) {
-    console.log('moveComponent', slot_id, parent_id, field_name, index)
     const slot = slotMap[slot_id]
 
     insertComponent(slot.type, parent_id, field_name, index, slot.props)
@@ -458,19 +436,10 @@
     index: number = 0,
     props = {}
   ) {
-    console.log(
-      'insertComponent',
-      getComponent(component_id).name,
-      parent_id,
-      field_name,
-      index,
-      props
-    )
     let localSlots = JSON.parse(JSON.stringify(slotList))
 
     const defaultProps: any = {}
     for (let field of getComponent(component_id).fields ?? []) {
-      console.log({ field })
       defaultProps[field.name] = field.default_value
     }
 
@@ -522,7 +491,6 @@
     }
 
     slotList = localSlots
-    console.log('render: insert component...', slotList, localSlots)
     render()
   }
 
@@ -553,7 +521,6 @@
     const index = +nextPlaceholder.dataset.index
     const parent = nextPlaceholder.dataset.parent
 
-    console.log('activeSlot: ', {parent, field, index, slot})
     insertComponent(slot.type, parent, field, index , slot.props)
 
 

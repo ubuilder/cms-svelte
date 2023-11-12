@@ -1,6 +1,6 @@
 import { stringify } from 'qs'
 export async function api(url: string, { params, data, formData, method }: any = {}) {
-	console.log('api: ' + url + '?' + stringify(params), data)
+	// console.log('api: ' + url + '?' + stringify(params), data)
 	const opts: any = {}
 
 	if (formData) {
@@ -18,8 +18,6 @@ export async function api(url: string, { params, data, formData, method }: any =
 	}
 
 	opts.method ??= method
-
-	console.log(opts)
 	
 	const paramsStr = params ? `?${stringify(params)}` : ''
 	const res: {message: string, status: number, data: any} = await fetch('/api' + url + paramsStr, opts).then((res) => res.json())

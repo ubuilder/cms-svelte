@@ -71,7 +71,6 @@
 	}
 
 	function forEachSlot(slots = [], cb, parent = null) {
-		console.log(slots)
 		for (let slot of slots) {
 			const component = getComponent(slot.type)
 			cb(slot, parent, slots)
@@ -163,7 +162,6 @@
 	let loading = true
 
 	async function reload(event: CustomEvent<string[]> | string[] | null = null) {
-		console.log('reload')
 		if (event) {
 			const items: string[] = Array.isArray(event) ? event : event.detail
 
@@ -204,7 +202,6 @@
 	}
 
 	function openComponentSettings(component: any) {
-		console.log('component', component)
 		offcanvas.openRight('component-settings', {
 			activeComponent: component,
 		})
@@ -291,7 +288,6 @@
 						leftSidebarOpen = true
 						leftSidebarMode = 'content'
 					}} />
-
 				{/if}
 				<!-- svelte-ignore a11y-click-events-have-key-events -->
 				<!-- svelte-ignore a11y-no-static-element-interactions -->
@@ -457,7 +453,6 @@
 						rightSidebarOpen = true
 					}}
 					on:open-component-options={(e) => {
-						console.log('open component options', e.detail)
 						rightSidebarMode = 'options'
 						rightSidebarOpen = true
 						activeSlot = e.detail
@@ -473,7 +468,6 @@
 						rightSidebarOpen = true
 					}}
 					on:open-component-options={(e) => {
-						console.log('open component options', e.detail)
 						rightSidebarMode = 'options'
 						rightSidebarOpen = true
 						activeSlot = e.detail
