@@ -290,6 +290,10 @@ body:has(.dragging) * {
 	display: contents;
 }
 
+.slot.dynamic > * {
+	border: 1px solid var(--y-success);
+}
+
 .page-slot, .table-field-item {
 	padding: 0.5rem;
 }

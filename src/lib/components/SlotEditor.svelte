@@ -7,6 +7,8 @@
   import { api } from '$lib/helpers/api'
   import { browser } from '$app/environment'
   import AddComponentModal from './components/AddComponentModal.svelte'
+  import { renderVariable } from '$lib/helpers'
+  import type { DbFilter, DbWith } from '$lib/types'
 
   export let slotList: any[] = []
 
@@ -36,16 +38,18 @@
   }
 
   export function removeSlot(id: string) {
-    slotList = slotList.filter((x) => x.id !== id)
-
     forEachSlot(slotList, (slot: any) => {
       const component = getComponent(slot.type)
       for (let field of component.fields) {
         if (field.type === 'slot' && slot.props[field.name]) {
-          slot.props[field.name].slot = (slot.props[field.name].slot ?? []).filter((x) => x.id !== id)
+          slot.props[field.name].slot = (slot.props[field.name].slot ?? []).filter(
+            (x) => x.id !== id
+          )
         }
       }
     })
+
+    slotList = slotList.filter((x) => x.id !== id)
 
     // TODO: can be optimized...
     render()
@@ -73,9 +77,9 @@
     // 	return
     // }
 
-    console.log("slotList", slotList)
+    console.log('slotList', slotList)
     forEachSlot(slotList, (slot) => {
-      console.log("insideForeach slot", slot)
+      console.log('insideForeach slot', slot)
 
       const component = getComponent(slot.type)
       for (let field of component.fields) {
@@ -101,7 +105,89 @@
     elStack = elStack.filter((x) => x !== e.target)
   }
 
-  export function render(slot = null) {
+  async function forEachSlot(slots = [], cb, parent = null) {
+    for (let slot of slots) {
+      console.log('slot', slot, slots)
+
+      const component = getComponent(slot.type)
+      await cb(slot, parent, slots)
+
+      for (let field of component.fields) {
+        if (field.type === 'slot') {
+          await forEachSlot(slot.props[field.name]?.slot ?? [], cb, slot)
+        }
+      }
+    }
+  }
+
+  async function loadDynamicData(slot, items) {
+    if (!slot) return
+    await forEachSlot([slot], async (slot) => {
+      const component = getComponent(slot.type)
+      for (let field of component.fields) {
+        if (field.type === 'slot' && slot.props[field.name] && slot.props[field.name].name) {
+          // Dynamic slot
+
+          const id = slot.props[field.name].name
+
+          const where: DbFilter = {}
+
+          const with_: DbWith = {}
+
+          for (let filter of slot.props[field.name].filters ?? []) {
+            where[filter.field] = {
+              operator: filter.operator,
+              value: renderVariable(filter.value, items),
+            }
+          }
+
+          if (slot.props[field.name].table) {
+            const table = await api('/tables', {
+              params: {
+                id: `${slot.props[field.name].table}`,
+              },
+            }).then((res) => res.data)
+            // await api("/content/" + slot.props[field.name].table, {
+            //   params: {
+            //     where: where,
+            //     with: with_,
+            //     perPage: slot.props[field.name].perPage,
+            //     page: slot.props[field.name].page,
+            //   }
+            // }).then((res) => res.data)
+
+            console.log(table)
+            for (let field of table.fields) {
+              if (field.type === 'relation') {
+                with_[field.name] = {
+                  table: field.table,
+                  // field: field.field + '_id', // not working
+                  field: 'author' + '_id', // working
+
+                  multiple: field.multiple,
+                }
+              }
+            }
+
+            items[id] = await api(`/content/${slot.props[field.name].table}`, {
+              params: {
+                where,
+                with: with_,
+                perPage: slot.props[field.name].perPage,
+                page: slot.props[field.name].page,
+              },
+            }).then((res) => res.data)
+
+            if (!slot.props[field.name].multiple) {
+              items[id] = items[id][0]
+            }
+          }
+        }
+      }
+    })
+  }
+
+  export async function render(slot = null) {
     setTimeout(() => {
       if (instance) {
         instance.destroy()
@@ -150,12 +236,16 @@
 
     if (slot) {
       if (browser) {
+        console.log(`render(${slot.id})`)
+
         const a = document.querySelector(`[id="component-${slot.id}"]`)
         if (a) {
-          a.outerHTML = renderSlot(slot, '', '', 0, false) // without placeholder
+          a.outerHTML = await renderSlot(slot, '', '', 0, false, {}) // without placeholder
         }
       }
     } else {
+      console.log('render')
+
       setTimeout(() => {
         document.querySelectorAll('.placeholder.empty').forEach((el) => {
           el.onclick = (e) => {
@@ -166,9 +256,13 @@
           }
         })
       })
-      html =
-        slotList.map((x, i) => renderSlot(x, '', '', i)).join('') +
-        placeholder('', '', slotList.length, 'empty')
+      const items = {}
+      let html = ''
+      for (let index in slotList) {
+        const slotItem = slotList[index]
+        html += await renderSlot(slotItem, '', '', +index, false, items)
+      }
+      html += placeholder('', '', slotList.length, 'empty')
 
       contentEl.innerHTML = html
     }
@@ -176,19 +270,17 @@
     updateActiveBorder()
   }
 
-  function renderSlot(
+  async function renderSlot(
     slot: any,
     parent_id: string = '',
     parent_field = '',
     parent_index = 0,
-    withPlaceholder = true
+    withPlaceholder = true,
+    items: any = {}
   ) {
     let props: any = {}
 
-    if (slot === '__list__') {
-      return '__list__'
-    }
-
+    await loadDynamicData(slot, items)
     const component = getComponent(slot.type)
     const id = slot.id ?? getId()
 
@@ -205,19 +297,70 @@
         if (field.type === 'slot') {
           let content = ''
 
-          for (let index in slot.props?.[field.name]?.slot ?? []) {
-            const x = slot.props[field.name]?.slot[index]
+          console.log(slot.props?.[field.name])
+          if (slot.props?.[field.name]?.name) {
+            console.log('dynamic slot: ', slot.props?.[field.name])
+            if (items[slot.props[field.name].name]) {
+              if (Array.isArray(items[slot.props[field.name].name] ?? [])) {
+                // multiple
+                console.log('Multiple', slot.props[field.name].name)
+                if (items[slot.props[field.name].name].length) {
+                  for (let item of items[slot.props[field.name].name] ?? []) {
+                    //
+                    for (let index in slot.props?.[field.name]?.slot ?? []) {
+                      const x = slot.props[field.name]?.slot[index]
 
-            const res = renderSlot(x, id, field.name, +index)
-            content += res
-          }
+                      const res = await renderSlot(x, id, field.name, +index, false, {
+                        ...items,
+                        [slot.props[field.name].name]: item,
+                      })
+                      content += res
+                    }
+                  }
+                } else {
+                  console.log('EMPTY: ')
+                  content = 'Empty'
+                }
+              } else {
+                //
+                for (let index in slot.props?.[field.name]?.slot ?? []) {
+                  const x = slot.props[field.name]?.slot[index]
 
-          if (content) {
-            props[field.name] =
-              `<div class="slot" data-parent="${id}" data-index="0">${content + placeholder(id, field.name, slot.props?.[field.name].length)}</div>`
-              
+                  const res = await renderSlot(x, id, field.name, +index, false, {
+                    ...items,
+                    [slot.props[field.name].name]: items[slot.props[field.name].name],
+                  })
+                  content += res
+                }
+              }
+            } else {
+              content = `No Data (${slot.props[field.name].name})`
+            }
+
+            console.log('content: ', content)
+            if (content) {
+              props[field.name] = `<div class="slot" data-dynamic data-parent="${id}" data-index="0">${
+                content + placeholder(id, field.name, slot.props?.[field.name].length)
+              }</div>`
+            } else {
+              props[field.name] = placeholder(id, field.name, 0, 'empty')
+            }
           } else {
-            props[field.name] = placeholder(id, field.name, 0, 'empty')
+            console.log('static slot: ', slot.props?.[field.name])
+            for (let index in slot.props?.[field.name]?.slot ?? []) {
+              const x = slot.props[field.name]?.slot[index]
+
+              const res = await renderSlot(x, id, field.name, +index, false, items)
+              content += res
+            }
+
+            if (content) {
+              props[field.name] = `<div class="slot" data-parent="${id}" data-index="0">${
+                content + placeholder(id, field.name, slot.props?.[field.name].length)
+              }</div>`
+            } else {
+              props[field.name] = placeholder(id, field.name, 0, 'empty')
+            }
           }
         } else {
           props[field.name] = slot.props[field.name]
@@ -281,19 +424,6 @@
     `<span class="placeholder ${className}" data-dropzone data-parent="${parent}" data-index="${index}" data-field="${field}"></span>`
   let html = ''
 
-  function forEachSlot(slots: any[] = [], cb, parent = null) {
-    for (let slot of slots) {
-      const component = getComponent(slot.type)
-      cb(slot, parent, slots)
-
-      for (let field of component.fields) {
-        if (field.type === 'slot' && slot.props[field.name]) {
-          forEachSlot(slot.props[field.name].slot ?? [], cb, slot)
-        }
-      }
-    }
-  }
-
   export function updateActiveBorder() {
     hoverBorderPosition = {}
     if (!activeSlot) return
@@ -326,31 +456,39 @@
       }
     })
   }
-  let clipboardSlot: any = null;
+  let clipboardSlot: any = null
 
   async function getClipboardSlot() {
     const text = await navigator.clipboard.readText()
-    if(text) {
+    if (text) {
       try {
+        const obj = JSON.parse(text)
 
-      const obj = JSON.parse(text)
-
-      if(getComponent(obj.type)) {
-        clipboardSlot = obj
-      }      
-    } catch(err) {
-      // skip
+        if (getComponent(obj.type)) {
+          clipboardSlot = obj
+        }
+      } catch (err) {
+        // skip
+      }
     }
+  }
 
+  function initialRender() {
+    if (contentEl && slotList) {
+      render()
+    } else {
+      setTimeout(initialRender, 100)
     }
   }
 
   onMount(() => {
     getClipboardSlot()
     // clipboardSlot
+    initialRender()
   })
+
   $: if (contentEl && slotList) {
-    render()
+    console.log('contentEL, slotList', contentEl, slotList)
     contentEl.addEventListener('scroll', updateActiveBorder)
   }
 
@@ -464,7 +602,7 @@
 
       for (let field of component_.fields) {
         if (slot.id === parent_id && field.name === field_name) {
-          slot.props[field.name] ??= {slot: []}
+          slot.props[field.name] ??= { slot: [] }
 
           if (index === 0) {
             slot.props[field.name].slot.unshift(newSlot)
@@ -495,7 +633,6 @@
   }
 
   function onCopy() {
-
     const result = JSON.parse(JSON.stringify([activeSlot]))
 
     forEachSlot(result, (slot) => {
@@ -504,38 +641,36 @@
       delete slot['parent_field']
       delete slot['parent_index']
     })
-    
-    navigator.clipboard.writeText(JSON.stringify(result[0]));
+
+    navigator.clipboard.writeText(JSON.stringify(result[0]))
     setTimeout(() => {
       getClipboardSlot()
     }, 1)
   }
 
   function paste() {
-    
     const slot = clipboardSlot
 
-    const nextPlaceholder = document.getElementById('component-' + activeSlot.id)?.nextElementSibling;
-    
+    const nextPlaceholder = document.getElementById(
+      'component-' + activeSlot.id
+    )?.nextElementSibling
+
     const field = nextPlaceholder.dataset.field
     const index = +nextPlaceholder.dataset.index
     const parent = nextPlaceholder.dataset.parent
 
-    insertComponent(slot.type, parent, field, index , slot.props)
-
-
+    insertComponent(slot.type, parent, field, index, slot.props)
   }
-
 </script>
 
 <div style="width: 100%; height: 100%">
-    <div
-      bind:this={contentEl}
-      on:click={() => openComponentList()}
-      class="content"
-      data-dropzone
-      class:dragging>
-    </div>
+  <div
+    bind:this={contentEl}
+    on:click={() => openComponentList()}
+    class="content"
+    data-dropzone
+    class:dragging>
+  </div>
 </div>
 <div
   class="component-hover-border"
@@ -561,17 +696,14 @@
           name="arrow-up" />
         <Tooltip placement="top">Select Parent</Tooltip>
         <Icon
-        class="p-0.5"
-        size="lg"
-        color="light"
-        data-draggable
-        data-id="component-{activeSlot?.id}"
-        bgColor="primary"
-        name="arrows-move" />
-      <Tooltip placement="top">Move</Tooltip>
-
-
-
+          class="p-0.5"
+          size="lg"
+          color="light"
+          data-draggable
+          data-id="component-{activeSlot?.id}"
+          bgColor="primary"
+          name="arrows-move" />
+        <Tooltip placement="top">Move</Tooltip>
 
         <Icon
           class="p-0.5"
@@ -582,19 +714,16 @@
           name="copy" />
         <Tooltip placement="top">Copy</Tooltip>
 
-
         {#if clipboardSlot}
-        <Icon
-          class="p-0.5"
-          size="lg"
-          color="light"
-
-          on:click={() => paste()}
-          bgColor="primary"
-          name="clipboard" />
-        <Tooltip placement="top">Paste</Tooltip>
+          <Icon
+            class="p-0.5"
+            size="lg"
+            color="light"
+            on:click={() => paste()}
+            bgColor="primary"
+            name="clipboard" />
+          <Tooltip placement="top">Paste</Tooltip>
         {/if}
-        
 
         <Icon
           class="p-0.5"
