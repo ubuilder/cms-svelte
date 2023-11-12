@@ -58,36 +58,36 @@
 
       // padding sizing ......................................................
       if (klass.startsWith('pt-[')) {
-        props.topPadding = klass.substring(3, klass.length - 1)
+        props.topPadding = klass.substring(4, klass.length - 1)
       }
 
       if (klass.startsWith('pl-[')) {
-        props.leftPadding = klass.substring(3, klass.length - 1)
+        props.leftPadding = klass.substring(4, klass.length - 1)
       }
 
       if (klass.startsWith('pb-[')) {
-        props.bottomPadding = klass.substring(3, klass.length - 1)
+        props.bottomPadding = klass.substring(4, klass.length - 1)
       }
 
       if (klass.startsWith('pr-[')) {
-        props.rightPadding = klass.substring(3, klass.length - 1)
+        props.rightPadding = klass.substring(4, klass.length - 1)
       }
 
       // margin sizing ......................................................
       if (klass.startsWith('mt-[')) {
-        props.topMargin = klass.substring(3, klass.length - 1)
+        props.topMargin = klass.substring(4, klass.length - 1)
       }
 
       if (klass.startsWith('ml-[')) {
-        props.leftMargin = klass.substring(3, klass.length - 1)
+        props.leftMargin = klass.substring(4, klass.length - 1)
       }
 
       if (klass.startsWith('mb-[')) {
-        props.bottomMargin = klass.substring(3, klass.length - 1)
+        props.bottomMargin = klass.substring(4, klass.length - 1)
       }
 
       if (klass.startsWith('mr-[')) {
-        props.rightMargin = klass.substring(3, klass.length - 1)
+        props.rightMargin = klass.substring(4, klass.length - 1)
       }
 
       if (klass == '__') {
@@ -204,8 +204,9 @@
 
   <FormSlider attribute="Hight" value={props.height} on:change={(e) => set({ height: e.detail })} />
 
+  <El class="inline-flex">
   <!--padding sizing .............................................-->
-  <Button class="m-1">Padding</Button>
+  <button class="w-full bg-zinc-700 border-r border-gray-600 hover:bg-gray-400 text-gray-300 font-bold py-2 px-4 rounded-l">Padding</button>
   <Popover trigger="click">
     <PopoverBody>
       <FormSlider
@@ -229,7 +230,7 @@
 
   <!--margin sizing .............................................-->
 
-  <Button class="m-1">Margin</Button>
+  <button class="w-full bg-zinc-700 hover:bg-gray-400 text-gray-300 font-bold py-2 px-4 rounded-r">Margin</button>
   <Popover trigger="click">
     <PopoverBody>
       <FormSlider
@@ -254,9 +255,11 @@
         on:change={(e) => set({ rightMargin: e.detail })} />
     </PopoverBody>
   </Popover>
+</El>
 
+<!--font size---------------------------------------->
   <FormSelect
-    placeholder={props.fontSize}
+    placeholder={props.fontSize??"choose a size"}
     items={sizes}
     label="Font size"
     bind:value={props.fontSize}
@@ -265,14 +268,18 @@
     <El>{item}</El>
   </FormSelect>
 
+<!--class ------------------------------------->
   <FormInput
     label="Class"
     bind:value={props.Class}
     on:change={(e) => set({ Class: e.target.value })} />
   {value}
+
+<!--colors ------------------------------------->
+
   <FormField label="Colors">
-    <div class="flex flex-row gap-2">
-      <button class="flex-1 border border-gray-200 py-2 px-4 bg-gray-200 !bg-{props.bgColor}"
+    <div class="inline-flex">
+      <button class="border-l border-gray-500 text-gray-100 font-bold py-2 px-4 rounded-l !bg-{props.bgColor}"
         >Background</button>
       <Popover placement="bottom-start">
         <PopoverBody class="max-w-[190px] !p-1 flex flex-wrap -mx-1">
@@ -299,15 +306,15 @@
         </PopoverBody>
       </Popover>
 
-      <button class="flex-1 border border-gray-200 py-2 px-4 bg-gray-200 !bg-{props.textColor}"
+      <button class="border-r border-gray-500 text-gray-100 font-bold py-2 px-4 rounded-r !bg-{props.textColor}"
         >Text</button>
       <Popover placement="bottom-start">
         <PopoverBody class="max-w-[190px] !p-1 flex flex-wrap -mx-1">
           {#each colors as color}
             <div class="p-[1px] w-1/10 hover:shadow-lg">
               <div
-                on:click={() => set({ textColor: color })}
-                class="bg-{color} cursor-pointer h-4 w-4">
+              on:click={() => set({ textColor: color })}
+              class="bg-{color} cursor-pointer h-4 w-4">
               </div>
             </div>
           {/each}
@@ -421,5 +428,4 @@
     </div>
   </FormField>
 
-  Margin Padding width height font size font weight
 </El>
