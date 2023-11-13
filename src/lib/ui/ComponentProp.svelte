@@ -63,7 +63,7 @@
 	}
 
   if(field.type === 'plain_text') {
-    accept=['number', 'select', 'date_time']
+    accept=['number', 'select', 'date_time', "plain_text", ]
   }
   if(field.type === 'rich_text') {
     accept=['number', 'select', 'plain_text', 'date_time']

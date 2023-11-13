@@ -14,7 +14,7 @@
 
   let contentEl: any
 
-  let activeSlot: any = null
+  export let activeSlot: any = null
   let dragging = false
   let loading = true
 
@@ -25,7 +25,7 @@
   let instance: any
 
   export let hbsTemplates: any = {}
-  const slotMap: any = {}
+  export let slotMap: any = {}
 
   const dispatch = createEventDispatcher()
 
@@ -107,7 +107,6 @@
 
   async function forEachSlot(slots = [], cb, parent = null) {
     for (let slot of slots) {
-      console.log('slot', slot, slots)
 
       const component = getComponent(slot.type)
       await cb(slot, parent, slots)
@@ -156,7 +155,6 @@
             //   }
             // }).then((res) => res.data)
 
-            console.log(table)
             for (let field of table.fields) {
               if (field.type === 'relation') {
                 with_[field.name] = {
@@ -177,7 +175,6 @@
                 page: slot.props[field.name].page,
               },
             }).then((res) => res.data)
-
             if (!slot.props[field.name].multiple) {
               items[id] = items[id][0]
             }
@@ -240,7 +237,7 @@
 
         const a = document.querySelector(`[id="component-${slot.id}"]`)
         if (a) {
-          a.outerHTML = await renderSlot(slot, '', '', 0, false, {}) // without placeholder
+          a.outerHTML = await renderSlot(slot, slot.parent_id??'', slot.parent_field??'', slot.parent_index??0, false, {}) // without placeholder
         }
       }
     } else {
@@ -296,8 +293,6 @@
 
         if (field.type === 'slot') {
           let content = ''
-
-          console.log(slot.props?.[field.name])
           if (slot.props?.[field.name]?.name) {
             console.log('dynamic slot: ', slot.props?.[field.name])
             if (items[slot.props[field.name].name]) {
@@ -307,7 +302,7 @@
                 if (items[slot.props[field.name].name].length) {
                   for (let item of items[slot.props[field.name].name] ?? []) {
                     //
-                    for (let index in slot.props?.[field.name]?.slot ?? []) {
+                    for (let index in s1lot.props?.[field.name]?.slot ?? []) {
                       const x = slot.props[field.name]?.slot[index]
 
                       const res = await renderSlot(x, id, field.name, +index, false, {
@@ -325,7 +320,6 @@
                 //
                 for (let index in slot.props?.[field.name]?.slot ?? []) {
                   const x = slot.props[field.name]?.slot[index]
-
                   const res = await renderSlot(x, id, field.name, +index, false, {
                     ...items,
                     [slot.props[field.name].name]: items[slot.props[field.name].name],
@@ -349,7 +343,6 @@
             console.log('static slot: ', slot.props?.[field.name])
             for (let index in slot.props?.[field.name]?.slot ?? []) {
               const x = slot.props[field.name]?.slot[index]
-
               const res = await renderSlot(x, id, field.name, +index, false, items)
               content += res
             }
@@ -528,10 +521,8 @@
     let slotItem = slotMap[id]
 
     if (slotItem) {
-      dispatch('open-component-options', slotItem)
-
       activeSlot = slotItem
-
+      dispatch('open-component-options', slotItem)
       setTimeout(() => {
         const rects = document
           .querySelector('#component-' + id)
