@@ -21,11 +21,19 @@
 
   const dispatch = createEventDispatcher()
 
+  let loaded = false
 
   function change() {
+    if(!loaded) return
     dispatch('change', `${num}${unit}`)
   }
 
+  onMount(() => {
+    setTimeout(() => {
+      loaded = true
+    }, 1000)
+  })
+  
   $: {
     num;
     unit;
@@ -43,25 +51,32 @@
               {#if unit === 'px'}
               <Button size="sm">
                 {#if negative}
-                <input class="py-0 px-2 h-[18px] border-none w-[60px]" step="4" type="number" bind:value={num}/>
+                <input class="py-0 !bg-gray-200 px-2 h-[18px] border-none w-[60px]" step="4" type="number" bind:value={num}/>
                 {:else}
-                <input class="py-0 px-2 h-[18px] border-none w-[60px]" step="4" min="0" type="number" bind:value={num}/>
+                <input class="py-0 !bg-gray-200 px-2 h-[18px] border-none w-[60px]" step="4" min="0" type="number" bind:value={num}/>
                 {/if}
               </Button>
               {/if}
-                <Dropdown style="background-color:white !important" autoClose arrow={false} bind:value={unit}>
-                    <Button style="background:white !important" size="sm" slot="target">{#if unit==='%'}{num}{/if}{unit}</Button>
+                <Dropdown  autoClose arrow={false} bind:value={unit}>
+                    <button class="!bg-gray-200 px-1" slot="target">{#if unit==='%'}{num}{/if}{unit}</button>
                     <DropdownMenu>
                       <DropdownItem on:click={() => unit = 'px'}>px</DropdownItem>
                       <DropdownItem on:click={() => unit = '%'}>%</DropdownItem>
                     </DropdownMenu>
                   </Dropdown>
             </El>
-        </El>
-        {#if unit === '%'}
-        <FormSlider color="blue" connect>
-            <SliderKnob bind:value={num} />
-        </FormSlider>
-        {/if}
+          </El>
+          <El m=2>
+            {#if unit === '%'}
+            <FormSlider color="blue" connect >
+                <SliderKnob bind:value={num} />
+            </FormSlider>
+            {/if}
+          </El>
     
 <!-- <i>value: {value}</i> -->
+<style>
+  :global(.y-slider-connects) {
+    background-color: #20202020;
+  }
+</style>
