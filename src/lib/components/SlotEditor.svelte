@@ -7,7 +7,7 @@
   import { api } from '$lib/helpers/api'
   import { browser } from '$app/environment'
   import AddComponentModal from './components/AddComponentModal.svelte'
-  import { renderVariable } from '$lib/helpers'
+  import { getId, renderVariable } from '$lib/helpers'
   import type { DbFilter, DbWith } from '$lib/types'
 
   export let slotList: any[] = []
@@ -28,14 +28,6 @@
   export let slotMap: any = {}
 
   const dispatch = createEventDispatcher()
-
-  function nanoid() {
-    return customAlphabet('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', 8)
-  }
-
-  function getId() {
-    return nanoid()()
-  }
 
   export function removeSlot(id: string) {
     forEachSlot(slotList, (slot: any) => {

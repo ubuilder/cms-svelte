@@ -1,5 +1,5 @@
 <script lang="ts">
-  import {id as getId} from '@ulibs/db'
+
   import ComponentProp from '$lib/ui/ComponentProp.svelte'
   import { createEventDispatcher, onMount } from 'svelte'
   import {
@@ -30,12 +30,15 @@
   import DynamicFormField from './content/DynamicFormField.svelte'
   import type { Field } from '$lib/types'
   import EventsEditor from './EventsEditor.svelte'
+  import { getId } from '$lib/helpers'
 
   export let tables: any[] = []
   export let components: any[] = []
   export let activeSlot: any
 
   export let items: any = {}
+
+  
   const dispatch = createEventDispatcher()
 
   function selectSlot(slot: any) {

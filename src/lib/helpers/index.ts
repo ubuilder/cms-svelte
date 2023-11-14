@@ -1,4 +1,6 @@
 import type { Items } from '$lib/types'
+import { customAlphabet} from 'nanoid'
+
 
 import hbs from 'handlebars'
 
@@ -37,3 +39,12 @@ export function slugify(str: string, separator = '_') {
 	}
 	return result
 }
+
+
+function nanoid() {
+	  return customAlphabet('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', 8)
+  }
+
+  export function getId() {
+	  return nanoid()()
+  }
