@@ -122,7 +122,7 @@
             {#if field.type !== 'slot'}
               <ComponentProp
                 {components}
-                items={{}}
+                {items}
                 {field}
                 bind:value={activeSlot.props[field.name]} />
             {:else}

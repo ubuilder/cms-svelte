@@ -1,6 +1,10 @@
 <script lang="ts">
   import { onMount } from 'svelte'
   import {
+    Accordion,
+    AccordionBody,
+    AccordionHeader,
+    Accordions,
     Button,
     Dropdown,
     DropdownItem,
@@ -16,6 +20,7 @@
     Tooltip,
   } from 'yesvelte'
   import FormSlider from './FormSlider.svelte'
+  import StyleAccordion from './StyleAccordion.svelte'
 
   export let value: string
 
@@ -31,7 +36,8 @@
       }
 
       if (klass.startsWith('text-')) {
-        if (colorNames.includes(klass.slice(5))) {
+        console.log({klass, value})
+        if (colorNames.includes(klass.split('-')[1])) {
           props.textColor = klass.substring(5)
         } else {
           props.fontSize = klass.substring(5)
@@ -88,6 +94,13 @@
 
       if (klass.startsWith('mr-[')) {
         props.rightMargin = klass.substring(4, klass.length - 1)
+      }
+
+      props.borderSides = {
+        top: false,
+        right: true,
+        bottom: false,
+        left: false,
       }
 
       if (klass == '__') {
@@ -199,74 +212,14 @@
   let sizes = ['xs', 'sm', 'base', 'lg', 'xl', '2xl', '3xl', '4xl', '5xl', '6xl']
 </script>
 
-<El class="style-div" row>
+<El row>
   <!--class ------------------------------------->
   <FormInput
-  label="Class"
-  bind:value={props.Class}
-  on:change={(e) => set({ Class: e.target.value })} />
-
-  <FormField label="Sizes">
-    <FormSlider attribute="Width" value={props.width} on:change={(e) => set({ width: e.detail })} />
-
-      <FormSlider attribute="Hight" value={props.height} on:change={(e) => set({ height: e.detail })} />
-    
-      <El class="flex items-center gap-2 mt-3">
-        <!--padding sizing .............................................-->
-        <button
-          class="w-full bg-gray-200 border border-gray-300 hover:bg-gray-300 font-bold py-2 px-4 rounded"
-          >Padding</button>
-        <Popover trigger="click">
-          <PopoverBody>
-            <FormSlider
-              attribute="Top"
-              value={props.topPadding}
-              on:change={(e) => set({ topPadding: e.detail })} />
-            <FormSlider
-              attribute="Left"
-              value={props.leftPadding}
-              on:change={(e) => set({ leftPadding: e.detail })} />
-            <FormSlider
-              attribute="bottom"
-              value={props.bottomPadding}
-              on:change={(e) => set({ bottomPadding: e.detail })} />
-            <FormSlider
-              attribute="Right"
-              value={props.rightPadding}
-              on:change={(e) => set({ rightPadding: e.detail })} />
-          </PopoverBody>
-        </Popover>
-    
-        <!--margin sizing .............................................-->
-    
-        <button class="w-full bg-gray-200 border border-gray-300 hover:bg-gray-300 font-bold py-2 px-4 rounded"
-          >Margin</button>
-        <Popover trigger="click">
-          <PopoverBody>
-            <FormSlider
-              negative={true}
-              attribute="Top"
-              value={props.topMargin}
-              on:change={(e) => set({ topMargin: e.detail })} />
-            <FormSlider
-              negative={true}
-              attribute="Left"
-              value={props.leftMargin}
-              on:change={(e) => set({ leftMargin: e.detail })} />
-            <FormSlider
-              negative={true}
-              attribute="bottom"
-              value={props.bottomMargin}
-              on:change={(e) => set({ bottomMargin: e.detail })} />
-            <FormSlider
-              negative={true}
-              attribute="Right"
-              value={props.rightMargin}
-              on:change={(e) => set({ rightMargin: e.detail })} />
-          </PopoverBody>
-        </Popover>
-      </El>
-    
+    label="Class"
+    bind:value={props.Class}
+    on:change={(e) => set({ Class: e.target.value })} />
+  <Accordions>
+    <StyleAccordion title="Size">
       <!--font size---------------------------------------->
       <FormSelect
         placeholder={props.fontSize ?? 'choose a size'}
@@ -277,168 +230,328 @@
         let:item>
         <El>{item}</El>
       </FormSelect>
-        
-  </FormField>
 
-  <!--colors ------------------------------------->
+      <FormField label="Sizes">
+        <FormSlider
+          attribute="Width"
+          value={props.width}
+          on:change={(e) => set({ width: e.detail })} />
 
-  <FormField label="Colors">
-    <div class="flex gap-2">
-      <button
-        class="flex flex-1 items-center border border-gray-300 font-bold py-2 px-4 rounded bg-gray-200">
-        <div class="w-4 h-4 me-2 border border-gray-300 bg-{props.bgColor}"></div>
-        Background
-      </button>
-      <Popover placement="bottom-start">
-        <PopoverBody class="max-w-[190px] !p-1 flex flex-wrap -mx-1">
-          {#each colors as color}
-            <div class="p-[1px] w-1/10 hover:shadow-lg">
-              <div
-                on:click={() => set({ bgColor: color })}
-                class="bg-{color} cursor-pointer h-4 w-4">
+        <FormSlider
+          attribute="Hight"
+          value={props.height}
+          on:change={(e) => set({ height: e.detail })} />
+
+        <El class="flex items-center gap-2 mt-3">
+          <!--padding sizing .............................................-->
+          <button
+            class="w-full bg-gray-200 border border-gray-300 hover:bg-gray-300 font-bold py-2 px-4 rounded"
+            >Padding</button>
+          <Popover trigger="click">
+            <PopoverBody>
+              <FormSlider
+                attribute="Top"
+                value={props.topPadding}
+                on:change={(e) => set({ topPadding: e.detail })} />
+              <FormSlider
+                attribute="Left"
+                value={props.leftPadding}
+                on:change={(e) => set({ leftPadding: e.detail })} />
+              <FormSlider
+                attribute="bottom"
+                value={props.bottomPadding}
+                on:change={(e) => set({ bottomPadding: e.detail })} />
+              <FormSlider
+                attribute="Right"
+                value={props.rightPadding}
+                on:change={(e) => set({ rightPadding: e.detail })} />
+            </PopoverBody>
+          </Popover>
+
+          <!--margin sizing .............................................-->
+
+          <button
+            class="w-full bg-gray-200 border border-gray-300 hover:bg-gray-300 font-bold py-2 px-4 rounded"
+            >Margin</button>
+          <Popover trigger="click">
+            <PopoverBody>
+              <FormSlider
+                negative={true}
+                attribute="Top"
+                value={props.topMargin}
+                on:change={(e) => set({ topMargin: e.detail })} />
+              <FormSlider
+                negative={true}
+                attribute="Left"
+                value={props.leftMargin}
+                on:change={(e) => set({ leftMargin: e.detail })} />
+              <FormSlider
+                negative={true}
+                attribute="bottom"
+                value={props.bottomMargin}
+                on:change={(e) => set({ bottomMargin: e.detail })} />
+              <FormSlider
+                negative={true}
+                attribute="Right"
+                value={props.rightMargin}
+                on:change={(e) => set({ rightMargin: e.detail })} />
+            </PopoverBody>
+          </Popover>
+        </El>
+
+        <!--font size---------------------------------------->
+        <FormSelect
+          placeholder={props.fontSize ?? 'choose a size'}
+          items={sizes}
+          label="Font size"
+          bind:value={props.fontSize}
+          on:change={(e) => set({ fontSize: e.target.value })}
+          let:item>
+          <El>{item}</El>
+        </FormSelect>
+      </FormField>
+    </StyleAccordion>
+
+    <StyleAccordion title="Border">
+      <El class="">
+        <El mb="3" w="100" d="flex" justifyContent="between" alignItems="center">
+          <div class="font-bold">Width:</div>
+          <div class="flex gap-1">
+            <button
+              class="p-1 flex items-center justify-center w-6 h-6 rounded-l inline-flex border border-gray-300 text-black bg-gray-100 hover:bg-gray-200"
+              class:text-white={props.borderSides['top']}
+              class:!bg-blue-500={props.borderSides['top']}
+              on:click={() => set({ borderSides: { top: !props.borderSides['top'] } })}>1</button>
+            <button
+              class="p-1 flex items-center justify-center w-6 h-6 rounded inline-flex border border-gray-300 text-black bg-gray-100 hover:bg-gray-200"
+              class:text-white={props.borderSides['right']}
+              class:!bg-blue-500={props.borderSides['right']}
+              on:click={() => set({ borderSides: { right: !props.borderSides['right'] } })}
+              >2</button>
+            <button
+              class="p-1 flex items-center justify-center w-6 h-6 rounded inline-flex border border-gray-300 text-black bg-gray-100 hover:bg-gray-200"
+              class:text-white={props.borderSides['bottom']}
+              class:!bg-blue-500={props.borderSides['bottom']}
+              on:click={() => set({ borderSides: { bottom: !props.borderSides['bottom'] } })}
+              >4</button>
+            <button
+              class="p-1 flex items-center justify-center w-6 h-6 rounded-r inline-flex border border-gray-300 text-black bg-gray-100 hover:bg-gray-200"
+              class:text-white={props.borderSides['left']}
+              class:!bg-blue-500={props.borderSides['left']}
+              on:click={() => set({ borderSides: { left: !props.borderSides['left'] } })}>8</button>
+          </div>
+        </El>
+
+        <El mb="3" w="100" d="flex" justifyContent="between" alignItems="center">
+          <div class="font-bold">Style:</div>
+          <div class="flex gap-1">
+            {#each ['solid', 'dotted', 'dashed', 'none'] as style}
+              <button
+                class="p-1 flex items-center justify-center w-6 h-6 rounded inline-flex border border-gray-300 text-black bg-gray-100 hover:bg-gray-200"
+                class:text-white={props.borderStyle === style}
+                class:!bg-blue-500={props.borderStyle === style}
+                on:click={() => set({ borderStyle: style })}><Icon name="circle-{style}" /></button>
+            {/each}
+          </div>
+        </El>
+
+        <El mb="3" w="100" d="flex" justifyContent="between" alignItems="center">
+          <div class="font-bold">Sides:</div>
+          <div class="flex gap-1">
+            <button
+              class="p-1 rounded flex items-center justify-center w-6 h-6 inline-flex border border-gray-300 text-black bg-gray-100 hover:bg-gray-200"
+              class:text-white={props.borderSides['top']}
+              class:!bg-blue-500={props.borderSides['top']}
+              on:click={() => set({ borderSides: { top: !props.borderSides['top'] } })}
+              ><Icon mb="2" name="border-top" /></button>
+            <button
+              class="p-1 rounded flex items-center justify-center w-6 h-6 inline-flex border border-gray-300 text-black bg-gray-100 hover:bg-gray-200"
+              class:text-white={props.borderSides['right']}
+              class:!bg-blue-500={props.borderSides['right']}
+              on:click={() => set({ borderSides: { right: !props.borderSides['right'] } })}
+              ><Icon mb="2" name="border-right" /></button>
+            <button
+              class="p-1 rounded flex items-center justify-center w-6 h-6 inline-flex border border-gray-300 text-black bg-gray-100 hover:bg-gray-200"
+              class:text-white={props.borderSides['bottom']}
+              class:!bg-blue-500={props.borderSides['bottom']}
+              on:click={() => set({ borderSides: { bottom: !props.borderSides['bottom'] } })}
+              ><Icon mb="2" name="border-bottom" /></button>
+            <button
+              class="p-1 rounded flex items-center justify-center w-6 h-6 inline-flex border border-gray-300 text-black bg-gray-100 hover:bg-gray-200"
+              class:text-white={props.borderSides['left']}
+              class:!bg-blue-500={props.borderSides['left']}
+              on:click={() => set({ borderSides: { left: !props.borderSides['left'] } })}
+              ><Icon mb="2" name="border-left" /></button>
+          </div>
+        </El>
+        <!-- <FormCheckboxGroup label="Select Language" inline color="primary" {items} bind:value /> -->
+      </El>
+    </StyleAccordion>
+    <StyleAccordion title="Colors">
+      <FormField label="Colors">
+        <El class="flex gap-2">
+          <button
+            class="flex flex-1 items-center border border-gray-300 font-bold py-2 px-4 rounded bg-gray-200">
+            <div class="w-4 h-4 me-2 border border-gray-300 bg-{props.bgColor}"></div>
+            Background
+          </button>
+          <Popover placement="bottom-start">
+            <PopoverBody class="max-w-[190px] !p-1 flex flex-wrap -mx-1">
+              {#each colors as color}
+                <div class="p-[1px] w-1/10 hover:shadow-lg">
+                  <div
+                    on:click={() => set({ bgColor: color })}
+                    class="bg-{color} cursor-pointer h-4 w-4">
+                  </div>
+                </div>
+              {/each}
+              <div class="p-[1px] w-1/10 hover:shadow-lg">
+                <div
+                  on:click={() => set({ bgColor: 'white' })}
+                  class="bg-{'white'} cursor-pointer h-4 w-4">
+                </div>
               </div>
-            </div>
-          {/each}
-          <div class="p-[1px] w-1/10 hover:shadow-lg">
-            <div
-              on:click={() => set({ bgColor: 'white' })}
-              class="bg-{'white'} cursor-pointer h-4 w-4">
-            </div>
-          </div>
-          <div class="p-[1px] w-1/10 hover:shadow-lg">
-            <div
-              on:click={() => set({ bgColor: 'black' })}
-              class="bg-{'black'} cursor-pointer h-4 w-4">
-            </div>
-          </div>
-        </PopoverBody>
-      </Popover>
-
-      <button
-        class="flex flex-1 items-center border border-gray-300 font-bold py-2 px-4 rounded bg-gray-200">
-        <div class="w-4 h-4 me-2 border border-gray-300 bg-{props.textColor}"></div>
-        Text
-      </button>
-      <Popover placement="bottom-start">
-        <PopoverBody class="max-w-[190px] !p-1 flex flex-wrap -mx-1">
-          {#each colors as color}
-            <div class="p-[1px] w-1/10 hover:shadow-lg">
-              <div
-                on:click={() => set({ textColor: color })}
-                class="bg-{color} cursor-pointer h-4 w-4">
+              <div class="p-[1px] w-1/10 hover:shadow-lg">
+                <div
+                  on:click={() => set({ bgColor: 'black' })}
+                  class="bg-{'black'} cursor-pointer h-4 w-4">
+                </div>
               </div>
-            </div>
-          {/each}
-          <div class="p-[1px] w-1/10 hover:shadow-lg">
-            <div
-              on:click={() => set({ textColor: 'white' })}
-              class="bg-{'white'} cursor-pointer h-4 w-4">
-            </div>
-          </div>
-          <div class="p-[1px] w-1/10 hover:shadow-lg">
-            <div
-              on:click={() => set({ textColor: 'black' })}
-              class="bg-{'black'} cursor-pointer h-4 w-4">
-            </div>
-          </div>
-        </PopoverBody>
-      </Popover>
-    </div> 
-  </FormField>
+            </PopoverBody>
+          </Popover>
 
-  <FormField label="Flex Direction">
-    <div class="flex">
-      <button
-        class="flex-1 p-1 rounded mx-0.5 bg-gray-100"
-        class:!bg-blue-500={props.flexDirection === 'row'}
-        class:text-white={props.flexDirection === 'row'}
-        on:click={() => set({ flexDirection: 'row' })}
-        ><Icon size="sm" name="arrow-right" /></button>
-      <button
-        class="flex-1 p-1 rounded mx-0.5 bg-gray-100"
-        class:!bg-blue-500={props.flexDirection === 'col'}
-        class:text-white={props.flexDirection === 'col'}
-        on:click={() => set({ flexDirection: 'col' })}
-        ><Icon size="sm" name="arrow-bottom" /></button>
-      <button
-        class="flex-1 p-1 rounded mx-0.5 bg-gray-100"
-        class:!bg-blue-500={props.flexDirection === 'row-reverse'}
-        class:text-white={props.flexDirection === 'row-reverse'}
-        on:click={() => set({ flexDirection: 'row-reverse' })}
-        ><Icon size="sm" name="arrow-left" /></button>
-      <button
-        class="flex-1 p-1 rounded mx-0.5 bg-gray-100"
-        class:!bg-blue-500={props.flexDirection === 'col-reverse'}
-        class:text-white={props.flexDirection === 'col-reverse'}
-        on:click={() => set({ flexDirection: 'col-reverse' })}
-        ><Icon size="sm" name="arrow-top" /></button>
-    </div>
-  </FormField>
+          <button
+            class="flex flex-1 items-center border border-gray-300 font-bold py-2 px-4 rounded bg-gray-200">
+            <div class="w-4 h-4 me-2 border border-gray-300 bg-{props.textColor}"></div>
+            Text
+          </button>
+          <Popover placement="bottom-start">
+            <PopoverBody class="max-w-[190px] !p-1 flex flex-wrap -mx-1">
+              {#each colors as color}
+                <div class="p-[1px] w-1/10 hover:shadow-lg">
+                  <div
+                    on:click={() => set({ textColor: color })}
+                    class="bg-{color} cursor-pointer h-4 w-4">
+                  </div>
+                </div>
+              {/each}
+              <div class="p-[1px] w-1/10 hover:shadow-lg">
+                <div
+                  on:click={() => set({ textColor: 'white' })}
+                  class="bg-{'white'} cursor-pointer h-4 w-4">
+                </div>
+              </div>
+              <div class="p-[1px] w-1/10 hover:shadow-lg">
+                <div
+                  on:click={() => set({ textColor: 'black' })}
+                  class="bg-{'black'} cursor-pointer h-4 w-4">
+                </div>
+              </div>
+            </PopoverBody>
+          </Popover>
+        </El>
+      </FormField>
+    </StyleAccordion>
+    <StyleAccordion title="Display">
+      <FormField label="Flex Direction">
+        <div class="flex">
+          <button
+            class="flex-1 p-1 rounded mx-0.5 bg-gray-100"
+            class:!bg-blue-500={props.flexDirection === 'row'}
+            class:text-white={props.flexDirection === 'row'}
+            on:click={() => set({ flexDirection: 'row' })}
+            ><Icon size="sm" name="arrow-right" /></button>
+          <button
+            class="flex-1 p-1 rounded mx-0.5 bg-gray-100"
+            class:!bg-blue-500={props.flexDirection === 'col'}
+            class:text-white={props.flexDirection === 'col'}
+            on:click={() => set({ flexDirection: 'col' })}
+            ><Icon size="sm" name="arrow-bottom" /></button>
+          <button
+            class="flex-1 p-1 rounded mx-0.5 bg-gray-100"
+            class:!bg-blue-500={props.flexDirection === 'row-reverse'}
+            class:text-white={props.flexDirection === 'row-reverse'}
+            on:click={() => set({ flexDirection: 'row-reverse' })}
+            ><Icon size="sm" name="arrow-left" /></button>
+          <button
+            class="flex-1 p-1 rounded mx-0.5 bg-gray-100"
+            class:!bg-blue-500={props.flexDirection === 'col-reverse'}
+            class:text-white={props.flexDirection === 'col-reverse'}
+            on:click={() => set({ flexDirection: 'col-reverse' })}
+            ><Icon size="sm" name="arrow-top" /></button>
+        </div>
+      </FormField>
 
-  <FormField label="Align Items">
-    <div class="flex">
-      <button
-        class="flex-1 p-1 rounded mx-0.5 bg-gray-100"
-        class:!bg-blue-500={props.items === 'start'}
-        class:text-white={props.items === 'start'}
-        on:click={() => set({ items: 'start' })}><Icon size="sm" name="arrow-right" /></button>
-      <button
-        class="flex-1 p-1 rounded mx-0.5 bg-gray-100"
-        class:!bg-blue-500={props.items === 'center'}
-        class:text-white={props.items === 'center'}
-        on:click={() => set({ items: 'center' })}><Icon size="sm" name="arrow-bottom" /></button>
-      <button
-        class="flex-1 p-1 rounded mx-0.5 bg-gray-100"
-        class:!bg-blue-500={props.items === 'end'}
-        class:text-white={props.items === 'end'}
-        on:click={() => set({ items: 'end' })}><Icon size="sm" name="arrow-left" /></button>
-      <button
-        class="flex-1 p-1 rounded mx-0.5 bg-gray-100"
-        class:!bg-blue-500={props.items === 'stretch'}
-        class:text-white={props.items === 'stretch'}
-        on:click={() => set({ items: 'stretch' })}><Icon size="sm" name="arrow-top" /></button>
-      <button
-        class="flex-1 p-1 rounded mx-0.5 bg-gray-100"
-        class:!bg-blue-500={props.items === 'baseline'}
-        class:text-white={props.items === 'stretch'}
-        on:click={() => set({ items: 'baseline' })}><Icon size="sm" name="arrow-top" /></button>
-    </div>
-  </FormField>
+      <FormField label="Align Items">
+        <div class="flex">
+          <button
+            class="flex-1 p-1 rounded mx-0.5 bg-gray-100"
+            class:!bg-blue-500={props.items === 'start'}
+            class:text-white={props.items === 'start'}
+            on:click={() => set({ items: 'start' })}><Icon size="sm" name="arrow-right" /></button>
+          <button
+            class="flex-1 p-1 rounded mx-0.5 bg-gray-100"
+            class:!bg-blue-500={props.items === 'center'}
+            class:text-white={props.items === 'center'}
+            on:click={() => set({ items: 'center' })}
+            ><Icon size="sm" name="arrow-bottom" /></button>
+          <button
+            class="flex-1 p-1 rounded mx-0.5 bg-gray-100"
+            class:!bg-blue-500={props.items === 'end'}
+            class:text-white={props.items === 'end'}
+            on:click={() => set({ items: 'end' })}><Icon size="sm" name="arrow-left" /></button>
+          <button
+            class="flex-1 p-1 rounded mx-0.5 bg-gray-100"
+            class:!bg-blue-500={props.items === 'stretch'}
+            class:text-white={props.items === 'stretch'}
+            on:click={() => set({ items: 'stretch' })}><Icon size="sm" name="arrow-top" /></button>
+          <button
+            class="flex-1 p-1 rounded mx-0.5 bg-gray-100"
+            class:!bg-blue-500={props.items === 'baseline'}
+            class:text-white={props.items === 'stretch'}
+            on:click={() => set({ items: 'baseline' })}><Icon size="sm" name="arrow-top" /></button>
+        </div>
+      </FormField>
 
-  <FormField label="Justify Content">
-    <div class="flex">
-      <button
-        class="flex-1 p-1 rounded mx-0.5 bg-gray-100"
-        class:!bg-blue-500={props.justify === 'start'}
-        class:text-white={props.justify === 'start'}
-        on:click={() => set({ justify: 'start' })}><Icon size="sm" name="arrow-right" /></button>
-      <button
-        class="flex-1 p-1 rounded mx-0.5 bg-gray-100"
-        class:!bg-blue-500={props.justify === 'center'}
-        class:text-white={props.justify === 'center'}
-        on:click={() => set({ justify: 'center' })}><Icon size="sm" name="arrow-bottom" /></button>
-      <button
-        class="flex-1 p-1 rounded mx-0.5 bg-gray-100"
-        class:!bg-blue-500={props.justify === 'end'}
-        class:text-white={props.justify === 'end'}
-        on:click={() => set({ justify: 'end' })}><Icon size="sm" name="arrow-left" /></button>
-      <button
-        class="flex-1 p-1 rounded mx-0.5 bg-gray-100"
-        class:!bg-blue-500={props.justify === 'between'}
-        class:text-white={props.justify === 'stretch'}
-        on:click={() => set({ justify: 'between' })}><Icon size="sm" name="arrow-top" /></button>
-      <button
-        class="flex-1 p-1 rounded mx-0.5 bg-gray-100"
-        class:!bg-blue-500={props.justify === 'evenly'}
-        class:text-white={props.justify === 'stretch'}
-        on:click={() => set({ justify: 'evenly' })}><Icon size="sm" name="arrow-top" /></button>
-      <button
-        class="flex-1 p-1 rounded mx-0.5 bg-gray-100"
-        class:!bg-blue-500={props.justify === 'around'}
-        class:text-white={props.justify === 'stretch'}
-        on:click={() => set({ justify: 'around' })}><Icon size="sm" name="arrow-top" /></button>
-    </div>
-  </FormField>
+      <FormField label="Justify Content">
+        <div class="flex">
+          <button
+            class="flex-1 p-1 rounded mx-0.5 bg-gray-100"
+            class:!bg-blue-500={props.justify === 'start'}
+            class:text-white={props.justify === 'start'}
+            on:click={() => set({ justify: 'start' })}
+            ><Icon size="sm" name="arrow-right" /></button>
+          <button
+            class="flex-1 p-1 rounded mx-0.5 bg-gray-100"
+            class:!bg-blue-500={props.justify === 'center'}
+            class:text-white={props.justify === 'center'}
+            on:click={() => set({ justify: 'center' })}
+            ><Icon size="sm" name="arrow-bottom" /></button>
+          <button
+            class="flex-1 p-1 rounded mx-0.5 bg-gray-100"
+            class:!bg-blue-500={props.justify === 'end'}
+            class:text-white={props.justify === 'end'}
+            on:click={() => set({ justify: 'end' })}><Icon size="sm" name="arrow-left" /></button>
+          <button
+            class="flex-1 p-1 rounded mx-0.5 bg-gray-100"
+            class:!bg-blue-500={props.justify === 'between'}
+            class:text-white={props.justify === 'stretch'}
+            on:click={() => set({ justify: 'between' })}
+            ><Icon size="sm" name="arrow-top" /></button>
+          <button
+            class="flex-1 p-1 rounded mx-0.5 bg-gray-100"
+            class:!bg-blue-500={props.justify === 'evenly'}
+            class:text-white={props.justify === 'stretch'}
+            on:click={() => set({ justify: 'evenly' })}><Icon size="sm" name="arrow-top" /></button>
+          <button
+            class="flex-1 p-1 rounded mx-0.5 bg-gray-100"
+            class:!bg-blue-500={props.justify === 'around'}
+            class:text-white={props.justify === 'stretch'}
+            on:click={() => set({ justify: 'around' })}><Icon size="sm" name="arrow-top" /></button>
+        </div>
+      </FormField>
+    </StyleAccordion>
+  </Accordions>
 </El>
 
 <style>

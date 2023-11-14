@@ -270,6 +270,133 @@
 
   let leftSidebarOpen = false
   let rightSidebarOpen = false
+
+  function getGlobalItems() {
+  	let params = page.slug?.match(/\{\w+\}/g)
+  return {
+			page: {
+				text: 'Page',
+				type: 'object',
+				content: {
+					slug: {
+						text: "Page's Slug",
+						type: 'plain_text',
+					},
+					params: {
+						type: 'object',
+						text: "Page's URL params",
+						content: params?.reduce((prev, curr) => {
+							const key = curr.substring(1, curr.length - 1)
+							return {
+								...prev,
+								[key]: {
+									text: "Page's param (" + key + ')',
+									type: 'plain_text',
+								},
+							}
+						}, {}),
+					},
+					title: {
+						text: "Page's Title",
+						type: 'plain_text',
+					},
+					description: {
+						text: "Page's Description",
+						type: 'plain_text',
+					},
+
+
+				},
+			}
+		}
+
+  }
+
+  let slotMap: any = {}
+  function getParentItems(parent_id: any):any {
+
+
+    const slot = slotMap[parent_id]
+    let items = {}
+    if(slot?.parent_id) {
+      items = getParentItems(slot.parent_id)
+    } else {
+      items = getGlobalItems()   
+    }
+
+    if(!slot) return items
+    const component= getComponent(slot.type)
+
+    for(let field of component.fields) {
+      if(field.type === 'slot') {
+        const options = slot.props[field.name]
+
+        let  fields  = {}
+        const table = tables.filter((table)=>table.id == options.table)[0]
+        for (let field of table.fields){
+          fields[field.name] = {
+            text: `${options.name}'s ${field.name}`,
+            type: field.type
+          }
+        }
+
+        items[options.name] = {
+          type: "object",
+          content: fields
+          
+        }
+      }
+    }
+
+    return items
+  }
+  function getItems(slot: any): any {
+      let items = getParentItems(activeSlot.parent_id)
+
+		// for (let item of load) {
+
+		// 	const table = tables.find((x) => x.id === item.table)
+		// 	if (!table) continue
+
+		// 	const fields: any = {}
+		// 	fields.id = {
+		// 		text: 'ID',
+		// 		type: 'plain_text'
+		// 	}
+		// 	for (let field of table.fields) {
+		// 		fields[field.name] = {
+		// 			text: `${item.name}'s ${field.name}`,
+		// 			type: field.type,
+		// 		}
+
+		// 		if (field.type === 'relation') {
+		// 			const otherTable = tables.find((x) => x.id === (field as FieldRelation).table)
+		// 			const otherFields: any = {}
+		// 			for (let otherField of otherTable.fields) {
+		// 				otherFields[otherField.name] = {
+		// 					text: `${item.name} ${field.name} ${otherField.name}`,
+		// 					type: otherField.type,
+		// 				}
+		// 			}
+
+		// 			fields[field.name].content = otherFields
+		// 			fields[field.name].type = field.multiple ? 'array' : 'object'
+		// 		}
+
+		// 		if (field.type === 'image' || field.type === 'file') {
+		// 			// alt, url, caption from assets....
+		// 		}
+		// 	}
+
+		// 	items[item.name] = {
+		// 		type: item.multiple ? 'array' : 'object',
+		// 		text: item.name,
+		// 		content: fields,
+		// 	}
+		// }
+
+		return items
+	}
 </script>
 
 <svelte:head>
@@ -445,6 +572,8 @@
           <SidebarComponentOption
             {components}
             {tables}
+            bind:activeSlot
+            items={getItems(activeSlot)}
             on:open-component-settings={(e) => openComponentSettings(e.detail)}
             on:select-slot={(e) => editor.selectSlot(e.detail)}
             on:select-parent={() => editor.onSelectParent()}
@@ -453,7 +582,7 @@
               editor.render(e.detail)
               reload(['components'])
             }}
-            bind:activeSlot />
+             />
         {/if}
       </div>
     </div>
@@ -464,6 +593,7 @@
       class:left-sidebar-open={leftSidebarOpen}>
       {#if page}
         <SlotEditor
+        bind:slotMap
           {components}
           {hbsTemplates}
           bind:this={editor}
@@ -474,8 +604,9 @@
           on:open-component-options={(e) => {
             rightSidebarMode = 'options'
             rightSidebarOpen = true
-            activeSlot = e.detail
+            // activeSlot = e.detail
           }}
+          bind:activeSlot
           bind:slotList={page.slot} />
       {:else if mode === 'component' && component}
         <SlotEditor
