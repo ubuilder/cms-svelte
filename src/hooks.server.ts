@@ -16,6 +16,8 @@ export const handle = async ({ event, resolve }) => {
 	const baseUrl = apiUrl + '/api/' + siteId
 	const token = event.cookies.get('token') ?? ''
 	
+	event.locals.siteId = siteId
+
 	event.locals.api = cms_api({
 		baseUrl,
 		fetch: event.fetch,
@@ -37,7 +39,7 @@ export const handle = async ({ event, resolve }) => {
 		event.locals.settings = await event.locals.api.getSettings().then(res => res.data) ?? {}
 
 		// auth
-		if (event.cookies.get('token')) {
+		if (event.cookies.get('token') || event.locals.siteId === 'demo') {
 			const user = await event.locals.api.getUser().then((res) => res.data)
 
 			console.log('user')
@@ -46,6 +48,7 @@ export const handle = async ({ event, resolve }) => {
 				event.locals.user = user
 			}
 		}
+		
 	
 		if (!event.locals.user) {
 			const hasUser = await event.locals.api.hasUser().then(res => res.data)
@@ -79,8 +82,6 @@ export const handle = async ({ event, resolve }) => {
 			}
 		}			
 	}
-
-	event.locals.siteId = siteId
 
 	return resolve(event)
 }
