@@ -29,6 +29,7 @@
   import FormFields from './content/FormFields.svelte'
   import DynamicFormField from './content/DynamicFormField.svelte'
   import type { Field } from '$lib/types'
+  import EventsEditor from './EventsEditor.svelte'
 
   export let tables: any[] = []
   export let components: any[] = []
@@ -85,6 +86,8 @@
   }
 
   $: hasClass = getComponent(activeSlot?.type)?.template?.includes("Class");
+  $: hasAttributes = getComponent(activeSlot?.type)?.template?.includes("Attributes");
+
   const getComponent = (id) => components.find((x) => x.id === id)
 </script>
 
@@ -109,6 +112,9 @@
         {#if hasClass}
           <TabItem>Style</TabItem>
         {/if}
+        {#if hasAttributes}
+          <TabItem>Events</TabItem>
+        {/if}
       </TabList>
       <TabContent>
         <TabPanel p="2">
@@ -121,13 +127,14 @@
                 bind:value={activeSlot.props[field.name]} />
             {:else}
 
+            {#if activeSlot.props[field.name]}
               <FormField mb="2">
                 <div class="flex items-center justify-between">
                   <Label>{field.name}</Label>
                   <Switch checked={activeSlot.props[field.name].name} on:change={() => switchDynamic(field.name)}/>
                 </div>
 
-                {#if activeSlot.props[field.name].name}
+                {#if activeSlot.props[field.name]?.name}
                   {@const table = tables.find((x) => x.id === activeSlot.props[field.name].table)}
 
                   <Accordions>
@@ -248,20 +255,21 @@
                   </El>
                 {/each}
               </FormField>
-
+            {/if}
             {/if}
           {/each}
-
-          <El row>
-            <El col></El>
-          </El>
         </TabPanel>
         {#if hasClass}
-
-        <TabPanel p="2">
-          <StyleEditor bind:value={activeSlot.props.Class}/>
-        </TabPanel>
+          <TabPanel p="2">
+            <StyleEditor bind:value={activeSlot.props.Class}/>
+          </TabPanel>
         {/if}
+        {#if hasAttributes}
+          <TabPanel p="2">
+            <EventsEditor bind:value={activeSlot.props.Attributes}/>
+          </TabPanel>
+        {/if}
+        
       </TabContent>
     </Tabs>
   </div>

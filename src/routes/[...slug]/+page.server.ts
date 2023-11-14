@@ -174,7 +174,7 @@ export async function load({ locals, params, url }) {
 
         const with_: DbWith = {}
 
-        for (let filter of slot.props[field.name].filters) {
+        for (let filter of slot.props[field.name].filters ?? []) {
           where[filter.field] = {
             operator: filter.operator,
             value: renderVariable(filter.value, items),
@@ -230,7 +230,7 @@ export async function load({ locals, params, url }) {
         for (let field of fields) {
           if (field.type === 'slot' && slot.props[field.name]) {
             console.log(slot.props)
-            if (!slot.props[field.name].table) {
+            if (!slot.props[field.name].name) {
 
                   props[field.name] = slot.props[field.name]?.slot?.map((slot) => renderSlot(slot, items))
                     .join('')
@@ -273,6 +273,8 @@ export async function load({ locals, params, url }) {
             props[field.name] = renderVariable(slot.props[field.name], items)
           }
           props['Class'] = slot.props['Class']
+          props['Attributes'] = slot.props['Attributes']
+
         }
 
 

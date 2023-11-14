@@ -310,7 +310,7 @@
                     for (let index in slot.props?.[field.name]?.slot ?? []) {
                       const x = slot.props[field.name]?.slot[index]
 
-                      const res = await renderSlot(x, id, field.name, +index, false, {
+                      const res = await renderSlot(x, id, field.name, +index, true, {
                         ...items,
                         [slot.props[field.name].name]: item,
                       })
@@ -326,7 +326,7 @@
                 for (let index in slot.props?.[field.name]?.slot ?? []) {
                   const x = slot.props[field.name]?.slot[index]
 
-                  const res = await renderSlot(x, id, field.name, +index, false, {
+                  const res = await renderSlot(x, id, field.name, +index, true, {
                     ...items,
                     [slot.props[field.name].name]: items[slot.props[field.name].name],
                   })
@@ -350,7 +350,7 @@
             for (let index in slot.props?.[field.name]?.slot ?? []) {
               const x = slot.props[field.name]?.slot[index]
 
-              const res = await renderSlot(x, id, field.name, +index, false, items)
+              const res = await renderSlot(x, id, field.name, +index, true, items)
               content += res
             }
 
@@ -368,6 +368,8 @@
       }
 
       props['Class'] = slot.props['Class'] ?? ''
+      props['Attributes'] = slot.props['Attributes'] ?? ''
+
 
       if (hbsTemplates[slot.type]) {
         setTimeout(() => {

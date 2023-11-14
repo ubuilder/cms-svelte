@@ -114,8 +114,36 @@
 					},
 				},
 			},
+			// todos: {
+			// 	type: 'array' | 'object',
+			// 	text: "todos",
+			// 	content: {
+			// 		id: {
+			// 			type,
+			// 			text
+			// 		},
+			// 		Text: {
+			// 			type: string,
+			// 			text: 'Text'
+			// 		}
+			// 	}
+			// }
 		}
 
+		// const items = {
+		// 	page: {
+		// 		slug: '//',
+		// 		params: {
+		// 			[x]: string
+		// 		},
+		// 		title: 'string',
+		// 		description: 'string'
+		// 	},
+		// 	todos: [{}, {}]
+
+		// }
+		
+		
 		for (let item of load) {
 			const table = tables.find((x) => x.id === item.table)
 			if (!table) continue
