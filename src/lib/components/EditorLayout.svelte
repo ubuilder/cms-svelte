@@ -333,7 +333,7 @@
 
         let  fields  = {}
         const table = tables.filter((table)=>table.id == options.table)[0]
-        for (let field of table.fields){
+        for (let field of table?.fields ?? []){
           fields[field.name] = {
             text: `${options.name}'s ${field.name}`,
             type: field.type
