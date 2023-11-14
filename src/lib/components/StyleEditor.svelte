@@ -1,14 +1,9 @@
 <script lang="ts">
   import { onMount } from 'svelte'
   import {
-    Accordion,
-    AccordionBody,
-    AccordionHeader,
+    
     Accordions,
-    Button,
-    Dropdown,
-    DropdownItem,
-    DropdownMenu,
+    
     El,
     FormField,
     FormInput,
@@ -23,20 +18,49 @@
   import StyleAccordion from './StyleAccordion.svelte'
 
   export let value: string
+  export let responsiveMode = ''
+  $:{console.log("responsive",responsiveMode)}
 
   let props: any = {}
+  let responsiveBreakPoints = ["", "sm:", "md:", "lg:"]
+  function match(klass, value){
+    // let classlist = [
+    //   "bg", "text",
+    //    "b" ,"bt", 'bs', 'be', 'bb',
+    //    "m", 'mt' , "ms", 'me' , "mb",
+    //    "p", 'pt' , "ps", 'pe' , "pb",
+    //    "p", 'pt' , "ps", 'pe' , "pb",
+    //    "w", "h",
+    // ]
+
+    if(klass.startsWith(`${value}-`) || klass.startsWith(`sm:${value}-`) || klass.startsWith(`md:${value}-`) || klass.startsWith(`lg:${value}-`)){
+      return true
+    }
+  }
+  function extractResponsiveClasses(value, stile){
+    let res = {}
+    value =value.trim()
+    if(value.startsWith(`${stile}-`)){
+      res[""] = value.split(`${stile}-`)[1]
+    } else if(value.startsWith(`sm:${stile}-`) ){
+      res["sm:"] = value.split(`sm:${stile}-`)[1]
+    }else if(value.startsWith(`md:${stile}-`) ){
+      res["md:"] = value.split(`md:${stile}-`)[1]
+    }else if(value.startsWith(`lg:${stile}-`) ){
+      res["lg:"] = value.split(`lg:${stile}-`)[1]
+    }
+    return res
+  }
+  
 
   function parse(value: string = '') {
     const classes = value.split(' ')
-
     for (let index in classes) {
       let klass = classes[index]
-      if (klass.startsWith('bg-')) {
-        props.bgColor = klass.substring(3)
+      if (match(klass , "bg")) {
+        props.bg = {...props.bg, ...extractResponsiveClasses(klass, "bg")}
       }
-
-      if (klass.startsWith('text-')) {
-        console.log({klass, value})
+      if (match(klass, 'text')) {
         if (colorNames.includes(klass.split('-')[1])) {
           props.textColor = klass.substring(5)
         } else {
@@ -108,6 +132,7 @@
         break
       }
     }
+    console.log('parse: ', props)
   }
 
   $: parse(value)
@@ -131,10 +156,28 @@
   let colorVariants = ['50', '100', '200', '300', '400', '500', '600', '700', '800', '900']
   $: colors = colorNames.map((name) => colorVariants.map((variant) => `${name}-${variant}`)).flat()
 
-  function set(_props: any) {
-    props = { ...props, ..._props }
+  function set(_props: any, _props2: any = undefined) {
+    if(_props2){
+      props = { 
+      ...props,
+      [Object.keys(_props2)[0]] : {
+        ...props[Object.keys(_props2)[0]],
+        [responsiveMode]: _props2[Object.keys(_props2)[0]] ,
+        
+      } 
+    }
+
+    }else{
+      props = { ...props, ..._props }
+
+    }
+    
     console.log('set: ', props, _props)
     value = ''
+    if(props.flexDirection){
+      responsiveMode
+
+    }
     if (props.flexDirection) {
       value += 'flex flex-' + props.flexDirection
     }
@@ -147,8 +190,10 @@
       value += ` justify-` + props.justify
     }
 
-    if (props.bgColor) {
-      value += ` bg-` + props.bgColor
+    if (props.bg) {
+      for (const b in props.bg){
+        value += ` ${b}bg-${props.bg[b]}`
+      }
     }
 
     if (props.textColor) {
@@ -207,7 +252,12 @@
     if (props.Class) {
       value += props.Class
     }
+    console.log("value", value)
+
   }
+
+
+
 
   let sizes = ['xs', 'sm', 'base', 'lg', 'xl', '2xl', '3xl', '4xl', '5xl', '6xl']
 </script>
@@ -400,7 +450,7 @@
               {#each colors as color}
                 <div class="p-[1px] w-1/10 hover:shadow-lg">
                   <div
-                    on:click={() => set({ bgColor: color })}
+                    on:click={() => set({},{ bg: color })}
                     class="bg-{color} cursor-pointer h-4 w-4">
                   </div>
                 </div>

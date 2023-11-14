@@ -35,6 +35,7 @@
   export let tables: any[] = []
   export let components: any[] = []
   export let activeSlot: any
+  export let responsiveMode = ''
 
   export let items: any = {}
 
@@ -221,9 +222,6 @@
                         {/each}
 
                         </Accordions>
-            
-                          
-                        
                         <Button
                         size="sm"
                         mt="3"
@@ -245,13 +243,7 @@
                     </AccordionBody>
                   </Accordion>
                 </Accordions>
-
-                 
-                  
                 {/if}
-
-                
-
                 {#each activeSlot.props[field.name]?.slot ?? [] as slot}
                   <El class="slot-item" px="3" py="2" borderRoundSize="2" border on:click={() => selectSlot(slot.id)}>
                     {getComponent(slot.type)?.name}
@@ -264,12 +256,12 @@
         </TabPanel>
         {#if hasClass}
           <TabPanel p="2">
-            <StyleEditor bind:value={activeSlot.props.Class}/>
+            <StyleEditor bind:responsiveMode bind:value={activeSlot.props.Class}/>
           </TabPanel>
         {/if}
         {#if hasAttributes}
           <TabPanel p="2">
-            <EventsEditor bind:value={activeSlot.props.Attributes}/>
+            <EventsEditor  bind:value={activeSlot.props.Attributes}/>
           </TabPanel>
         {/if}
         

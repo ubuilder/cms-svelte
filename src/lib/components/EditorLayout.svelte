@@ -62,6 +62,9 @@
 
   const hbsTemplates: any = {}
 
+  let responsiveMode = ''
+  
+
   let leftOffcanvasOpen = false
   let rightOffcanvasOpen = false
 
@@ -397,6 +400,8 @@
 
 		return items
 	}
+  
+
 </script>
 
 <svelte:head>
@@ -417,6 +422,7 @@
       class:right-sidebar-open={rightSidebarOpen}
       class:left-sidebar-open={leftSidebarOpen}>
       <div class="flex items-center gap-2">
+
         {#if mode === 'page'}
           <HeaderItem
             icon="file"
@@ -435,6 +441,30 @@
         {/if}
         <!-- svelte-ignore a11y-click-events-have-key-events -->
         <!-- svelte-ignore a11y-no-static-element-interactions -->
+      </div>
+      <div class = 'flex items-center gap-2'>
+          <HeaderItem
+            icon="device-desktop"
+            active = {responsiveMode ==""}
+            on:click={() => {
+              responsiveMode = ''
+              
+            }} />
+          <HeaderItem active = {responsiveMode =="lg:"} icon="device-ipad-horizontal" on:click={() =>{responsiveMode ="lg:"}} />
+
+          <HeaderItem
+            icon="device-tablet"
+            active = {responsiveMode =="md:"}
+            on:click={() => {
+              responsiveMode ="md:"
+              
+            }} />
+          <HeaderItem
+            icon="device-mobile"
+            active = {responsiveMode =="sm:"}
+            on:click={() => {
+              responsiveMode ="sm:"
+            }} />
       </div>
 
       <div class="flex items-center gap-2">
@@ -572,6 +602,7 @@
           <SidebarComponentOption
             {components}
             {tables}
+            bind:responsiveMode
             bind:activeSlot
             items={getItems(activeSlot)}
             on:open-component-settings={(e) => openComponentSettings(e.detail)}

@@ -2,6 +2,7 @@
 	import { Icon } from "yesvelte"
 
 export let icon: string = '';
+export let active = false
 
 </script>
 
@@ -9,9 +10,10 @@ export let icon: string = '';
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 
 <div
+class:active= {active}
 on:click
 on:dblclick
-	class="font-bold cursor-pointer hover:text-blue-500"
+	class="font-bold cursor-pointer hover:text-blue-500 rounded"
 	style="">
     <slot>
         <Icon name={icon}/>
@@ -28,5 +30,11 @@ on:dblclick
 	div {
 		color: #6b768b; line-height: 20px; font-size: 16px;
 	}
+	.active{
+		color: #236ffb;
+		background-color: #c5d9ff;
+	}
+
+	
 
 </style>
