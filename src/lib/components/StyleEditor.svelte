@@ -18,11 +18,12 @@
   import StyleAccordion from './StyleAccordion.svelte'
 
   export let value: string
+  let _value:string
   export let responsiveMode = ''
   $:{console.log("responsive",responsiveMode)}
 
   let props: any = {}
-  let responsiveBreakPoints = ["", "sm:", "md:", "lg:"]
+  let responsiveBreakPoints = ["", "sm:", "md:", "lg:", "xl:"]
   function match(klass, value){
     // let classlist = [
     //   "bg", "text",
@@ -156,17 +157,59 @@
   let colorVariants = ['50', '100', '200', '300', '400', '500', '600', '700', '800', '900']
   $: colors = colorNames.map((name) => colorVariants.map((variant) => `${name}-${variant}`)).flat()
 
-  function set(_props: any, _props2: any = undefined) {
-    if(_props2){
-      props = { 
-      ...props,
-      [Object.keys(_props2)[0]] : {
-        ...props[Object.keys(_props2)[0]],
-        [responsiveMode]: _props2[Object.keys(_props2)[0]] ,
-        
-      } 
-    }
+  function set(_props: any, key:string, val:string) {
+    console.log({key, val})
+    console.log({props})
+    const currentIndex = responsiveBreakPoints.findIndex((x)=> x == responsiveMode)
+    function isSmallerPoints(prop){
+        console.log('reverse:', prop.reverse())
+        for (let x of prop.reverse()){
+          const index = responsiveBreakPoints.slice(0, currentIndex).findIndex((y)=>{
+            if(x==y){
+              return true
+            }
+          })
+          if(index !== -1)return index
+        }
+        return false
+      }
+    if(key){
+      ///check if there is smaller break point added before
+      ///if not the set default stlyle to current + 1 and set the current style to default 
+      ///if yes exits then set the current styl to previous style + 1 
+      //{
+        // "":"red-500",
+        // "lg":"green-500",
+      // }
+      console.log({currentIndex})
+     
 
+     
+      
+      if(isSmallerPoints(Object.keys(props[key]??{}))){
+        console.log(1)
+
+        props[key] = {
+          [responsiveMode]: val
+        }
+      }else if(responsiveMode == '' && Object.keys(props[key]??{}).includes('')){
+
+        props[key][""]  = val
+      }else if(Object.keys(props[key]??{}).includes('')){
+        console.log(2)
+        
+        const defaultt = props[key][responsiveBreakPoints[0]]
+
+        props[key][responsiveBreakPoints[currentIndex + 1]] = defaultt
+        props[key][responsiveBreakPoints[0]] = val
+      }else{
+        let index = 0
+        if(isSmallerPoints(Object.keys(props)??{})){
+          index = isSmallerPoints(Object.keys(props)??{}) + 1
+        }
+        props[key] = {...props[key], [responsiveBreakPoints[index]] :val }
+      }
+      console.log({props})
     }else{
       props = { ...props, ..._props }
 
@@ -174,6 +217,7 @@
     
     console.log('set: ', props, _props)
     value = ''
+   
     if(props.flexDirection){
       responsiveMode
 
@@ -193,8 +237,15 @@
     if (props.bg) {
       for (const b in props.bg){
         value += ` ${b}bg-${props.bg[b]}`
+        console.log('b:', b, responsiveMode)
+        responsiveBreakPoints.slice(0, currentIndex).map(x=>{
+          if(x==b){
+            value += ` xs:bg-${props.bg[b]}`
+          }
+        })
       }
     }
+
 
     if (props.textColor) {
       value += ` text-` + props.textColor
@@ -252,6 +303,7 @@
     if (props.Class) {
       value += props.Class
     }
+    value = value
     console.log("value", value)
 
   }
@@ -450,7 +502,7 @@
               {#each colors as color}
                 <div class="p-[1px] w-1/10 hover:shadow-lg">
                   <div
-                    on:click={() => set({},{ bg: color })}
+                    on:click={() => set({},"bg", color)}
                     class="bg-{color} cursor-pointer h-4 w-4">
                   </div>
                 </div>

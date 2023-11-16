@@ -62,7 +62,7 @@
 
   const hbsTemplates: any = {}
 
-  let responsiveMode = ''
+  let responsiveMode = ""
   
 
   let leftOffcanvasOpen = false

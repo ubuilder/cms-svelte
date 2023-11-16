@@ -650,7 +650,7 @@
   }
 </script>
 
-<div style="width: 100%; height: 100%">
+<div style="width: 100%; height: 100%" class = "@container-normal">
   <div
     bind:this={contentEl}
     on:click={() => openComponentList()}
