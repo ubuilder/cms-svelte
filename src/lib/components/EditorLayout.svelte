@@ -625,6 +625,7 @@
       {#if page}
         <SlotEditor
         bind:slotMap
+          {responsiveMode}
           {components}
           {hbsTemplates}
           bind:this={editor}

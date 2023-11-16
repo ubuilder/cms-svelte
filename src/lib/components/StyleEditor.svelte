@@ -33,7 +33,6 @@
     //    "p", 'pt' , "ps", 'pe' , "pb",
     //    "w", "h",
     // ]
-
     if(klass.startsWith(`${value}-`) || klass.startsWith(`sm:${value}-`) || klass.startsWith(`md:${value}-`) || klass.startsWith(`lg:${value}-`)){
       return true
     }
@@ -63,9 +62,9 @@
       }
       if (match(klass, 'text')) {
         if (colorNames.includes(klass.split('-')[1])) {
-          props.textColor = klass.substring(5)
+          props.textColor = {...props.textColor, ...extractResponsiveClasses(klass, "text")}
         } else {
-          props.fontSize = klass.substring(5)
+          props.fontSize = {...props.fontSize, ...extractResponsiveClasses(klass, "text")}
         }
       }
 
@@ -79,8 +78,8 @@
         props.flexDirection = klass.substring(5)
       }
 
-      if (klass.startsWith('w-[')) {
-        props.width = klass.substring(3, klass.length - 1)
+      if (match(klass, 'w')) {
+        props.width =  {...props.width, ...extractResponsiveClasses(klass, "width")}
       }
 
       if (klass.startsWith('h-[')) {
@@ -160,16 +159,20 @@
   function set(_props: any, key:string, val:string) {
     console.log({key, val})
     console.log({props})
-    const currentIndex = responsiveBreakPoints.findIndex((x)=> x == responsiveMode)
+    let currentIndex = responsiveBreakPoints.findIndex((x)=> x == responsiveMode)
+    if(responsiveMode == '') currentIndex = 4
     function isSmallerPoints(prop){
         console.log('reverse:', prop.reverse())
+        console.log('in:', responsiveBreakPoints.slice(1, currentIndex))
+        const inn = responsiveBreakPoints.slice(1, currentIndex)
         for (let x of prop.reverse()){
-          const index = responsiveBreakPoints.slice(0, currentIndex).findIndex((y)=>{
+          const index = inn.findIndex((y)=>{
             if(x==y){
               return true
             }
+            return false
           })
-          if(index !== -1)return index
+          if(index !== -1)return (inn.length) - index
         }
         return false
       }
@@ -177,36 +180,19 @@
       ///check if there is smaller break point added before
       ///if not the set default stlyle to current + 1 and set the current style to default 
       ///if yes exits then set the current styl to previous style + 1 
-      //{
-        // "":"red-500",
-        // "lg":"green-500",
-      // }
       console.log({currentIndex})
-     
-
-     
-      
-      if(isSmallerPoints(Object.keys(props[key]??{}))){
+      console.log('smailler point', isSmallerPoints(Object.keys(props[key]??{})))
+      if(isSmallerPoints(Object.keys(props[key]??{})) === false){
         console.log(1)
-
         props[key] = {
-          [responsiveMode]: val
+          ...props[key],
+          ['']: val,
+          [responsiveBreakPoints[currentIndex]] : val
         }
-      }else if(responsiveMode == '' && Object.keys(props[key]??{}).includes('')){
-
-        props[key][""]  = val
-      }else if(Object.keys(props[key]??{}).includes('')){
-        console.log(2)
-        
-        const defaultt = props[key][responsiveBreakPoints[0]]
-
-        props[key][responsiveBreakPoints[currentIndex + 1]] = defaultt
-        props[key][responsiveBreakPoints[0]] = val
       }else{
-        let index = 0
-        if(isSmallerPoints(Object.keys(props)??{})){
-          index = isSmallerPoints(Object.keys(props)??{}) + 1
-        }
+        
+        let index = isSmallerPoints(Object.keys(props[key])??{}) + 1
+        console.log(2)
         props[key] = {...props[key], [responsiveBreakPoints[index]] :val }
       }
       console.log({props})
@@ -237,26 +223,26 @@
     if (props.bg) {
       for (const b in props.bg){
         value += ` ${b}bg-${props.bg[b]}`
-        console.log('b:', b, responsiveMode)
-        responsiveBreakPoints.slice(0, currentIndex).map(x=>{
-          if(x==b){
-            value += ` xs:bg-${props.bg[b]}`
-          }
-        })
       }
     }
 
 
     if (props.textColor) {
-      value += ` text-` + props.textColor
+      for (const b in props.textColor){
+        value += ` ${b}text-${props.textColor[b]}`
+      }
     }
 
     if (props.fontSize) {
-      value += ` text-` + props.fontSize
+      for (const b in props.fontSize){
+        value += ` ${b}text-${props.fontSize[b]}`
+      }
     }
 
     if (props.width) {
-      value += ` w-[` + props.width + ']'
+      for (const b in props.width){
+        value += ` ${b}w-[${props.width[b]}]`
+      }
     }
 
     // hight .......................
@@ -324,11 +310,10 @@
     <StyleAccordion title="Size">
       <!--font size---------------------------------------->
       <FormSelect
-        placeholder={props.fontSize ?? 'choose a size'}
+        placeholder={(props.fontSize?props.fontSize[responsiveMode]: 'choose a size') }
         items={sizes}
         label="Font size"
-        bind:value={props.fontSize}
-        on:change={(e) => set({ fontSize: e.target.value })}
+        on:change={(e) => set("", "fontSize",  e.target.value)}
         let:item>
         <El>{item}</El>
       </FormSelect>
@@ -336,8 +321,8 @@
       <FormField label="Sizes">
         <FormSlider
           attribute="Width"
-          value={props.width}
-          on:change={(e) => set({ width: e.detail })} />
+          value={props.width?props.width[responsiveMode]: ''}
+          on:change={(e) => set("",  "width",  e.detail )} />
 
         <FormSlider
           attribute="Hight"
@@ -494,7 +479,7 @@
         <El class="flex gap-2">
           <button
             class="flex flex-1 items-center border border-gray-300 font-bold py-2 px-4 rounded bg-gray-200">
-            <div class="w-4 h-4 me-2 border border-gray-300 bg-{props.bgColor}"></div>
+            <div class="w-4 h-4 me-2 border border-gray-300 bg-{(props.bg?props.bg[responsiveMode]: '')}"></div>
             Background
           </button>
           <Popover placement="bottom-start">
@@ -509,13 +494,13 @@
               {/each}
               <div class="p-[1px] w-1/10 hover:shadow-lg">
                 <div
-                  on:click={() => set({ bgColor: 'white' })}
+                  on:click={() => set('', "bg", "white")}
                   class="bg-{'white'} cursor-pointer h-4 w-4">
                 </div>
               </div>
               <div class="p-[1px] w-1/10 hover:shadow-lg">
                 <div
-                  on:click={() => set({ bgColor: 'black' })}
+                  on:click={() => set("", "bg", "black")}
                   class="bg-{'black'} cursor-pointer h-4 w-4">
                 </div>
               </div>
@@ -524,7 +509,7 @@
 
           <button
             class="flex flex-1 items-center border border-gray-300 font-bold py-2 px-4 rounded bg-gray-200">
-            <div class="w-4 h-4 me-2 border border-gray-300 bg-{props.textColor}"></div>
+            <div class="w-4 h-4 me-2 border border-gray-300 bg-{(props.textColor?props.textColor[responsiveMode]:"")}"></div>
             Text
           </button>
           <Popover placement="bottom-start">
@@ -532,20 +517,20 @@
               {#each colors as color}
                 <div class="p-[1px] w-1/10 hover:shadow-lg">
                   <div
-                    on:click={() => set({ textColor: color })}
+                    on:click={() => set("", "textColor" , color )}
                     class="bg-{color} cursor-pointer h-4 w-4">
                   </div>
                 </div>
               {/each}
               <div class="p-[1px] w-1/10 hover:shadow-lg">
                 <div
-                  on:click={() => set({ textColor: 'white' })}
+                  on:click={() => set("", "textColor", 'white' )}
                   class="bg-{'white'} cursor-pointer h-4 w-4">
                 </div>
               </div>
               <div class="p-[1px] w-1/10 hover:shadow-lg">
                 <div
-                  on:click={() => set({ textColor: 'black' })}
+                  on:click={() => set("", "textColor", 'black' )}
                   class="bg-{'black'} cursor-pointer h-4 w-4">
                 </div>
               </div>

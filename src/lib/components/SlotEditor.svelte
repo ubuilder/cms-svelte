@@ -21,6 +21,7 @@
   let borderPosition: any = {}
   let hoverBorderPosition: any = {}
   export let components: any[] = []
+  export let responsiveMode  = ""
 
   let instance: any
 
@@ -650,7 +651,7 @@
   }
 </script>
 
-<div style="width: 100%; height: 100%" class = "@container-normal">
+<div style="margin-left: auto;margin-right: auto;width: 100%; height: 100%"  class = "@container" class:sm={responsiveMode == 'sm:'} class:md ={responsiveMode =='md:'} class:lg={responsiveMode =='lg:'}>
   <div
     bind:this={contentEl}
     on:click={() => openComponentList()}
@@ -734,3 +735,18 @@
     </div>
   </div>
 </div>
+<style>
+  .xs{
+    max-width: 380px;
+  }
+  .sm{
+    max-width: 480px;
+  }
+  .md{
+    max-width: 720px;
+  }
+  .lg{
+    max-width: 1300px;
+  }
+  
+</style>
