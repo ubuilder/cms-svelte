@@ -1,6 +1,6 @@
 <script lang="ts">
   import EditorOffcanvases from './EditorOffcanvases.svelte'
-
+  import containerQuery from '@tailwindcss/container-queries'
   import hbs from 'handlebars'
   import '@ulibs/yesvelte/styles.css'
   import './Editor.css'
@@ -62,8 +62,7 @@
 
   const hbsTemplates: any = {}
 
-  let responsiveMode = ""
-  
+  let responsiveMode = '@xs:'
 
   let leftOffcanvasOpen = false
   let rightOffcanvasOpen = false
@@ -252,101 +251,95 @@
   }
 
   $: if (page) {
-	function findAndReplace(list) {
-		for(let slot of list) {
-			const component = getComponent(slot.type)
-			for (let field of component.fields) {
-				if (field.type === 'slot') {
-					if (Array.isArray(slot.props[field.name] ?? [])) {
-						findAndReplace(slot.props[field.name] ?? [])
+    function findAndReplace(list) {
+      for (let slot of list) {
+        const component = getComponent(slot.type)
+        for (let field of component.fields) {
+          if (field.type === 'slot') {
+            if (Array.isArray(slot.props[field.name] ?? [])) {
+              findAndReplace(slot.props[field.name] ?? [])
 
-						slot.props[field.name] = {
-						slot: slot.props[field.name] ?? [],
-						}
-					}
-				}
-			}
-		}
-	}
-	findAndReplace(page.slot)
+              slot.props[field.name] = {
+                slot: slot.props[field.name] ?? [],
+              }
+            }
+          }
+        }
+      }
+    }
+    findAndReplace(page.slot)
   }
 
   let leftSidebarOpen = false
   let rightSidebarOpen = false
 
   function getGlobalItems() {
-  	let params = page.slug?.match(/\{\w+\}/g)
-  return {
-			page: {
-				text: 'Page',
-				type: 'object',
-				content: {
-					slug: {
-						text: "Page's Slug",
-						type: 'plain_text',
-					},
-					params: {
-						type: 'object',
-						text: "Page's URL params",
-						content: params?.reduce((prev, curr) => {
-							const key = curr.substring(1, curr.length - 1)
-							return {
-								...prev,
-								[key]: {
-									text: "Page's param (" + key + ')',
-									type: 'plain_text',
-								},
-							}
-						}, {}),
-					},
-					title: {
-						text: "Page's Title",
-						type: 'plain_text',
-					},
-					description: {
-						text: "Page's Description",
-						type: 'plain_text',
-					},
-
-
-				},
-			}
-		}
-
+    let params = page.slug?.match(/\{\w+\}/g)
+    return {
+      page: {
+        text: 'Page',
+        type: 'object',
+        content: {
+          slug: {
+            text: "Page's Slug",
+            type: 'plain_text',
+          },
+          params: {
+            type: 'object',
+            text: "Page's URL params",
+            content: params?.reduce((prev, curr) => {
+              const key = curr.substring(1, curr.length - 1)
+              return {
+                ...prev,
+                [key]: {
+                  text: "Page's param (" + key + ')',
+                  type: 'plain_text',
+                },
+              }
+            }, {}),
+          },
+          title: {
+            text: "Page's Title",
+            type: 'plain_text',
+          },
+          description: {
+            text: "Page's Description",
+            type: 'plain_text',
+          },
+        },
+      },
+    }
   }
 
   let slotMap: any = {}
-  function getParentItems(parent_id: any):any {
-
-
+  function getParentItems(parent_id: any): any {
     const slot = slotMap[parent_id]
     let items = {}
-    if(slot?.parent_id) {
+    if (slot?.parent_id) {
       items = getParentItems(slot.parent_id)
     } else {
-      items = getGlobalItems()   
+      items = getGlobalItems()
     }
 
-    if(!slot) return items
-    const component= getComponent(slot.type)
+    if (!slot) return items
+    const component = getComponent(slot.type)
 
-    for(let field of component.fields) {
-      if(field.type === 'slot') {
+    for (let field of component.fields) {
+      if (field.type === 'slot') {
         const options = slot.props[field.name]
 
-        let  fields  = {}
-        const table = tables.filter((table)=>table.id == options.table)[0]
-        for (let field of table?.fields ?? []){
+        let fields = {}
+        const table = tables.filter((table) => table.id == options.table)[0]
+        for (let field of table?.fields ?? []) {
           fields[field.name] = {
             text: `${options.name}'s ${field.name}`,
-            type: field.type
+            type: field.type,
           }
         }
 
         items[options.name] = {
-          type: "object",
-          content: fields
-          
+          type: 'object',
+          content: fields,
         }
       }
     }
@@ -354,60 +347,62 @@
     return items
   }
   function getItems(slot: any): any {
-      let items = getParentItems(activeSlot.parent_id)
+    let items = getParentItems(activeSlot.parent_id)
 
-		// for (let item of load) {
+    // for (let item of load) {
 
-		// 	const table = tables.find((x) => x.id === item.table)
-		// 	if (!table) continue
+    // 	const table = tables.find((x) => x.id === item.table)
+    // 	if (!table) continue
 
-		// 	const fields: any = {}
-		// 	fields.id = {
-		// 		text: 'ID',
-		// 		type: 'plain_text'
-		// 	}
-		// 	for (let field of table.fields) {
-		// 		fields[field.name] = {
-		// 			text: `${item.name}'s ${field.name}`,
-		// 			type: field.type,
-		// 		}
+    // 	const fields: any = {}
+    // 	fields.id = {
+    // 		text: 'ID',
+    // 		type: 'plain_text'
+    // 	}
+    // 	for (let field of table.fields) {
+    // 		fields[field.name] = {
+    // 			text: `${item.name}'s ${field.name}`,
+    // 			type: field.type,
+    // 		}
 
-		// 		if (field.type === 'relation') {
-		// 			const otherTable = tables.find((x) => x.id === (field as FieldRelation).table)
-		// 			const otherFields: any = {}
-		// 			for (let otherField of otherTable.fields) {
-		// 				otherFields[otherField.name] = {
-		// 					text: `${item.name} ${field.name} ${otherField.name}`,
-		// 					type: otherField.type,
-		// 				}
-		// 			}
+    // 		if (field.type === 'relation') {
+    // 			const otherTable = tables.find((x) => x.id === (field as FieldRelation).table)
+    // 			const otherFields: any = {}
+    // 			for (let otherField of otherTable.fields) {
+    // 				otherFields[otherField.name] = {
+    // 					text: `${item.name} ${field.name} ${otherField.name}`,
+    // 					type: otherField.type,
+    // 				}
+    // 			}
 
-		// 			fields[field.name].content = otherFields
-		// 			fields[field.name].type = field.multiple ? 'array' : 'object'
-		// 		}
+    // 			fields[field.name].content = otherFields
+    // 			fields[field.name].type = field.multiple ? 'array' : 'object'
+    // 		}
 
-		// 		if (field.type === 'image' || field.type === 'file') {
-		// 			// alt, url, caption from assets....
-		// 		}
-		// 	}
+    // 		if (field.type === 'image' || field.type === 'file') {
+    // 			// alt, url, caption from assets....
+    // 		}
+    // 	}
 
-		// 	items[item.name] = {
-		// 		type: item.multiple ? 'array' : 'object',
-		// 		text: item.name,
-		// 		content: fields,
-		// 	}
-		// }
+    // 	items[item.name] = {
+    // 		type: item.multiple ? 'array' : 'object',
+    // 		text: item.name,
+    // 		content: fields,
+    // 	}
+    // }
 
-		return items
-	}
-  
-
+    return items
+  }
 </script>
 
 <svelte:head>
   <!-- <script src="https://cdn.tailwindcss.com?plugins=forms,typography,aspect-ratio,line-clamp"></script> -->
   <!-- <script src="https://cdn.tailwindcss.com?plugins=forms,typography,aspect-ratio,line-clamp"></script> -->
+  <!-- <script src="https://cdn.tailwindcss.com?plugins=forms,typography,aspect-ratio,line-clamp"></script> -->
+  <!-- <script src="https://cdn.tailwindcss.com?plugins=forms,typography,aspect-ratio,line-clamp"></script> -->
   <script src="/cdn.tailwindcss.com.js"></script>
+  <script src="/src/lib/helpers/containerQuery.js"></script>
+
   {#if page}
     {@html page?.head}
   {/if}
@@ -422,7 +417,6 @@
       class:right-sidebar-open={rightSidebarOpen}
       class:left-sidebar-open={leftSidebarOpen}>
       <div class="flex items-center gap-2">
-
         {#if mode === 'page'}
           <HeaderItem
             icon="file"
@@ -442,29 +436,32 @@
         <!-- svelte-ignore a11y-click-events-have-key-events -->
         <!-- svelte-ignore a11y-no-static-element-interactions -->
       </div>
-      <div class = 'flex items-center gap-2'>
-          <HeaderItem
-            icon="device-desktop"
-            active = {responsiveMode ==""}
-            on:click={() => {
-              responsiveMode = ''
-              
-            }} />
-          <HeaderItem active = {responsiveMode =="lg:"} icon="device-ipad-horizontal" on:click={() =>{responsiveMode ="lg:"}} />
+      <div class="flex items-center gap-2">
+        <HeaderItem
+          icon="device-desktop"
+          active={responsiveMode == '@xs:'}
+          on:click={() => {
+            responsiveMode = '@xs:'
+          }} />
+        <HeaderItem
+          active={responsiveMode == '@lg:'}
+          icon="device-ipad-horizontal"
+          on:click={() => {
+            responsiveMode = '@lg:'
+          }} />
 
-          <HeaderItem
-            icon="device-tablet"
-            active = {responsiveMode =="md:"}
-            on:click={() => {
-              responsiveMode ="md:"
-              
-            }} />
-          <HeaderItem
-            icon="device-mobile"
-            active = {responsiveMode =="sm:"}
-            on:click={() => {
-              responsiveMode ="sm:"
-            }} />
+        <HeaderItem
+          icon="device-tablet"
+          active={responsiveMode == '@md:'}
+          on:click={() => {
+            responsiveMode = '@md:'
+          }} />
+        <HeaderItem
+          icon="device-mobile"
+          active={responsiveMode == '@sm:'}
+          on:click={() => {
+            responsiveMode = '@sm:'
+          }} />
       </div>
 
       <div class="flex items-center gap-2">
@@ -612,8 +609,7 @@
             on:update={(e) => {
               editor.render(e.detail)
               reload(['components'])
-            }}
-             />
+            }} />
         {/if}
       </div>
     </div>
@@ -624,7 +620,7 @@
       class:left-sidebar-open={leftSidebarOpen}>
       {#if page}
         <SlotEditor
-        bind:slotMap
+          bind:slotMap
           {responsiveMode}
           {components}
           {hbsTemplates}

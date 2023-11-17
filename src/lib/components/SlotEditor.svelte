@@ -21,7 +21,7 @@
   let borderPosition: any = {}
   let hoverBorderPosition: any = {}
   export let components: any[] = []
-  export let responsiveMode  = ""
+  export let responsiveMode = ''
 
   let instance: any
 
@@ -100,7 +100,6 @@
 
   async function forEachSlot(slots = [], cb, parent = null) {
     for (let slot of slots) {
-
       const component = getComponent(slot.type)
       await cb(slot, parent, slots)
 
@@ -230,7 +229,14 @@
 
         const a = document.querySelector(`[id="component-${slot.id}"]`)
         if (a) {
-          a.outerHTML = await renderSlot(slot, slot.parent_id??'', slot.parent_field??'', slot.parent_index??0, false, {}) // without placeholder
+          a.outerHTML = await renderSlot(
+            slot,
+            slot.parent_id ?? '',
+            slot.parent_field ?? '',
+            slot.parent_index ?? 0,
+            false,
+            {}
+          ) // without placeholder
         }
       }
     } else {
@@ -327,7 +333,9 @@
 
             console.log('content: ', content)
             if (content) {
-              props[field.name] = `<div class="slot" data-dynamic data-parent="${id}" data-index="0">${
+              props[
+                field.name
+              ] = `<div class="slot" data-dynamic data-parent="${id}" data-index="0">${
                 content + placeholder(id, field.name, slot.props?.[field.name].length)
               }</div>`
             } else {
@@ -357,7 +365,6 @@
 
       props['Class'] = slot.props['Class'] ?? ''
       props['Attributes'] = slot.props['Attributes'] ?? ''
-
 
       if (hbsTemplates[slot.type]) {
         setTimeout(() => {
@@ -473,8 +480,8 @@
 
   onMount(() => {
     getClipboardSlot()
-    // clipboardSlot
     initialRender()
+    makeResizeable()
   })
 
   $: if (contentEl && slotList) {
@@ -649,16 +656,76 @@
 
     insertComponent(slot.type, parent, field, index, slot.props)
   }
+
+  let controler: HTMLDivElement
+  let width = '100%'
+  let left = '100%'
+  $: setWidth(responsiveMode)
+  function setWidth() {
+    width = '100%'
+    left = '100%'
+  }
+  
+  function makeResizeable() {
+    const widthsMap = {
+      '@xs:': [200, 380],
+      '@sm:': [380, 512],
+      '@md:': [512, 672],
+      '@lg:': [672, 896],
+      '@xl:': [896, 1200],
+    }
+    controler.addEventListener('mousedown', (e) => {
+      controler.addEventListener('mousemove', resize)
+    })
+    controler.addEventListener('mouseup', (e) => {
+      controler.removeEventListener('mousemove', resize)
+    })
+    controler.addEventListener('mouseleave', (e) => {
+      controler.removeEventListener('mousemove', resize)
+    })
+    function resize(e) {
+      if (left.endsWith('px')) {
+        let x = left
+        x.replace('px', '')
+        x = Number.parseFloat(x)
+        if (
+          x < widthsMap[responsiveMode][0] &&
+          x > e.pageX - contentEl.getBoundingClientRect().left
+        )
+          return
+        if (
+          x > widthsMap[responsiveMode][1] &&
+          x < e.pageX - contentEl.getBoundingClientRect().left
+        )
+          return
+      }
+      width = e.pageX - contentEl.getBoundingClientRect().left + 'px'
+      left = width
+    }
+  }
+
 </script>
 
-<div style="margin-left: auto;margin-right: auto;width: 100%; height: 100%"  class = "@container" class:sm={responsiveMode == 'sm:'} class:md ={responsiveMode =='md:'} class:lg={responsiveMode =='lg:'}>
+<!-- <iframe bind:this = {iframe} src = '/iframe' width = '200' height = '200'>
+
+</iframe> -->
+
+<div
+  style="margin-left: auto;margin-right: auto;width: 100%; height: 100%;"
+  class="@container"
+  class:sm={responsiveMode == '@sm:'}
+  class:md={responsiveMode == '@md:'}
+  class:lg={responsiveMode == '@lg:'}>
   <div
+    id="content-el"
     bind:this={contentEl}
     on:click={() => openComponentList()}
     class="content"
     data-dropzone
-    class:dragging>
+    class:dragging
+    style="width:{width};">
   </div>
+  <div style="left: {left}" class="controler" bind:this={controler}></div>
 </div>
 <div
   class="component-hover-border"
@@ -735,18 +802,43 @@
     </div>
   </div>
 </div>
+
 <style>
-  .xs{
-    max-width: 380px;
+  /* xs: '1rem',
+      sm: '24rem',
+      md: '32rem',
+      lg: '42rem',
+      xl: '56rem',
+      '2xl': '66rem',
+      '3xl': '76rem',
+      '4xl': '86rem',
+      '5xl': '96rem',
+      '6xl': '106rem',
+      '7xl': '116rem', */
+  .xs {
+    max-width: 24rem;
   }
-  .sm{
-    max-width: 480px;
+  .sm {
+    max-width: 32rem;
   }
-  .md{
-    max-width: 720px;
+  .md {
+    max-width: 42rem;
   }
-  .lg{
-    max-width: 1300px;
+  .lg {
+    max-width: 56rem;
   }
-  
+  .controler {
+    background-color: rgb(92, 92, 92);
+    width: 10px;
+    cursor: ew-resize;
+    z-index: 10;
+    margin-left: auto;
+    height: 200px;
+    position: absolute;
+    top: 12px;
+    left: 100%;
+  }
+  .controler:hover {
+    background-color: rgb(119, 192, 255);
+  }
 </style>

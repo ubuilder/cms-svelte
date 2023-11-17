@@ -1,4 +1,6 @@
 <script>
+  import { CardBody } from 'yesvelte'
+
   export let data
 </script>
 
@@ -8,9 +10,11 @@
 	<meta name="description" content={data.page.description} />
 
 	<!-- <script src="https://cdn.tailwindcss.com?plugins=forms,typography,aspect-ratio,line-clamp"></script> -->
-	<script src="/cdn.tailwindcss.com.js"></script>
-
+	<script>
 	
+</script>
+	<script src="/cdn.tailwindcss.com.js"></script>
+	<script src="/src/lib/helpers/containerQuery.js"></script>
 </svelte:head>
 
 {#if false}
