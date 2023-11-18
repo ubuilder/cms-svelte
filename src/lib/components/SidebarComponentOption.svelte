@@ -35,7 +35,7 @@
   export let tables: any[] = []
   export let components: any[] = []
   export let activeSlot: any
-  export let responsiveMode = ''
+  export let responsiveMode = '@xl:'
 
   export let items: any = {}
 

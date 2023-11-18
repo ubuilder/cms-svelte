@@ -21,7 +21,7 @@
   let borderPosition: any = {}
   let hoverBorderPosition: any = {}
   export let components: any[] = []
-  export let responsiveMode = ''
+  export let responsiveMode = '@xl:'
 
   let instance: any
 

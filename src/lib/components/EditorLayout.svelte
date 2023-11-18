@@ -62,7 +62,7 @@
 
   const hbsTemplates: any = {}
 
-  let responsiveMode = '@xs:'
+  let responsiveMode = '@xl:'
 
   let leftOffcanvasOpen = false
   let rightOffcanvasOpen = false
@@ -439,9 +439,9 @@
       <div class="flex items-center gap-2">
         <HeaderItem
           icon="device-desktop"
-          active={responsiveMode == '@xs:'}
+          active={responsiveMode == '@xl:'}
           on:click={() => {
-            responsiveMode = '@xs:'
+            responsiveMode = '@xl:'
           }} />
         <HeaderItem
           active={responsiveMode == '@lg:'}
