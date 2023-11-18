@@ -48,7 +48,6 @@
   function extractResponsiveClasses(value, stile) {
     let res = {}
     value = value.trim().replace('[','').replace(']', "")
-    
     if (value.startsWith(`@xs:${stile}-`)) {
       res['@xs:'] = value.split(`@xs:${stile}-`)[1]
     } else if (value.startsWith(`@sm:${stile}-`)) {

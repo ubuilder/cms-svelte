@@ -675,13 +675,13 @@
       '@xl:': [896, 1200],
     }
     controler.addEventListener('mousedown', (e) => {
-      controler.addEventListener('mousemove', resize)
+      wrapper.addEventListener('mousemove', resize)
     })
-    controler.addEventListener('mouseup', (e) => {
-      controler.removeEventListener('mousemove', resize)
+    wrapper.addEventListener('mouseup', (e) => {
+      wrapper.removeEventListener('mousemove', resize)
     })
-    controler.addEventListener('mouseleave', (e) => {
-      controler.removeEventListener('mousemove', resize)
+    wrapper.addEventListener('mouseleave', (e) => {
+      wrapper.removeEventListener('mousemove', resize)
     })
     function resize(e) {
       if (left.endsWith('px')) {
@@ -699,10 +699,11 @@
         )
           return
       }
-      width = e.pageX - contentEl.getBoundingClientRect().left + 'px'
+      width = (e.pageX - contentEl.getBoundingClientRect().left) + 'px'
       left = width
     }
   }
+  let wrapper:HTMLDivElement
 
 </script>
 
@@ -715,7 +716,9 @@
   class="@container"
   class:sm={responsiveMode == '@sm:'}
   class:md={responsiveMode == '@md:'}
-  class:lg={responsiveMode == '@lg:'}>
+  class:lg={responsiveMode == '@lg:'}
+  bind:this = {wrapper}>
+  
   <div
     id="content-el"
     bind:this={contentEl}
