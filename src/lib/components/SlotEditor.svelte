@@ -712,21 +712,21 @@
 </iframe> -->
 
 <div
-  style="margin-left: auto;margin-right: auto;width: 100%; height: 100%;"
-  class="@container"
+  style="margin-left: auto;margin-right: auto;width: 100%; height: 100%;position:relative"
   class:sm={responsiveMode == '@sm:'}
   class:md={responsiveMode == '@md:'}
   class:lg={responsiveMode == '@lg:'}
+  class = ""
   bind:this = {wrapper}>
   
   <div
     id="content-el"
     bind:this={contentEl}
     on:click={() => openComponentList()}
-    class="content"
+    class="content @container"
     data-dropzone
     class:dragging
-    style="width:{width};">
+    style="width: {width}">
   </div>
   <div style="left: {left}" class="controler" bind:this={controler}></div>
 </div>

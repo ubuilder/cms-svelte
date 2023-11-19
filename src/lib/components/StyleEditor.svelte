@@ -1,29 +1,15 @@
 <script lang="ts">
   import { onMount } from 'svelte'
-  import {
-    Accordions,
-    El,
-    FormField,
-    FormInput,
-    FormSelect,
-    Icon,
-    Popover,
-    PopoverBody,
-  } from 'yesvelte'
+  import { Accordions, El, FormInput } from 'yesvelte'
   import FormSlider from './FormSlider.svelte'
   import StyleAccordion from './StyleAccordion.svelte'
-  import type { Script } from 'vm'
   import Display from './styles/Display.svelte'
   import Color from './styles/Color.svelte'
   import Border from './styles/Border.svelte'
   import Size from './styles/Size.svelte'
 
   export let value: string
-  let _value: string
   export let responsiveMode = '@xl:'
-  $: {
-    console.log('responsive', responsiveMode)
-  }
 
   let props: any = {}
   let responsiveBreakPoints = ['@xs:', '@sm:', '@md:', '@lg:', '@xl:']
@@ -47,7 +33,7 @@
   }
   function extractResponsiveClasses(value, stile) {
     let res = {}
-    value = value.trim().replace('[','').replace(']', "")
+    value = value.trim().replace('[', '').replace(']', '')
     if (value.startsWith(`@xs:${stile}-`)) {
       res['@xs:'] = value.split(`@xs:${stile}-`)[1]
     } else if (value.startsWith(`@sm:${stile}-`)) {
@@ -69,16 +55,22 @@
     props.mb = {}
 
     props.b = {}
-    props.bl = {}
-    props.br = {}
-    props.bb = {}
     props.bt = {}
+    props.bb = {}
+    props.bs = {}
+    props.be = {}
+
+    props.borderStyle = {}
+    props.borderStyleT = {}
+    props.borderStyleB = {}
+    props.borderStyleS = {}
+    props.borderStyleE = {}
 
     props.p = {}
-    props.pb = {}
     props.pt = {}
-    props.pl = {}
-    props.pr = {}
+    props.pb = {}
+    props.ps = {}
+    props.pe = {}
 
     props.bg = {}
 
@@ -90,25 +82,19 @@
     props.w = {}
     props.h = {}
 
-    props.borderSides = {}
-    props.borderSidesT = {}
-    props.borderSidesL = {}
-    props.borderSidesR = {}
-    props.borderSidesB = {}
-    props.activeBorders = {t:true, r: true}
-    
-    props.borderStyle = {}
+  
     props.textColor = {}
     props.flexDirection = {}
     props.justify = {}
-    
 
     for (let index in classes) {
+      
       let klass = classes[index]
+      console.log({klass})
       if (match(klass, 'bg')) {
         props.bg = { ...props.bg, ...extractResponsiveClasses(klass, 'bg') }
       }
-      if (match(klass, 'text')) {
+      else if (match(klass, 'text')) {
         if (colorNames.includes(klass.split('-')[1])) {
           props.textColor = { ...props.textColor, ...extractResponsiveClasses(klass, 'text') }
         } else {
@@ -116,58 +102,100 @@
         }
       }
 
-      if (match(klass, 'items')) {
+      else if (match(klass, 'items')) {
         props.items = { ...props.items, ...extractResponsiveClasses(klass, 'items') }
       }
-      if (match(klass, 'justify')) {
+      else if (match(klass, 'justify')) {
         props.justify = { ...props.justify, ...extractResponsiveClasses(klass, 'justify') }
       }
-      if (match(klass, 'flex')) {
+      else if (match(klass, 'flex')) {
         props.flex = { ...props.flex, ...extractResponsiveClasses(klass, 'flex') }
       }
 
-      if (match(klass, 'w')) {
+      else if (match(klass, 'w')) {
         props.w = { ...props.w, ...extractResponsiveClasses(klass, 'w') }
       }
 
-      if (match(klass, 'h')) {
+      else if (match(klass, 'h')) {
         props.h = { ...props.h, ...extractResponsiveClasses(klass, 'h') }
       }
 
       // padding sizing ......................................................
-      if (match(klass, 'pt')) {
+      else if (match(klass, 'p')) {
+        props.p = { ...props.p, ...extractResponsiveClasses(klass, 'p') }
+      }
+      else if (match(klass, 'pt')) {
         props.pt = { ...props.pt, ...extractResponsiveClasses(klass, 'pt') }
       }
 
-      if (match(klass, 'pl')) {
-        props.pl = { ...props.pl, ...extractResponsiveClasses(klass, 'pl') }
+      else if (match(klass, 'ps')) {
+        props.ps = { ...props.ps, ...extractResponsiveClasses(klass, 'ps') }
       }
 
-      if (match(klass, 'pb')) {
+      else if (match(klass, 'pb')) {
         props.pb = { ...props.pb, ...extractResponsiveClasses(klass, 'pb') }
       }
 
-      if (match(klass, 'pr')) {
-        props.pr = { ...props.pr, ...extractResponsiveClasses(klass, 'pr') }
+      else if (match(klass, 'pe')) {
+        props.pe = { ...props.pe, ...extractResponsiveClasses(klass, 'pe') }
       }
 
       // margin sizing ......................................................
-      if (match(klass, 'mt')) {
+      else if (match(klass, 'mt')) {
         props.mt = { ...props.mt, ...extractResponsiveClasses(klass, 'mt') }
       }
 
-      if (match(klass, 'ml')) {
+      else if (match(klass, 'ml')) {
         props.ml = { ...props.ml, ...extractResponsiveClasses(klass, 'ml') }
       }
 
-      if (match(klass, 'mb')) {
+      else if (match(klass, 'mb')) {
         props.mb = { ...props.mb, ...extractResponsiveClasses(klass, 'mb') }
       }
 
-      if (match(klass, 'mr')) {
+      else if (match(klass, 'mr')) {
         props.mr = { ...props.mr, ...extractResponsiveClasses(klass, 'mr') }
       }
 
+      else if (match(klass, 'border')) {
+        for(const style of ['solid', 'dotted', 'dashed', 'none']){
+          if(match(klass, `border-${style}`)){
+            props.borderStyle = { ...props.borderStyle, ...extractResponsiveClasses(klass, `border-${style}`) }
+          }
+        }
+        for(const style of ['s-solid', 's-dotted', 's-dashed', 's-none']){
+          if(match(klass, `border-${style}`)){
+            props.borderStyleS = { ...props.borderStyleS, ...extractResponsiveClasses(klass, `border-${style}`) }
+
+          }
+        }
+        for(const style of ['e-solid', 'e-dotted', 'e-dashed', 'e-none']){
+          if(match(klass, `border-${style}`)){
+            props.borderStyleE = { ...props.borderStyleE, ...extractResponsiveClasses(klass, `border-${style}`) }
+
+          }
+        }
+        for(const style of ['t-solid', 't-dotted', 't-dashed', 't-none']){
+          if(match(klass, `border-${style}`)){
+            props.borderStyleT = { ...props.borderStyleT, ...extractResponsiveClasses(klass, `border-${style}`) }
+
+          }
+        }
+        for(const style of ['b-solid', 'b-dotted', 'b-dashed', 'b-none']){
+          if(match(klass, `border-${style}`)){
+            props.borderStyleB = { ...props.borderStyleB, ...extractResponsiveClasses(klass, `border-${style}`) }
+
+          }
+        }
+        for(const side of ['s', 'e', "t", "b"]){
+          if(match(klass, `border-${side}`)){
+            props[`b${side}`] = { ...props[`b${side}`], ...extractResponsiveClasses(klass, `border-${side}`) }
+          }
+        }
+        if(match(klass, `border`)){
+            props.b = { ...props.b, ...extractResponsiveClasses(klass, `border`) }
+          }
+      }
       // props.borderSides = {
       //   top: false,
       //   right: true,
@@ -209,7 +237,6 @@
     if (responsiveMode == '@xs:') currentIndex = 4
     function isSmallerPoints(prop) {
       console.log('reverse:', prop.reverse())
-      console.log('in:', responsiveBreakPoints.slice(1, currentIndex))
       const inn = responsiveBreakPoints.slice(1, currentIndex)
       for (let x of prop.reverse()) {
         const index = inn.findIndex((y) => {
@@ -226,42 +253,43 @@
       ///check if there is smaller break point added before
       ///if not the set default stlyle to current + 1 and set the current style to default
       ///if yes exits then set the current styl to previous style + 1
-      
+
       //step 1
       props[key][responsiveMode] = val
       //step 2
       if (isSmallerPoints(Object.keys(props[key] ?? {})) === false) {
-        props[key]["@xs:"] =val
-        props[key][responsiveBreakPoints[currentIndex]] =val
+        props[key]['@xs:'] = val
+        props[key][responsiveBreakPoints[currentIndex]] = val
       } else {
         //step 3
         let index = isSmallerPoints(Object.keys(props[key]) ?? {}) + 1
         props[key] = { ...props[key], [responsiveBreakPoints[index]]: val }
       }
-      props=props
+      props = props
       console.log({ props })
-    } 
-  }
-  function xy(prop, klas = prop,) {
-    if (!props[prop]) return
-    for (const b in props[prop]) {
-      value += ` ${b}${klas}-${props[prop][b]}`
     }
   }
-  function xyz(prop, klas = prop,) {
-    if (!props[prop]) return
-    for (const b in props[prop]) {
-      value += ` ${b}${klas}-[${props[prop][b]}]`
-    }
-  }
+
   function set(key: string, val: string) {
+    let _value = ''
+    function xy(prop, klas = prop) {
+      if (!props[prop]) return
+      for (const b in props[prop]) {
+        _value += ` ${b}${klas}-${props[prop][b]}`
+      }
+    }
+    function xyz(prop, klas = prop) {
+      if (!props[prop]) return
+      for (const b in props[prop]) {
+        _value += ` ${b}${klas}-[${props[prop][b]}]`
+      }
+    }
     updateProps(key, val)
     console.log('set: ', props, key, val)
-    value = ''
 
     if (props.flexDirection) {
       for (const b in props.flexDirection) {
-       value += ` ${b}flex ${b}flex-${props.flexDirection[b]}`
+        _value += ` ${b}flex ${b}flex-${props.flexDirection[b]}`
       }
     }
     xy('flex')
@@ -271,6 +299,16 @@
     xy('textColor', 'text')
     xy('fontSize', 'text')
     xy('w')
+    xy('b', "border")
+    xy('bt', "border-t")
+    xy('bb', "border-b")
+    xy('bs', "border-s")
+    xy('be', "border-e")
+    xy('borderStyle', "border")
+    xy('borderStyleT', "border-t")
+    xy('borderStyleB', "border-b")
+    xy('borderStyleS', "border-s")
+    xy('borderStyleE', "border-e")
     xy('h')
     xyz('pt')
     xyz('pl')
@@ -280,16 +318,14 @@
     xyz('ml')
     xyz('mb')
     xyz('mr')
-    value += ' __ '
+    _value += ' __ '
 
     if (props.Class) {
-      value += props.Class
+      _value += props.Class
     }
-    value = value
+    value = _value
     console.log('value', value)
   }
-
-  
 </script>
 
 <El row>
@@ -300,7 +336,7 @@
     on:change={(e) => set('Class', e.target.value)} />
   <Accordions>
     <StyleAccordion title="Size">
-      <Size  {responsiveMode} bind:props {set} />
+      <Size {responsiveMode} bind:props {set} />
     </StyleAccordion>
     <StyleAccordion title="Border">
       <Border {responsiveMode} bind:props {set} />
