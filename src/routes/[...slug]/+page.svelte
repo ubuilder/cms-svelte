@@ -2,6 +2,7 @@
   import { CardBody } from 'yesvelte'
 
   export let data
+  console.log({data})
 </script>
 
 <svelte:head>
