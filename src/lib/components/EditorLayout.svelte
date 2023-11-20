@@ -401,7 +401,7 @@
   <!-- <script src="https://cdn.tailwindcss.com?plugins=forms,typography,aspect-ratio,line-clamp"></script> -->
   <!-- <script src="https://cdn.tailwindcss.com?plugins=forms,typography,aspect-ratio,line-clamp"></script> -->
   <script src="/cdn.tailwindcss.com.js"></script>
-  <script src="/src/lib/helpers/containerQuery.js"></script>
+  <script src="/containerQuery.js"></script>
 
   {#if page}
     {@html page?.head}

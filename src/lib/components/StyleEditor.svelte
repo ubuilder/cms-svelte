@@ -12,7 +12,7 @@
   export let responsiveMode = '@xl:'
 
   let props: any = {}
-  let responsiveBreakPoints = ['@xs:', '@sm:', '@md:', '@lg:', '@xl:']
+  let responsiveBreakPoints = ['@xs:', '@sm:', '@md:', '@lg:', '@xl:', "#:"]
   function match(klass, value) {
     // let classlist = [
     //   "bg", "text",
@@ -26,7 +26,9 @@
       klass.startsWith(`@xs:${value}-`) ||
       klass.startsWith(`@sm:${value}-`) ||
       klass.startsWith(`@md:${value}-`) ||
-      klass.startsWith(`@lg:${value}-`)
+      klass.startsWith(`@lg:${value}-`) ||
+      klass.startsWith(`@xl:${value}-`) ||
+      klass.startsWith( `#:${value}-` ) 
     ) {
       return true
     }
@@ -42,6 +44,10 @@
       res['@md:'] = value.split(`@md:${stile}-`)[1]
     } else if (value.startsWith(`@lg:${stile}-`)) {
       res['@lg:'] = value.split(`@lg:${stile}-`)[1]
+    } else if (value.startsWith(`@xl:${stile}-`)) {
+      res['@xl:'] = value.split(`@xl:${stile}-`)[1]
+    } else if (value.startsWith(`#:${stile}-`)){
+      res['#:']   = value.split(`#:${stile}-`)[1]
     }
     return res
   }
@@ -90,7 +96,6 @@
     for (let index in classes) {
       
       let klass = classes[index]
-      console.log({klass})
       if (match(klass, 'bg')) {
         props.bg = { ...props.bg, ...extractResponsiveClasses(klass, 'bg') }
       }
@@ -208,7 +213,7 @@
         break
       }
     }
-    console.log('parse: ', props)
+    console.log('parse: ', JSON.stringify(props))
   }
 
   $: parse(value)
@@ -234,18 +239,15 @@
 
   function updateProps(key: string, val: string) {
     let currentIndex = responsiveBreakPoints.findIndex((x) => x == responsiveMode)
+    console.log('currentIndxex: ', currentIndex)
     if (responsiveMode == '@xs:') currentIndex = 4
     function isSmallerPoints(prop) {
-      console.log('reverse:', prop.reverse())
+      let sortedKey = Object.keys(prop)
+      sortedKey = sortedKey.sort((a , b) => responsiveBreakPoints.indexOf(b) - responsiveBreakPoints.indexOf(a))
       const inn = responsiveBreakPoints.slice(1, currentIndex)
-      for (let x of prop.reverse()) {
-        const index = inn.findIndex((y) => {
-          if (x == y) {
-            return true
-          }
-          return false
-        })
-        if (index !== -1) return inn.length - index
+      for (let x of sortedKey) {
+        const index = inn.indexOf(x)
+        if(index> -1)return (index + 1)
       }
       return false
     }
@@ -255,16 +257,55 @@
       ///if yes exits then set the current styl to previous style + 1
 
       //step 1
+      console.log({responsiveMode})
       props[key][responsiveMode] = val
-      //step 2
-      if (isSmallerPoints(Object.keys(props[key] ?? {})) === false) {
-        props[key]['@xs:'] = val
-        props[key][responsiveBreakPoints[currentIndex]] = val
-      } else {
-        //step 3
-        let index = isSmallerPoints(Object.keys(props[key]) ?? {}) + 1
-        props[key] = { ...props[key], [responsiveBreakPoints[index]]: val }
+
+
+      const pointerValue = props[key]["#:"]?.split("__")[0]??""
+      const pointer = props[key]["#:"]?.split("__")[1]??""
+
+      console.log({pointer}, {pointerValue})
+      if(!pointer && responsiveMode !== "@xl:"){
+        console.log(3)
+        props[key]["#:"] = `${props[key]["@xs:"]}__${responsiveMode}`
+        props[key][(responsiveBreakPoints[responsiveBreakPoints.indexOf(responsiveMode) + 1])]= props[key]["@xs:"]
       }
+      if(!pointer){
+        console.log(1)
+          props[key]['@xs:'] = val
+      }
+
+      if(pointer && responsiveBreakPoints.indexOf(pointer) <= responsiveBreakPoints.indexOf(responsiveMode)){
+        console.log(2)
+            props[key][(responsiveBreakPoints[(responsiveBreakPoints.indexOf(pointer) + 1)])]= pointerValue
+            props[key]["#:"] = `${pointerValue}__${responsiveMode}`
+      }
+      
+
+      // if(responsiveMode !== '@xl:'){
+      //   props[key]["#:"] = `${pointerValue}__${responsiveMode}`
+      // }
+
+      // if(res == responsiveMode){
+
+        // }
+        // if(res!=='@xl:'){
+        //     props[key][responsiveBreakPoints[responsiveBreakPoints.findIndex(res) + 1]]= val 
+      // }
+      // //step 2
+      // if (isSmallerPoints(props[key] ?? {}) === false) {
+        //   console.log(1)
+        //   props[key]['@xs:'] = val
+      // } else {
+      //   //4
+      //   console.log(2)
+      //   //step 3
+      //   let index = isSmallerPoints(props[key] ?? {}) 
+      //   // props[key][responsiveBreakPoints[currentIndex + 1]] = val
+      //   console.log('index', index + 1)
+      
+      // }
+      
       props = props
       console.log({ props })
     }
@@ -298,7 +339,6 @@
     xy('bg')
     xy('textColor', 'text')
     xy('fontSize', 'text')
-    xy('w')
     xy('b', "border")
     xy('bt', "border-t")
     xy('bb', "border-b")
@@ -309,7 +349,8 @@
     xy('borderStyleB', "border-b")
     xy('borderStyleS', "border-s")
     xy('borderStyleE', "border-e")
-    xy('h')
+    xyz('w')
+    xyz('h')
     xyz('pt')
     xyz('pl')
     xyz('pb')
@@ -323,8 +364,9 @@
     if (props.Class) {
       _value += props.Class
     }
+    console.log('_value:', _value)
+    console.log('value:', value)
     value = _value
-    console.log('value', value)
   }
 </script>
 

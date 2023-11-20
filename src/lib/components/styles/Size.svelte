@@ -22,7 +22,7 @@
     <FormField label="Sizes">
       <FormSlider
         attribute="Width"
-        value={props.w ? props.w[responsiveMode] : ''}
+        value={props.w[responsiveMode]}
         on:change={(e) => set('w', e.detail)} />
 
       <FormSlider

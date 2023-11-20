@@ -14,7 +14,7 @@
 	
 </script>
 	<script src="/cdn.tailwindcss.com.js"></script>
-	<script src="/src/lib/helpers/containerQuery.js"></script>
+	<script src="/containerQuery.js"></script>
 </svelte:head>
 
 {#if false}
