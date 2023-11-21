@@ -60,12 +60,15 @@
 <Page>
 	<PageHeader slot="header" px="2" title="Settings">
 		<Button on:click={close}>{t('buttons.cancel')}</Button>
-		<Button color="primary" bgColor="primary" on:click={updateSettings}
-			>{t('buttons.save')}</Button>
+		<Button color="primary" bgColor="primary" on:click={updateSettings}>
+			{t('buttons.save')}
+		</Button>
 	</PageHeader>
 	<Card>
 		<CardBody>
 			<FormSelect
+				disabled
+				class="opacity-50"
 				items={languages}
 				key="key"
 				placeholder={settings.lang}
@@ -74,7 +77,9 @@
 				let:item>
 				{item.text}
 			</FormSelect>
+
 			<FormRadioGroup
+				class="pointer-events-none opacity-50"
 				inline
 				items={themes}
 				key="key"
@@ -104,7 +109,7 @@
 				{item.title}
 			</FormSelect>
 
-			<FormField label="Menus (Sidebar)">
+			<!-- <FormField label="Menus (Sidebar)">
 				<El row>
 					{#each settings.menu ?? [] as menu, index}
 						<FormInput bind:value={menu.icon} col="2" label={index == 0 ? 'Icon' : undefined} />
@@ -132,7 +137,7 @@
 						</Button>
 					</El>
 				</El>
-			</FormField>
+			</FormField> -->
 		</CardBody>
 	</Card>
 </Page>
