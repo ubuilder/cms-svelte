@@ -423,7 +423,10 @@
         _value += ` ${b}${klas}-[${props[prop][b]}]`
       }
     }
-    updateProps(key, val)
+    if(key !== 'Class') {
+      updateProps(key, val)
+    }
+
     console.log('set: ', props, key, val)
 
     if (props.flexDirection) {
