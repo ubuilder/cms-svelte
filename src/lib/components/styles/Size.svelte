@@ -87,14 +87,4 @@
         </Popover>
       </El>
 
-      <!--font size---------------------------------------->
-      <FormSelect
-        placeholder={props.fontSize ? props.fontSize[responsiveMode] : 'choose a size'}
-        items={sizes}
-        label="Font size"
-        value={props.fontSize ? props.fontSize[responsiveMode] : ''}
-        on:change={(e) => set('fontSize', e.detail)}
-        let:item>
-        <El>{item}</El>
-      </FormSelect>
     </FormField>

@@ -34,7 +34,7 @@
     }
   }
   function extractResponsiveClasses(value, stile) {
-    let res = {}
+    let res: Record<string, any>  = {}
     value = value.trim().replace('[', '').replace(']', '')
     if (value.startsWith(`@xs:${stile}-`)) {
       res['@xs:'] = value.split(`@xs:${stile}-`)[1]
@@ -226,6 +226,7 @@
   $: colors = colorNames.map((name) => colorVariants.map((variant) => `${name}-${variant}`)).flat()
 
   function updateProps(key: string, val: string) {
+    if(!props[key]) props[key] = {}
     let currentIndex = responsiveBreakPoints.findIndex((x) => x == responsiveMode)
     console.log('currentIndxex: ', currentIndex)
     if (responsiveMode == '@xs:') currentIndex = 4
@@ -250,7 +251,7 @@
       console.log({ responsiveMode })
       props[key][responsiveMode] = val
       
-      const pointer = props[key]['#:']?? ''
+      const pointer = props[key]?.['#:'] ?? ''
       //the case for upper levels
       let upper = false
       for (let x of responsiveBreakPoints.slice(responsiveBreakPoints.indexOf(responsiveMode)  + 1, 5)){

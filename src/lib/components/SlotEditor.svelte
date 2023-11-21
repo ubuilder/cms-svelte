@@ -166,7 +166,7 @@
                 perPage: slot.props[field.name].perPage,
                 page: slot.props[field.name].page,
               },
-            }).then((res) => res.data)
+            }).then((res) => res.data.data)
             if (!slot.props[field.name].multiple) {
               items[id] = items[id][0]
             }
@@ -277,6 +277,7 @@
     let props: any = {}
 
     await loadDynamicData(slot, items)
+    console.log('items::::::', items)
     const component = getComponent(slot.type)
     const id = slot.id ?? getId()
 
@@ -301,7 +302,7 @@
                 if (items[slot.props[field.name].name].length) {
                   for (let item of items[slot.props[field.name].name] ?? []) {
                     //
-                    for (let index in s1lot.props?.[field.name]?.slot ?? []) {
+                    for (let index in slot.props?.[field.name]?.slot ?? []) {
                       const x = slot.props[field.name]?.slot[index]
 
                       const res = await renderSlot(x, id, field.name, +index, true, {
@@ -333,10 +334,8 @@
 
             console.log('content: ', content)
             if (content) {
-              props[
-                field.name
-              ] = `<div class="slot" data-dynamic data-parent="${id}" data-index="0">${
-                content + placeholder(id, field.name, slot.props?.[field.name].length)
+              props[field.name] = `<div class="slot" data-dynamic data-parent="${id}" data-index="0">${
+                renderVariable(content, items) + placeholder(id, field.name, slot.props?.[field.name].length)
               }</div>`
             } else {
               props[field.name] = placeholder(id, field.name, 0, 'empty')
@@ -352,14 +351,14 @@
 
             if (content) {
               props[field.name] = `<div class="slot" data-parent="${id}" data-index="0">${
-                content + placeholder(id, field.name, slot.props?.[field.name].length)
+                renderVariable(content, items) + placeholder(id, field.name, slot.props?.[field.name].length)
               }</div>`
             } else {
               props[field.name] = placeholder(id, field.name, 0, 'empty')
             }
           }
         } else {
-          props[field.name] = slot.props[field.name]
+          props[field.name] = renderVariable(slot.props[field.name], items)
         }
       }
 
@@ -394,6 +393,8 @@
         }, 5)
 
         slot.id = id
+
+        console.log(':::props: ', props)
         return `${
           withPlaceholder ? placeholder(parent_id, parent_field, parent_index) : ''
         }<div class="component-wrapper" id="component-${id}">${hbsTemplates[slot.type](
