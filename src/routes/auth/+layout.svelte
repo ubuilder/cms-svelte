@@ -3,3 +3,10 @@
 </script>
 
 <slot />
+
+
+<style>
+    :global(:root) {
+        --border-color: var(--y-border-color);
+    }
+</style>

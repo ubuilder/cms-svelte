@@ -27,7 +27,7 @@
 </script>
 
 <Layout
-  theme={data.theme}
+  theme="light"
   sidebar={false}
   header={false}>
   <Page title="" htmlTitle="Register">
