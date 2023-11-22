@@ -269,11 +269,11 @@
     xyz('w')
     xyz('h')
     xyz('pt')
-    xyz('pl')
+    xyz('ps')
     xyz('pb')
     xyz('pr')
     xyz('mt')
-    xyz('ml')
+    xyz('ms')
     xyz('mb')
     xyz('mr')
     _value += ' __ '

@@ -1023,8 +1023,10 @@
 		{:else if offcanvasMode === 'table-create'}
 			<TableInsertPage on:reload on:close ={closeOffcanvas} />
 		{:else if offcanvasMode === 'data-list'}
-			<DataList on:dataInsert={()=>{offcanvasMode = "data-insert"}} bind:table={data.activeTable} on:close  = {closeOffcanvas} />
+			<DataList on:data-edit = {()=>offcanvasMode = "data-edit"} on:dataInsert={()=>{offcanvasMode = "data-insert"}} bind:table={data.activeTable} on:close  = {closeOffcanvas} />
 		{:else if offcanvasMode === 'data-insert'}
+			<DataInsert on:goBack={()=>{offcanvasMode = 'data-list'}} bind:table={data.activeTable} on:close  = {closeOffcanvas} />
+		{:else if offcanvasMode === 'data-edit'}
 			<DataInsert on:goBack={()=>{offcanvasMode = 'data-list'}} bind:table={data.activeTable} on:close  = {closeOffcanvas} />
 		{:else}
 		{offcanvasMode}
