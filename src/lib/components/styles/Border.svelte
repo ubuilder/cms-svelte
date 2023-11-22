@@ -77,7 +77,6 @@
     <div class="font-bold">Style:</div>
     <div class="flex gap-1">
       {#each ['solid', 'dotted', 'dashed', 'none'] as style}
-        {activeSidde}
         <button
           class="p-1 flex items-center justify-center w-6 h-6 rounded inline-flex border border-gray-300 text-black bg-gray-100 hover:bg-gray-200"
           class:text-white={props[`borderStyle${activeSidde}`][responsiveMode] == style}
