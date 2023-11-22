@@ -81,7 +81,7 @@
             <FormSlider
               negative={true}
               attribute="Right"
-              value={ props.mr[responsiveMode]}
+              value={ props.me[responsiveMode]}
               on:change={(e) => set('mr', e.detail)} />
           </PopoverBody>
         </Popover>
