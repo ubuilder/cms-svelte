@@ -28,5 +28,11 @@
           class="bg-black cursor-pointer h-4 w-4">
         </div>
       </div>
+      <div class="p-[1px] w-1/10 hover:shadow-lg">
+        <div
+          on:click={() => set({ bgColor: '' })}
+          class="bg-transparent border border-gray-200 cursor-pointer h-4 w-4">
+        </div>
+      </div>
     </PopoverBody>
   </Popover>

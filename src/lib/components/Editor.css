@@ -170,7 +170,7 @@ body:has(.dragging) * {
 	cursor: pointer;
 	top: 0.375rem;
 	color: #20202080;
-	z-index: 1;
+	z-index: 3;
 }
 .sidebar-close-icon:hover {
 	color: #4040f0;

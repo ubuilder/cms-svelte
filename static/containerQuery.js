@@ -4,9 +4,6 @@ document.addEventListener('DOMContentLoaded', () => {
 })
 tailwind.config = {
   plugins: [
-    function (obj) {
-      console.log('first')
-    },
     function containerQueries({ matchUtilities, matchVariant, theme }) {
       let values = theme('containers') ?? {}
 
@@ -40,7 +37,7 @@ tailwind.config = {
         (value = '', { modifier }) => {
           let parsed = parseValue(value)
 
-          return parsed !== null ? `@container ${modifier ?? ''} (min-width: ${value})` : []
+          return parsed !== null ? `@container ${modifier ?? ''} (max-width: ${value})` : []
         },
         {
           values,
@@ -51,34 +48,47 @@ tailwind.config = {
             if (a === null || z === null) return 0
 
             // Sort values themselves regardless of unit
-            if (a - z !== 0) return a - z
+            if (a - z !== 0) return z- a
 
             let aLabel = aVariant.modifier ?? ''
             let zLabel = zVariant.modifier ?? ''
 
             // Explicitly move empty labels to the end
             if (aLabel === '' && zLabel !== '') {
-              return 1
-            } else if (aLabel !== '' && zLabel === '') {
               return -1
+            } else if (aLabel !== '' && zLabel === '') {
+              return 1
             }
 
             // Sort labels alphabetically in the English locale
             // We are intentionally overriding the locale because we do not want the sort to
             // be affected by the machine's locale (be it a developer or CI environment)
-            return aLabel.localeCompare(zLabel, 'en', { numeric: true })
+            return aLabel.localeCompare(zLabel, 'en', { numeric: true }) * -1
           },
         }
       )
     },
   ],
+  
   theme: {
+  //   screens: {
+  //     xs: {max: '480px'},
+  //     sm: {max: '640px'},
+  //     md: {max: '768px'},
+  //     lg: {max: '1024px'},
+  //     xl: {max: '1280px'},
+  // },
     containers: {
-      xs: '1rem',
-      sm: '24rem',
-      md: '32rem',
-      lg: '42rem',
-      xl: '500rem',
+      xs: '480px',
+      sm: '640px',
+      md: '768px',
+      lg: '1024px',
+      xl: '5000px',
+      // xs: '1rem',
+      // sm: '24rem',
+      // md: '32rem',
+      // lg: '42rem',
+      // xl: '56rem',
       // '2xl': '66rem',
       // '3xl': '76rem',
       // '4xl': '86rem',

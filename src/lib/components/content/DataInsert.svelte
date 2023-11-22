@@ -34,6 +34,7 @@
   </PageHeader>
 
   <El container="lg">
+   
     <Card mt="4">
       <CardBody row>
         {#each table.fields as field}

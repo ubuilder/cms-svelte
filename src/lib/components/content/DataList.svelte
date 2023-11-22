@@ -53,10 +53,13 @@
   function close() {
     dispatch('close')
   }
+  function onEdit(data){
+    dispatch('data-edit', data)
+  }
 
   onMount(async () => {
     const res = await api(`/content/${table.id}`, {}).then((res) => res)
-    rows = res.data
+    rows = res.data?.data
   })
 </script>
 
@@ -104,7 +107,6 @@
       {/if}
     {/each}
   </FilterList>
-
   <ListBox title="" items={rows} let:item>
     {#each table.fields.filter((x) => x.show_in_list !== false) as field}
       <ListItem name={field.name}>
@@ -150,7 +152,7 @@
         <Button size="sm" href="../{table.slug}/{item.id}">
           <Icon name="eye" />
         </Button>
-        <Button color="primary" size="sm" href="../{table.slug}/{item.id}/edit">
+        <Button color="primary" size="sm" on:click = {()=>onEdit(item)}>
           <Icon name="pencil" />
         </Button>
         <Button color="cyan" size="sm" href="../{table.slug}/{item.id}/history">

@@ -11,7 +11,7 @@
 </script>
     <!--font size---------------------------------------->
     <FormSelect
-      placeholder={props.fontSize ? props.fontSize[responsiveMode] : 'choose a size'}
+      placeholder={ props.fontSize[responsiveMode] ?? 'choose a size'}
       items={sizes}
       label="Font size"
       on:change={(e) => set('fontSize', e.target.value)}
@@ -27,7 +27,7 @@
 
       <FormSlider
         attribute="Hight"
-        value={props.h ? props.h[responsiveMode] : ''}
+        value={props.h[responsiveMode]}
         on:change={(e) => set('h', e.detail)} />
 
       <El class="flex items-center gap-2 mt-3">
@@ -43,8 +43,8 @@
               on:change={(e) => set('pt', e.detail)} />
             <FormSlider
               attribute="Left"
-              value={props.pl ? props.pl[responsiveMode] : ''}
-              on:change={(e) => set('pl', e.detail)} />
+              value={props.ps ? props.ps[responsiveMode] : ''}
+              on:change={(e) => set('ps', e.detail)} />
             <FormSlider
               attribute="bottom"
               value={props.pb ? props.pb[responsiveMode] : ''}
@@ -66,35 +66,25 @@
             <FormSlider
               negative={true}
               attribute="Top"
-              value={props.mt ? props.mt[responsiveMode] : ''}
+              value={ props.mt[responsiveMode]}
               on:change={(e) => set('mt', e.detail)} />
             <FormSlider
               negative={true}
               attribute="Left"
-              value={props.ml ? props.ml[responsiveMode] : ''}
-              on:change={(e) => set('ml', e.detail)} />
+              value={ props.ms[responsiveMode]}
+              on:change={(e) => set('ms', e.detail)} />
             <FormSlider
               negative={true}
               attribute="bottom"
-              value={props.mb ? props.mb[responsiveMode] : ''}
+              value={ props.mb[responsiveMode]}
               on:change={(e) => set('mb', e.detail)} />
             <FormSlider
               negative={true}
               attribute="Right"
-              value={props.mr ? props.mr[responsiveMode] : ''}
+              value={ props.me[responsiveMode]}
               on:change={(e) => set('mr', e.detail)} />
           </PopoverBody>
         </Popover>
       </El>
 
-      <!--font size---------------------------------------->
-      <FormSelect
-        placeholder={props.fontSize ? props.fontSize[responsiveMode] : 'choose a size'}
-        items={sizes}
-        label="Font size"
-        value={props.fontSize ? props.fontSize[responsiveMode] : ''}
-        on:change={(e) => set('fontSize', e.detail)}
-        let:item>
-        <El>{item}</El>
-      </FormSelect>
     </FormField>
