@@ -18,6 +18,7 @@
         unit = '%'
     }
   })
+  $:console.log({unit}, {value})
 
   const dispatch = createEventDispatcher()
 

@@ -277,7 +277,6 @@
     let props: any = {}
 
     await loadDynamicData(slot, items)
-    console.log('items::::::', items)
     const component = getComponent(slot.type)
     const id = slot.id ?? getId()
 
@@ -394,7 +393,6 @@
 
         slot.id = id
 
-        console.log(':::props: ', props)
         return `${
           withPlaceholder ? placeholder(parent_id, parent_field, parent_index) : ''
         }<div class="component-wrapper" id="component-${id}">${hbsTemplates[slot.type](

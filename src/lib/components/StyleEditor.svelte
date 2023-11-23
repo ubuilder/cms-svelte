@@ -12,7 +12,8 @@
   export let responsiveMode = '@xl:'
 
   let props: any = {}
-  
+  let breakPoints = ['@xs:', '@sm:', '@md:', '@lg:', '@xl:']
+
   function match(klass, value) {
     // let classlist = [
     //   "bg", "text",
@@ -33,7 +34,7 @@
     }
   }
   function extractResponsiveClasses(value, stile) {
-    let res: Record<string, any>  = {}
+    let res: Record<string, any> = {}
     value = value.trim().replace('[', '').replace(']', '')
     if (value.startsWith(`@xs:${stile}-`)) {
       res['@xs:'] = value.split(`@xs:${stile}-`)[1]
@@ -45,7 +46,7 @@
       res['@lg:'] = value.split(`@lg:${stile}-`)[1]
     } else if (value.startsWith(`@xl:${stile}-`)) {
       res['@xl:'] = value.split(`@xl:${stile}-`)[1]
-    } 
+    }
     return res
   }
 
@@ -223,8 +224,12 @@
   $: colors = colorNames.map((name) => colorVariants.map((variant) => `${name}-${variant}`)).flat()
 
   function updateProps(key: string, val: string) {
-    if(!props[key]) props[key] = {}
-       props[key][responsiveMode] = val
+    if (!props[key]) props[key] = {}
+
+    //delete the responsive break point if no value is passed
+    if (!val) delete props[key][responsiveMode]
+
+    props[key][responsiveMode] = val
   }
 
   function set(key: string, val: string) {
@@ -241,7 +246,7 @@
         _value += ` ${b}${klas}-[${props[prop][b]}]`
       }
     }
-    if(key !== 'Class') {
+    if (key !== 'Class') {
       updateProps(key, val)
     }
 
@@ -281,9 +286,22 @@
     if (props.Class) {
       _value += props.Class
     }
-    console.log('_value:', _value)
     console.log('value:', value)
     value = _value
+  }
+
+  /**
+  *this function return the value of style at current responsive break point if 
+  the current break point is null then the higher break point value is retured
+  *  */
+  function getExactValue(key) {
+    for (let x of breakPoints.slice(breakPoints.indexOf(responsiveMode))) {
+      console.log('key: ', key)
+      if (props[key][x]) {
+        return props[key][x]
+      }
+    }
+    return ''
   }
 </script>
 
@@ -294,18 +312,20 @@
     bind:value={props.Class}
     on:change={(e) => set('Class', e.target.value)} />
   <Accordions>
-    <StyleAccordion title="Size">
-      <Size {responsiveMode} bind:props {set} />
-    </StyleAccordion>
-    <StyleAccordion title="Border">
-      <Border {responsiveMode} bind:props {set} />
-    </StyleAccordion>
-    <StyleAccordion title="Colors">
-      <Color {responsiveMode} bind:props {set} {colors} />
-    </StyleAccordion>
-    <StyleAccordion title="Display">
-      <Display {responsiveMode} bind:props {set} />
-    </StyleAccordion>
+    {#key responsiveMode}
+      <StyleAccordion title="Size">
+        <Size {breakPoints} {responsiveMode} bind:props {set} {getExactValue} />
+      </StyleAccordion>
+      <StyleAccordion title="Border">
+        <Border {responsiveMode} bind:props {set} {getExactValue} />
+      </StyleAccordion>
+      <StyleAccordion title="Colors">
+        <Color {responsiveMode} bind:props {set} {colors} {getExactValue} />
+      </StyleAccordion>
+      <StyleAccordion title="Display">
+        <Display {responsiveMode} bind:props {set} {getExactValue} />
+      </StyleAccordion>
+    {/key}
   </Accordions>
 </El>
 

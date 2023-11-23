@@ -3,12 +3,14 @@
   export let responsiveMode
   export let props
   export let set
+  export let getExactValue
 
   let activeSide: 'b' | 'bt' | 'bb' | 'bs' | 'be' = 'b'
   let activeSidde: '' | 'T' | 'B' | 'S' | 'E' = ''
   $: {
     activeSidde = activeSide[1]?.toUpperCase() ?? ''
   }
+  let value = getExactValue(activeSide)
 </script>
 
 <El class="">
@@ -17,28 +19,28 @@
     <div class="flex gap-1">
       <button
         class="p-1 flex items-center justify-center w-6 h-6 rounded-l inline-flex border border-gray-300 text-black bg-gray-100 hover:bg-gray-200"
-        class:text-white={props[activeSide][responsiveMode] == 1}
-        class:!bg-blue-500={props[activeSide][responsiveMode] == 1}
+        class:text-white={value == 1}
+        class:!bg-blue-500={value == 1}
         on:click={() => set(activeSide, 1)}>1</button>
       <button
         class="p-1 flex items-center justify-center w-6 h-6 rounded-l inline-flex border border-gray-300 text-black bg-gray-100 hover:bg-gray-200"
-        class:text-white={props[activeSide][responsiveMode] == 2}
-        class:!bg-blue-500={props[activeSide][responsiveMode] == 2}
+        class:text-white={value == 2}
+        class:!bg-blue-500={value == 2}
         on:click={() => set(activeSide, 2)}>2</button>
       <button
         class="p-1 flex items-center justify-center w-6 h-6 rounded-l inline-flex border border-gray-300 text-black bg-gray-100 hover:bg-gray-200"
-        class:text-white={props[activeSide][responsiveMode] == 3}
-        class:!bg-blue-500={props[activeSide][responsiveMode] == 3}
+        class:text-white={value == 3}
+        class:!bg-blue-500={value == 3}
         on:click={() => set(activeSide, 3)}>3</button>
       <button
         class="p-1 flex items-center justify-center w-6 h-6 rounded-l inline-flex border border-gray-300 text-black bg-gray-100 hover:bg-gray-200"
-        class:text-white={props[activeSide][responsiveMode] == 4}
-        class:!bg-blue-500={props[activeSide][responsiveMode] == 4}
+        class:text-white={value == 4}
+        class:!bg-blue-500={value == 4}
         on:click={() => set(activeSide, 4)}>4</button>
       <button
         class="p-1 flex items-center justify-center w-6 h-6 rounded-l inline-flex border border-gray-300 text-black bg-gray-100 hover:bg-gray-200"
-        class:text-white={props[activeSide][responsiveMode] == 8}
-        class:!bg-blue-500={props[activeSide][responsiveMode] == 8}
+        class:text-white={value == 8}
+        class:!bg-blue-500={value == 8}
         on:click={() => set(activeSide, 8)}>8</button>
     </div>
   </El>
@@ -77,10 +79,11 @@
     <div class="font-bold">Style:</div>
     <div class="flex gap-1">
       {#each ['solid', 'dotted', 'dashed', 'none'] as style}
+      {@const _value = getExactValue(`borderStyle${activeSidde}`)}
         <button
           class="p-1 flex items-center justify-center w-6 h-6 rounded inline-flex border border-gray-300 text-black bg-gray-100 hover:bg-gray-200"
-          class:text-white={props[`borderStyle${activeSidde}`][responsiveMode] == style}
-          class:!bg-blue-500={props[`borderStyle${activeSidde}`][responsiveMode] == style}
+          class:text-white={_value == style}
+          class:!bg-blue-500={_value == style}
           on:click={() => set(`borderStyle${activeSidde}`, style)}>
           {#if style == 'solid'}
             <Icon name="circle" />

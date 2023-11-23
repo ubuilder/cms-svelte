@@ -5,13 +5,15 @@
   export let responsiveMode
   export let props
   export let set
+  export let breakPoints= []
+  export let getExactValue = ()=>{}
   let sizes = ['xs', 'sm', 'base', 'lg', 'xl', '2xl', '3xl', '4xl', '5xl', '6xl']
 
 
 </script>
     <!--font size---------------------------------------->
     <FormSelect
-      placeholder={ props.fontSize[responsiveMode] ?? 'choose a size'}
+      placeholder={getExactValue("fontSize")?? 'choose a size'}
       items={sizes}
       label="Font size"
       on:change={(e) => set('fontSize', e.target.value)}
@@ -22,12 +24,12 @@
     <FormField label="Sizes">
       <FormSlider
         attribute="Width"
-        value={props.w[responsiveMode]}
+        value={getExactValue("w")}
         on:change={(e) => set('w', e.detail)} />
 
       <FormSlider
         attribute="Hight"
-        value={props.h[responsiveMode]}
+        value={getExactValue("h")}
         on:change={(e) => set('h', e.detail)} />
 
       <El class="flex items-center gap-2 mt-3">
@@ -39,20 +41,20 @@
           <PopoverBody>
             <FormSlider
               attribute="Top"
-              value={props.pt ? props.pt[responsiveMode] : ''}
+              value={getExactValue("pt")}
               on:change={(e) => set('pt', e.detail)} />
             <FormSlider
               attribute="Left"
-              value={props.ps ? props.ps[responsiveMode] : ''}
+              value={getExactValue('ps')}
               on:change={(e) => set('ps', e.detail)} />
             <FormSlider
               attribute="bottom"
-              value={props.pb ? props.pb[responsiveMode] : ''}
+              value={getExactValue("pb")}
               on:change={(e) => set('pb', e.detail)} />
             <FormSlider
               attribute="Right"
-              value={props.pr ? props.pr[responsiveMode] : ''}
-              on:change={(e) => set('pr', e.detail)} />
+              value={getExactValue("pe")}
+              on:change={(e) => set('pe', e.detail)} />
           </PopoverBody>
         </Popover>
 
@@ -66,25 +68,24 @@
             <FormSlider
               negative={true}
               attribute="Top"
-              value={ props.mt[responsiveMode]}
+              value={getExactValue("mt")}
               on:change={(e) => set('mt', e.detail)} />
             <FormSlider
               negative={true}
               attribute="Left"
-              value={ props.ms[responsiveMode]}
+              value={getExactValue('ms')}
               on:change={(e) => set('ms', e.detail)} />
             <FormSlider
               negative={true}
               attribute="bottom"
-              value={ props.mb[responsiveMode]}
+              value={getExactValue('mb')}
               on:change={(e) => set('mb', e.detail)} />
             <FormSlider
               negative={true}
               attribute="Right"
-              value={ props.me[responsiveMode]}
+              value={getExactValue("mr")}
               on:change={(e) => set('mr', e.detail)} />
           </PopoverBody>
         </Popover>
       </El>
-
     </FormField>
