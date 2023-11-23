@@ -333,8 +333,11 @@
 
             console.log('content: ', content)
             if (content) {
-              props[field.name] = `<div class="slot" data-dynamic data-parent="${id}" data-index="0">${
-                renderVariable(content, items) + placeholder(id, field.name, slot.props?.[field.name].length)
+              props[
+                field.name
+              ] = `<div class="slot" data-dynamic data-parent="${id}" data-index="0">${
+                renderVariable(content, items) +
+                placeholder(id, field.name, slot.props?.[field.name].length)
               }</div>`
             } else {
               props[field.name] = placeholder(id, field.name, 0, 'empty')
@@ -350,7 +353,8 @@
 
             if (content) {
               props[field.name] = `<div class="slot" data-parent="${id}" data-index="0">${
-                renderVariable(content, items) + placeholder(id, field.name, slot.props?.[field.name].length)
+                renderVariable(content, items) +
+                placeholder(id, field.name, slot.props?.[field.name].length)
               }</div>`
             } else {
               props[field.name] = placeholder(id, field.name, 0, 'empty')
@@ -664,14 +668,14 @@
     width = '100%'
     left = '100%'
   }
-  
+
   function makeResizeable() {
     const widthsMap = {
-      '@xs:': [200, 380],
-      '@sm:': [380, 512],
-      '@md:': [512, 672],
-      '@lg:': [672, 896],
-      '@xl:': [896, 1200],
+      '@xs:': [200, 480],
+      '@sm:': [481, 640],
+      '@md:': [641, 768],
+      '@lg:': [769, 1024],
+      '@xl:': [1025, 10280],
     }
     controler.addEventListener('mousedown', (e) => {
       wrapper.addEventListener('mousemove', resize)
@@ -688,22 +692,29 @@
         x.replace('px', '')
         x = Number.parseFloat(x)
         if (
-          x < widthsMap[responsiveMode][0] &&
-          x > e.pageX - contentEl.getBoundingClientRect().left
-        )
+          x <= widthsMap[responsiveMode][0] &&
+          x >= e.pageX - responsiveWrapper.getBoundingClientRect().left
+        ){
+          width = widthsMap[responsiveMode][0] + "px"
+          left = width
           return
+        }
         if (
-          x > widthsMap[responsiveMode][1] &&
-          x < e.pageX - contentEl.getBoundingClientRect().left
-        )
+          x >= widthsMap[responsiveMode][1] &&
+          x <= e.pageX - responsiveWrapper.getBoundingClientRect().left
+        ){
+          width = widthsMap[responsiveMode][1] + "px"
+          left = width
           return
+
+        }
       }
-      width = (e.pageX - contentEl.getBoundingClientRect().left) + 'px'
+      width = e.pageX - responsiveWrapper.getBoundingClientRect().left + 'px'
       left = width
     }
   }
-  let wrapper:HTMLDivElement
-
+  let wrapper: HTMLDivElement
+  let responsiveWrapper: HTMLDivElement
 </script>
 
 <!-- <iframe bind:this = {iframe} src = '/iframe' width = '200' height = '200'>
@@ -711,23 +722,28 @@
 </iframe> -->
 
 <div
-  style="margin-left: auto;margin-right: auto;width: 100%; height: 100%;position:relative"
+  style="margin-left: auto;margin-right: auto;width: 100%; height: 100%;position:relative;display:flex; justify-content:center"
+  bind:this={wrapper}>
+  <div 
+  class = '@container'
+  bind:this = {responsiveWrapper}
+  style="height: 100%; width: {width}; display:flex;position:relative"
   class:sm={responsiveMode == '@sm:'}
   class:md={responsiveMode == '@md:'}
   class:lg={responsiveMode == '@lg:'}
-  class = ""
-  bind:this = {wrapper}>
-  
-  <div
-    id="content-el"
-    bind:this={contentEl}
-    on:click={() => openComponentList()}
-    class="content @container"
-    data-dropzone
-    class:dragging
-    style="width: {width}">
+  >
+    <div
+      id="content-el"
+      bind:this={contentEl}
+      on:click={() => openComponentList()}
+      class="content"
+      style = 'width:100%'
+      data-dropzone
+      class:dragging>
+      
+    </div>
+    <div style="left: {left}" class="controler" bind:this={controler}></div>
   </div>
-  <div style="left: {left}" class="controler" bind:this={controler}></div>
 </div>
 <div
   class="component-hover-border"
@@ -806,39 +822,26 @@
 </div>
 
 <style>
-  /* xs: '1rem',
-      sm: '24rem',
-      md: '32rem',
-      lg: '42rem',
-      xl: '56rem',
-      '2xl': '66rem',
-      '3xl': '76rem',
-      '4xl': '86rem',
-      '5xl': '96rem',
-      '6xl': '106rem',
-      '7xl': '116rem', */
   .xs {
-    max-width: 24rem;
+    max-width: 480px;
   }
   .sm {
-    max-width: 32rem;
+    max-width: 640px;
   }
   .md {
-    max-width: 42rem;
+    max-width: 768px;
   }
   .lg {
-    max-width: 56rem;
+    max-width: 1024px;
   }
   .controler {
     background-color: rgb(92, 92, 92);
     width: 10px;
     cursor: ew-resize;
-    z-index: 10;
-    margin-left: auto;
     height: 200px;
     position: absolute;
     top: 12px;
-    left: 100%;
+    margin-left: -4px;
   }
   .controler:hover {
     background-color: rgb(119, 192, 255);

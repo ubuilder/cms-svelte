@@ -1,7 +1,4 @@
-console.log('hellow')
-document.addEventListener('DOMContentLoaded', () => {
-  document.querySelector('body').classList.add('@container')
-})
+console.info('%c Hellow World',"color:#00f20f")
 tailwind.config = {
   plugins: [
     function containerQueries({ matchUtilities, matchVariant, theme }) {

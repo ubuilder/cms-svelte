@@ -83,8 +83,8 @@
             <FormSlider
               negative={true}
               attribute="Right"
-              value={getExactValue("mr")}
-              on:change={(e) => set('mr', e.detail)} />
+              value={getExactValue("me")}
+              on:change={(e) => set('me', e.detail)} />
           </PopoverBody>
         </Popover>
       </El>

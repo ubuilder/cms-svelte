@@ -10,10 +10,12 @@
 <FormField label="Colors">
   <El class="flex gap-2">
     <button
-      class="flex flex-1 items-center border border-gray-300 font-bold py-2 px-4 rounded bg-gray-200">
+    class="flex flex-1 items-center border border-gray-300 font-bold py-2 px-4 rounded bg-gray-200">
+    {#key props}
       <div
         class="w-4 h-4 me-2 border border-gray-300 bg-{getExactValue("bg")}">
       </div>
+      {/key}
       Background
     </button>
     <Popover placement="bottom-start">
@@ -39,9 +41,11 @@
 
     <button
       class="flex flex-1 items-center border border-gray-300 font-bold py-2 px-4 rounded bg-gray-200">
+      {#key props}
       <div
         class="w-4 h-4 me-2 border border-gray-300 bg-{getExactValue('textColor')}">
       </div>
+      {/key}
       Text
     </button>
     <Popover placement="bottom-start">
