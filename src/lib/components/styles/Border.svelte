@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { El, Icon } from 'yesvelte'
+  import { El, Icon, Tooltip } from 'yesvelte'
   export let responsiveMode
   export let props
   export let set
@@ -91,6 +91,8 @@
             <Icon name="circle-{style}" />
           {/if}
         </button>
+        <Tooltip placement = 'top'>{style}</Tooltip>
+
       {/each}
     </div>
   </El>
