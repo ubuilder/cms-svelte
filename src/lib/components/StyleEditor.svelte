@@ -49,9 +49,7 @@
     }
     return res
   }
-
-  function parse(value: string = '') {
-    const classes = value.split(' ')
+  function initializeProps(){
     props.m = {}
     props.mt = {}
     props.ms = {}
@@ -89,7 +87,11 @@
     props.textColor = {}
     props.flexDirection = {}
     props.justify = {}
+  }
 
+  function parse(value: string = '') {
+    initializeProps()
+    const classes = value.split(' ')
     for (let index in classes) {
       let klass = classes[index]
       if (match(klass, 'bg')) {
@@ -256,6 +258,7 @@
       }
     }
     xy('flex')
+    xy('flexDirection', 'flex')
     xy('items', 'items')
     xy('justify', 'justify')
     xy('bg')
@@ -286,8 +289,8 @@
     if (props.Class) {
       _value += props.Class
     }
-    console.log('value:', value)
     value = _value
+    console.log('value:', value)
   }
 
   /**

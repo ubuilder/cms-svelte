@@ -1,12 +1,22 @@
 <script>
+  import { updated } from '$app/stores'
   import { FormField, Icon } from 'yesvelte'
   export let props
   export let set
   export let responsiveMode
   export let getExactValue
-  let flexDirection = getExactValue("flexDirection")
-  let items = getExactValue("flexDirection")
-  let justify = getExactValue("flexDirection")
+  let flexDirection 
+  let items 
+  let justify
+
+  $:{
+    props;
+    flexDirection = getExactValue("flex")
+    items = getExactValue("items")
+    justify = getExactValue("justify")
+  }
+  $:console.log("props change", {props})
+  $:console.log({flexDirection}, {items}, {justify})
 </script>
 
 <FormField label="Flex Direction">
@@ -15,7 +25,7 @@
       class="flex-1 p-1 rounded mx-0.5 bg-gray-100"
       class:!bg-blue-500={flexDirection === 'row'}
       class:text-white={flexDirection === 'row'}
-      on:click={() => set('flexDirection', 'row')}><Icon size="sm" name="arrow-right" /></button>
+      on:click={() => {set('flexDirection', 'row')}}><Icon size="sm" name="arrow-right" /></button>
     <button
       class="flex-1 p-1 rounded mx-0.5 bg-gray-100"
       class:!bg-blue-500={flexDirection === 'col'}
