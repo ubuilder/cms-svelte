@@ -83,7 +83,7 @@ tailwind.config = {
       sm: '640px',
       md: '768px',
       lg: '1024px',
-      xl: '5000px',
+      xl: '10280px',
       // xs: '1rem',
       // sm: '24rem',
       // md: '32rem',
