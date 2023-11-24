@@ -32,7 +32,7 @@ export async function POST({ request, locals, url, params }) {
 
   return respond(res.status, res.message, res.data)
 }
-export async function DELETE({ locals: { api }, url: { searchParams }, request }) {
-  const res = await api.removeComponent(searchParams.get('id'))
-  return respond()
+export async function DELETE({ locals: { api }, url: { searchParams }, params }) {
+  const res = await api.removeData({table: params.table_id, id: searchParams.get('id')})
+  return respond(res.status, res.message, res.data)
 }

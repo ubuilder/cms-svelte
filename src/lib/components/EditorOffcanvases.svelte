@@ -1025,13 +1025,13 @@
 		{:else if offcanvasMode === 'table-create'}
 			<TableInsertPage on:reload on:close ={closeOffcanvas} />
 		{:else if offcanvasMode === 'data-list'}
-			<DataList on:data-edit = {(e)=>offcanvasMode = "data-edit"} on:data-view= {()=>offcanvasMode = 'data-view'} on:dataInsert={()=>{offcanvasMode = "data-insert"}} bind:table={data.activeTable} on:close  = {closeOffcanvas} />
+			<DataList on:table-settings = {()=>offcanvasMode = 'table-settings'} on:data-edit = {(e)=>offcanvasMode = "data-edit"} on:data-view= {()=>offcanvasMode = 'data-view'} on:dataInsert={()=>{offcanvasMode = "data-insert"}} bind:table={data.activeTable} on:close  = {closeOffcanvas} />
 		{:else if offcanvasMode === 'data-insert'}
 			<DataInsert on:goBack={()=>{offcanvasMode = 'data-list'}} bind:table={data.activeTable} on:close  = {closeOffcanvas} />
 		{:else if offcanvasMode === 'data-edit'}
 			<DataEdit on:goBack={()=>{offcanvasMode = 'data-list'}} bind:table={data.activeTable} on:close  = {closeOffcanvas} />
 		{:else if offcanvasMode === 'data-view'}
-			<DataView on:goBack={()=>{offcanvasMode = 'data-list'}} bind:table={data.activeTable} on:close  = {closeOffcanvas} />
+			<DataView on:goBack={()=>{offcanvasMode = 'data-list'}} on:data-edit = {()=>offcanvasMode = 'data-edit'} bind:table={data.activeTable} on:close  = {closeOffcanvas} />
 		{:else}
 		{offcanvasMode}
 			<div>Page List </div>

@@ -17,6 +17,7 @@
     Status,
     Switch,
     Avatar,
+    alert,
   } from '@ulibs/yesvelte'
   import { invalidateAll } from '$app/navigation'
 
@@ -38,11 +39,11 @@
     })
 
     if (choice) {
-      await fetch('?/remove', {
-        method: 'POST',
-        body: JSON.stringify({ id: item.id }),
-      }).then((res) => res.json())
-
+      const res = await api(`/content/${table.id}`, {
+        params: { id: item.id },
+        method: 'DELETE',
+      }).then((res) => res)
+      alert.success(res.message)
       await invalidateAll()
     }
   }
@@ -53,13 +54,17 @@
   function close() {
     dispatch('close')
   }
-  function onEdit(data){
+  function onEdit(data) {
     table.selectedItem = data
     dispatch('data-edit', data)
   }
-  function onView(data){
+  function onView(data) {
     table.selectedItem = data
     dispatch('data-view', data)
+  }
+  function onTableEdit(){
+    delete table.selectedItem
+    dispatch("table-settings")
   }
 
   onMount(async () => {
@@ -72,7 +77,7 @@
   <svelte:fragment slot="title">
     <Icon mb="2" size="xl" name={table.icon} me="1" />
     {table.name}
-    <Button ghost color="secondary" href="./edit">
+    <Button ghost on:click = {onTableEdit}>
       <Icon name="settings" />
     </Button>
   </svelte:fragment>
@@ -154,21 +159,21 @@
     </ListItem>
     <ListItem style="width: 0" name={t('content.actions')}>
       <El d="flex" gap="2">
-        <Button size="sm" on:click = {()=>onView(item)}>
+        <Button size="sm" on:click={() => onView(item)}>
           <Icon name="eye" />
         </Button>
-        <Button color="primary" size="sm" on:click = {()=>onEdit(item)}>
+        <Button color="primary" size="sm" on:click={() => onEdit(item)}>
           <Icon name="pencil" />
         </Button>
-        <Button color="cyan" size="sm" href="../{table.slug}/{item.id}/history">
+        <!-- <Button color="cyan" size="sm">
           <Icon name="history" />
-        </Button>
+        </Button> -->
 
         <Button color="danger" size="sm" on:click={() => removeItem(item)}>
           <Icon name="trash" />
         </Button>
       </El>
     </ListItem>
-    <El gap="2" d="flex" justifyContent="end" px="3" py="2" slot="end">HELLO</El>
+    <El gap="2" d="flex" justifyContent="end" px="3" py="2" slot="end">HELLO Ubuilder CMS</El>
   </ListBox>
 </Page>
