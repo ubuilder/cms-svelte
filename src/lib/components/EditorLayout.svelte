@@ -160,6 +160,7 @@
   let loading = true
 
   async function reload(event: CustomEvent<string[]> | string[] | null = null) {
+    console.log("reload called")
     if (event) {
       const items: string[] = Array.isArray(event) ? event : event.detail
 

@@ -177,6 +177,7 @@
   }
 
   export async function render(slot = null) {
+    console.log({slot})
     setTimeout(() => {
       if (instance) {
         instance.destroy()
@@ -254,8 +255,11 @@
       })
       const items = {}
       let html = ''
+      console.log('slotlist', {slotList})
       for (let index in slotList) {
+        console.log('here', {slotList}, {index})
         const slotItem = slotList[index]
+        console.log('slotitem',slotList[index])
         html += await renderSlot(slotItem, '', '', +index, false, items)
       }
       html += placeholder('', '', slotList.length, 'empty')
@@ -275,6 +279,7 @@
     items: any = {}
   ) {
     let props: any = {}
+    console.log({slot})
 
     await loadDynamicData(slot, items)
     const component = getComponent(slot.type)
@@ -288,6 +293,7 @@
 
     if (component?.raw) {
       for (let index in component.fields) {
+        console.log('new')
         const field = component.fields[index]
 
         if (field.type === 'slot') {
@@ -344,7 +350,11 @@
             }
           } else {
             console.log('static slot: ', slot.props?.[field.name])
+            console.log('outside')
             for (let index in slot.props?.[field.name]?.slot ?? []) {
+              console.log('inside');
+              
+              console.log({slot}, {field}, {index})
               const x = slot.props[field.name]?.slot[index]
 
               const res = await renderSlot(x, id, field.name, +index, true, items)
@@ -359,8 +369,10 @@
             } else {
               props[field.name] = placeholder(id, field.name, 0, 'empty')
             }
+            console.log('end')
           }
         } else {
+          console.log('else')
           props[field.name] = renderVariable(slot.props[field.name], items)
         }
       }
@@ -459,7 +471,7 @@
   let clipboardSlot: any = null
 
   async function getClipboardSlot() {
-    const text = await navigator.clipboard.readText()
+    const text = navigator.clipboard.readText? await navigator.clipboard.readText(): ""
     if (text) {
       try {
         const obj = JSON.parse(text)

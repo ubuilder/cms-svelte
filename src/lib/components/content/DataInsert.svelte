@@ -3,7 +3,6 @@
   import { goto, invalidateAll } from '$app/navigation'
   import FieldInput from '$lib/components/content/FieldInput.svelte'
   import { api } from '$lib/helpers/api'
-  import { t } from '$lib/i18n'
   import type { SubmitFunction } from '@sveltejs/kit'
   import { Button, ButtonList, PageHeader, Card, CardBody, El, Icon, Page } from '@ulibs/yesvelte'
   import { createEventDispatcher } from 'svelte'
