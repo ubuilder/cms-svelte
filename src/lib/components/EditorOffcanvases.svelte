@@ -24,6 +24,7 @@
 	import TableEditCard from './content/TableEditCard.svelte'
   import TableSettingEdit from './content/TableSettingEdit.svelte'
   import TableInsertPage from './content/TableInsertPage.svelte'
+  import DataEdit from './content/DataEdit.svelte'
 	
 	// import { goto, invalidate, invalidateAll } from '$app/navigation'
 	// import AddComponentModal from '$lib/components/components/AddComponentModal.svelte'
@@ -1027,7 +1028,7 @@
 		{:else if offcanvasMode === 'data-insert'}
 			<DataInsert on:goBack={()=>{offcanvasMode = 'data-list'}} bind:table={data.activeTable} on:close  = {closeOffcanvas} />
 		{:else if offcanvasMode === 'data-edit'}
-			<DataInsert on:goBack={()=>{offcanvasMode = 'data-list'}} bind:table={data.activeTable} on:close  = {closeOffcanvas} />
+			<DataEdit on:goBack={()=>{offcanvasMode = 'data-list'}} bind:table={data.activeTable} on:close  = {closeOffcanvas} />
 		{:else}
 		{offcanvasMode}
 			<div>Page List </div>

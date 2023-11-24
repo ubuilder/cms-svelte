@@ -54,6 +54,7 @@
     dispatch('close')
   }
   function onEdit(data){
+    table.selectedItem = data
     dispatch('data-edit', data)
   }
 
