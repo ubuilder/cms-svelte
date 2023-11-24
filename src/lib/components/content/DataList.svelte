@@ -57,6 +57,10 @@
     table.selectedItem = data
     dispatch('data-edit', data)
   }
+  function onView(data){
+    table.selectedItem = data
+    dispatch('data-view', data)
+  }
 
   onMount(async () => {
     const res = await api(`/content/${table.id}`, {}).then((res) => res)
@@ -150,7 +154,7 @@
     </ListItem>
     <ListItem style="width: 0" name={t('content.actions')}>
       <El d="flex" gap="2">
-        <Button size="sm" href="../{table.slug}/{item.id}">
+        <Button size="sm" on:click = {()=>onView(item)}>
           <Icon name="eye" />
         </Button>
         <Button color="primary" size="sm" on:click = {()=>onEdit(item)}>
