@@ -51,6 +51,12 @@ function startTour(){
   setTimeout(()=>{
     driverObj.drive();
   }, 3000)
+  let interval = setInterval(()=>{
+    if(!driverObj.hasNextStep()){
+      driverObj.destroy()
+      clearInterval(interval)
+    }
+  }, 60 * 1000)
   return driverObj
 }
 $:if(!loading){startTour()}

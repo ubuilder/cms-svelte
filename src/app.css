@@ -61,6 +61,6 @@ body:has([data-bs-theme='light']),
 @import './typography.css';
 
 .navigator-popover-class{
-	background-color: #f68a17 !important;
+	background-color: #f6b317 !important;
 	box-shadow: 0px 0px 8px 2px #ffffff !important;
 }
