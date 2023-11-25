@@ -31,9 +31,11 @@
   import { driver } from "driver.js";
   import "driver.js/dist/driver.css";
 function startTour(){
+  if(localStorage.getItem("Ubuilder_navigator_tour") == "true")return
   const driverObj = driver({
     popoverClass: 'navigator-popover-class',
     showProgress: true,
+    onDestroyed : ()=>localStorage.setItem("Ubuilder_navigator_tour", "true"),
     steps: [
       { element: '.nothing', popover: { title: 'Wellcom to UBuilder CMS', description: 'Ubuilder CMS is an opensource CMS, the main goal of Ubuilder is to bring simplicity to no code web development' } },
       { element: '.nothing', popover: { title: 'You can use arrow keys', description: 'You can use left and right arrow key to navigate between steps' } },
@@ -51,12 +53,6 @@ function startTour(){
   setTimeout(()=>{
     driverObj.drive();
   }, 3000)
-  let interval = setInterval(()=>{
-    if(!driverObj.hasNextStep()){
-      driverObj.destroy()
-      clearInterval(interval)
-    }
-  }, 60 * 1000)
   return driverObj
 }
 $:if(!loading){startTour()}
