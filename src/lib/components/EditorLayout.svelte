@@ -29,9 +29,10 @@
   import SlotEditor from './SlotEditor.svelte'
   import { goto } from '$app/navigation'
   import { driver } from "driver.js";
-import "driver.js/dist/driver.css";
-onMount(()=>{
+  import "driver.js/dist/driver.css";
+function startTour(){
   const driverObj = driver({
+    popoverClass: 'navigator-popover-class',
     showProgress: true,
     steps: [
       { element: '.nothing', popover: { title: 'Wellcom to UBuilder CMS', description: 'Ubuilder CMS is an opensource CMS, the main goal of Ubuilder is to bring simplicity to no code web development' } },
@@ -49,11 +50,10 @@ onMount(()=>{
   });
   setTimeout(()=>{
     driverObj.drive();
-
-  }, 10000)
-
-})
-
+  }, 3000)
+  return driverObj
+}
+$:if(!loading){startTour()}
 
 
   let editor: any
