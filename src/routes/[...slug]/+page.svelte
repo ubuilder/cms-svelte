@@ -1,4 +1,5 @@
 <script>
+  import '../../typography.css'
   export let data
   console.log({ data })
 </script>

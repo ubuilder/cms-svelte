@@ -58,3 +58,4 @@ body:has([data-bs-theme='light']),
 	background-color: var(--y-bg-forms) !important;
 	border: 1px solid var(--border-color);
 }
+@import './typography.css'

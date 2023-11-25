@@ -400,8 +400,8 @@
   <!-- <script src="https://cdn.tailwindcss.com?plugins=forms,typography,aspect-ratio,line-clamp"></script> -->
   <!-- <script src="https://cdn.tailwindcss.com?plugins=forms,typography,aspect-ratio,line-clamp"></script> -->
   <!-- <script src="https://cdn.tailwindcss.com?plugins=forms,typography,aspect-ratio,line-clamp"></script> -->
-  <!-- <script src="https://cdn.tailwindcss.com?plugins=forms,typography,aspect-ratio,line-clamp"></script> -->
-  <script  src="/cdn.tailwindcss.com.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- <script  src="/cdn.tailwindcss.com.js"></script> -->
   <script>
     tailwind.config = {
       theme: {
