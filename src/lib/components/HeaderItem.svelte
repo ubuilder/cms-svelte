@@ -11,9 +11,10 @@ export let active = false
 
 <div
 class:active= {active}
+{...$$restProps}
 on:click
 on:dblclick
-	class="font-bold cursor-pointer hover:text-blue-500 rounded"
+	class="font-bold cursor-pointer hover:text-blue-500 rounded {$$restProps.class}"
 	style="">
     <slot>
         <Icon name={icon}/>

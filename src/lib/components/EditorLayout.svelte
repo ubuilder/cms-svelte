@@ -28,6 +28,33 @@
   import { t } from '$lib/i18n'
   import SlotEditor from './SlotEditor.svelte'
   import { goto } from '$app/navigation'
+  import { driver } from "driver.js";
+import "driver.js/dist/driver.css";
+onMount(()=>{
+  const driverObj = driver({
+    showProgress: true,
+    steps: [
+      { element: '.nothing', popover: { title: 'Wellcom to UBuilder CMS', description: 'Ubuilder CMS is an opensource CMS, the main goal of Ubuilder is to bring simplicity to no code web development' } },
+      { element: '.nothing', popover: { title: 'You can use arrow keys', description: 'You can use left and right arrow key to navigate between steps' } },
+      { element: '#main-sections', popover: { title: 'Main Sections', description: 'Provides you with the main sections of CMS' } },
+      { element: '.pages-button', popover: { title: 'Pages', description: 'You can View and manage pages' } },
+      { element: '.assets-button', popover: { title: 'Database', description: 'You can View and manage Data' } },
+      { element: '.databases-button', popover: { title: 'Assets', description: 'You can upload and manage your assets and files' } },
+      { element: '.responsive-section', popover: { title: 'Responsive Design', description: 'You can make different designs for different screen sizes and devices' } },
+      { element: '.xl-responsive-mode', popover: { title: 'Desktop', description: 'This is the default design size whick applyes to all screen sizes' } },
+      { element: '.sm-responsive-mode', popover: { title: 'Mobile', description: 'This is the smalles screen size which is good for different mobile screens' } },
+      { element: '.components-section', popover: { title: 'Components', description: 'Your Can Open list of Components to start design with.' } },
+      { element: '.nothing', popover: { title: 'Ready to go!', description: 'Good luck with your journy of creating your dream pages with UBuilder CMS' } },
+    ]
+  });
+  setTimeout(()=>{
+    driverObj.drive();
+
+  }, 10000)
+
+})
+
+
 
   let editor: any
 
@@ -400,6 +427,22 @@
   <!-- <script src="https://cdn.tailwindcss.com?plugins=forms,typography,aspect-ratio,line-clamp"></script> -->
   <!-- <script src="https://cdn.tailwindcss.com?plugins=forms,typography,aspect-ratio,line-clamp"></script> -->
   <!-- <script src="https://cdn.tailwindcss.com?plugins=forms,typography,aspect-ratio,line-clamp"></script> -->
+  <!-- <script src="https://cdn.jsdelivr.net/npm/driver.js@1.0.1/dist/driver.js.iife.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/driver.js@1.0.1/dist/driver.css"/>
+<script>
+  setTimeout(()=>{
+    
+    const driver = window.driver.js.driver;
+    const driverObj = driver();
+    driverObj.highlight({
+      element: "#main-sections",
+      popover: {
+        title: "Title",
+        description: "Description"
+      }
+    });
+  }, 10000)
+</script> -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- <script  src="/cdn.tailwindcss.com.js"></script> -->
   <script>
@@ -428,17 +471,20 @@
       class="header"
       class:right-sidebar-open={rightSidebarOpen}
       class:left-sidebar-open={leftSidebarOpen}>
-      <div class="flex items-center gap-2">
+      <div id = "main-sections" class="main-sections flex items-center gap-2">
         {#if mode === 'page'}
           <HeaderItem
+          class = 'pages-button'
+             
             icon="file"
             on:click={() => {
               leftSidebarOpen = true
               leftSidebarMode = 'list'
             }} />
-          <HeaderItem icon="photo" on:click={() => offcanvas.openLeft('assets')} />
+          <HeaderItem class = 'assets-button' icon="photo" on:click={() => offcanvas.openLeft('assets')} />
 
           <HeaderItem
+            class = 'databases-button'
             icon="database"
             on:click={() => {
               leftSidebarOpen = true
@@ -448,8 +494,9 @@
         <!-- svelte-ignore a11y-click-events-have-key-events -->
         <!-- svelte-ignore a11y-no-static-element-interactions -->
       </div>
-      <div class="flex items-center gap-2">
+      <div  class="responsive-section flex items-center gap-2">
         <HeaderItem
+        class = "xl-responsive-mode"
           icon="device-desktop"
           active={responsiveMode == '@xl:'}
           on:click={() => {
@@ -469,6 +516,7 @@
             responsiveMode = '@md:'
           }} />
         <HeaderItem
+        class = 'sm-responsive-mode'
           icon="device-mobile"
           active={responsiveMode == '@sm:'}
           on:click={() => {
@@ -531,6 +579,7 @@
           <!--  -->
         </HeaderItem>
         <HeaderItem
+        class = 'components-section'
           icon="category-filled"
           on:click={() => {
             if (rightSidebarOpen && rightSidebarMode === 'options') {
