@@ -43,7 +43,7 @@ export function startTour(state, onDestroy = undefined){
               }, 3000)
               return driverObj
     }else if (state === 'page-settings'){
-        if(localStorage.getItem("navigator-page-settings") == 'true'){(onDestroy&& onDestroy())return;};
+        if(localStorage.getItem("navigator-page-settings") == 'true'){(onDestroy&& onDestroy());return;};
         driverObj.setConfig({
             popoverClass: 'navigator-popover-class',
             showProgress: true,
@@ -58,7 +58,7 @@ export function startTour(state, onDestroy = undefined){
           return driverObj
         
     }else if( state === 'profile-button'){
-        if(localStorage.getItem("navigator-profile-button") == 'true'){(onDestroy&& onDestroy())return;};
+        if(localStorage.getItem("navigator-profile-button") == 'true'){(onDestroy&& onDestroy());return;};
         driverObj.setConfig({
             popoverClass: 'navigator-popover-class',
             showProgress: true,
