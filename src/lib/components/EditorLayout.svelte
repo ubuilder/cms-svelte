@@ -28,35 +28,11 @@
   import { t } from '$lib/i18n'
   import SlotEditor from './SlotEditor.svelte'
   import { goto } from '$app/navigation'
-  import { driver } from "driver.js";
   import "driver.js/dist/driver.css";
-function startTour(){
-  if(localStorage.getItem("Ubuilder_navigator_tour") == "true")return
-  const driverObj = driver({
-    popoverClass: 'navigator-popover-class',
-    showProgress: true,
-    onDestroyed : ()=>localStorage.setItem("Ubuilder_navigator_tour", "true"),
-    steps: [
-      { element: '.nothing', popover: { title: 'Wellcom to UBuilder CMS', description: 'Ubuilder CMS is an opensource CMS, the main goal of Ubuilder is to bring simplicity to no code web development' } },
-      { element: '.nothing', popover: { title: 'You can use arrow keys', description: 'You can use left and right arrow key to navigate between steps' } },
-      { element: '#main-sections', popover: { title: 'Main Sections', description: 'Provides you with the main sections of CMS' } },
-      { element: '.pages-button', popover: { title: 'Pages', description: 'You can View and manage pages' } },
-      { element: '.assets-button', popover: { title: 'Database', description: 'You can View and manage Data' } },
-      { element: '.databases-button', popover: { title: 'Assets', description: 'You can upload and manage your assets and files' } },
-      { element: '.responsive-section', popover: { title: 'Responsive Design', description: 'You can make different designs for different screen sizes and devices' } },
-      { element: '.xl-responsive-mode', popover: { title: 'Desktop', description: 'This is the default design size whick applyes to all screen sizes' } },
-      { element: '.sm-responsive-mode', popover: { title: 'Mobile', description: 'This is the smalles screen size which is good for different mobile screens' } },
-      { element: '.components-section', popover: { title: 'Components', description: 'Your Can Open list of Components to start design with.' } },
-      { element: '.nothing', popover: { title: 'Ready to go!', description: 'Good luck with your journy of creating your dream pages with UBuilder CMS' } },
-    ]
-  });
-  setTimeout(()=>{
-    driverObj.drive();
-  }, 3000)
-  return driverObj
-}
-$:if(!loading){startTour()}
+  import { startTour } from '$lib/helpers/driver'
 
+  let tourState = "home"
+$:if(!loading && tourState ){startTour(tourState)}
 
   let editor: any
 
@@ -482,8 +458,9 @@ $:if(!loading){startTour()}
             on:click={() => {
               leftSidebarOpen = true
               leftSidebarMode = 'list'
+              tourState = 'page-create'
             }} />
-          <HeaderItem class = 'assets-button' icon="photo" on:click={() => offcanvas.openLeft('assets')} />
+          <HeaderItem class = 'assets-button' icon="photo" on:click={() => {offcanvas.openLeft('assets'); tourState = 'asset-page'}} />
 
           <HeaderItem
             class = 'databases-button'
@@ -491,6 +468,7 @@ $:if(!loading){startTour()}
             on:click={() => {
               leftSidebarOpen = true
               leftSidebarMode = 'content'
+              tourState = 'database-page'
             }} />
         {/if}
         <!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -560,7 +538,7 @@ $:if(!loading){startTour()}
         {/if}
         <HeaderItem>
           <Dropdown autoClose arrow={false} placement="bottom-end">
-            <Avatar slot="target" size="xs" shape="circle" color="primary">
+            <Avatar on:click = {()=>{tourState = 'profile-settings'}} class = 'profile-button' slot="target" size="xs" shape="circle" color="primary">
               {#if user.profile}
                 <img alt="profile" src="/files/{user.profile}" />
               {:else}
@@ -571,7 +549,7 @@ $:if(!loading){startTour()}
               <DropdownItem on:click={() => offcanvas.openLeft('profile')}>
                 {t('profile.title')}
               </DropdownItem>
-              <DropdownItem on:click={() => offcanvas.openLeft('settings')}>
+              <DropdownItem class = 'profile-settings' on:click={() => {offcanvas.openLeft('settings'); tourState = 'choose-home-page'}}>
                 {t('settings.title')}
               </DropdownItem>
               <DropdownItem divider />
@@ -590,6 +568,7 @@ $:if(!loading){startTour()}
               rightSidebarOpen = !rightSidebarOpen
               rightSidebarMode = 'add'
             }
+            startTour("component-list")
           }} />
       </div>
     </div>
@@ -622,7 +601,7 @@ $:if(!loading){startTour()}
               {settings}
               {page}
               {pages}
-              on:open-page={(e) => gotoPageEditor(e.detail)}
+              on:open-page={(e) => {gotoPageEditor(e.detail); startTour('page-settings', ()=>startTour("profile-button", ()=>startTour("component-button")))}}
               on:open-page-settings={(e) => openPageSettings(e.detail)} />
 
             <div class="h-10"></div>
@@ -641,7 +620,7 @@ $:if(!loading){startTour()}
     {/if}
 
     <div class="sidebar" class:open={rightSidebarOpen}>
-      <div class="h-full w-full relative">
+      <div class="h-full w-full relative component-list">
         <Icon
           class="sidebar-close-icon left"
           on:click={() => (rightSidebarOpen = false)}

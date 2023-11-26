@@ -90,6 +90,7 @@
 			</FormRadioGroup>
 
 			<FormSelect
+			class = 'choose-home-page'
 				items={pages.filter(x => !x.slug.includes('/{'))}
 				key="id"
 				placeholder={t('settings.page_home_placeholder')}
