@@ -43,6 +43,38 @@
 
 
 <El mb="3" w="100" d="flex" justifyContent="between" alignItems="center">
+  <div class="font-bold">Centers:</div>
+  <div>
+    <div class="flex justify-center items-center mb-1">
+      <button
+        class="p-1 flex items-center justify-center w-6 h-6 rounded-t inline-flex border border-gray-300 text-black bg-gray-100 hover:bg-gray-200"
+        class:!bg-blue-500={items === 'center'}
+        class:text-white={items === 'center'}
+        on:click={() => {
+          set('items', 'center')
+        }}><img src = '/svg/align-center.svg'></button>
+      <Tooltip placement="top">Row</Tooltip>
+      <button
+        class="p-1 flex items-center justify-center w-6 h-6 rounded-t inline-flex border border-gray-300 text-black bg-gray-100 hover:bg-gray-200"
+        class:!bg-blue-500={justify === 'center'}
+        class:text-white={justify === 'center'}
+        on:click={() => {
+          set('justify', 'center')
+        }}><img style = 'transform:rotate(90deg)' src = '/svg/align-center.svg'></button>
+      <Tooltip placement="top">Row</Tooltip>
+      <button
+        class="p-1 flex items-center justify-center w-6 h-6 rounded-t inline-flex border border-gray-300 text-black bg-gray-100 hover:bg-gray-200"
+        class:!bg-blue-500={items === 'stretch'}
+        class:text-white={items === 'stretch'}
+        on:click={() => {
+          set('items', 'stretch')
+        }}><img src = '/svg/align-stretch.svg'></button>
+      <Tooltip placement="top">Row</Tooltip>
+    </div>
+
+  </div>
+</El>
+<El mb="3" w="100" d="flex" justifyContent="between" alignItems="center">
   <div class="font-bold">Alignments:</div>
   <div>
     <div class="flex justify-center items-center mb-1">
@@ -114,6 +146,41 @@
 {:else}
 
 <El mb="3" w="100" d="flex" justifyContent="between" alignItems="center">
+  <div class="font-bold">Centers:</div>
+  <div>
+    <div class="flex justify-center items-center mb-1">
+      
+      <button
+        class="p-1 flex items-center justify-center w-6 h-6 rounded-t inline-flex border border-gray-300 text-black bg-gray-100 hover:bg-gray-200"
+        class:!bg-blue-500={justify === 'center'}
+        class:text-white={justify === 'center'}
+        on:click={() => {
+          set('justify', 'center')
+        }}><img  src = '/svg/align-center.svg'></button>
+      <Tooltip placement="top">Row</Tooltip>
+      <button
+        class="p-1 flex items-center justify-center w-6 h-6 rounded-t inline-flex border border-gray-300 text-black bg-gray-100 hover:bg-gray-200"
+        class:!bg-blue-500={items === 'center'}
+        class:text-white={items === 'center'}
+        on:click={() => {
+          set('items', 'center')
+        }}><img style = 'transform:rotate(90deg)' src = '/svg/align-center.svg'></button>
+      <Tooltip placement="top">Row</Tooltip>
+      <button
+        class="p-1 flex items-center justify-center w-6 h-6 rounded-t inline-flex border border-gray-300 text-black bg-gray-100 hover:bg-gray-200"
+        class:!bg-blue-500={items === 'stretch'}
+        class:text-white={items === 'stretch'}
+        on:click={() => {
+          set('items', 'stretch')
+        }}><img style = 'transform:rotate(90deg)' src = '/svg/align-stretch.svg'></button>
+      <Tooltip placement="top">Row</Tooltip>
+    </div>
+
+  </div>
+</El>
+
+<El mb="3" w="100" d="flex" justifyContent="between" alignItems="center">
+  
   <div class="font-bold">Alignments:</div>
   <div>
     <div class="flex justify-center items-center mb-1">
@@ -137,10 +204,11 @@
       <Tooltip placement="top">Row</Tooltip>
       <button
         class="p-1 flex items-center justify-center w-6 h-6 rounded inline-flex border border-gray-300 text-black bg-gray-100 hover:bg-gray-200"
-        class:!bg-blue-500={flexDirection === 'row'}
-        class:text-white={flexDirection === 'row'}
+        class:!bg-blue-500={(items === 'center' && justify === "center")}
+        class:text-white={(items === 'center' && justify === "center")}
         on:click={() => {
-          set('flexDirection', 'row')
+          set('items', 'center')
+          set('justify', 'center')
         }}><Icon name="focus-2" /></button>
       <Tooltip placement="top">Row</Tooltip>
       <button
