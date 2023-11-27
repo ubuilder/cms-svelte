@@ -266,10 +266,17 @@
 
   function set(key: string, val: string) {
     let _value = ''
-    function xy(prop, klas = prop) {
+    function xy(prop, klas = prop, onlyValue = false) {
       if (!props[prop]) return
-      for (const b in props[prop]) {
-        _value += ` ${b}${klas}-${props[prop][b]}`
+      if(!onlyValue){
+        for (const b in props[prop]) {
+          _value += ` ${b}${klas}-${props[prop][b]}`
+        }
+
+      }else{
+        for (const b in props[prop]) {
+          _value += ` ${b}${klas}`
+        }
       }
     }
     function xyz(prop, klas = prop) {
@@ -287,7 +294,7 @@
         _value += ` ${b}flex ${b}flex-${props.flexDirection[b]}`
       }
     }
-    xy('flex')
+    xy('flex', "flex", true)
     // xy('flexDirection', 'flex')
     xy('items', 'items')
     xy('justify', 'justify')
