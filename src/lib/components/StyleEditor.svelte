@@ -14,7 +14,7 @@
   let props: any = {}
   let breakPoints = ['@xs:', '@sm:', '@md:', '@lg:', '@xl:']
 
-  function match(klass, value) {
+  function match(klass, value, onlyValue = false) {
     // let classlist = [
     //   "bg", "text",
     //    "b" ,"bt", 'bs', 'be', 'bb',
@@ -23,33 +23,61 @@
     //    "p", 'pt' , "ps", 'pe' , "pb",
     //    "w", "h",
     // ]
-    if (
-      klass.startsWith(`@xs:${value}-`) ||
-      klass.startsWith(`@sm:${value}-`) ||
-      klass.startsWith(`@md:${value}-`) ||
-      klass.startsWith(`@lg:${value}-`) ||
-      klass.startsWith(`@xl:${value}-`)
-    ) {
-      return true
+
+    if (!onlyValue) {
+      if (
+        klass.startsWith(`@xs:${value}-`) ||
+        klass.startsWith(`@sm:${value}-`) ||
+        klass.startsWith(`@md:${value}-`) ||
+        klass.startsWith(`@lg:${value}-`) ||
+        klass.startsWith(`@xl:${value}-`)
+      ) {
+        return true
+      }
+    } else {
+      if (
+        klass === `@xs:${value}` ||
+        klass === `@sm:${value}` ||
+        klass === `@md:${value}` ||
+        klass === `@lg:${value}` ||
+        klass === `@xl:${value}`
+      ) {
+        return true
+      }
     }
   }
-  function extractResponsiveClasses(value, stile) {
+  function extractResponsiveClasses(value, stile, onlyValue = false) {
     let res: Record<string, any> = {}
     value = value.trim().replace('[', '').replace(']', '')
-    if (value.startsWith(`@xs:${stile}-`)) {
-      res['@xs:'] = value.split(`@xs:${stile}-`)[1]
-    } else if (value.startsWith(`@sm:${stile}-`)) {
-      res['@sm:'] = value.split(`@sm:${stile}-`)[1]
-    } else if (value.startsWith(`@md:${stile}-`)) {
-      res['@md:'] = value.split(`@md:${stile}-`)[1]
-    } else if (value.startsWith(`@lg:${stile}-`)) {
-      res['@lg:'] = value.split(`@lg:${stile}-`)[1]
-    } else if (value.startsWith(`@xl:${stile}-`)) {
-      res['@xl:'] = value.split(`@xl:${stile}-`)[1]
+    if (!onlyValue) {
+      if (value.startsWith(`@xs:${stile}-`)) {
+        res['@xs:'] = value.split(`@xs:${stile}-`)[1]
+      } else if (value.startsWith(`@sm:${stile}-`)) {
+        res['@sm:'] = value.split(`@sm:${stile}-`)[1]
+      } else if (value.startsWith(`@md:${stile}-`)) {
+        res['@md:'] = value.split(`@md:${stile}-`)[1]
+      } else if (value.startsWith(`@lg:${stile}-`)) {
+        res['@lg:'] = value.split(`@lg:${stile}-`)[1]
+      } else if (value.startsWith(`@xl:${stile}-`)) {
+        res['@xl:'] = value.split(`@xl:${stile}-`)[1]
+      }
+    } else {
+      if (value === `@xs:${stile}`) {
+        res['@xs:'] = true
+      } else if (value === `@sm:${stile}`) {
+        res['@sm:'] = true
+      } else if (value === `@md:${stile}`) {
+        res['@md:'] = true
+      } else if (value === `@lg:${stile}`) {
+        res['@lg:'] = true
+      } else if (value === `@xl:${stile}`) {
+        res['@xl:'] = true
+      }
     }
+
     return res
   }
-  function initializeProps(){
+  function initializeProps() {
     props.m = {}
     props.mt = {}
     props.ms = {}
@@ -106,8 +134,10 @@
         props.items = { ...props.items, ...extractResponsiveClasses(klass, 'items') }
       } else if (match(klass, 'justify')) {
         props.justify = { ...props.justify, ...extractResponsiveClasses(klass, 'justify') }
+      } else if (match(klass, 'flex', true)) {
+        props.flex = { ...props.flex, ...extractResponsiveClasses(klass, 'flex', true) }
       } else if (match(klass, 'flex')) {
-        props.flex = { ...props.flex, ...extractResponsiveClasses(klass, 'flex') }
+        props.flexDirection = { ...props.flexDirection, ...extractResponsiveClasses(klass, 'flex') }
       } else if (match(klass, 'w')) {
         props.w = { ...props.w, ...extractResponsiveClasses(klass, 'w') }
       } else if (match(klass, 'h')) {
@@ -258,7 +288,7 @@
       }
     }
     xy('flex')
-    xy('flexDirection', 'flex')
+    // xy('flexDirection', 'flex')
     xy('items', 'items')
     xy('justify', 'justify')
     xy('bg')
