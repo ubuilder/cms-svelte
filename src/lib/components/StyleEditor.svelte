@@ -260,8 +260,24 @@
 
     //delete the responsive break point if no value is passed
     if (!val) delete props[key][responsiveMode]
-
-    props[key][responsiveMode] = val
+    if(props[key][responsiveMode] == val){
+      deleteProps(key)
+    }else{
+      props[key][responsiveMode] = val
+    }
+  }
+  function deleteProps(key){
+    if(!props[key])return;
+    if(key === "flex"){
+      delete props[key][responsiveMode]
+      delete props["items"][responsiveMode]
+      delete props["justify"][responsiveMode]
+    }else if(key ==='flexDirection'){
+      delete props[key][responsiveMode]
+      deleteProps('flex')
+    }else{
+      delete props[key][responsiveMode]
+    }
   }
 
   function set(key: string, val: string) {
