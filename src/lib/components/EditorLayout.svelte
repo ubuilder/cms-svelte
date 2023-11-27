@@ -55,6 +55,7 @@ $:if(!loading && tourState ){startTour(tourState)}
   let hasChanges = true
 
   let page: any = null
+  $:console.log({page})
   let component: any = null
 
   let activeSlot: any = null
@@ -125,6 +126,7 @@ $:if(!loading && tourState ){startTour(tourState)}
       delete slot['parent_field']
       delete slot['parent_index']
     })
+    console.log('saveing data: ', result)
 
     await api('/pages', {
       params: {
@@ -152,6 +154,14 @@ $:if(!loading && tourState ){startTour(tourState)}
       }
     })
   }
+  $:onPageChange(page)
+  function onPageChange(page){
+    // activeSlot = null;
+    rightSidebarMode = 'add';
+    rightSidebarOpen = true;
+    editor?.selectSlot()
+  }
+  
 
   $: {
     leftSidebarOpen
@@ -274,6 +284,7 @@ $:if(!loading && tourState ){startTour(tourState)}
       }
     }
     findAndReplace(page.slot)
+
   }
 
   let leftSidebarOpen = false
