@@ -141,8 +141,12 @@ $:if(!loading && tourState ){startTour(tourState)}
       activePage: page,
     })
   }
+  function setPage(pages){
+    page = pages.find((x) => x.id === page_id) ?? null
+  }
 
-  $: page = pages.find((x) => x.id === page_id) ?? null
+  $: setPage(pages)
+  // $: page = pages.find((x) => x.id === page_id) ?? null
   $: component = components.find((x) => x.id === component_id) ?? null
 
   $: if (page) {
@@ -221,11 +225,12 @@ $:if(!loading && tourState ){startTour(tourState)}
     })
   }
 
-  function gotoPageEditor(newPage: any) {
-    reload()
-    page_id = newPage.id
+ async function gotoPageEditor(newPage: any) {
 
-    window.history.pushState({}, '', '/edit/' + page_id)
+   page_id = newPage.id
+   await reload()
+
+    // window.history.pushState({}, '', '/edit/' + page_id)
     editor?.render()
   }
   function openTableCreate() {

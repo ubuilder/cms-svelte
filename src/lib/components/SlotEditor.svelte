@@ -1,6 +1,5 @@
 <script lang="ts">
-  import hbs from 'handlebars'
-  import { customAlphabet } from 'nanoid'
+  
   import { createEventDispatcher, onMount } from 'svelte'
   import { DragDrop } from '$lib/helpers/drag-drop'
   import { Icon, Loading, Tooltip, alert, modal } from '@ulibs/yesvelte'
@@ -11,23 +10,22 @@
   import type { DbFilter, DbWith } from '$lib/types'
 
   export let slotList: any[] = []
-
-  let contentEl: any
-
-  export let activeSlot: any = null
-  let dragging = false
-  let loading = true
-
-  let borderPosition: any = {}
-  let hoverBorderPosition: any = {}
   export let components: any[] = []
   export let responsiveMode = '@xl:'
-
-  let instance: any
-
+  export let activeSlot: any = null
   export let hbsTemplates: any = {}
   export let slotMap: any = {}
+  $:console.log('slotlist change: ', JSON.stringify(slotList, null, 2))
 
+  let contentEl: any
+  let dragging = false
+  let loading = true
+  let borderPosition: any = {}
+  let hoverBorderPosition: any = {}
+  let instance: any
+  let wrapper: HTMLDivElement
+  let responsiveWrapper: HTMLDivElement
+  
   const dispatch = createEventDispatcher()
 
   export function removeSlot(id: string) {
@@ -70,9 +68,7 @@
     // 	return
     // }
 
-    console.log('slotList', slotList)
     forEachSlot(slotList, (slot) => {
-      console.log('insideForeach slot', slot)
 
       const component = getComponent(slot.type)
       for (let field of component.fields) {
@@ -177,7 +173,7 @@
   }
 
   export async function render(slot = null) {
-    console.log({slot})
+    console.log("rederfunction", {slot})
     setTimeout(() => {
       if (instance) {
         instance.destroy()
@@ -241,7 +237,6 @@
         }
       }
     } else {
-      console.log('render')
 
       setTimeout(() => {
         document.querySelectorAll('.placeholder.empty').forEach((el) => {
@@ -255,11 +250,8 @@
       })
       const items = {}
       let html = ''
-      console.log('slotlist', {slotList})
       for (let index in slotList) {
-        console.log('here', {slotList}, {index})
         const slotItem = slotList[index]
-        console.log('slotitem',slotList[index])
         html += await renderSlot(slotItem, '', '', +index, false, items)
       }
       html += placeholder('', '', slotList.length, 'empty')
@@ -279,7 +271,7 @@
     items: any = {}
   ) {
     let props: any = {}
-    console.log({slot})
+    console.log("inside rnederslot", JSON.stringify(slot), JSON.stringify(slotList))
 
     await loadDynamicData(slot, items)
     const component = getComponent(slot.type)
@@ -293,17 +285,14 @@
 
     if (component?.raw) {
       for (let index in component.fields) {
-        console.log('new')
         const field = component.fields[index]
 
         if (field.type === 'slot') {
           let content = ''
           if (slot.props?.[field.name]?.name) {
-            console.log('dynamic slot: ', slot.props?.[field.name])
             if (items[slot.props[field.name].name]) {
               if (Array.isArray(items[slot.props[field.name].name] ?? [])) {
                 // multiple
-                console.log('Multiple', slot.props[field.name].name)
                 if (items[slot.props[field.name].name].length) {
                   for (let item of items[slot.props[field.name].name] ?? []) {
                     //
@@ -318,7 +307,6 @@
                     }
                   }
                 } else {
-                  console.log('EMPTY: ')
                   content = 'Empty'
                 }
               } else {
@@ -337,7 +325,6 @@
               content = `No Data (${slot.props[field.name].name})`
             }
 
-            console.log('content: ', content)
             if (content) {
               props[
                 field.name
@@ -349,12 +336,9 @@
               props[field.name] = placeholder(id, field.name, 0, 'empty')
             }
           } else {
-            console.log('static slot: ', slot.props?.[field.name])
-            console.log('outside')
             for (let index in slot.props?.[field.name]?.slot ?? []) {
-              console.log('inside');
               
-              console.log({slot}, {field}, {index})
+              console.log("inside: ", {slot}, {field}, {index})
               const x = slot.props[field.name]?.slot[index]
 
               const res = await renderSlot(x, id, field.name, +index, true, items)
@@ -369,10 +353,8 @@
             } else {
               props[field.name] = placeholder(id, field.name, 0, 'empty')
             }
-            console.log('end')
           }
         } else {
-          console.log('else')
           props[field.name] = renderVariable(slot.props[field.name], items)
         }
       }
@@ -500,7 +482,6 @@
   })
 
   $: if (contentEl && slotList) {
-    console.log('contentEL, slotList', contentEl, slotList)
     contentEl.addEventListener('scroll', updateActiveBorder)
   }
 
@@ -725,8 +706,7 @@
       left = width
     }
   }
-  let wrapper: HTMLDivElement
-  let responsiveWrapper: HTMLDivElement
+
 </script>
 
 <!-- <iframe bind:this = {iframe} src = '/iframe' width = '200' height = '200'>
