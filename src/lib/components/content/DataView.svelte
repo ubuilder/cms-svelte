@@ -27,6 +27,7 @@
   import { api } from '$lib/helpers/api'
 
   export let table
+  $:console.log("tabel inside dataView", {table})
   let row = table.selectedItem
   async function removeItem(item: any) {
     const choice = await confirmModal.open({
