@@ -159,6 +159,7 @@
   const dispatch = createEventDispatcher()
   let key = 1
   function reload() {
+	dispatch('reload')
 	dispatch('update')
     key = key + 1
   }

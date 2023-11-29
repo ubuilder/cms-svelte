@@ -15,7 +15,6 @@
   export let activeSlot: any = null
   export let hbsTemplates: any = {}
   export let slotMap: any = {}
-  $:console.log('slotlist change: ', JSON.stringify(slotList, null, 2))
 
   let contentEl: any
   let dragging = false
@@ -271,7 +270,6 @@
     items: any = {}
   ) {
     let props: any = {}
-    console.log("inside rnederslot", JSON.stringify(slot), JSON.stringify(slotList))
 
     await loadDynamicData(slot, items)
     const component = getComponent(slot.type)
@@ -338,7 +336,6 @@
           } else {
             for (let index in slot.props?.[field.name]?.slot ?? []) {
               
-              console.log("inside: ", {slot}, {field}, {index})
               const x = slot.props[field.name]?.slot[index]
 
               const res = await renderSlot(x, id, field.name, +index, true, items)
@@ -348,7 +345,7 @@
             if (content) {
               props[field.name] = `<div class="slot" data-parent="${id}" data-index="0">${
                 renderVariable(content, items) +
-                placeholder(id, field.name, slot.props?.[field.name].length)
+                placeholder(id, field.name, slot.props?.[field.name]?.slot?.length)
               }</div>`
             } else {
               props[field.name] = placeholder(id, field.name, 0, 'empty')
@@ -709,10 +706,6 @@
 
 </script>
 
-<!-- <iframe bind:this = {iframe} src = '/iframe' width = '200' height = '200'>
-
-</iframe> -->
-
 <div
   style="margin-left: auto;margin-right: auto;width: 100%; height: 100%;position:relative;display:flex; justify-content:center"
   bind:this={wrapper}>
@@ -825,6 +818,11 @@
   }
   .lg {
     max-width: 1024px;
+    /* min-width: 768px; */
+  }
+  .xl {
+    max-width: 50000px;
+    /* min-width: 1024px; */
   }
   .controler {
     background-color: rgb(92, 92, 92);

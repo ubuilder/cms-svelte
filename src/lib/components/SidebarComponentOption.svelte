@@ -127,6 +127,7 @@
                 {field}
                 bind:value={activeSlot.props[field.name]} 
                 on:update
+                on:reload
                 />
             {:else if activeSlot.props[field.name]}
               <FormField mb="2">
