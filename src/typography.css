@@ -1,25 +1,25 @@
 h1,h2,h3,h4,h5,h6{
-    font-weight: bold;
+    font-weight: bold !important;
 }
 h1{
-	font-weight: bolder;
-	font-size: x-large;
-	margin-bottom: 1em;
+	font-weight: bolder !important;
+	font-size: x-large !important;
+	margin-bottom: 1rem !important;
 }
 h2{
-	font-size: larger;
-	margin-bottom: 0.8rem;
+	font-size: larger !important ;
+	margin-bottom: 0.8rem  !important;
 }
 h3{
-	font-size: large;
-	margin-bottom: 0.5rem;
+	font-size: large !important ;
+	margin-bottom: 0.5rem  !important;
 }
 h4{
-	margin-bottom: 0.3rem;
+	margin-bottom: 0.3rem !important ;
 }
 h5{
-    margin-bottom: 0.2rem;
+    margin-bottom: 0.2rem  !important;
 }
 h6{
-    margin-bottom: 0.1rem;
+    margin-bottom: 0.1rem  !important ;
 }

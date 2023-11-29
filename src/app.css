@@ -1,5 +1,5 @@
 @import 'highlight.js/styles/dark.css';
-
+@import './typography.css';
 [dir='ltr'] {
 	font-family: Nunito, Roboto, sans-serif;
 }
@@ -58,9 +58,34 @@ body:has([data-bs-theme='light']),
 	background-color: var(--y-bg-forms) !important;
 	border: 1px solid var(--border-color);
 }
-@import './typography.css';
+
 
 .navigator-popover-class{
 	background-color: #f6b317 !important;
 	box-shadow: 0px 0px 8px 2px #ffffff !important;
+}
+h1,h2,h3,h4,h5,h6{
+    font-weight: bold !important;
+}
+h1{
+	font-weight: bolder !important;
+	font-size: x-large !important;
+	margin-bottom: 1em !important;
+}
+h2{
+	font-size: larger;
+	margin-bottom: 0.8rem;
+}
+h3{
+	font-size: large;
+	margin-bottom: 0.5rem;
+}
+h4{
+	margin-bottom: 0.3rem;
+}
+h5{
+    margin-bottom: 0.2rem;
+}
+h6{
+    margin-bottom: 0.1rem;
 }
