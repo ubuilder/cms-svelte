@@ -251,6 +251,7 @@
       let html = ''
       for (let index in slotList) {
         const slotItem = slotList[index]
+        html += placeholder('', '', index, 'h-4')
         html += await renderSlot(slotItem, '', '', +index, false, items)
       }
       html += placeholder('', '', slotList.length, 'empty')
