@@ -103,7 +103,7 @@
                 <RelationItem value={row[field.name]} table={field.table} title={field.title} />
               {/if}
             {:else}
-              {row[field.name].substring(0, 100) + (row[field.name]?.length > 100 ? '...' : '')}
+              {row[field.name]?.toString().substring(0, 100) + (row[field.name]?.length > 100 ? '...' : '')}
             {/if}
           </td>
         </tr>

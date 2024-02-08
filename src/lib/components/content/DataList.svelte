@@ -62,15 +62,20 @@
     table.selectedItem = data
     dispatch('data-view', data)
   }
+
+  let filters : any = {}
+
   function onTableEdit(){
     delete table.selectedItem
     dispatch("table-settings")
   }
 
-  onMount(async () => {
-    const res = await api(`/content/${table.id}`, {}).then((res) => res)
-    rows = res.data?.data
-  })
+    async function load(filters) {
+        const res = await api(`/content/${table.id}`, {filters}).then((res) => res)
+        rows = res.data?.data
+    }
+
+$: load(filters)
 </script>
 
 <Page title={table.name}>
@@ -93,7 +98,7 @@
     </Button>
   </ButtonList>
 
-  <FilterList>
+  <FilterList bind:filters>
     {#each table.fields.filter((x) => x.show_in_list !== false) as field}
       {#if field.type === 'select'}
         <SelectFilter
@@ -119,7 +124,7 @@
   </FilterList>
   <ListBox title="" items={rows} let:item>
     {#each table.fields.filter((x) => x.show_in_list !== false) as field}
-      <ListItem name={field.name}>
+        <ListItem name={field.name} footer={field.type === 'number' ? rows.reduce((prev, curr) => prev + curr[field.name], 0) : ''}>
         {#if field.type === 'switch'}
           <Switch disabled checked={item[field.name]} />
         {:else if field.type === 'select'}
@@ -137,7 +142,7 @@
             <RelationItem value={item[field.name]} table={field.table} title={field.title} />
           {/if}
         {:else}
-          {item[field.name].substring(0, 100) + (item[field.name]?.length > 100 ? '...' : '')}
+          {item[field.name]?.toString().substring(0, 100) + (item[field.name]?.length > 100 ? '...' : '')}
         {/if}
       </ListItem>
     {/each}
